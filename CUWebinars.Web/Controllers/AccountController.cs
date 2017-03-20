@@ -294,6 +294,7 @@ namespace CUWebinars.Web.Controllers
             if (id.HasValue)
             {
                 var order = _accountControllerOrchestrator.GetOrderById(id.Value);
+
                 return View(order);
             }
             return View();
@@ -2146,6 +2147,17 @@ namespace CUWebinars.Web.Controllers
 
                 if (webUserId.HasValue && webUserId > 0)
                 {
+                    var userAcct = _membershipService.GetUserAccountByWebUserId(_globalConfig.Tenant, webUserId.Value);
+                    
+                    if (userAcct != null && !userAcct.HasClaim(ClaimTypes.FullName))
+                    {
+                       
+                        resultObject.Add("isConfirmed", "false");
+                    }
+                    else
+                    {
+                        resultObject.Add("isConfirmed", "true");
+                    }
                     //  Email exists and view is notified.
                     resultObject.Add("success", "foundExisting");
                     return Json(resultObject);

@@ -101,6 +101,7 @@ $(function () {
                     utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
 
                 } else if (data.Result === 'UserHasMulti') {
+                    
                     utilities.goToUrl('/Cart/Checkout');
                 } else {
                     //console.error('Failed to post order');
@@ -250,7 +251,8 @@ $(function () {
     signUpForm.on('submit', function (e) {
 
         e.preventDefault();
-
+        $('#EventDescription').slideToggle();
+        window.scrollTo(0, 0);
         var beigeFormArea = signUpFormContainer.find('div.well');
 
         $('#loginEmail').val($('#Email1').val());
@@ -269,7 +271,7 @@ $(function () {
 
         // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
-            console.log(signUpForm.attr('action'));
+
             //Account/Signup2
             $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {

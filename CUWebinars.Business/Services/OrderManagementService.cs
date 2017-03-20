@@ -700,7 +700,7 @@ namespace CUWebinars.Business.Services
 
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
                 row.UnitPrice = regTypePricing;
-
+                row.RegistrationType = GetRegTypeOfOrderRow(row.idRegType);
             }
             //Calculate row price before discount
             if (row.AdditionalLocation != null)
@@ -854,12 +854,12 @@ namespace CUWebinars.Business.Services
             Uri url = null)
         {
             var doesUserExist = _webUserRepository.GetWebUserFullname(order.BillingEmail);
-            
+
             if (doesUserExist != null)
                 userCreatedInCart = false;
 
             string addPasswordUrl = string.Empty;
-            
+
             var orderSubmittedViewModel = new ConfirmOrderMessage
             {
                 AddPasswordUrl = string.Empty,
@@ -1661,6 +1661,9 @@ namespace CUWebinars.Business.Services
                     _orderRepository.AssignWebUserToOrder(user, order);
                 _orderRepository.SaveOrderChanges(order, null);
 
+                RemoveDupedOrders(order);
+
+
             }
             catch (Exception ex)
             {
@@ -1675,6 +1678,9 @@ namespace CUWebinars.Business.Services
             var order = _orderRepository.FindById(orderId);
             order.AuditInfo = "{\"anon user becomes " + user.email + "\":" + order.AuditInfo + "}";
             order.idUser = userId;
+
+            RemoveDupedOrders(order);
+
 
             var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).SingleOrDefault();
             var shippingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.ShippingAddress).SingleOrDefault();
@@ -1735,6 +1741,50 @@ namespace CUWebinars.Business.Services
             order.Institution = user.Institution.InstitutionName;
 
             _orderRepository.SaveOrderChanges(order, null);
+        }
+
+        private void RemoveDupedOrders(Order order)
+        {
+            List<Order> orders =
+                GetOrdersByEmail(order.BillingEmail, 19).Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+            IList<int> iDsToRemove = new List<int>();
+
+            var result =
+                    orders
+                        .SelectMany(o => o.OrderRows.Where(r => r.RowStatus == OrderRowStatus.Active))
+                        .OrderBy(o => o.Order.OrderDate)
+                        .GroupBy(y => y.idWebinar)
+                        .Where(g => g.Skip(1).Any())
+                        .Select(g => g.Key)
+                        .ToList()
+                ;
+            if (result.Any())
+            {
+                foreach (var i in result)
+                {
+                    var _orders =
+                        orders.Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == i)
+                        .Skip(1).ToList();
+                    foreach (var _orderId in _orders)
+                    {
+                        iDsToRemove.Add(_orderId.idOrder);
+                    }
+                }
+            }
+
+            foreach (var id in iDsToRemove)
+            {
+                var itemToRemove = orders.SingleOrDefault(o => o.idOrder == id);
+                if (itemToRemove != null)
+                {
+                    itemToRemove.OrderStatus = OrderStatus.Canceled;
+                    SaveOrderChanges(itemToRemove, null, null);
+                    if (itemToRemove != null)
+                        orders.Remove(itemToRemove);
+
+                    _logger.Warn("Found and canceled duped order: " + id);
+                }
+            }
         }
 
         public void RemoveAdditionalLocationsForOrder(int idOrderRow)
@@ -2154,7 +2204,7 @@ namespace CUWebinars.Business.Services
                 _logger.Info("SaveOrderChanges: {0}", currentOrder.idOrder);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
-//////  REMOVES SEND CONFIRMATION LOOP TO PREVENT DUPED SENDS
+                //////  REMOVES SEND CONFIRMATION LOOP TO PREVENT DUPED SENDS
                 //// If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
                 //// we don't want to send the normal register user email. We want to roll those details into this confirmation
                 //// notification (OrderSubmitted notification). 

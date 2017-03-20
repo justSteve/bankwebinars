@@ -60,7 +60,7 @@
         $(function() {
             var idOrder = @Model.idOrder;
             $('#btnSubmitCCForm').text("please wait");
-            $('#PayByCCModal').on('show', function () {
+            $('#ShowPayByCCModal').on('click', function () {
                 
                 $.ajax({
                     datatype: "text/plain",
@@ -68,11 +68,12 @@
                     url: '/cart/PayTraceModalIni?idOrder='+idOrder,
                     cache: false,
                     success: function (data) {
-                        console.log(data);
+
                         if (data.isRedirect) {
+                            alert("Attention: we found the following <i>pending</i> orders. You can discard or pay for them on the next screen.");
                             window.location.href = data.redirectUrl;
                         }
-
+                        $('#PayByCCModal').show();
                         $('#btnSubmitCCForm').text("Continue");
                         dataParamList = data.paramList;
 

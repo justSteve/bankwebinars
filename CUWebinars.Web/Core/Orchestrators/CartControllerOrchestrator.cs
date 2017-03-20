@@ -967,7 +967,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             "Authenticated",
                             string.Empty,
                             string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId),
-                                "@notauthenticated-"+ Request.ServerVariables["REMOTE_ADDR"].ToString().Replace(":","z").Replace(".","_") + ".com"),
+                                "@notauthenticated-" + Request.ServerVariables["REMOTE_ADDR"].ToString().Replace(":", "z").Replace(".", "_") + ".com"),
                             USTimeZone.Central,
                             UserType.Customer,
                             _stateService.GetValue<int>("AValidInstitution"),
@@ -985,7 +985,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Order newOrder = new Order();
                 if (reuseOrder != null)
                     newOrder = _orderManagementService.GetOrderById(reuseOrder);
-                
+
                 newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
                 newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
                 newOrder.Origin = DomainConstants.Cart;
@@ -1443,8 +1443,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             document.MailMerge.Execute(fields);
 
-
-
             bool noError = true;
             try
             {
@@ -1472,7 +1470,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     myString = _appHelper.CleanHtmlCodesAndLogo(myString, _globalConfig.TenantLogo);
                     FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
-                        , "[Test] Confirmation of New Account for " + order.BillingEmail, myString);
+                        , "[Test][" + _globalConfig.Tenant + "] Please confirm your account", myString);
 
 
                 }

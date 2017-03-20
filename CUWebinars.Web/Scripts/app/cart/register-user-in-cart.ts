@@ -391,12 +391,37 @@ module RegistrationInCart {
             $('form#ResetPasswordForm').submit();
         }
 
+        resetPasswordOrLoginViewUnconfirmed(email: JQuery, webinarId: number): void {
+            //fires when existing user is detected entering 'signup'.
+            //console.log("call resetPasswordOrLoginView: " + email);
+            $('#Email1').val(email);
+            $('#ResetPassEmail').val(email);
+            $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is on file.</span>');
+            $('#wrapEmail').hide('slow');
+
+            var showLoginInput = $.Deferred(function () {
+                $('#wrapReset').show('slow');
+            });
+
+            $.when(showLoginInput.resolve()).then(function () {
+                $('#Password1').focus();
+                $('#modalShowExpressCheckoutUnConfirmed').modal('toggle');
+            });
+
+            this.action = Action.SubmitLogin;
+            $('#TheSubmitButton').prop('value', 'Log In');
+            var TheSubmitButtonWrapper = $('#TheSubmitButtonWrapper').contents();
+            $('#LoginToExistingAccountBTN').append(TheSubmitButtonWrapper);
+
+            if (this.inputAction === InputAction.EnterKeyPress)
+                this.inputAction = InputAction.None;
+        }
         resetPasswordOrLoginView(email: JQuery, webinarId: number): void {
             //fires when existing user is detected entering 'signup'.
             //console.log("call resetPasswordOrLoginView: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);
-            $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is already on file.</span>');
+            $('#labelEmail').html('<span class="label label-important"><b>&nbsp;&nbsp;' + email + '</b>&nbsp; is on file.</span>');
             $('#wrapEmail').hide('slow');
 
             var showLoginInput = $.Deferred(function () {

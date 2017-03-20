@@ -252,11 +252,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             }).done(function (data) {
 
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
-
+                
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
-                    L.clientLogger.info('Existing user came anon: ', { email: email });
-                    regUserStateManager.resetPasswordOrLoginView(email, webinarId);
+                    if (data.isConfirmed !== 'true') {
+                        regUserStateManager.resetPasswordOrLoginViewUnconfirmed(email, webinarId);
+                    } else {
+                        regUserStateManager.resetPasswordOrLoginView(email, webinarId);
+                    }
                 } else if (data.success === 'foundInstitution') {
                     regUserStateManager.foundInstitutionView(data, email);
                     L.clientLogger.info('foundInstitution for user: ', { email: email });
@@ -280,16 +283,16 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 }
 
             }).fail(commonFuncs.failCallBack)
-              .always(function (data, status, message) {
-                  regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+                .always(function (data, status, message) {
+                    regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
 
-                  if (data && data.responseText) {
-                      if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
-                          L.clientLogger.error("HandleAjaxExceptionAttribute #458 ", { result: data });
-                      }
+                    if (data && data.responseText) {
+                        if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
+                            L.clientLogger.error("HandleAjaxExceptionAttribute #458 ", { result: data });
+                        }
 
-                  }
-              });
+                    }
+                });
         }
     });
 
@@ -389,7 +392,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         var payloadFromForm = formProcessor.processInputs(formInputs);
         var payload = _.extend(payloadFromTab, payloadFromForm);
         delete (payload['undefined']); // this was the __RequestVerificationToken which we chucked in the headers. See immediately above.
-
+        //Account/RegisterFromCart
         var url = createUserForm.attr('action');
 
         $.ajax({
@@ -411,8 +414,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 errorsList.empty();
                 errorsList.append('<li style="display:none"></li>');
 
-                beigeFormArea.height(500);
-                //TODO: Why are we setting this height?
             }
         }).done(function (data) {
             //alert('done: ');
@@ -461,7 +462,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             //create the MR UserAccount (but don't log the user in). 
 
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
-                                
+
 
                                 if (status == 'error') {
                                     L.clientLogger.error("Error at /cart/checkoutConfirm/", { rowid: cartStateManager.getOrderId() });
@@ -560,6 +561,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             beforeSend: function () {
                 labelEmail.html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Logging you in...</span>');
                 formProcessor.clearValidationSummary(valSummary);
+
+
             }
         }).done(function (data) {
             if (data.result) {
@@ -675,7 +678,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
             } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                    ;// do nothing
+                ;// do nothing
             } else {
                 alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
             };
@@ -817,7 +820,7 @@ function cancelOrder(orderId, webinarId) {
                 $('#ConfirmRegistrationBillMe').after('<span class="field-validation-error">Error #216. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
                 $('#CancelModal').modal('hide');
             }
-            
+
         }, 'json');
 
         // unbind event so we don't get them building up each time the user clicks the Cancel Registration button.
@@ -909,7 +912,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
                     alert('Sorry, your session has expired. Please login again to continue');
                     window.location.href = '/Account/Login';
                 } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                        ; // do nothing
+                    ; // do nothing
                 } else {
                     alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
                 };
@@ -989,7 +992,7 @@ function hookUpChangeTypeLogic(dropDown) {
                         if (data.Result === 'Success') {
                             // This next variable is initially set in the CheckoutConfirm.cshtml razor view
                             anyAddLocs = false;
-                            
+
                             $('#additionalLocationsCaption').html('None');
 
                             $('#addlocSpiel').text('To add additional locations for this order, please use our Help & Feedback button (lower right corner)  for immediate assistance').addClass('text-info');
@@ -1081,7 +1084,7 @@ function ShowModalForShippingDetails(shippingDetailsRqrd) {
 }
 
 function hookUpApplyDiscountLogic(btn, orderRowId) {
-    
+
     btn.on('click', function (e) {
         var $item = $(e);
         var form = $item.parents("form");
@@ -1134,15 +1137,15 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                 var percentOff = data.PercentOff;
                 console.log(data);
                 var showDiscount = "";
-                
+
                 var newTotalPrice = data.Total;
 
                 $("#amount").val(newTotalPrice);
 
                 if (newTotalPrice < 0)
                     newTotalPrice = 0;
-                
-                
+
+
                 $('#discountedText').html(' <span id="totalDiscount" style="color: red;">Discounted: $' + data.Discount + '</span>').removeClass('muted');
                 //original -- what changed this? $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
                 $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '</span>');

@@ -32,7 +32,7 @@
 
             var idOrder = @idOrder;
 
-            $('#PayByPayTraceModal').on('show', function () {
+            $('#ShowPayByCCModal').on('click', function () {
 
                 $.ajax({
                     datatype: "text/plain",
@@ -40,8 +40,7 @@
                     url: '/cart/PayTraceModalIni?checked=true&idOrder='+idOrder + "&multi=@orderList",
                     cache: false,
                     success: function (data) {
-                        console.log(data);
-                        
+
                         dataParamList = data.paramList;
 
                         $("#btnSubmitPayTraceForm").click(function() {
@@ -100,7 +99,8 @@
                             // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
                         }
                         <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
-                        <button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
+                        @*<button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />*@
+                        <button  role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
 
 
                     </div>

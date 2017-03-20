@@ -19,8 +19,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -28,6 +30,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
 using CUWebinars.Web.Models.DataTablesModels;
+using GemBox.Document;
 using Microsoft.Ajax.Utilities;
 using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
@@ -894,12 +897,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return true;
         }
 
-        //public AddQuizEditModel BuildAddQuizEditModel()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        public EditBillingAddressModel BuildBillingAddressModel()
+    public EditBillingAddressModel BuildBillingAddressModel()
         {
             var model = new EditBillingAddressModel();
 

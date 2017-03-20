@@ -683,15 +683,16 @@ namespace CUWebinars.Web.Controllers
             // to get an approval amount set: AMOUNT~1.00
             // to get a declined amount set: AMOUNT~1.12
 
-            //totalAmt = .21M;
-            //if (order.idOrder % 2 != 0)
-            //    totalAmt = 1.12m;
+            totalAmt = .21M;
+
             string parameters = "UN~shuener|PSWD~Nb9rj3Sw|TERMS~Y|TRANXTYPE~Sale|";
 
             if (_globalConfig.EmailSendingMode != "live")
             {
+                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar % 2 != 0)
+                    totalAmt = .08m;
                 parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
-                totalAmt = .21M;
+                
                 parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
                 //parameters += "ApproveURL~http://6242c10f.ngrok.io/cart/PayTraceApproved/|";
                 //parameters += "DeclineURL~http://6242c10f.ngrok.io/cart/PayTraceDeclined/|";
@@ -1965,20 +1966,32 @@ namespace CUWebinars.Web.Controllers
 
             List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
                 .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+
             IList<int> iDsToRemove = new List<int>();
-            var x = 0;
-            foreach (var order in orders)
+
+            var result =
+                    orders
+                        .SelectMany(o => o.OrderRows.Where(r => r.RowStatus == OrderRowStatus.Active))
+                        .OrderBy(o => o.Order.OrderDate)
+                        .GroupBy(y => y.idWebinar)
+                        .Where(g => g.Skip(1).Any())
+                        .Select(g => g.Key)
+                        .ToList()
+                ;
+            if (result.Any())
             {
-                x++;
-
-                var hasAnyOthers = _cartControllerOrchestrator.GetOrdersByUser(order.BillingEmail)
-                    .Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).OrderBy(o => o.idOrder);
-
-                if (hasAnyOthers.Count() > x)
+                foreach (var i in result)
                 {
-                    iDsToRemove.Add(order.idOrder);
+                    var _orders =
+                        orders.Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == i)
+                        .Skip(1).ToList();
+                    foreach (var _orderId in _orders)
+                    {
+                        iDsToRemove.Add(_orderId.idOrder);
+                    }
                 }
             }
+
             foreach (var id in iDsToRemove)
             {
                 var itemToRemove = orders.SingleOrDefault(o => o.idOrder == id);
@@ -1987,7 +2000,6 @@ namespace CUWebinars.Web.Controllers
                 if (itemToRemove != null)
                     orders.Remove(itemToRemove);
                 _logger.Warn("Checkout found and canceled duped order: " + id);
-                //_cartControllerOrchestrator.CancelOrder(id);
             }
 
             RegistrationSummaryMultiViewModel model = BuildRegistrationSummaryMultiViewModel(orders);
