@@ -205,6 +205,7 @@ namespace CUWebinars.Web.Controllers
                     if (User.Identity.IsAuthenticated)
                     {
                         //M4Gen
+                        _logger.Info("ConfirmOrder UserIdent: " + User.Identity.Name);
                         var orderConfirmString =
                             _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
                         orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
@@ -217,9 +218,10 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
-
                         if (model.Order.Origin == "Express")
                         {
+                            _logger.Info("ConfirmOrder Express: " + model.Order.idOrder);
+
                             //M4Gen
                             var orderConfirmString =
                                 _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
@@ -235,6 +237,8 @@ namespace CUWebinars.Web.Controllers
                         }
                         else
                         {
+                            _logger.Info("ConfirmOrder NotExpress: " + model.Order.idOrder);
+
                             //M4Gen
                             var orderConfirmString =
                                 _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
@@ -255,7 +259,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty,
                         "ConfirmOrder|ConfirmOrder failed.");
-                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed ", exception);
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed " + model.Order.idOrder, exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
                 try
@@ -267,7 +271,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, "ConfirmOrder|UpdateOrderPricing failed.");
-                    _logger.ErrorException("ConfirmOrder|UpdateOrderPricing failed ", exception);
+                    _logger.ErrorException("ConfirmOrder|UpdateOrderPricing failed:  " + model.Order.idOrder, exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
@@ -280,7 +284,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, "ConfirmOrder|CreatePostEventClaim failed");
-                    _logger.ErrorException("ConfirmOrder|CreatePostEventClaim failed ", exception);
+                    _logger.ErrorException("ConfirmOrder|CreatePostEventClaim failed: " + model.Order.idOrder, exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
 
@@ -289,7 +293,7 @@ namespace CUWebinars.Web.Controllers
                     Result = WebUiConstants.Success,
                     OrderRowID = model.Order.idOrder,
                     Msg =
-                    string.Format("Your registration is confirmed. Complete details will be emailed to {0}.",
+                    string.Format("Thank you! Your registration is confirmed as: " + model.Order.idOrder + ". Complete details will be emailed to {0}.",
                         model.Order.BillingEmail)
                 }, JsonRequestBehavior.AllowGet);
 
@@ -692,7 +696,7 @@ namespace CUWebinars.Web.Controllers
                 if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar % 2 != 0)
                     totalAmt = .08m;
                 parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
-                
+
                 parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
                 //parameters += "ApproveURL~http://6242c10f.ngrok.io/cart/PayTraceApproved/|";
                 //parameters += "DeclineURL~http://6242c10f.ngrok.io/cart/PayTraceDeclined/|";
