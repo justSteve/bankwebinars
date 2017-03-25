@@ -1033,7 +1033,7 @@ function hookUpChangeTypeLogic(dropDown) {
 // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
 // TODO: Display 'Confirm Shipping Address' via the Shipping Details modal form where the RegType chosen has a shipping address requirement.
 function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
-
+    
     registerDuringCheckout.gatherPricingData();
 
     var url = '/Cart/UpdateOrderDetails';

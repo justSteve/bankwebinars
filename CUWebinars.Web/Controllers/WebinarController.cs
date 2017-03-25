@@ -1211,7 +1211,7 @@ namespace CUWebinars.Web.Controllers
                             },
                             OrderRowExists = true,
                             OrderRowHasId = true,
-                            OrderStatus = OrderStatus.InProcess,
+                            OrderStatus = order.OrderStatus, //OrderStatus.InProcess,
                             Origin = model.Order.Origin,
                             UserComments = model.Order.UserComments,
                             UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,

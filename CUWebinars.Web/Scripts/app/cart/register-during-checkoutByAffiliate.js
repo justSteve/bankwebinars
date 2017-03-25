@@ -1,6 +1,13 @@
 ﻿var registerDuringCheckout = {};
 registerDuringCheckout.institutionNames = {};
 
+$(function () {
+
+    hookUpChangeTypeLogic($('#RegType'));
+    $("#ContinueShoppingButton").hide();
+    $("#createNewUserButton").hide();
+    $("#Canceller").hide();
+});
 
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, addressOptions, callback) {
 
@@ -229,16 +236,16 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 }
 
             }).fail(commonFuncs.failCallBack)
-              .always(function (data, status, message) {
-                  regUserStateManager.setInputAction(RegistrationInCartByAffiliate.InputAction.None);
+                .always(function (data, status, message) {
+                    regUserStateManager.setInputAction(RegistrationInCartByAffiliate.InputAction.None);
 
-                  if (data && data.responseText) {
-                      if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
-                          L.clientLogger.error("HandleAjaxExceptionAttribute #458 ", { result: data });
-                      }
+                    if (data && data.responseText) {
+                        if (status === 'error' && JSON.parse(data.responseText)['Message'] === 'Uncaught Ajax Error') {
+                            L.clientLogger.error("HandleAjaxExceptionAttribute #458 ", { result: data });
+                        }
 
-                  }
-              });
+                    }
+                });
         }
     });
 
@@ -608,7 +615,7 @@ function hookUpEditUserLogic(button) {
                     alert('Sorry, your session has expired. Please login again to continue');
                     window.location.href = '/Account/Login';
                 } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                        ; // do nothing
+                    ; // do nothing
                 } else {
                     alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
                 };
@@ -627,6 +634,36 @@ function hookUpEditUserLogic(button) {
     });
 }
 
+function hookUpChangeTypeLogic(dropDown) {
+
+    var changeTypeConfirmModal = $('#changeTypeConfirmModal');
+    var chosenRegTypeLabel = $('#chosenRegType');
+    var position,
+        typeChosenCurrent,
+        typeChosenPrevious,
+        valOfTypeChosenPrevious,
+        valOfTypeChosenCurrent;
+
+    //  need to save state in the event that a Modal is displayed and Cancel is clicked on it.
+    typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+    valOfTypeChosenPrevious = valOfTypeChosenCurrent = dropDown.val();
+
+    dropDown.on('change', function (e) {
+
+        e.preventDefault();
+
+        valOfTypeChosenCurrent = $(this).val();
+        var totalPrice = 0;
+
+        typeChosenPrevious = typeChosenCurrent = $.trim($('#RegType option:selected').text());
+        chosenRegTypeLabel.empty().text(typeChosenCurrent);
+        valOfTypeChosenPrevious = valOfTypeChosenCurrent;
+        updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
+
+
+    });
+}
+
 // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
 // It also displays the Shipping Details modal form where the RegType chosen has a shipping address requirement.
 function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
@@ -636,7 +673,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
     var url = '/Cart/UpdateOrderDetails';
 
     var payLoad = {
-        idOrderRow: cartStateManager.getOrderRowId(),
+        idOrderRow: $('input[name="ID"]').val(),
         idRegType: registrationTypeId
     };
 

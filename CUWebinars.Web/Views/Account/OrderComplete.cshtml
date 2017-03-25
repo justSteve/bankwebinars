@@ -11,9 +11,7 @@
     if (!User.Identity.IsAuthenticated && Model.Origin != DomainConstants.OriginExpress)
     {
         newUserMsg = "<div class='span7'><p>" +
-                     "An order confirmation email has been dispatched to <b>" + Model.BillingEmail + "</b> and includes " +
-                     "a link that will confirm your identity and activate this account. You will not be able " +
-                     "to log into our website until visiting the link provided in that email. </p>" +
+                     "An order confirmation email has been dispatched to <b>" + Model.BillingEmail + "</b>.</p>" +
                      "<p>If you do not see our message in a timely fashion (and after checking your spam folder " +
                      "for a message from " + _globalConfig.TenantEmail + ") please contact Customer Service at that same address.</p></div>";
     }

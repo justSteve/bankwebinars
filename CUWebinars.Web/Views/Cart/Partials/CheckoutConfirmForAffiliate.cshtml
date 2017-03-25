@@ -42,7 +42,7 @@
                                         <span class="result">
                                             @* content will be loaded here*@
                                         </span>
-                                        
+
                                     }
                                 </div>
                             }
@@ -76,7 +76,7 @@
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
                                 <div id="additionalLocationsList">
-                                    
+
                                 </div>
                             }
                         </div>
@@ -98,43 +98,43 @@
                         </div>
                     </div>
                 </div>
-            }
+                                }
 
-            @*if (Model.OrderStatus != OrderStatus.InProcess)
-            {
-                <div id="postCheckout" class="well pull-right">
-                    <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
-                    @if (Model.OrderStatus != OrderStatus.Paid)
-                    {
-                        <span style="font-size: small; text-align: center;">
-                            To be invoiced after the event or
-                        </span>
-                        <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                        <br />
-                    }
-                </div>
-                <div class="row">
-                    <div class="span2 offset1 alignright">
-                        Primary Contact:<br />
-                        <br />
+                                @*if (Model.OrderStatus != OrderStatus.InProcess)
+                                    {
+                                        <div id="postCheckout" class="well pull-right">
+                                            <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
+                                            @if (Model.OrderStatus != OrderStatus.Paid)
+                                            {
+                                                <span style="font-size: small; text-align: center;">
+                                                    To be invoiced after the event or
+                                                </span>
+                                                <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
+                                                <br />
+                                            }
+                                        </div>
+                                        <div class="row">
+                                            <div class="span2 offset1 alignright">
+                                                Primary Contact:<br />
+                                                <br />
 
-                        Type:<br />
+                                                Type:<br />
 
-                    </div>
-                    <div class="span4">
-                        @Html.Raw(@Model.UserDetails)<br />
+                                            </div>
+                                            <div class="span4">
+                                                @Html.Raw(@Model.UserDetails)<br />
 
-                        @Model.OptionLabel<br />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="pull-right">
-                        <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
-                    </div>
-                </div>
-            }*@
-        }
-    }
+                                                @Model.OptionLabel<br />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="pull-right">
+                                                <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
+                                            </div>
+                                        </div>
+                                    }*@
+                                    }
+                                }
 }
 
 @{
@@ -143,7 +143,7 @@
     {
         ViewBag.NoteVersion = "03";
         Html.RenderPartial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", (Order)ViewBag.Order);
-        
+
         Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
     }
     //Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
@@ -152,7 +152,16 @@
 <script type="text/javascript">
     $(function() {
         // permits Admin to choose which affiliate will be credited with order
+        @{
+        if (Model.OrderStatus == OrderStatus.Paid)
+        {
+            <text>
 
+                $("#ShowPayByCCModal").hide();
+                $("#ConfirmRegistrationBillMe").hide();
+            </text>
+        }
+    }
         $('#frmChangeAffiliate_ > span.form-body').load('/Admin/GetAffiliates', function () {
 
             $('#SelectedAffiliate').val(currentAffiliateId);
@@ -187,7 +196,7 @@
                         $('#changeAffSpinner').remove();
                     } else {
                         $('#setAssignedAffiliate_').find('span[class="result"]').prepend('<span id="resultLabel" class="label label-danger"><span>&nbsp;<i class="icon icon-thumbs-down"></i>&nbsp;Affiliate update failed.</span>&nbsp;</span>');
-                        $('#changeAffSpinner').remove();                        
+                        $('#changeAffSpinner').remove();
                     }
                 });
             });

@@ -197,15 +197,15 @@
     </style>
 
     <script>
-        //to accomodate IE  http://stackoverflow.com/questions/5522164/input-placeholders-for-internet-explorer -- Jonathan Tonge
-        var placeholder = 'placeholder' in document.createElement('input');
-        if (!placeholder) {
-            $.getScript("/Scripts/placeholder.js", function () {
-                $(":input").each(function () {   // this will work for all input fields
-                    $(this).placeHolder();
-                });
-            });
-        }
+                //to accomodate IE  http://stackoverflow.com/questions/5522164/input-placeholders-for-internet-explorer -- Jonathan Tonge
+                var placeholder = 'placeholder' in document.createElement('input');
+                if (!placeholder) {
+                    $.getScript("/Scripts/placeholder.js", function () {
+                        $(":input").each(function () {   // this will work for all input fields
+                            $(this).placeHolder();
+                        });
+                    });
+                }
     </script>
     @{
         if (User.Identity.IsAuthenticated)
@@ -409,16 +409,71 @@
             <a href="#" id="ErrorSubmitter" class="btn btn-primary">Continue</a>
         </div>
     </div>
+    <div id="PayByCCModal" class="modal hide fade">
 
+        <input type="hidden" name="id" />
+
+        <div class="modal-header">
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="PayByCCModalOrderDetails" class="modal-body">
+            <div>
+                <div class="legendImitator">
+                    Credit Card Processing Redirect
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    We will now redirect your browser to our credit card processor - https://www.paytrace.com - for entry of credit card information.
+                </div>
+
+                <div class="pull-right">
+
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btn btn-success" name="btnSubmitCCForm" id="btnSubmitCCForm">Continue</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="PayByCCIsOfflineModal" class="modal hide fade">
+
+        <input type="hidden" name="id" />
+
+        <div class="modal-header">
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="PayByCCModalOrderDetails" class="modal-body">
+            <div>
+                <div class="legendImitator">
+                    Credit Card Processing Is Currently Offline
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    @*<b>The store is currently in test mode. Submissions require a valid credit card number but no transactions will occur. Transactions will alternately be act as if approved and declined to provide a mix of response messages.
+                        </b>*@                   
+                    <p>
+                        Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option. If you leave your email address we will notify you when service is restored.<br /><br />
+                   <input type="text" name="SubmitCCIsOffline" placeholder="Email to Notify" />
+                    </p>
+                </div>
+
+                <div class="pull-right">
+
+                    <button class="btn btn-success" data-dismiss="modal"  name="btnSubmitCCIsOfflineForm" id="btnSubmitCCIsOfflineForm">Continue</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/CrispApp")
 
     <script type="text/javascript">
-        $(document).ready(function () {
+                $(document).ready(function () {
 
 
-        });
+                });
     </script>
     @RenderSection("scripts", required: false)
 </body>

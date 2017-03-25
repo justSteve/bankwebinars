@@ -22,7 +22,7 @@
     <script type="text/javascript" language="javascript">
         var dataParamList = 0;
 
-        function SubmitCCForm () {
+        function SubmitCCForm() {
             $("#PayByCCFormPTMulti input[name='parmList']").val(dataParamList);
 
             $("#PayByCCFormPTMulti").submit();
@@ -32,25 +32,42 @@
 
             var idOrder = @idOrder;
 
-            $('#ShowPayByCCModal').on('click', function () {
+            $('#btnSubmitCCForm').text("please wait");
+            $('#ShowPayByCCModal').on('click',
+                function() {
+                    $.ajax({
+                        datatype: "text/plain",
+                        type: "GET",
+                        url: '/cart/PayTraceModalIni?checked=true&idOrder=' + idOrder + "&multi=@orderList",
+                        cache: false
+                    }).done(function (data) {
+                        if (data.success === "success") {
 
-                $.ajax({
-                    datatype: "text/plain",
-                    type: "GET",
-                    url: '/cart/PayTraceModalIni?checked=true&idOrder='+idOrder + "&multi=@orderList",
-                    cache: false,
-                    success: function (data) {
+                            if (data.isRedirect) {
+                                alert("Attention: we found the following pending orders. You can discard or pay for them on the next screen.");
+                                window.location.href = data.redirectUrl;
+                            }
 
-                        dataParamList = data.paramList;
+                            $('#PayByCCModal').modal('show');
+                            $('#btnSubmitCCForm').text("Continue");
+                            dataParamList = data.paramList;
 
-                        $("#btnSubmitPayTraceForm").click(function() {
-                            SubmitCCForm();
-                        });
-                    }
+                            $("#btnSubmitCCForm").click(function () {
+                                SubmitCCForm();
+                            });
+
+                        }
+                        console.log(data);
+                        if (data.success === "failed") {
+
+                            alert("There was a problem contacting our credit card processor.")
+                            $('#PayByCCIsOfflineModal').modal('show');
+                            
+                        }
+
+                    });
                 });
-            });
         });
-
     </script>
 
     <div id="LogInContainer" class="container">
@@ -100,7 +117,7 @@
                         }
                         <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
                         @*<button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />*@
-                        <button  role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
+                        <button role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
 
 
                     </div>
@@ -109,7 +126,8 @@
 
             <div id="PayByPayTraceModal" class="modal hide fade">
 
-                <form id="PayByCCFormPTMulti" method="post" action="https://paytrace.com/api/checkout.pay">
+                <form id="PayByCCFormPTMulti" method="post" action="https://paytrace.com/api/default.pay">
+                @*<form id="PayByCCFormPTMulti" method="post" action="https://beta.paytrace.com/api/default.pay">*@
 
                     <input type="hidden" name="parmList" id="paraList" value="">
                     <input type="hidden" name="ordersList" id="ordersList" value="">

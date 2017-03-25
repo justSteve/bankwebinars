@@ -698,12 +698,12 @@ namespace CUWebinars.Web.Controllers
                 parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
 
                 parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
-                //parameters += "ApproveURL~http://6242c10f.ngrok.io/cart/PayTraceApproved/|";
-                //parameters += "DeclineURL~http://6242c10f.ngrok.io/cart/PayTraceDeclined/|";
-                //parameters += "ReturnURL~http://6242c10f.ngrok.io/cart/PayTracePostBack/|";
-                parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
-                parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
-                parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
+                parameters += "ApproveURL~http://d2d2b3e2.ngrok.io/cart/PayTraceApproved/|";
+                parameters += "DeclineURL~http://d2d2b3e2.ngrok.io/cart/PayTraceDeclined/|";
+                parameters += "ReturnURL~http://d2d2b3e2.ngrok.io/cart/PayTracePostBack/|";
+                //parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
+                //parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
+                //parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
             }
             else
             {
@@ -720,27 +720,42 @@ namespace CUWebinars.Web.Controllers
             ASCIIEncoding encoding = new ASCIIEncoding();
             byte[] bytes = encoding.GetBytes(parameter_list);
             _logger.Info("PayTrace: " + order.idOrder + "  validation request: " + parameter_list);
+            var responseString = "";
+            var strResponse = "";
+            try
+            {
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://paytrace.com/api/validate.pay");
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = bytes.Length;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://beta.paytrace.com/api/validate.pay ");
+                //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://paytrace.com/api/validate.pay");
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = bytes.Length;
 
-            // send validation request
-            Stream str = request.GetRequestStream();
-            str.Write(bytes, 0, bytes.Length);
-            str.Flush();
-            str.Close();
+                // send validation request
+                Stream str = request.GetRequestStream();
+                str.Write(bytes, 0, bytes.Length);
+                str.Flush();
+                str.Close();
 
-            // get response and parse
-            WebResponse response = request.GetResponse();
-            Stream rsp_stream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(rsp_stream);
+                // get response and parse
+                WebResponse response = request.GetResponse();
+                Stream rsp_stream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(rsp_stream);
 
-            // read the response string
-            string strResponse = reader.ReadToEnd();
-            var responseString = strResponse;
-
+                // read the response string
+                strResponse = reader.ReadToEnd();
+                responseString = strResponse;
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("PayTrace: " + idOrder +" dies at pre-auth.", ex);
+                return Json(new
+                {
+                    success = "failed",
+                    responseString,
+                }, JsonRequestBehavior.AllowGet);
+            }
             string authKey;
 
             // if we have errors if so output to ui
@@ -1227,6 +1242,7 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult UpdateOrderDetails(int? idOrderRow = null, int? idRegType = null)
         {
+            int orderIDTracker = 0;
             if (idOrderRow.HasValue && idRegType.HasValue)
             {
                 try
@@ -1239,9 +1255,7 @@ namespace CUWebinars.Web.Controllers
 
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
-
-
-
+                    orderIDTracker = model.Order.idOrder;
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
                     var discountCaption = "";
@@ -1255,11 +1269,8 @@ namespace CUWebinars.Web.Controllers
                             model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount,
                             model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
                     }
-
-                    //_cartControllerOrchestrator.UpdateRegTypeOnLegacy(idRegType.Value, model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idWebinar, model.Order.BillingEmail);
-
-                    _logger.Info("EditRegTypeTo: " + newRegType + " From: " + oldRegType + " on orderId: " +
-                                 model.Order.idOrder);
+                    
+                    _logger.Info("UpdateOrderDetails: " +model.Order.idOrder +" changed from: " + oldRegType + " to: " + newRegType);
 
                     if (!string.IsNullOrEmpty(model.Order.InvoiceDetail))
                     {
@@ -1295,7 +1306,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(
-                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", idRegType,
+                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", orderIDTracker ,
                             exception.Message, _appHelper.GetUserAuditInfo()), exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
 
@@ -2180,7 +2191,7 @@ namespace CUWebinars.Web.Controllers
 
             System.Diagnostics.Debug.WriteLine("final discountCaptionMultiMsg: {0}", discountCaptionMultiMsg);
 
-            grandTotalCaptionMultiMsg = "Included below are all currently pending orders. Any orders removed from here are permanently deleted. Edit any remaining orders for your exact need and use our 'Bill Me' or credit card processing when you are ready for final checkout.<br><br><b> Grand Total: " + grandTotal.ToString("c").Replace(".00", "") + "</b>";
+            grandTotalCaptionMultiMsg = "Included below are all currently pending orders. Any orders removed from here are permanently deleted. Edit any remaining orders for your exact needs and use our 'Bill Me' or credit card processing when you are ready for final checkout.<br><br><b> Grand Total: " + grandTotal.ToString("c").Replace(".00", "") + "</b>";
 
             System.Diagnostics.Debug.WriteLine("final grandTotalCaptionMultiMsg: {0}", grandTotalCaptionMultiMsg);
 

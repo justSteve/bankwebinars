@@ -231,7 +231,8 @@
     <div id="page">
 
         @RenderBody()
-        <form id="PayByCCFormPT" method="post" action="https://paytrace.com/api/checkout.pay">
+        <form id="PayByCCFormPT" method="post" action="https://beta.paytrace.com/api/checkout.pay ">
+        @*<form id="PayByCCFormPT" method="post" action="https://paytrace.com/api/checkout.pay">*@
             <input type="hidden" name="parmList" id="paraList" value="">
         </form>
     </div>
@@ -294,9 +295,63 @@
         <!--close section-->
     </footer>
     <!--/.footer-->
-    @*<span class="backToTop"><a href="#top">back to top</a></span>*@
     <!-- close #page-->
+    <div id="PayByCCModal" class="modal hide fade">
 
+        <input type="hidden" name="id" />
+
+        <div class="modal-header">
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="PayByCCModalOrderDetails" class="modal-body">
+            <div>
+                <div class="legendImitator">
+                    Credit Card Processing Redirect
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    We will now redirect your browser to our credit card processor - https://www.paytrace.com - for entry of credit card information.
+                </div>
+
+                <div class="pull-right">
+
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btn btn-success" name="btnSubmitCCForm" id="btnSubmitCCForm">Continue</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="PayByCCIsOfflineModal" class="modal hide fade">
+
+        <input type="hidden" name="id" />
+
+        <div class="modal-header">
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="PayByCCModalOrderDetails" class="modal-body">
+            <div>
+                <div class="legendImitator">
+                    Credit Card Processing Is Currently Offline
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    @*<b>The store is currently in test mode. Submissions require a valid credit card number but no transactions will occur. Transactions will alternately be act as if approved and declined to provide a mix of response messages.
+                        </b>*@
+                    <p>
+                        Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option. If you leave your email address we will notify you when service is restored.<br /><br />
+                        <input type="text" name="SubmitCCIsOffline" placeholder="Email to Notify" />
+                    </p>
+                </div>
+
+                <div class="pull-right">
+
+                    <button class="btn btn-success" data-dismiss="modal" name="btnSubmitCCIsOfflineForm" id="btnSubmitCCIsOfflineForm">Continue</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal hide fade in" id="DisplayErrorModal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

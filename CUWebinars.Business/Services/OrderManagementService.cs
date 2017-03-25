@@ -2158,6 +2158,7 @@ namespace CUWebinars.Business.Services
                 if (thisDiscount.DiscountType == DiscountType.Promo || thisDiscount.DiscountType == DiscountType.Compensation)
                 {
                     thisDiscount = RedeemDiscount(thisDiscount, row);
+                    row.Discount = thisDiscount;
                     _logger.Info("ApplyDiscountCode PROMO: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
                 }
                 if (thisDiscount.DiscountType == DiscountType.Subscription)
