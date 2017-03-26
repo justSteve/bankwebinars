@@ -685,7 +685,6 @@ namespace CUWebinars.Business.Services
         {
             PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
             decimal totalOptionsPrice = 0M;
-
             var row = order.OrderRows.SingleOrDefault(orderRow => orderRow.RowStatus == OrderRowStatus.Active);
 
             Debug.Assert(row != null, "OrderRow object should always have a value here.");
@@ -826,19 +825,9 @@ namespace CUWebinars.Business.Services
             //Calculate order total
             order.Total = row.RowPrice + pricesAndDiscounts.TaxAmount;
             pricesAndDiscounts.Discount = row.Discount;
-            pricesAndDiscounts.TotalOrderPrice = order.Total;
+            pricesAndDiscounts.TotalOrderPrice = order.Total - order.TotalPaid;
 
-            //var discountJsonString =
-            //    new JObject(
-            //        new JProperty("Discount", discountJson)
-            //        );
-            //var rowJson =
-            //    new JObject(
-            //           new JProperty("Row", JsonConvert.SerializeObject(row, Formatting.None, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore })));
-
-
-            //_logger.Info(discountJsonString.ToString());
-            //_logger.Info(rowJson.ToString());
+            //pricesAndDiscounts.OutstandingBalance = order.Total - order.TotalPaid;
 
             return pricesAndDiscounts;
         }

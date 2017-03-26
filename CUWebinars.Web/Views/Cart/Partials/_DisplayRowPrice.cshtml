@@ -96,6 +96,11 @@
                 statusLabelSpan.AddCssClass("label-warning");
                 statusLabelSpan.SetInnerText(@OrderStatus.Canceled.ToString());
                 break;
+
+            case OrderStatus.OutstandingBalance:
+                statusLabelSpan.AddCssClass("label-important");
+                statusLabelSpan.SetInnerText("Outstanding Balance");
+                break;
         }
 
         return statusLabelSpan.ToString(TagRenderMode.Normal);
@@ -154,8 +159,22 @@
         {
             rowAmount.Append("<span class='hidden' id='showTax'>Tax: <span id='taxAmt'></span></span><br />");
         }
-        rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
+        //rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
+        rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" +(Model.PricesAndDiscounts.UnitPrice + Model.PricesAndDiscounts.TaxAmount - Model.PricesAndDiscounts.TotalDiscount).ToString(CurrencyFormatToken)
+            //Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) 
+            + "</span></span>");
 
+        if (Model.PricesAndDiscounts.TotalOrderPrice != 0)
+        {
+            if (Model.PricesAndDiscounts.TotalOrderPrice > 0)
+            {
+                rowAmount.Append("<br><span  style=\"color: red;\" id='showOutstandingBalance'>Due: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
+            }
+            else
+            {
+                rowAmount.Append("<br><span  style=\"color: Green;\" id='showOutstandingBalance'>Refund: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
+            }
+        }
         <div id="billingDetails" style="text-align: right;">
 
             @Html.Raw(rowAmount.ToString())
@@ -181,7 +200,7 @@
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <button class="btn btn-success" data-toggle="modal" role="button" data-target="#ContinueShoppingModal" id="ContinueShoppingButton">Continue Shopping</button>
-                            } 
+                            }
                             &nbsp;
                             &nbsp;
                             &nbsp;

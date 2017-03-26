@@ -18,6 +18,7 @@ namespace CUWebinars.Business.Models
         public DateTime OrderDate { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public decimal Total { get; set; }
+        public decimal TotalPaid { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Institution { get; set; }

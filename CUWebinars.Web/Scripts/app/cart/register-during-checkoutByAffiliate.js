@@ -692,15 +692,25 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
             } else {
                 $('#showTax').addClass("hidden");
             }
-
+            console.log(data);
             $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
             $('#discountCaption').html(data.DiscountCaption);
             $('#optionLabel').html(data.regTypeShort);
+
             $('#baseCost').html('$' + data.BasePrice + '');
             $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
             $('#taxAmt').html(data.Tax + '');
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+            if (data.OutstandingBalance != 0) {
+                if (data.OutstandingBalance > 0) {
+                    $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="totalPaid">Paid: $' + data.TotalPaid + '</span><br><span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
+                    
+                } else {
+                    $("#ShowPayByCCModal").hide();
+                    $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="totalPaid">Paid: $' + data.TotalPaid + '</span><br><span style=\"color: red;\"  id="outstandingBalance">Refund: $(' + data.OutstandingBalance.REPLACE('-','') + ')</span>');
+                }
+            }
         }
 
         dropDown.removeAttr('disabled');

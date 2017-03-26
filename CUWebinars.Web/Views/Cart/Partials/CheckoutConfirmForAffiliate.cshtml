@@ -156,12 +156,12 @@
         if (Model.OrderStatus == OrderStatus.Paid)
         {
             <text>
-
                 $("#ShowPayByCCModal").hide();
-                $("#ConfirmRegistrationBillMe").hide();
+
             </text>
         }
-    }
+        }
+                $("#ConfirmRegistrationBillMe").hide();
         $('#frmChangeAffiliate_ > span.form-body').load('/Admin/GetAffiliates', function () {
 
             $('#SelectedAffiliate').val(currentAffiliateId);

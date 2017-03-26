@@ -476,6 +476,12 @@ namespace CUWebinars.Web.Controllers.Admin
                         _orderManagementService.FireOrderSubmittedEvent(order, false, false);
                     }
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
+                    if (model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid)
+                    {
+                        order.TotalPaid = order.Total;
+                        _orderManagementService.SaveOrderChanges(order, null, null);
+
+                    }
                     // the only field that we are updating at this time
                     try
                     {

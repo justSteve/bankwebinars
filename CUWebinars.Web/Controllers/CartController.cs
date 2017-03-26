@@ -10,6 +10,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Web;
+using System.Web.ModelBinding;
 using System.Web.Mvc;
 using System.Web.Routing;
 using CUWebinars.Business.AccountService;
@@ -265,7 +266,11 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     //_cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-                    if (model.Order.Total == 0) model.Order.OrderStatus = OrderStatus.Paid;
+                    if (model.Order.Total == 0)
+                    {
+                        model.Order.OrderStatus = OrderStatus.Paid;
+                        model.Order.TotalPaid = model.Order.Total;
+                    }
 
                 }
                 catch (Exception exception)
@@ -749,7 +754,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.FatalException("PayTrace: " + idOrder +" dies at pre-auth.", ex);
+                _logger.FatalException("PayTrace: " + idOrder + " dies at pre-auth.", ex);
                 return Json(new
                 {
                     success = "failed",
@@ -1253,11 +1258,39 @@ namespace CUWebinars.Web.Controllers
                     var oldRegType =
                         _cartControllerOrchestrator.GetOrderRowLoaded(idOrderRow.Value).RegistrationType.OptionLabel;
 
+                    var newRegTypeCost = regType.Price;
+                    var oldRegTypeCost =
+                        _cartControllerOrchestrator.GetOrderRowLoaded(idOrderRow.Value).RegistrationType.Price;
+
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
+                    var orgTotal = model.Order.Total;
+                    double outStandingBalance;
+
+
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
                     orderIDTracker = model.Order.idOrder;
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
+                    if (model.Order.OrderStatus == OrderStatus.Paid)
+                    {
+                        model.Order.OrderStatus = OrderStatus.OutstandingBalance;
+
+                        model.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(
+                            model.Order.AdminComments,
+                            new JProperty("OutstandingBalance",
+                                        new JObject(
+                                            new JProperty("OriginalCost",
+                                                orgTotal),
+                                             new JProperty("NewCost",
+                                                model.Order.Total),
+                                             new JProperty("Difference",
+                                                pricesAndDiscounts.TotalOrderPrice))
+                                        )
+                                                , "OutstandingBalance");
+                        _cartControllerOrchestrator.SaveOrder(model.Order);
+                    }
+
+                    //just produces a caption - no impact on price
                     var discountCaption = "";
                     if (pricesAndDiscounts.Discount == null)
                     {
@@ -1269,13 +1302,14 @@ namespace CUWebinars.Web.Controllers
                             model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount,
                             model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
                     }
-                    
-                    _logger.Info("UpdateOrderDetails: " +model.Order.idOrder +" changed from: " + oldRegType + " to: " + newRegType);
+
+                    _logger.Info("UpdateOrderDetails: " + model.Order.idOrder + " changed from: " + oldRegType + " to: " + newRegType);
 
                     if (!string.IsNullOrEmpty(model.Order.InvoiceDetail))
                     {
                         _cartControllerOrchestrator.InvoicedOrderIsUpdated(model.Order);
                     }
+
 
                     var UpdateSuccessCaption = "Order updated to: " + newRegType;
                     var ShippedDate =
@@ -1297,8 +1331,10 @@ namespace CUWebinars.Web.Controllers
                                 Discount = pricesAndDiscounts.TotalDiscount,
                                 OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
                                 Tax = pricesAndDiscounts.TaxAmount,
-                                Total = pricesAndDiscounts.TotalOrderPrice,
+                                Total = pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount,
+                                TotalPaid = model.Order.TotalPaid,
                                 FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                                OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - model.Order.TotalPaid, 
                                 ShippedDateString = shippDateString,
                                 PercentOff = pricesAndDiscounts.Discount.PercentOff
                             });
@@ -1306,7 +1342,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception exception)
                 {
                     _logger.ErrorException(
-                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", orderIDTracker ,
+                        String.Format("UpdateOrderDetails failed on {0} with {1} Session={2}", orderIDTracker,
                             exception.Message, _appHelper.GetUserAuditInfo()), exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
 
@@ -1326,7 +1362,13 @@ namespace CUWebinars.Web.Controllers
             if (ModelState.IsValid)
             {
                 var orderRow = _cartControllerOrchestrator.LoadOrderRow(orderRowID, status);
+                if (status == OrderStatus.Paid)
+                {
+                    orderRow.Order.TotalPaid = orderRow.Order.Total;
+                    _cartControllerOrchestrator.SaveOrder(orderRow.Order);
+                }
                 return Json(orderRow.Order.OrderStatus.ToString());
+
             }
             return this.ModelStateJson(ModelState);
         }
@@ -1799,6 +1841,7 @@ namespace CUWebinars.Web.Controllers
                         order.AdminComments = order.AdminComments.Replace("Single_OrderCheckout", "PaidByCC");
 
                         order.OrderStatus = OrderStatus.Paid;
+                        order.TotalPaid = order.Total;
 
                         _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,
                             order.OrderRows.FirstOrDefault());
@@ -1846,6 +1889,7 @@ namespace CUWebinars.Web.Controllers
                                 _logger.Info("Paytrace: " + order.idOrder + "  Postback Multi-OrderCheckout loops: " + order.idOrder);
 
                                 order.OrderStatus = OrderStatus.Paid;
+                                order.TotalPaid = order.Total;
                                 order.AdminComments = order.AdminComments.Replace("Multi_OrderCheckout", "PaidByCC");
 
                                 _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,

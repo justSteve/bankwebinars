@@ -35,29 +35,30 @@
                 }
             }
 
-            @if (myRow.ShipmentDate.HasValue)
-            {
-                <text>Shipped Date:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>
-            }
-            @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0 && !myRow.Webinar.Title.StartsWith("Compliance Per"))
-            {
+        @if (myRow.ShipmentDate.HasValue)
+        {
+            <text>Shipped Date:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>
+        }
+        @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.PercentOff > 0 && !myRow.Webinar.Title.StartsWith("Compliance Per"))
+        {
 
-                amtToReduce = myRow.UnitPrice - Model.OrderRow.RowPrice;
-                <i>Amt. of Discount:</i>
-                <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span>
+            amtToReduce = myRow.UnitPrice - Model.OrderRow.RowPrice;
+            <i>Amt. of Discount:</i>
+            <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span>
 
-                if (myRow.Discount.DiscountType == DiscountType.Subscription && Model.DiscountCaption != null )
-                {<text>(</text> @Model.DiscountCaption <text>)</text>
-                }
-                <br />
+            if (myRow.Discount.DiscountType == DiscountType.Subscription && Model.DiscountCaption != null )
+            {<text>(</text> @Model.DiscountCaption <text>)</text>
             }
-            @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.FlatOff > 0)
-            {
-                amtToReduce = Convert.ToDecimal(myRow.Order.Total) - myRow.UnitPrice;
-                <i>Amt. of Discount:</i>
-                <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br />
-            }
-            <i>Total Cost:</i> <b>@myRow.Order.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b>
+            <br />
+        }
+        @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.FlatOff > 0)
+        {
+            amtToReduce = Convert.ToDecimal(myRow.Order.Total) - myRow.UnitPrice;
+            <i>Amt. of Discount:</i>
+            <span style="color: red;">@amtToReduce.ToString().Replace(".00", "")</span><br />
+        }
+        <i>Total Cost:</i> <b>@myRow.Order.Total.ToString(CurrencyFormatToken).Replace(".00", "")</b><br>
+        <i>Order Status: </i><b>@myRow.Order.OrderStatus</b><br>
             @if (Request.Url != null &&
                  Request.Url.PathAndQuery.ContainsIgnoreCase("/Checkout"))
             {
