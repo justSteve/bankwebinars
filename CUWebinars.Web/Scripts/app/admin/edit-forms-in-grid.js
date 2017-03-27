@@ -186,7 +186,7 @@ $(document).ready(function () {
         });
 
         ns.showChangeUser.on('click', function (e) {
-            
+
             e.preventDefault();
 
             var modalFormOptions = {
@@ -203,7 +203,7 @@ $(document).ready(function () {
         });
 
         ns.showChangePrice.on('click', function (e) {
-            
+
             e.preventDefault();
 
             var modalFormOptions = {
@@ -292,7 +292,7 @@ $(document).ready(function () {
                         alert("There was an error detected while attempting to locate discount code " + data.Code + ". " +
                             " Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                     } else {
-                        
+
                         // need to update the currently displaying regType and associated costs
 
                         $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
@@ -481,7 +481,8 @@ $(document).ready(function () {
             },
             success: function (data) {
                 if (data) {
-
+                    console.log("editformsingrid: ");
+                    console.log(data);
                     // need to update the currently displaying regType and associated costs
                     $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
                     $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions").html("$" + data.OptionsPrice);

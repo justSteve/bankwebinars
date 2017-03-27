@@ -145,11 +145,11 @@
 
         }
 
-        if (Model.NumberOfAdditionalLocations > 0)
-        {
-            rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
-            //rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> change?</button> " + GetAdditionalLocationsTextSpan());
-        }
+        //if (Model.NumberOfAdditionalLocations > 0)
+        //{
+        //rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
+        rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> Add Locaction?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+        //}
 
         if (Model.PricesAndDiscounts.TaxAmount > 0)
         {
@@ -160,20 +160,22 @@
             rowAmount.Append("<span class='hidden' id='showTax'>Tax: <span id='taxAmt'></span></span><br />");
         }
         //rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
-        rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" +(Model.PricesAndDiscounts.UnitPrice + Model.PricesAndDiscounts.TaxAmount - Model.PricesAndDiscounts.TotalDiscount).ToString(CurrencyFormatToken)
-            //Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) 
+        rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + (Model.PricesAndDiscounts.UnitPrice + Model.PricesAndDiscounts.TotalCostOfOptions + Model.PricesAndDiscounts.TaxAmount - Model.PricesAndDiscounts.TotalDiscount).ToString(CurrencyFormatToken)
+            //Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken)
             + "</span></span>");
 
-        if (Model.PricesAndDiscounts.TotalOrderPrice != 0)
+        if (Model.PricesAndDiscounts.TotalPaid != 0)
         {
+            rowAmount.Append("<br><span  style=\"color: green;\" id='showPaid'>Paid: <span id='totalPaid'>" + Model.PricesAndDiscounts.TotalPaid.ToString(CurrencyFormatToken) + "</span></span>");
             if (Model.PricesAndDiscounts.TotalOrderPrice > 0)
             {
                 rowAmount.Append("<br><span  style=\"color: red;\" id='showOutstandingBalance'>Due: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
             }
             else
             {
-                rowAmount.Append("<br><span  style=\"color: Green;\" id='showOutstandingBalance'>Refund: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
+                rowAmount.Append("<br><span  style=\"color: Green;\" id='showOutstandingBalance'>Due: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
             }
+
         }
         <div id="billingDetails" style="text-align: right;">
 

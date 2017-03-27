@@ -380,7 +380,7 @@ OCA.initializeFunctions = function () {
     };
 
     OCA.populateAdditionalLocationsOn3rdTab = function () {
-
+        alert("Hit1");
         if (!locationsSpanPrefix) {
             locationsSpanPrefix = 'LocationSpan-',
             breakSuffix = '-break';
@@ -394,7 +394,7 @@ OCA.initializeFunctions = function () {
 
         addLocsOn1stTabContainer.remove();
 
-        //var additionalLocationsList = $('#additionalLocationsList');
+        var additionalLocationsList = $('#additionalLocationsList');
 
         $('#additionalLocationsList').append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + OCA.cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
         $('#additionalLocationsList').append(copyOfLocations);
@@ -443,7 +443,7 @@ OCA.initializeFunctions = function () {
     OCA.applyAdditionalLocations = function (e) {
         //this handler only applies to shopping cart AddLoc control - for grid editor see edit-forms-in-child-row
         e.preventDefault();
-
+        alert("dsf")
         var self = $(this);
 
         var adjustAddLocsForm = $('#AdjustAddLocsForm');
@@ -455,7 +455,8 @@ OCA.initializeFunctions = function () {
             $(value).attr('name', 'AdditionalLocations[' + idx + '].Email');
         });
 
-        $('#additionalLocationsList').append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + OCA.cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
+        $('#additionalLocationsList').append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value='
+            + OCA.cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
 
         var formData = adjustAddLocsForm.serialize();
 
@@ -471,12 +472,10 @@ OCA.initializeFunctions = function () {
                 self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
             }
         }).done(function (data) {
-            console.log(data);
-
-            if (data.Result === 'Success') {
-
+            if (data) {
+                alert("hit346")
                 var infoLabel = $('#addLocsText');
-                var newText = $("#numberOfAdditionalLocationsTab3") + $.trim(infoLabel.html()).slice(1);
+                var newText = $("#numberOfAdditionalLocationsTab3").text() + $.trim(infoLabel.html()).slice(1);
 
                 infoLabel.fadeOut(200, function () {
                     infoLabel.html(newText);
@@ -484,21 +483,25 @@ OCA.initializeFunctions = function () {
                 });
 
 
-                if (data.Tax > 0) {
-                    $('#showTax').removeClass("hidden");
-                } else {
-                    $('#showTax').addClass("hidden");
-                }
-
+                console.log(data);
                 $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
                 $('#discountCaption').html(data.DiscountCaption);
-                //$('#optionLabel').html(data.regTypeShort);
+                $('#optionLabel').html(data.regTypeShort);
+
                 $('#baseCost').html('$' + data.BasePrice + '');
                 $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
                 $('#taxAmt').html(data.Tax + '');
                 $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
                 $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
-                $('#additionalLocationsCaption').addClass("hidden");
+                if (data.TotalPaid !== 0) {
+                    if (data.OutstandingBalance > 0) {
+                        $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="totalPaid">Paid: $' + data.TotalPaid + '</span><br><span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
+
+                    } else {
+                        $("#ShowPayByCCModal").hide();
+                        $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="totalPaid">Paid: $' + data.TotalPaid + '</span><br><span style=\"color: red;\"  id="outstandingBalance">Refund: $(' + data.OutstandingBalance + ')</span>');
+                    }
+                }
 
             } else {
                 console.error('Failed to post order');

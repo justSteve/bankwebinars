@@ -1257,21 +1257,15 @@ namespace CUWebinars.Web.Controllers
                     var newRegType = regType.OptionLabel;
                     var oldRegType =
                         _cartControllerOrchestrator.GetOrderRowLoaded(idOrderRow.Value).RegistrationType.OptionLabel;
-
-                    var newRegTypeCost = regType.Price;
-                    var oldRegTypeCost =
-                        _cartControllerOrchestrator.GetOrderRowLoaded(idOrderRow.Value).RegistrationType.Price;
-
+                    
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     var orgTotal = model.Order.Total;
-                    double outStandingBalance;
-
-
+                    
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
                     orderIDTracker = model.Order.idOrder;
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
-                    if (model.Order.OrderStatus == OrderStatus.Paid)
+                    if (model.Order.OrderStatus == OrderStatus.Paid && model.Order.Total != model.Order.TotalPaid)
                     {
                         model.Order.OrderStatus = OrderStatus.OutstandingBalance;
 
@@ -1322,7 +1316,7 @@ namespace CUWebinars.Web.Controllers
                     }
                     return
                         Json(
-                            new
+                            new 
                             {
                                 DiscountCaption = discountCaption,
                                 UpdateSuccessCaption = UpdateSuccessCaption,
@@ -1331,10 +1325,10 @@ namespace CUWebinars.Web.Controllers
                                 Discount = pricesAndDiscounts.TotalDiscount,
                                 OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
                                 Tax = pricesAndDiscounts.TaxAmount,
-                                Total = pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount,
+                                Total = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount),
                                 TotalPaid = model.Order.TotalPaid,
                                 FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                                OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - model.Order.TotalPaid, 
+                                OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - model.Order.TotalPaid, 
                                 ShippedDateString = shippDateString,
                                 PercentOff = pricesAndDiscounts.Discount.PercentOff
                             });
@@ -2388,22 +2382,26 @@ namespace CUWebinars.Web.Controllers
                            model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
                 }
 
+                var regType = _cartControllerOrchestrator.GetRegTypeById(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idRegType);
+
                 return
                     Json(
                         new
                         {
-                            Result = WebUiConstants.Success,
                             DiscountCaption = discountCaption,
                             UpdateSuccessCaption = UpdateSuccessCaption,
-                            //regTypeShort = regType.OptionLabelShort,
+                            regTypeShort = regType.OptionLabelShort,
                             BasePrice = pricesAndDiscounts.UnitPrice,
                             Discount = pricesAndDiscounts.TotalDiscount,
                             OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
                             Tax = pricesAndDiscounts.TaxAmount,
-                            Total = pricesAndDiscounts.TotalOrderPrice,
+                            Total = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount),
+                            TotalPaid = model.Order.TotalPaid,
                             FlatOff = pricesAndDiscounts.Discount.FlatOff,
+                            OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - model.Order.TotalPaid,
                             //ShippedDateString = shippDateString,
                             PercentOff = pricesAndDiscounts.Discount.PercentOff
+
                         });
             }
             catch (Exception ex)
@@ -2433,4 +2431,5 @@ namespace CUWebinars.Web.Controllers
 
 
     }
+    
 }

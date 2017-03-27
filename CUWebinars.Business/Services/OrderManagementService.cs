@@ -820,15 +820,13 @@ namespace CUWebinars.Business.Services
                 pricesAndDiscounts.TaxAmount = Math.Round(row.RowPrice * Convert.ToDecimal(.055), 2);
                 _logger.Info("COC found tax on: " + row.idOrder + " found " + pricesAndDiscounts.TaxAmount);
             }
-
-
+            
             //Calculate order total
             order.Total = row.RowPrice + pricesAndDiscounts.TaxAmount;
             pricesAndDiscounts.Discount = row.Discount;
             pricesAndDiscounts.TotalOrderPrice = order.Total - order.TotalPaid;
-
-            //pricesAndDiscounts.OutstandingBalance = order.Total - order.TotalPaid;
-
+            pricesAndDiscounts.TotalPaid = order.TotalPaid;
+            
             return pricesAndDiscounts;
         }
 
