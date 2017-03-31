@@ -548,92 +548,6 @@ function hookUpModal(modalForm) {
     modalForm.modal('show');
 }
 
-function hookUpEditUserLogic(button) {
-    var modalForm = $('#UserDetailsModal');
-
-    // There may be times where a button does not trigger the modal.
-    if (button) {
-        button.on('click', function (e) {
-
-            e.preventDefault();
-
-            hookUpModal(modalForm);
-        });
-    }
-
-    modalForm.on('shown', function (e) {
-
-        $('#updateShippingMsgLabelWrap').empty();
-        var userDetailsForm = $('#userDetailsForm');
-
-        $('#saveChangesButton').on('click', function () {
-            e.preventDefault();
-
-            userDetailsForm.submit();
-        });
-
-        userDetailsForm.on('submit', function (e) {
-
-            e.preventDefault();
-
-            var url = $(this).attr('action'); // -> /Account/UpdateShippingDetails
-            //alert(url);
-            var payload = $(this).serialize();
-            $.ajax({
-                type: 'POST',
-                contentType: constants.FormPostContentType,
-                data: payload,
-                cache: false,
-                url: url,
-                dataType: constants.JsonDataType,
-                beforeSend: function (xhr) {
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
-                }
-            }).done(function (data) {
-
-                if (data.Result === 'Success') {
-                    var fullname = $('#ShippingAddress_Name').val();
-
-                    $('#userFullnameLabel').text(fullname);
-
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
-
-                } else if (!data.isSuccessful) {
-
-                    L.clientLogger.error("userDetailsForm Submission Fails: ", { data: data && data.Result });
-                    $('#updateShippingMsgLabelWrap').empty();
-                    formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
-                } else {
-                    L.clientLogger.error("Error #416: ", { data: data && data.Result });
-                };
-
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
-
-            }).fail(function (data) {
-
-                if (jqXHR.statusCode().status == 403) {
-                    alert('Sorry, your session has expired. Please login again to continue');
-                    window.location.href = '/Account/Login';
-                } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                    ; // do nothing
-                } else {
-                    alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
-                };
-
-                L.clientLogger.error("Error #417", { jqXHR: jqXHR && jqXHR.statusCode().statusText });
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. For customer service contact us by using the Online Chat button below or emailing Support@ttsTrain.com.</span>');
-            });
-        });
-
-
-    });
-
-    modalForm.on('hidden', function (e) {
-        $('#saveChangesButton').off('click');
-        $('#userDetailsForm').off('submit');
-    });
-}
-
 function hookUpChangeTypeLogic(dropDown) {
 
     var changeTypeConfirmModal = $('#changeTypeConfirmModal');
@@ -693,6 +607,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
                 $('#showTax').addClass("hidden");
             }
             console.log(data);
+            var alertCaption = data.UpdateSuccessCaption;
             $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
             $('#discountCaption').html(data.DiscountCaption);
             $('#optionLabel').html(data.regTypeShort);
@@ -701,18 +616,22 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
             $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
             $('#taxAmt').html(data.Tax + '');
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+            if (data.OrderStatusCaption !== "") {
+                $('#orderStatusLabel').html(data.OrderStatusCaption);
+                alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+            }
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
             if (data.TotalPaid !== 0) {
                 if (data.OutstandingBalance > 0) {
                     $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
-                    
+
                 } else {
                     $("#ShowPayByCCModal").hide();
                     $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="outstandingBalance">Due: $(' + data.OutstandingBalance + ')</span>');
                 }
             }
         }
-
+        alert(alertCaption);
         dropDown.removeAttr('disabled');
         $('#discountSpinner').remove();
 

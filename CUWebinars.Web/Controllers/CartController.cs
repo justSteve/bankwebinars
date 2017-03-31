@@ -167,8 +167,9 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = null)
+        public PartialViewResult GetAdditionalLocationByOrderId(int webinarId, int? webUserId = 0)
         {
+            // webUserId is hard-coded to 0 because it should never be used. --- prove me wrong
             if (webUserId.HasValue)
             {
                 return PartialView(
@@ -683,8 +684,8 @@ namespace CUWebinars.Web.Controllers
                 ProdDesc += "    <td align='left'>" + regType + "</td>";
                 ProdDesc += "    <td align='left'>" + totalAmt + "</td>";
                 ProdDesc += "</tr>";
-                ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" + _globalConfig.TenantPrefix +
-                                order.idOrder + Environment.NewLine;
+                ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40))
+                    + " (" + _globalConfig.TenantPrefix + order.idOrder + ") " + Environment.NewLine;
 
             }
 
@@ -692,14 +693,20 @@ namespace CUWebinars.Web.Controllers
             // to get an approval amount set: AMOUNT~1.00
             // to get a declined amount set: AMOUNT~1.12
 
-            totalAmt = .21M;
 
             string parameters = "UN~shuener|PSWD~Nb9rj3Sw|TERMS~Y|TRANXTYPE~Sale|";
 
             if (_globalConfig.EmailSendingMode != "live")
             {
+                //if id of the webinar is odd send a magic tx amount to trigger a decline.
                 if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar % 2 != 0)
+                {
+                    totalAmt = .21m;
+                }
+                else
+                {
                     totalAmt = .08m;
+                }
                 parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
 
                 parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
@@ -731,8 +738,8 @@ namespace CUWebinars.Web.Controllers
             {
 
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://beta.paytrace.com/api/validate.pay ");
-                //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://paytrace.com/api/validate.pay");
+                //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://beta.paytrace.com/api/validate.pay ");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://paytrace.com/api/validate.pay");
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
                 request.ContentLength = bytes.Length;
@@ -1257,18 +1264,19 @@ namespace CUWebinars.Web.Controllers
                     var newRegType = regType.OptionLabel;
                     var oldRegType =
                         _cartControllerOrchestrator.GetOrderRowLoaded(idOrderRow.Value).RegistrationType.OptionLabel;
-                    
+
                     var model = _cartControllerOrchestrator.BuildCheckOutViewModel(idOrderRow);
                     var orgTotal = model.Order.Total;
-                    
+
                     model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).RegistrationType = regType;
                     orderIDTracker = model.Order.idOrder;
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-
+                    var orderStatusCaption = "";
                     if (model.Order.OrderStatus == OrderStatus.Paid && model.Order.Total != model.Order.TotalPaid)
                     {
                         model.Order.OrderStatus = OrderStatus.OutstandingBalance;
-
+                        orderStatusCaption =
+                            "<span id=\"orderStatusLabel\" class=\"label-important label\">Outstanding Balance</span>";
                         model.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(
                             model.Order.AdminComments,
                             new JProperty("OutstandingBalance",
@@ -1314,12 +1322,15 @@ namespace CUWebinars.Web.Controllers
                         shippDateString = ShippedDate.Value.Month
                                           + "/" + ShippedDate.Value.Day;
                     }
+
+
                     return
                         Json(
-                            new 
+                            new
                             {
                                 DiscountCaption = discountCaption,
                                 UpdateSuccessCaption = UpdateSuccessCaption,
+                                OrderStatusCaption = orderStatusCaption,
                                 regTypeShort = regType.OptionLabelShort,
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
@@ -1328,7 +1339,8 @@ namespace CUWebinars.Web.Controllers
                                 Total = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount),
                                 TotalPaid = model.Order.TotalPaid,
                                 FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                                OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - model.Order.TotalPaid, 
+                                OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - model.Order.TotalPaid,
+                                OrderStatus = model.Order.OrderStatus,
                                 ShippedDateString = shippDateString,
                                 PercentOff = pricesAndDiscounts.Discount.PercentOff
                             });
@@ -2362,11 +2374,12 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations, newOrderRowId.Value);
-
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(newOrderRowId.Value);
 
-                var UpdateSuccessCaption = "Updated Additional Locations";
+                _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations, newOrderRowId.Value);
+
+
+                var updateSuccessCaption = "Updated Additional Locations";
 
                 var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
 
@@ -2383,13 +2396,65 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 var regType = _cartControllerOrchestrator.GetRegTypeById(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idRegType);
+                StringBuilder UpdateAddLocCaption = new StringBuilder();
+                var orderStatusCaption = "";
+                if (model.Order.OrderStatus == OrderStatus.Paid && model.Order.Total != model.Order.TotalPaid)
+                {
+                    model.Order.OrderStatus = OrderStatus.OutstandingBalance;
+                    orderStatusCaption =
+                        "<span id=\"orderStatusLabel\" class=\"label-important label\">Outstanding Balance</span>";
+                    _cartControllerOrchestrator.SaveOrder(model.Order);
+                }
+                if (
+                    model.Order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                        .AdditionalLocation.Any())
+                {
+                    var _addLocs =
+                        model.Order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
+                            .AdditionalLocation;
 
+                    if (_addLocs.Any())
+                    {
+                        if (_addLocs.Count == 1)
+                        {
+                            UpdateAddLocCaption.Clear();
+                            UpdateAddLocCaption.AppendLine("1 Additional Location: (" +
+                                                           _addLocs.FirstOrDefault().Price.ToString("C0") + ") " +
+                                                           _addLocs.FirstOrDefault().Email);
+                            updateSuccessCaption = "Order updated with an Additional Location for " +
+                                                   (_addLocs.FirstOrDefault().Email + " at a cost of " +
+                                                    _addLocs.FirstOrDefault().Price.ToString("C0"));
+                            ;
+                        }
+                        else
+                        {
+                            var totalCost = _addLocs.Sum(a => a.Price);
+                            {
+                                UpdateAddLocCaption.Clear();
+                                UpdateAddLocCaption.Append(_addLocs.Count + " Additional Locations: (" +
+                                                           totalCost.ToString("C0"));
+                            }
+                            foreach (var addloc in _addLocs)
+                            {
+                                UpdateAddLocCaption.AppendLine(addloc.Email);
+                            }
+                            updateSuccessCaption = "Order updated to " + (_addLocs.Count + " Additional Locations costing " +
+                                                    totalCost.ToString("c0"));
+                        }
+                    }
+                    else
+                    {
+                        updateSuccessCaption = "Additional Locations are removed.";
+                    }
+
+                }
                 return
                     Json(
                         new
                         {
                             DiscountCaption = discountCaption,
-                            UpdateSuccessCaption = UpdateSuccessCaption,
+                            UpdateSuccessCaption = updateSuccessCaption,
+                            UpdateAddLocCaption = UpdateAddLocCaption,
                             regTypeShort = regType.OptionLabelShort,
                             BasePrice = pricesAndDiscounts.UnitPrice,
                             Discount = pricesAndDiscounts.TotalDiscount,
@@ -2401,7 +2466,6 @@ namespace CUWebinars.Web.Controllers
                             OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - model.Order.TotalPaid,
                             //ShippedDateString = shippDateString,
                             PercentOff = pricesAndDiscounts.Discount.PercentOff
-
                         });
             }
             catch (Exception ex)
@@ -2431,5 +2495,5 @@ namespace CUWebinars.Web.Controllers
 
 
     }
-    
+
 }

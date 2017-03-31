@@ -164,28 +164,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var order = _orderManagementService.GetOrderById(idOrder.Value);
                 if (!ReferenceEquals(null, order))
                 {
-
-                    try
-                    {
-                        var existingOrders = _orderManagementService.FindOrdersByUserId(order.idUser)
-                            .Where(
-                                o =>
-                                    o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
-                                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToList();
-
-                        if (existingOrders.Any())
-                        {
-                            foreach (var o in existingOrders)
-                            {
-                                if (o.idOrder != idOrder)
-                                    _logger.Warn("BuildCheckoutConfirmViewModel found an existing order: " + o.idOrder + " same userid as: " + idOrder);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.FatalException("BuildCheckoutConfirmViewModel: ", ex);
-                    }
                     try
                     {
                         var existingOrdersByEmail = _orderManagementService.GetOrdersByEmail(order.BillingEmail, 19) //_orderRepository.FindOrdersByBillingEmail(webUser.email, 19)
@@ -1101,44 +1079,52 @@ namespace CUWebinars.Web.Core.Orchestrators
             return amountToDiscount;
         }
 
-        public void UpdateAdditionalLocationsForOrderRow(IEnumerable<AdditionalLocation> additionalLocations, int newOrderRowId)
+        public void UpdateAdditionalLocationsForOrderRow(IEnumerable<AdditionalLocation> additionalLocations,
+            int newOrderRowId)
         {
-            var existingAdditionalLocationsForOrderRow =
-                _orderManagementService.GetAdditionalLocationsForOrderRow(newOrderRowId);
-
-            if (additionalLocations == null)
+            var orderRow = _orderManagementService.GetOrderRowById(newOrderRowId);
+            if (orderRow != null)
             {
-                foreach (var additionalLocationToDelete in
-                    existingAdditionalLocationsForOrderRow)
-                {
+                var addLocPricing = _orderManagementService.GetAdditionalLocationsPricing(orderRow.idWebinar);
+                var existingAdditionalLocationsForOrderRow =
+                    _orderManagementService.GetAdditionalLocationsForOrderRow(newOrderRowId);
 
-                    //_orderManagementService.RestoreToDiscount(newOrderRowId);
-                    _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                if (additionalLocations == null)
+                {
+                    foreach (var additionalLocationToDelete in
+                        existingAdditionalLocationsForOrderRow)
+                    {
+                        _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                    }
                 }
+                else
+                {
+                    foreach (
+                        var newSubmittedAdditionalLocation in
+                        additionalLocations.Where(
+                            al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
+                    {
+                        newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
+                        newSubmittedAdditionalLocation.Price = addLocPricing;
+                        _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
+                    }
+
+                    foreach (var additionalLocationToDelete in
+                        existingAdditionalLocationsForOrderRow.Where(
+                            existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
+                    {
+                        _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
+                    }
+                }
+                _orderManagementService.SaveChanges();
             }
             else
             {
-                foreach (
-                    var newSubmittedAdditionalLocation in
-                        additionalLocations.Where(
-                            al => !existingAdditionalLocationsForOrderRow.Select(eal => eal.Email).Contains(al.Email)))
-                {
-                    newSubmittedAdditionalLocation.idOrderRow = newOrderRowId;
-                    //_orderManagementService.RemoveFromDiscount(newOrderRowId);
-                    _orderManagementService.AddAdditionalLocation(newSubmittedAdditionalLocation);
-                }
-
-                foreach (var additionalLocationToDelete in
-                    existingAdditionalLocationsForOrderRow.Where(
-                        existingEmail => !additionalLocations.Select(al => al.Email).Contains(existingEmail.Email)))
-                {
-
-                    //_orderManagementService.RestoreToDiscount(newOrderRowId);
-                    _orderManagementService.RemoveAndDeleteAdditionalLocation(additionalLocationToDelete);
-                }
+                _logger.Fatal("UpdateAdditionalLocations");
+                throw new Exception("Invalid OrderRow passed to AdditionalLocation adjuster");
+                
             }
-            _orderManagementService.SaveChanges();
-        }
+    }
 
         public Order LoadOrder(int id)
         {

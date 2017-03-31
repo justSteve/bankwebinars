@@ -1202,8 +1202,8 @@ namespace CUWebinars.Web.Controllers
                                 {
                                     idUser = model.Order.idUser,
                                     CostPerAdditionalLocation = additionalLocationsViewModel.OptionsCost,
-                                    NumberOfAdditionalLocations = additionalLocationsViewModel.Addresses.Split(',').Length,
-                                    TotalCostOfOptions = 0,
+                                    NumberOfAdditionalLocations = additionalLocationsViewModel.Addresses.TrimEnd(',').Split(',').Length,
+                                    TotalCostOfOptions = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions,
                                     WebinarId = orderRow.Webinar.idWebinar,
                                     idOrder = order.idOrder,
                                     idOrderRow = orderRow.idOrderRow
@@ -1435,6 +1435,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     lstAddLoc += additionalLocation.Email + ",";
                 }
+                model.CheckoutConfirmViewModel.DisplayRowPriceViewModel.AddressesForAdditionalLocations =lstAddLoc.TrimEnd(',');
             }
 
 

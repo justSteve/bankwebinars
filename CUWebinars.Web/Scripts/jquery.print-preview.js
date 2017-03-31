@@ -35,7 +35,7 @@
     $.printPreview = {
 
         loadPrintPreview: function () {
-            alert("Hits")
+            
             // Declare DOM objects
             print_modal = $('<div id="print-modal"></div>');
             print_controls = $('<div id="print-modal-controls">' +

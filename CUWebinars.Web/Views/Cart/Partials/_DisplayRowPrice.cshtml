@@ -48,15 +48,13 @@
         }
         else
         {
+
+
             outerSpan.InnerHtml = string.Concat(Model.NumberOfAdditionalLocations, " Additional Locations: ", additionalLocsPriceElement.ToString(TagRenderMode.Normal), "</br>");
         }
 
-
-
         return outerSpan.ToString(TagRenderMode.Normal);
     }
-
-
 
     private string GetStatusLabel(OrderStatus orderStatus)
     {
@@ -145,11 +143,7 @@
 
         }
 
-        //if (Model.NumberOfAdditionalLocations > 0)
-        //{
-        //rowAmount.Append(GetAdditionalLocationsTextSpan() + "<br>");
-        rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> Add Locaction?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
-        //}
+        rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'> add location?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
 
         if (Model.PricesAndDiscounts.TaxAmount > 0)
         {
@@ -159,10 +153,9 @@
         {
             rowAmount.Append("<span class='hidden' id='showTax'>Tax: <span id='taxAmt'></span></span><br />");
         }
-        //rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
-        rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>" + (Model.PricesAndDiscounts.UnitPrice + Model.PricesAndDiscounts.TotalCostOfOptions + Model.PricesAndDiscounts.TaxAmount - Model.PricesAndDiscounts.TotalDiscount).ToString(CurrencyFormatToken)
-            //Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken)
-            + "</span></span>");
+
+        rowAmount.Append("<span id='showTotalPrice'>Total Cost: <span id='totalPrice'>"
+            + (Model.PricesAndDiscounts.UnitPrice + Model.PricesAndDiscounts.TotalCostOfOptions + Model.PricesAndDiscounts.TaxAmount - Model.PricesAndDiscounts.TotalDiscount).ToString(CurrencyFormatToken) + "</span></span>");
 
         if (Model.PricesAndDiscounts.TotalPaid != 0)
         {
@@ -177,11 +170,12 @@
             }
 
         }
+        
         <div id="billingDetails" style="text-align: right;">
 
             @Html.Raw(rowAmount.ToString())
 
-            <div style="padding-top: 10px;">
+            <div id="showOrderStatus" style="padding-top: 10px;">
                 Order Status:
                 @Html.Raw(GetStatusLabel(Model.OrderStatus))
             </div>
@@ -192,7 +186,7 @@
                 <div class="label label-danger @discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
                      id="discountCaption">@Html.Raw(ViewBag.DiscountCaption.ToString())</div>
             }
-
+            @*//following it for Multi-event checkout*@
             @if (!Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
             {
                 <div style="text-align: center; margin-top: 10px; ">
@@ -230,8 +224,3 @@
         </div>
     }
 }
-<div id="additionalLocationsModalDialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-body">
-        @* modal content goes here *@
-    </div><!-- /.modal-content -->
-</div>

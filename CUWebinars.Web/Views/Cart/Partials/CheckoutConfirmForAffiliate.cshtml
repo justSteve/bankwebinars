@@ -21,7 +21,7 @@
         {
             if (Model.OrderStatus != OrderStatus.Error)
             {
-                <b>Please review this order summary and and choose billing method.</b>
+                <b>Please review this order summary and choose billing method.</b>
 
                 <div class="row">
                     <div class="offset1 span10">Primary Contact:</div>
@@ -75,7 +75,7 @@
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
-                                <div id="additionalLocationsList"></div>
+                                <div id="additionalLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.AdditionalLocationsRenderer)</div>
                             }
                         </div>
                     </div>
@@ -96,41 +96,8 @@
                         </div>
                     </div>
                 </div>
-                                }
+                                        }
 
-                                @*if (Model.OrderStatus != OrderStatus.InProcess)
-                                    {
-                                        <div id="postCheckout" class="well pull-right">
-                                            <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
-                                            @if (Model.OrderStatus != OrderStatus.Paid)
-                                            {
-                                                <span style="font-size: small; text-align: center;">
-                                                    To be invoiced after the event or
-                                                </span>
-                                                <button class="btn btn-mini btn-success" id="ConfirmRegistrationPayByCC">Pay By Credit Card</button>
-                                                <br />
-                                            }
-                                        </div>
-                                        <div class="row">
-                                            <div class="span2 offset1 alignright">
-                                                Primary Contact:<br />
-                                                <br />
-
-                                                Type:<br />
-
-                                            </div>
-                                            <div class="span4">
-                                                @Html.Raw(@Model.UserDetails)<br />
-
-                                                @Model.OptionLabel<br />
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="pull-right">
-                                                <a class="btn btn-mini btn-success" href="#ResendConfirmationModal" data-toggle="modal" id="ConfirmationResender">Resend/Forward Order Summary</a>
-                                            </div>
-                                        </div>
-                                    }*@
                                     }
                                 }
 }
@@ -159,7 +126,8 @@
             </text>
         }
         }
-                $("#ConfirmRegistrationBillMe").hide();
+        //$("#ConfirmRegistrationBillMe").hide();
+        $("#ContinueShoppingButton").hide();
         $('#frmChangeAffiliate_ > span.form-body').load('/Admin/GetAffiliates', function () {
 
             $('#SelectedAffiliate').val(currentAffiliateId);

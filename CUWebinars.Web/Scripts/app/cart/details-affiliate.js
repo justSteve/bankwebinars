@@ -85,7 +85,7 @@ OCA.initializeFunctions = function () {
         });
     });
     $('#doNotPromoteButton').on("click", function () {
-        
+
         var self = this;
         console.log(webinarId);
         var payload = { idWebinar: webinarId, idAffiliate: affiliateId };
@@ -125,7 +125,7 @@ OCA.initializeFunctions = function () {
     OCA.hookUpApplyDiscountLogic = function (btn, orderRowId) {
 
         btn.on('click', function (e) {
-            
+
             e.preventDefault();
 
             registerDuringCheckout.gatherPricingData();
@@ -244,7 +244,7 @@ OCA.initializeFunctions = function () {
             idOrderRow: OCA.cartStateManager.getOrderRowId(),
             idRegType: registrationTypeId
         };
-        alert("hit");
+
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
@@ -353,20 +353,21 @@ OCA.initializeFunctions = function () {
             var newId;
 
             if (OCA.numberOfAdditionalLocationsTab3 == 0) {
+                if ($("#additionalLocationsList").length == 0) {
+                    $("#additionalLocationsList").after($('<button>',
+                        {
+                            id: 'applyAdditionalLocationsButton',
+                            text: 'apply',
+                            'class': 'btn btn-mini btn-primary'
+                        }));
 
-                $("#additionalLocationsList").after($('<button>',
-                {
-                    id: 'applyAdditionalLocationsButton',
-                    text: 'apply',
-                    'class': 'btn btn-mini btn-primary'
-                }));
-
-                $('#applyAdditionalLocationsButton').on('click', OCA.applyAdditionalLocations);
-
+                    $('#applyAdditionalLocationsButton').on('click', OCA.applyAdditionalLocations);
+                }
                 newId = 0;
             } else {
+
                 // first get the last previous email input
-                var lastInput = additionalLocationsList.find('input[type="email"]:last');
+                var lastInput = $("#additionalLocationsList").find('input[type="email"]:last');
                 // get its id
                 var lastInputId = lastInput.attr('id');
                 var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
@@ -380,14 +381,17 @@ OCA.initializeFunctions = function () {
     };
 
     OCA.populateAdditionalLocationsOn3rdTab = function () {
-        alert("Hit1");
+
         if (!locationsSpanPrefix) {
             locationsSpanPrefix = 'LocationSpan-',
-            breakSuffix = '-break';
+                breakSuffix = '-break';
         }
 
         var addLocsOn1stTabContainer = $('#collectAdditionalLocations');
         var locations = addLocsOn1stTabContainer.children();
+        console.log(locations);
+
+
         OCA.numberOfAdditionalLocationsTab3 = locations.filter('span').length;
 
         var copyOfLocations = locations.clone();
@@ -401,11 +405,11 @@ OCA.initializeFunctions = function () {
 
         if (OCA.numberOfAdditionalLocationsTab3 > 0) {
             $("#additionalLocationsList").after($('<button>',
-            {
-                id: 'applyAdditionalLocationsButton',
-                text: 'apply',
-                'class': 'btn btn-mini btn-primary'
-            }));
+                {
+                    id: 'applyAdditionalLocationsButton',
+                    text: 'apply',
+                    'class': 'btn btn-mini btn-primary'
+                }));
 
             $('#applyAdditionalLocationsButton').on('click', OCA.applyAdditionalLocations);
 
@@ -433,17 +437,17 @@ OCA.initializeFunctions = function () {
             $(this).remove();
         });
 
-        if (OCA.numberOfAdditionalLocationsTab3 < 1) {
-            $('#applyAdditionalLocationsButton').hide(300, function () {
-                $(this).remove();
-            });
-        }
+        //if (OCA.numberOfAdditionalLocationsTab3 < 1) {
+        //    $('#applyAdditionalLocationsButton').hide(300, function () {
+        //        $(this).remove();
+        //    });
+        //}
     };
 
     OCA.applyAdditionalLocations = function (e) {
         //this handler only applies to shopping cart AddLoc control - for grid editor see edit-forms-in-child-row
         e.preventDefault();
-        alert("dsf")
+
         var self = $(this);
 
         var adjustAddLocsForm = $('#AdjustAddLocsForm');
@@ -473,17 +477,22 @@ OCA.initializeFunctions = function () {
             }
         }).done(function (data) {
             if (data) {
-                alert("hit346")
-                var infoLabel = $('#addLocsText');
-                var newText = $("#numberOfAdditionalLocationsTab3").text() + $.trim(infoLabel.html()).slice(1);
 
-                infoLabel.fadeOut(200, function () {
-                    infoLabel.html(newText);
-                    infoLabel.fadeIn(200);
-                });
+                //var infoLabel = $('#addLocsText');
+                //var newText = $("#numberOfAdditionalLocationsTab3").text() + $.trim(infoLabel.html()).slice(1);
 
+                //infoLabel.fadeOut(200, function () {
+                //    infoLabel.html(newText);
+                //    infoLabel.fadeIn(200);
+                //});
 
-                console.log(data);
+                if (data.Tax > 0) {
+                    $('#showTax').removeClass("hidden");
+                } else {
+                    $('#showTax').addClass("hidden");
+                }
+                //am working here
+                var alertCaption = data.UpdateSuccessCaption;
                 $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
                 $('#discountCaption').html(data.DiscountCaption);
                 $('#optionLabel').html(data.regTypeShort);
@@ -492,17 +501,21 @@ OCA.initializeFunctions = function () {
                 $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
                 $('#taxAmt').html(data.Tax + '');
                 $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+                if (data.OrderStatusCaption !== "") {
+                    $('#orderStatusLabel').html(data.OrderStatusCaption);
+                    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+                }
                 $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
                 if (data.TotalPaid !== 0) {
                     if (data.OutstandingBalance > 0) {
-                        $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="totalPaid">Paid: $' + data.TotalPaid + '</span><br><span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
+                        $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
 
                     } else {
                         $("#ShowPayByCCModal").hide();
-                        $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="totalPaid">Paid: $' + data.TotalPaid + '</span><br><span style=\"color: red;\"  id="outstandingBalance">Refund: $(' + data.OutstandingBalance + ')</span>');
+                        $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="outstandingBalance">Due: $(' + data.OutstandingBalance + ')</span>');
                     }
                 }
-
+                alert(alertCaption);
             } else {
                 console.error('Failed to post order');
             }
@@ -530,6 +543,7 @@ OCA.initializeFunctions = function () {
         // The Cancel Registration button on 3rd tab
         $('#Canceller').on('click', function (e) {
             e.preventDefault();
+
             var cancelOrderForm = $('#cancelOrder');
             cancelOrderForm.submit();
         });
@@ -579,7 +593,7 @@ OCA.initializeFunctions = function () {
             self.find('input[name="id"]').val(OCA.cartStateManager.getOrderRowId());
             var data = $(this).serialize();
             confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-            
+
             $.ajax({
                 type: 'POST',
                 contentType: constants.FormPostContentType,
@@ -744,6 +758,7 @@ OCA.wireUpHandlers = function () {
     OCA.AddOrder = function (e, idUser) {
 
         $('#idUser').val(idUser);
+        $('#loadingSpinner').hide();
 
         formProcessor.clearValidationSummary($('#valSummarySignUpForm'));
 
@@ -785,14 +800,13 @@ OCA.wireUpHandlers = function () {
             alert('log in');
         } else {
             console.log(OCA.signUpForm.attr('action'));
+            ///Cart/SignupAffiliate
             // So the user IS LOGGED IN
             $.post(OCA.signUpForm.attr('action'), data, function (response, status, xhr) {
 
                 if (status !== 'error') {
                     switch (xhr.responseJSON['success']) {
                         case "AlreadySubmitted":
-
-
                             //if (xhr.responseJSON['success'] == "AlreadySubmitted") {
                             OCA.cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
                             OCA.cartStateManager.setOrderId(xhr.responseJSON['orderId']);
@@ -845,8 +859,6 @@ OCA.wireUpHandlers = function () {
 
                                     $('#showSetAssignedAffiliate').removeAttr('disabled');
                                 }
-
-                                $('#Canceller').hide();
 
                             }, constants.HtmlDataType);
                             break;
@@ -908,7 +920,7 @@ OCA.wireUpHandlers = function () {
                                 formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
                                 $('#AddToCart').removeAttr('disabled');
                             }
-                            //    default code block
+                        //    default code block
                     }
 
                 } else {

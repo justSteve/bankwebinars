@@ -60,7 +60,8 @@ function wireUpHandlers() {
         $(this).append('<i id="loadModalSpinner" class="icon-spinner icon-spin"></i>');
         
         $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/'
-            + webinarId +'/' + (idUser || 0).toString(), function () {
+            + webinarId +'/0', function () {
+            //+ webinarId +'/0' + (idUser || 0).toString(), function () {
             wireUpHandlersForModal();
             $('#AddInputsButton').focus();
             $('#additionalLocationsModalDialog').modal(modalFormOptions);
@@ -80,6 +81,7 @@ function primeDomVariables() {
 }
 
 function wireUpHandlersForModal() {
+    
     var locationsCloned, locationsBakForCancel;
     var collectAdditionalLocations = $('#collectAdditionalLocations');
 
@@ -137,7 +139,7 @@ function wireUpHandlersForModal() {
                 });
                 if (allValid) {
                     collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
-
+                    
                     $('#additionalLocationsModalDialog').modal('hide');
                     $(this).remove();
                 }
