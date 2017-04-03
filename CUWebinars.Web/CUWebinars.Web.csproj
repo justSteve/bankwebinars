@@ -504,6 +504,7 @@
     <Compile Include="Models\FindLinkModel.cs" />
     <Compile Include="Models\IncomingEmailModel.cs" />
     <Compile Include="Models\ListSegmentsViewModel.cs" />
+    <Compile Include="Models\WebinarStatusUpdate.cs" />
     <Compile Include="Notification\Templates\OrderSubmitted2ViewModel.cs" />
     <Compile Include="ViewModel\EditAdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\EditPresenterViewModel.cs" />
@@ -2097,6 +2098,7 @@
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal2.cshtml" />
     <Content Include="Views\Shared\_LoginPartialDES.cshtml" />
     <Content Include="Views\Order\ChangeCC.cshtml" />
+    <Content Include="Views\Webinar\WebinarStatus.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

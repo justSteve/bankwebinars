@@ -173,6 +173,7 @@
         
         <div id="billingDetails" style="text-align: right;">
 
+            <div id="flyUpdateSuccessFlag"></div>
             @Html.Raw(rowAmount.ToString())
 
             <div id="showOrderStatus" style="padding-top: 10px;">
@@ -180,7 +181,6 @@
                 @Html.Raw(GetStatusLabel(Model.OrderStatus))
             </div>
 
-            <div id="flyUpdateSuccessFlag"></div>
             @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
             {
                 <div class="label label-danger @discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"

@@ -478,14 +478,6 @@ OCA.initializeFunctions = function () {
         }).done(function (data) {
             if (data) {
 
-                //var infoLabel = $('#addLocsText');
-                //var newText = $("#numberOfAdditionalLocationsTab3").text() + $.trim(infoLabel.html()).slice(1);
-
-                //infoLabel.fadeOut(200, function () {
-                //    infoLabel.html(newText);
-                //    infoLabel.fadeIn(200);
-                //});
-
                 if (data.Tax > 0) {
                     $('#showTax').removeClass("hidden");
                 } else {

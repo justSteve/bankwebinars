@@ -3,10 +3,14 @@
 @using CUWebinars.Web.Core
 @model List<Webinar>
 @{
-    
+
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
-
+    if (!(ViewBag.Msg == null || ViewBag.Msg == string.Empty))
+    {
+        <script type="text/javascript" language="javascript">
+            alert(@ViewBag.Msg);
+        </script>
+    }
 
 
 }

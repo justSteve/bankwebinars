@@ -29,6 +29,7 @@
     {
         <script language="javascript" type="text/javascript">
             var DiscountSurcharge = "";
+
         </script>
 
     }
@@ -40,7 +41,7 @@
         var orderID = 0;
         if (Model.OrderRowExists && Model.OrderRowHasId)
         {
-            if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
+            if (Model.OrderStatus != OrderStatus.Error)
             {
 
                 <script type="text/javascript" language="javascript">
@@ -64,24 +65,30 @@
                         </div>
                     </div>
                 </div>
+                @*<div id="AdjustAddLoc" class="row initialHide">
+                        <div class="offset2 span9 ">
+                            <div id="additionalLocationsCaption" class="clear pull-right">
+
+                                Additional Locations: @Model.AdditionalLocationsViewModel.OptionsCost.ToString("c") will be added to the cost of registration for each additional seat.
+                                <a id="AddLocationsButton" class="btn" href="#AdditionalLocationsModal" role="button" data-toggle="modal">Add?</a>
+
+                                @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new {id = "AdjustAddLocsForm"}))
+                                {
+                                    <div id="additionalLocationsList"></div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>*@
                 <div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption" class="clear pull-right">
-                            @*<div id="displayAddLoc">
-                                    @Html.Partial("~/Views/Webinar/Partials/_AdditionalLocationsModal2.cshtml", Model.AdditionalLocationsViewModel)
-
-                                </div>*@
-
-                            Additional Locations: @Model.AdditionalLocationsViewModel.OptionsCost.ToString("c") will be added to the cost of registration for each additional seat.
-
-                            @*<button id="addAnotherAddLoc" class="btn btn-mini">add</button>*@
-                            <a id="AddLocationsButton" class="btn" href="#AdditionalLocationsModal" role="button" data-toggle="modal">Add?</a>
+                            Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
-                                <div id="additionalLocationsList"></div>
+                                <div id="additionalLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.AdditionalLocationsRenderer)</div>
                             }
-
                         </div>
                     </div>
                 </div>
@@ -101,38 +108,42 @@
                         </div>
                     </div>
                 </div>
-                                }// end of test if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
-                                if (Model.OrderStatus != OrderStatus.InProcess)
+                                }
+                                else
                                 {
-                                    <div id="postCheckout" class="well pull-right">
-                                        <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
-                                    </div>
-                                            }
-                                            else
-                                            {
-                                                if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson"))
+                                    // end of test if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
+                                    if (Model.OrderStatus != OrderStatus.InProcess)
+                                    {
+                                        <div id="postCheckout" class="well pull-right">
+                                            <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
+                                        </div>
+                                                }
+                                                else
                                                 {
-                                                    <div class="row">
-                                                        <div class="pull-right">
-                                                            <button class="btn btn-small cancel-edit-order">close panel</button>
+                                                    if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson"))
+                                                    {
+                                                        <div class="row">
+                                                            <div class="pull-right">
+                                                                <button class="btn btn-small cancel-edit-order">close panel</button>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                            }
                                                         }
                                                     }
                                                 }
-                                            }
 
-                                            Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+                                                Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
 
-                                            Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
-                                            if (ViewBag.Order != null)
-                                            {
-                                                Html.RenderPartial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", (Order)ViewBag.Order);
+                                                Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
+                                                if (ViewBag.Order != null)
+                                                {
+                                                    Html.RenderPartial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", (Order)ViewBag.Order);
 
-                                                Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
-                                            }
-                                            Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
+                                                    Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
+                                                }
+                                                Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
 
 
-                                            <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
+                                                <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
+                                                }
 }

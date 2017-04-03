@@ -1413,6 +1413,19 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     var order = _cartControllerOrchestrator.GetOrderById(id);
+
+                    if (order.BillingEmail != User.Identity.Name)
+                    {
+                     _logger.Warn("Resume idOrder: " + id + " was not by order's email: " + User.Identity.Name);
+                       
+                    return RedirectToAction("Index", "Home", new
+                    {
+                        msg = "Order's email does not match login email.",
+                        idOrder = id,
+                        source = "Resume"
+                    });
+                    }
+
                     order.Origin = DomainConstants.OriginResume;
 
                     _logger.Info("Resume idOrder: " + id + " by: " + User.Identity.Name);
@@ -2375,8 +2388,8 @@ namespace CUWebinars.Web.Controllers
             try
             {
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(newOrderRowId.Value);
-
-                _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations, newOrderRowId.Value);
+                var row = model.Order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active);
+                _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations.Where(a => a.Email != null), newOrderRowId.Value);
 
 
                 var updateSuccessCaption = "Updated Additional Locations";
@@ -2396,7 +2409,7 @@ namespace CUWebinars.Web.Controllers
                 }
 
                 var regType = _cartControllerOrchestrator.GetRegTypeById(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idRegType);
-                StringBuilder UpdateAddLocCaption = new StringBuilder();
+                StringBuilder updateAddLocCaption = new StringBuilder();
                 var orderStatusCaption = "";
                 if (model.Order.OrderStatus == OrderStatus.Paid && model.Order.Total != model.Order.TotalPaid)
                 {
@@ -2405,20 +2418,19 @@ namespace CUWebinars.Web.Controllers
                         "<span id=\"orderStatusLabel\" class=\"label-important label\">Outstanding Balance</span>";
                     _cartControllerOrchestrator.SaveOrder(model.Order);
                 }
+                
                 if (
-                    model.Order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
-                        .AdditionalLocation.Any())
+                    row.AdditionalLocation.Any())
                 {
                     var _addLocs =
-                        model.Order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active)
-                            .AdditionalLocation;
+                        row.AdditionalLocation;
 
                     if (_addLocs.Any())
                     {
                         if (_addLocs.Count == 1)
                         {
-                            UpdateAddLocCaption.Clear();
-                            UpdateAddLocCaption.AppendLine("1 Additional Location: (" +
+                            updateAddLocCaption.Clear();
+                            updateAddLocCaption.AppendLine("1 Additional Location: (" +
                                                            _addLocs.FirstOrDefault().Price.ToString("C0") + ") " +
                                                            _addLocs.FirstOrDefault().Email);
                             updateSuccessCaption = "Order updated with an Additional Location for " +
@@ -2430,13 +2442,13 @@ namespace CUWebinars.Web.Controllers
                         {
                             var totalCost = _addLocs.Sum(a => a.Price);
                             {
-                                UpdateAddLocCaption.Clear();
-                                UpdateAddLocCaption.Append(_addLocs.Count + " Additional Locations: (" +
+                                updateAddLocCaption.Clear();
+                                updateAddLocCaption.Append(_addLocs.Count + " Additional Locations: (" +
                                                            totalCost.ToString("C0"));
                             }
                             foreach (var addloc in _addLocs)
                             {
-                                UpdateAddLocCaption.AppendLine(addloc.Email);
+                                updateAddLocCaption.AppendLine(addloc.Email);
                             }
                             updateSuccessCaption = "Order updated to " + (_addLocs.Count + " Additional Locations costing " +
                                                     totalCost.ToString("c0"));
@@ -2454,7 +2466,7 @@ namespace CUWebinars.Web.Controllers
                         {
                             DiscountCaption = discountCaption,
                             UpdateSuccessCaption = updateSuccessCaption,
-                            UpdateAddLocCaption = UpdateAddLocCaption,
+                            UpdateAddLocCaption = updateAddLocCaption,
                             regTypeShort = regType.OptionLabelShort,
                             BasePrice = pricesAndDiscounts.UnitPrice,
                             Discount = pricesAndDiscounts.TotalDiscount,

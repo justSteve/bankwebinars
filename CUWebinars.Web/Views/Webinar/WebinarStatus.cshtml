@@ -1,0 +1,103 @@
+﻿@model WebinarStatusUpdate
+
+@using CUWebinars.Web.Core
+
+<script type="text/javascript" language="javascript">
+
+</script>
+@{
+    ViewBag.Title = "Gateway to Your Webinar";
+
+    USTimeZone timeZ = USTimeZone.Central;
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+
+    nfi.CurrencyDecimalDigits = 2;
+    if (Model.Webinar.Status == WebinarStatus.Recorded)
+    {
+        <div>This event took place on @Model.Webinar.Date.ToShortDateString()</div>
+    }
+    else
+    {
+        if (Model.Webinar != null)
+        {
+            //var row = Model.Orders.FirstOrDefault().OrderRows.FirstOrDefault();
+            if (ReferenceEquals(Model.Webinar, null))
+            {
+                <div class="row">
+                    <div class="span4 text text-error">Unable to find webinar that corresponds to that code.</div>
+                </div>
+            }
+            else
+            {
+                TimeSpan calcDays = Model.Webinar.Date - DateTime.UtcNow;
+                var numDays = Convert.ToInt32(calcDays.TotalDays);
+                string remainingDays;
+                if (numDays == 0)
+                {
+                    remainingDays = " today - <i> " + @Html.DisplayDate(Model.Webinar.Date) + "</i>";
+                }
+                else if (numDays == 1)
+                {
+                    remainingDays = " tomorrow - <i>" + @Html.DisplayDate(Model.Webinar.Date) + "</i>";
+                }
+                else
+                {
+                    remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(Model.Webinar.Date) + "</i>";
+                }
+                <div class="well well-large container-fluid">
+                    <div class="row-fluid center">
+                        <p>
+                            <br />
+                            Presented by @Model.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays)
+                            starting at @Html.DisplayTime(Model.Webinar.Date, timeZ, true).Replace(":00 ", "").Replace("12pm ", "Noon ").
+                        </p>
+
+                        @if (Model.Webinar.Status == WebinarStatus.Scheduled)
+                        {
+                            <p>
+                                Awaiting connection info. Check back or watch your email for updates.
+                            </p>
+                            <p>
+                                <input type="submit" value="Add to Calendar" class="btn btn-mini" id="addICS" />
+                            </p>
+
+                        }
+                        else
+                        {
+                            if (Model.Webinar.Status == WebinarStatus.InProgress)
+                            {
+                                <b>Webinar is Open!</b>
+                            }
+                            else
+                            {
+                                <p>
+                                    Please refresh this page 15-20 minutes prior to the event.<br />
+                                </p>
+                            }
+                        }
+                        @if (Model.Webinar.WebinarFiles != null)
+                        {
+                            <h5>Event Materials</h5>
+                            <span>(login or JoinCode required)</span>;
+                        }
+                        <h5>Need Detailed Connection Instructions?</h5>
+                        <p>
+                            First time attendees are encouraged to review <a href="https://www.bankwebinars.com/Home/DetailedConnectionInstructions">the instructions here.</a>
+                        </p>
+                        <p>
+                            <a href="https://care.citrixonline.com/gotowebinar/get-ready" target="_new">
+                                Test your computer's readiness for our event.
+                            </a>
+                        </p>
+                        <p>
+                            A link to the recording will be announced by email within 24 hours following the event.
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+    }
+}

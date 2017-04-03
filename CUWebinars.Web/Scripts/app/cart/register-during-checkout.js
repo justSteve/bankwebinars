@@ -496,6 +496,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                                     hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                     hookUpChangeTypeLogic($('#RegType'));
+                                    hookUpAddLocsLogic($('#AddLocs'));
                                     hookUpEditUserLogic(null);
 
                                     if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && !registerDuringCheckout.addressOptions['notificationsTesting'] && !registerDuringCheckout.addressOptions['addressVerified']) {
@@ -633,6 +634,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                                             hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
                                             hookUpChangeTypeLogic($('#RegType'));
+                                            hookUpAddLocsLogic($('#AddLocs'));
                                             hookUpEditUserLogic(null);
 
                                             if (registerDuringCheckout.addressOptions['shippingAddressRequired'] && !registerDuringCheckout.addressOptions['notificationsTesting'] && !registerDuringCheckout.addressOptions['addressVerified']) {
@@ -844,93 +846,6 @@ function hookUpModal(modalForm) {
     modalForm.modal('show');
 }
 
-function hookUpEditUserLogic(button, shippingAddressRequired) {
-
-    var modalForm = $('#UserDetailsModal');
-
-    // There may be times where a button does not trigger the modal.
-    if (button) {
-        button.on('click', function (e) {
-
-            e.preventDefault();
-
-            hookUpModal(modalForm);
-        });
-    }
-
-    modalForm.on('shown', function (e) {
-
-        $('#updateShippingMsgLabelWrap').empty();
-        var userDetailsForm = $('#userDetailsForm');
-
-        $('#saveChangesButton').on('click', function () {
-            e.preventDefault();
-
-            userDetailsForm.submit();
-        });
-
-        userDetailsForm.on('submit', function (e) {
-
-            e.preventDefault();
-
-            var url = $(this).attr('action'); // -> /Account/UpdateShippingDetails
-
-            var payload = $(this).serialize();
-            $.ajax({
-                type: 'POST',
-                contentType: constants.FormPostContentType,
-                data: payload,
-                cache: false,
-                url: url,
-                dataType: constants.JsonDataType,
-                beforeSend: function (xhr) {
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
-                }
-            }).done(function (data) {
-
-                if (data.Result === 'Success') {
-                    var fullname = $('#ShippingAddress_Name').val();
-
-                    $('#userFullnameLabel').text(fullname);
-
-                    $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
-
-                } else if (!data.isSuccessful) {
-
-                    L.clientLogger.error("userDetailsForm Submission Fails: ", { data: data && data.Result });
-                    $('#updateShippingMsgLabelWrap').empty();
-                    formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
-                } else {
-                    L.clientLogger.error("Error #416: ", { data: data && data.Result });
-                };
-
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
-
-            }).fail(function (data) {
-
-                if (jqXHR.statusCode().status == 403) {
-                    alert('Sorry, your session has expired. Please login again to continue');
-                    window.location.href = '/Account/Login';
-                } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
-                    ; // do nothing
-                } else {
-                    alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
-                };
-
-                L.clientLogger.error("Error #417", { jqXHR: jqXHR && jqXHR.statusCode().statusText });
-                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
-            });
-        });
-
-
-    });
-
-    modalForm.on('hidden', function (e) {
-        $('#saveChangesButton').off('click');
-        $('#userDetailsForm').off('submit');
-    });
-}
-
 function hookUpChangeTypeLogic(dropDown) {
 
     var changeTypeConfirmModal = $('#changeTypeConfirmModal');
@@ -1030,6 +945,180 @@ function hookUpChangeTypeLogic(dropDown) {
     });
 }
 
+function hookUpEditUserLogic(button, shippingAddressRequired) {
+
+    var modalForm = $('#UserDetailsModal');
+
+    // There may be times where a button does not trigger the modal.
+    if (button) {
+        button.on('click', function (e) {
+
+            e.preventDefault();
+
+            hookUpModal(modalForm);
+        });
+    }
+
+    modalForm.on('shown', function (e) {
+
+        $('#updateShippingMsgLabelWrap').empty();
+        var userDetailsForm = $('#userDetailsForm');
+
+        $('#saveChangesButton').on('click', function () {
+            e.preventDefault();
+
+            userDetailsForm.submit();
+        });
+
+        userDetailsForm.on('submit', function (e) {
+
+            e.preventDefault();
+
+            var url = $(this).attr('action'); // -> /Account/UpdateShippingDetails
+
+            var payload = $(this).serialize();
+            $.ajax({
+                type: 'POST',
+                contentType: constants.FormPostContentType,
+                data: payload,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+                beforeSend: function (xhr) {
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-info">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Updating details...</span>');
+                }
+            }).done(function (data) {
+
+                if (data.Result === 'Success') {
+                    var fullname = $('#ShippingAddress_Name').val();
+
+                    $('#userFullnameLabel').text(fullname);
+
+                    $('#updateShippingMsgLabelWrap').html('<span class="label label-success">&nbsp;<i class="icon icon-thumbs-up"></i>&nbsp;Details updated successfully.</span>');
+
+                } else if (!data.isSuccessful) {
+
+                    L.clientLogger.error("userDetailsForm Submission Fails: ", { data: data && data.Result });
+                    $('#updateShippingMsgLabelWrap').empty();
+                    formProcessor.lightUpValidationSummary('userDetailsValSummary', data);
+                } else {
+                    L.clientLogger.error("Error #416: ", { data: data && data.Result });
+                };
+
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #416. For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
+
+            }).fail(function (data) {
+
+                if (jqXHR.statusCode().status == 403) {
+                    alert('Sorry, your session has expired. Please login again to continue');
+                    window.location.href = '/Account/Login';
+                } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
+                    ; // do nothing
+                } else {
+                    alert('An error occurred: ' + jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
+                };
+
+                L.clientLogger.error("Error #417", { jqXHR: jqXHR && jqXHR.statusCode().statusText });
+                $('#updateShippingMsgLabelWrap').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>Error #417. For customer service contact us by using the Online Chat button below or emailing @globalConfig.TenantEmail .</span>');
+            });
+        });
+
+
+    });
+
+    modalForm.on('hidden', function (e) {
+        $('#saveChangesButton').off('click');
+        $('#userDetailsForm').off('submit');
+    });
+}
+
+function change(_addLocs) {
+
+    change.on('change', function (e) {
+
+        e.preventDefault();
+
+        addLocs = $(this).val();
+        var totalPrice = 0;
+
+        var url = '/Cart/CheckIfAddLocShouldHide?optionID=' + valOfTypeChosenCurrent;
+
+        $.ajax({
+            type: 'GET',
+            contentType: constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: constants.JsonDataType,
+            beforeSend: function () {
+                dropDown.attr('disabled', 'disabled').after('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+            }
+        }).done(function (data) {
+
+            // see CartController's CheckIfAddLocShouldHide method for commented explanation regarding the 'shouldShow' property.
+            if (data.shouldShow === 'No') {
+
+                registerDuringCheckout.gatherPricingData();
+
+                //  First, check if there are currently any Additional Locations
+                //added to the order.
+                if (anyAddLocs === true) {
+
+                    position = $('#confirmation').offset();
+
+                    var url = '/Cart/RemoveAdditionalLocationsFromOrder';
+                    var payLoad = {
+                        idOrderRow: cartStateManager.getOrderRowId()
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        contentType: constants.JsonContentType,
+                        cache: false,
+                        url: url,
+                        dataType: constants.JsonDataType,
+                        data: JSON.stringify(payLoad)
+                    }).done(function (data) {
+
+                        if (data.Result === 'Success') {
+                            // This next variable is initially set in the CheckoutConfirm.cshtml razor view
+                            anyAddLocs = false;
+
+                            $('#additionalLocationsCaption').html('None');
+
+                            $('#addlocSpiel').text('To add additional locations for this order, please use our Help & Feedback button (lower right corner)  for immediate assistance').addClass('text-info');
+
+                            $('#addLocsText').html('Additional Locations: <span id="totalAdLocsPrice">$0.00</span>').addClass('muted');
+                            totalPrice = registerDuringCheckout.totalPrice - registerDuringCheckout.addLocsPrice;
+
+                            updatePriceOnNewSelection(valOfTypeChosenCurrent, totalPrice, dropDown);
+                        }
+                    }).fail(commonFuncs.failCallBack);
+                    alert("of failed");
+                } else {
+                    updatePriceOnAddLocChange(addLocs, registerDuringCheckout.totalPrice, "");
+                }
+            } else {
+                updatePriceOnNewSelection(valOfTypeChosenCurrent, registerDuringCheckout.totalPrice, dropDown);
+            }
+
+            //if (data.shippingDetailsRqrd === 'Yes') {
+            //    registerDuringCheckout.addressOptions['shippingAddressRequired'] = true;
+            //} else {
+            //    registerDuringCheckout.addressOptions['shippingAddressRequired'] = false;
+            //}
+        }).fail(commonFuncs.failCallBack);
+    });
+
+}
+
+function hookUpAddLocsLogic(_addLocs) {
+
+    var changeTypeConfirmModal = $('#changeAddLocsModal');
+    var addLocCaption = $('#chosenAddLoc');
+    var addLocs = "";
+
+}
+
 // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
 // TODO: Display 'Confirm Shipping Address' via the Shipping Details modal form where the RegType chosen has a shipping address requirement.
 function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
@@ -1051,7 +1140,51 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
         dataType: constants.JsonDataType,
         data: JSON.stringify(payLoad)
     }).done(function (data) {
+        console.log(data);
+        if (data) {
+            if (data.Tax > 0) {
+                $('#showTax').removeClass("hidden");
+            } else {
+                $('#showTax').addClass("hidden");
+            }
 
+            $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+            $('#discountCaption').html(data.DiscountCaption);
+            $('#optionLabel').html(data.regTypeShort);
+            $('#baseCost').html('$' + data.BasePrice + '');
+            $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+            $('#taxAmt').html(data.Tax + '');
+            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+            $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+        }
+
+        dropDown.removeAttr('disabled');
+        $('#discountSpinner').remove();
+
+        ShowModalForShippingDetails();
+    }).fail(commonFuncs.failCallBack);
+}
+// TODO: Display 'Confirm Shipping Address' via the Shipping Details modal form where the RegType chosen has a shipping address requirement.
+function updatePriceOnAddLocChange(addLocs, totalPrice) {
+    
+    registerDuringCheckout.gatherPricingData();
+
+    var url = '/Cart/UpdateAdditionalLocations';
+
+    var payLoad = {
+        idOrderRow: cartStateManager.getOrderRowId(),
+        addLocs
+    };
+
+    $.ajax({
+        type: 'POST',
+        contentType: constants.JsonContentType,
+        cache: false,
+        url: url,
+        dataType: constants.JsonDataType,
+        data: JSON.stringify(payLoad)
+    }).done(function (data) {
+        console.log(data);
         if (data) {
             if (data.Tax > 0) {
                 $('#showTax').removeClass("hidden");

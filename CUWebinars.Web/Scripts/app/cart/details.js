@@ -207,8 +207,6 @@ $(function () {
 
     // Flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
-
-
         if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
             // Following function lives in the register-during-checkout.js script
             // which will be in memory at this point and thus will have been hoisted.
@@ -233,8 +231,6 @@ $(function () {
             e.preventDefault();
 
             $('#CancelModal').modal('show');
-            //var cancelOrderForm = $('#cancelOrder');
-            //cancelOrderForm.submit();
         });
 
         populateAdditionalLocationsOn3rdTab();
@@ -244,6 +240,7 @@ $(function () {
         // which will be in memory at this point. So these functions will be hoisted.
         hookUpApplyDiscountLogic($('#SubmitDiscountCode'), cartStateManager.getOrderRowId());
         hookUpChangeTypeLogic($('#RegType'));
+        hookUpAddLocsLogic($('#AddLocs'));
         hookUpEditUserLogic(null, shippingAddressRequired);
     }
 
@@ -428,6 +425,39 @@ function isShippingAddressRequired(jQueryObject) {
 
 function setUpEditButtons() {
 
+    $('#addAnotherAddLoc').on('click', function (e) {
+        alert("hisd")
+        e.preventDefault();
+
+        var newId;
+
+        if (numberOfAdditionalLocationsTab3 == 0) {
+            if ($("#additionalLocationsList").length == 0) {
+                $("#additionalLocationsList").after($('<button>',
+                    {
+                        id: 'applyAdditionalLocationsButton',
+                        text: 'apply',
+                        'class': 'btn btn-mini btn-primary'
+                    }));
+
+                $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
+            }
+            newId = 0;
+        } else {
+
+            // first get the last previous email input
+            var lastInput = $("#additionalLocationsList").find('input[type="email"]:last');
+            // get its id
+            var lastInputId = lastInput.attr('id');
+            var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+            newId = id + 1;
+        }
+        $("#additionalLocationsList").append('<span id="' + locationsSpanPrefix + newId + '"><input id="AdditionalLocationEmail_' + newId + '" name="AdditionalLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-AdditionLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+        $("#additionalLocationsList").find('i#' + newId + '-AdditionLocationEmail-delete').on('click', deleteAddLocInputTabb3);
+        $('#AdditionalLocationEmail_' + newId).focus();
+        numberOfAdditionalLocationsTab3++;
+    });
+
     if (desCheckout) {
 
         $('#ConfirmRegistrationBillMe').hide();
@@ -441,6 +471,7 @@ function setUpEditButtons() {
     }
     $('#revealOptions').on('click', function (e) {
         e.preventDefault();
+        
         $('#AdjustOrder').slideToggle();
     });
 
@@ -563,7 +594,7 @@ var applyAdditionalLocations = function (e) {
             self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
         }
     }).done(function (data) {
-        if (data.Result === 'Success') {
+        if (data) {
 
             var infoLabel = $('#addLocsText');
 
@@ -577,30 +608,38 @@ var applyAdditionalLocations = function (e) {
                 addLocPrice = webinarAdditionalLocationPrice;
             }
 
-            priceLabel.text('$' + (numberOfAdditionalLocationsTab3 * addLocPrice));
-
-            var newText = numberOfAdditionalLocationsTab3 + $.trim(infoLabel.html()).slice(1);
-
-            infoLabel.fadeOut(200, function () {
-                infoLabel.html(newText);
-                infoLabel.fadeIn(200);
-            });
             if (data.Tax > 0) {
                 $('#showTax').removeClass("hidden");
             } else {
                 $('#showTax').addClass("hidden");
             }
-
+            //am working here
+            var alertCaption = data.UpdateSuccessCaption;
             $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
             $('#discountCaption').html(data.DiscountCaption);
-            //$('#optionLabel').html(data.regTypeShort);
+            $('#optionLabel').html(data.regTypeShort);
+
             $('#baseCost').html('$' + data.BasePrice + '');
             $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
             $('#taxAmt').html(data.Tax + '');
-            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+            $('#addLocsText').html('$' + data.OptionsPrice + '');
+            if (data.OrderStatusCaption) {
+                if (data.OrderStatusCaption.includes("outstanding")) {
+                    $('#orderStatusLabel').html(data.OrderStatusCaption);
+                    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+                }
+            }
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
-            $('#additionalLocationsCaption').addClass("hidden");
+            if (data.TotalPaid !== 0) {
+                if (data.OutstandingBalance > 0) {
+                    $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
 
+                } else {
+                    $("#ShowPayByCCModal").hide();
+                    $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="outstandingBalance">Due: $(' + data.OutstandingBalance + ')</span>');
+                }
+            }
+            alert(alertCaption);
         } else {
             alert("failed to add");
             var a = 'holder';

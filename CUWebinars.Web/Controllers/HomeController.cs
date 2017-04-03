@@ -5,6 +5,7 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Services;
 
@@ -32,7 +33,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult TestStaticPage()
         {
-//            ViewBag.PageStyleType = "two-columns-right-sidebar";
+            //            ViewBag.PageStyleType = "two-columns-right-sidebar";
             return View();
         }
 
@@ -147,7 +148,12 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Index()
         {
+
             ViewBag.PageStyleType = "index-flex-dark";
+            if (Request.Url != null && Request.Url.PathAndQuery.ContainsIgnoreCase("email does not match"))
+            {
+                ViewBag.Msg = ("Order's email does not match login email.");
+            }
 
             var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
             return View(lWebinars);
