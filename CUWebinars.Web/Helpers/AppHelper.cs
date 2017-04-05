@@ -246,7 +246,7 @@ namespace CUWebinars.Web.Helpers
         public string GetUserAuditInfo()
         {
             IDictionary<string, string> auditInfoDictionary = new Dictionary<string, string>();
-             
+
             auditInfoDictionary.Add("FirstPage", SecurityElement.Escape(_stateService.GetValue<string>("FirstPage")));
             auditInfoDictionary.Add("RemoteAddress", SecurityElement.Escape(_request.ServerVariables["REMOTE_ADDR"]));
             auditInfoDictionary.Add("RemoteHost", SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]));
@@ -638,7 +638,10 @@ namespace CUWebinars.Web.Helpers
             fields.TenantSignature = "The " + Tenant + " Staff";
 
             fields.AttendType = row.RegistrationType.OptionLabelShort;
+            fields.ServiceNote = "<b>Service Update!</b></br> Please update your whitelist to include whatever@ttstregistrations.com. <br>To ensure your receipt of future notifications please send a blank message to whatever@ttsregistrations.com";
+            fields.ServiceNote = "";
             fields.OrderID = row.idOrder;
+            fields.Institution = order.Institution;
             fields.BillingEmail = order.BillingEmail;
             fields.TenantName = _globalConfig.Tenant();
             fields.TenantURL = _globalConfig.TenantURL();
@@ -659,8 +662,10 @@ namespace CUWebinars.Web.Helpers
             fields.AddReminder = " <a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
                                  "Add to Calendar</a>";
             fields.CCCaption =
-                " We didn't find any address(es) already on the CC notification list. <a href='" +
-                TenantURL + "/Order/ChangeCC?idOrder=" + order.idOrder + "'>" + "This link will let you share this and future emails with the person logging on to the webinar. </a>";
+                " Need to share the connection information with an associate? Just share " + TenantURL + "/j/" + row.TtsJoinUrl
+                + " - valid for a single connection only. Or to add an associate's email so they are CCed on all notifications <a href='" +
+                TenantURL + "/Order/ChangeCC?idOrder=" + order.idOrder + "'>" + " visit this page.</a>";
+
             fields.PaymentStatus = order.OrderStatus.ToString();
 
             if (order.OrderStatus == OrderStatus.Paid)
@@ -692,11 +697,6 @@ namespace CUWebinars.Web.Helpers
                 }
             }
 
-            if (row.Webinar.Title.Contains("Compliance Perspectives"))
-            {
-                fields.AddLocsCost =
-                    " Compliance Perspective events include 3 Additional Locations at no extra cost - $50 per seat afterwards.";
-            }
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
@@ -722,27 +722,24 @@ namespace CUWebinars.Web.Helpers
                 if (row.AdditionalLocation.Count == 1)
                 {
                     fields.ExistingAddLocs = locs.TrimEnd(',') +
-                                             " is currently included as an Additional Location. "
-                                             //"<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
-                                             //"Just let us know if you need more!</a>";
-                                             ;
+                                             " is currently included as an Additional Location. " +
+                                             "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
+                                             "Just let us know if you need more!</a>";
                 }
                 if (row.AdditionalLocation.Count > 1)
                 {
                     fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
-                                             " are the included Additional Locations. "
-                                             //"<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
-                                             //"Just let us know if you need change anything.</a>";
-                                             ;
+                                             " are the included Additional Locations. " +
+                                             "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
+                                             "Just let us know if you need change anything.</a>";
                 }
 
                 if (locs == "")
                 {
                     fields.ExistingAddLocs =
-                        " We didn't find any Additional Locations stored for this order. "
-                        //"<a href='" + TenantURL + "/Resume/" + order.idOrder +"'>" + 
-                        //"Click here to add.</a>";
-                        ;
+                        " Need to support remote branches? Add additional locations for $[addloccost] per seat.  " +
+                        "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
+                        "Click here to add.</a>";
                 }
 
             }

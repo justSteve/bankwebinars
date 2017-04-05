@@ -123,7 +123,7 @@ OCA.initializeFunctions = function () {
 
 
     OCA.hookUpApplyDiscountLogic = function (btn, orderRowId) {
-
+        
         btn.on('click', function (e) {
 
             e.preventDefault();
@@ -524,6 +524,7 @@ OCA.initializeFunctions = function () {
 
     OCA.wireUpMainButtonsOn3rdTab = function () {
         // The Bill Me button on 3rd tab
+        OCA.hookUpApplyDiscountLogic($('#SubmitDiscountCode'), OCA.cartStateManager.getOrderRowId());
 
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
 

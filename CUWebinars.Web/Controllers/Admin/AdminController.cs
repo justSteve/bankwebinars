@@ -1472,53 +1472,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return PartialView("~/Views/Admin/Home/_SendConnectionInfo.cshtml", model);
         }
 
-        //[HttpPost]
-        //public JsonResult SendConnectionInfo(int webinarId)
-        //{
-        //    //_logger.Info("Begins SendConnectionInfo");
-        //    var orders = _orderManagementService.GetOrdersForLiveNotifications(webinarId);
-        //    var citrixRegistrants = _orderManagementService.GetCitrixRegistrantsByWebinar(webinarId);
-        //    foreach (var order in orders)
-        //    {
-        //        var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-        //        // perf bump by assigning to local variable
-        //        //need to refine logic in the CitrixJoinInfoAvailable a little bit.
-        //        if (string.IsNullOrEmpty(orderRow.CitrixJoinUrl)) // && orderRow.Webinar.CitrixJoinInfoAvailable())
-        //        {
-        //            _orderManagementService.GenerateRegistrantKey(order);
-
-        //            if (orderRow.AdditionalLocation.Any())
-        //            {
-        //                foreach (var additionalLocation in orderRow.AdditionalLocation)
-        //                {
-        //                    _orderManagementService.GenerateRegistrantKey(order);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    orders.ToList().ForEach((order) =>
-        //    {
-        //        var notificationStorage = new NotificationStorage
-        //        {
-        //            idOrder = order.idOrder,
-        //            SessionStartInfo = _appHelper.GetSessionStartInfo()
-        //        };
-
-        //        if (string.IsNullOrWhiteSpace(order.NotificationStorage))
-        //        {
-        //            order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
-        //        }
-        //    });
-
-        //    _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, resending: false);
-
-        //    var numRows = _orderManagementService.SaveChanges();
-
-        //    _logger.Info("Concludes SendConnectionInfo. {0} rows updated.", numRows);
-        //    return Json(new { Result = WebUiConstants.Success });
-        //}
-
 
         public PartialViewResult SendShippedOrder()
         {
@@ -3231,8 +3184,15 @@ namespace CUWebinars.Web.Controllers.Admin
         [AllowAnonymous]
         public JsonResult GenerateWeeklyInvoices2(DateTime startDate, int? _idAffiliate)
         {
-            Stopwatch openingCall = new Stopwatch();
-            openingCall.Start();
+            //Stopwatch openingCall = new Stopwatch();
+            //openingCall.Start();
+
+            int TenantConstant = 4985;
+
+            if (_globalConfig.Tenant == "BankWebinars")
+            {
+                TenantConstant = 19983;
+            }
 
             if (!_idAffiliate.HasValue)
             {
@@ -3299,16 +3259,16 @@ namespace CUWebinars.Web.Controllers.Admin
                 else
                 {
                     var listOrdersAdjusted =
-                        affiliateHasAnyOrders.Split(':')[3].TrimEnd(',').TrimStart(' ').Replace("19983,", "");
+                        affiliateHasAnyOrders.Split(':')[3].TrimEnd(',').TrimStart(' ').Replace(TenantConstant.ToString() + ",", "");
 
                     var listOrdersPostEvent =
                         affiliateHasAnyOrders.Split(':')[2].Replace(" AjustedOrders", "")
                             .TrimEnd(',')
                             .TrimStart(' ')
-                            .Replace("19983,", "");
+                            .Replace(TenantConstant.ToString() + ",", "");
 
                     _logger.Info("GenerateWeeklyInvoicesEvent | affiliateHasAnyOrders " +
-                                 affiliateHasAnyOrders.Replace("19983,", ""));
+                                 affiliateHasAnyOrders.Replace(TenantConstant +",", ""));
 
                     List<InvoiceExceptions> invoiceExceptionsByAff = new List<InvoiceExceptions>();
                     List<InvoiceExceptions> postEventByAff = new List<InvoiceExceptions>();
@@ -3591,7 +3551,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         foreach (var id in listOrdersPostEvent.Split(','))
                         {
                             //for why the test against static ID see DataOperations | 
-                            if (id != "19983")
+                            if (id != TenantConstant.ToString())
                             {
                                 int variable = 0;
                                 int.TryParse(id, out variable);
@@ -3739,7 +3699,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         foreach (var id in listOrdersAdjusted.Split(','))
                         {
-                            if (id != "19983")
+                            if (id != TenantConstant.ToString() )
                             {
                                 int variable = 0;
                                 int.TryParse(id, out variable);

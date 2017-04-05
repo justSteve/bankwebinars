@@ -212,6 +212,9 @@ namespace CUWebinars.Web.Controllers
                             _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
                         orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                             _globalConfig.TenantLogo);
+
+                        orderConfirmString = orderConfirmString.Replace("[addloccost]", _cartControllerOrchestrator.GetAddLocPrice(model.Webinar));
+
                         _cartControllerOrchestrator.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"]
                             , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
@@ -1413,17 +1416,23 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     var order = _cartControllerOrchestrator.GetOrderById(id);
+                    ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-                    if (order.BillingEmail != User.Identity.Name)
+                    if (!(claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate) || claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin)))
                     {
-                     _logger.Warn("Resume idOrder: " + id + " was not by order's email: " + User.Identity.Name);
-                       
-                    return RedirectToAction("Index", "Home", new
-                    {
-                        msg = "Order's email does not match login email.",
-                        idOrder = id,
-                        source = "Resume"
-                    });
+                        if (order.BillingEmail != User.Identity.Name)
+                        {
+                            _logger.Warn("Resume idOrder: " + id + " was not by order's email: " + User.Identity.Name);
+
+                            return RedirectToAction("Index", "Home", new
+                            {
+                                msg = "Order's email does not match login email.",
+                                idOrder = id,
+                                source = "Resume"
+                            });
+                        }
                     }
 
                     order.Origin = DomainConstants.OriginResume;
@@ -1663,7 +1672,7 @@ namespace CUWebinars.Web.Controllers
             var ptRedirectSession = _stateService.GetValue<string>(WebUiConstants.PayTraceSubmit);
 
             var sb = new StringBuilder();
-            sb.AppendLine("PayTraceApproved: " + formFields);
+            sb.AppendLine("PayTrace: Approved: " + formFields);
             var nameValuePair = ptRedirectSession.Split('|');
             var payTraceModel = new PayTraceResponse();
             foreach (var name in nameValuePair)
@@ -1711,7 +1720,7 @@ namespace CUWebinars.Web.Controllers
             var ptRedirectSession = _stateService.GetValue<string>(WebUiConstants.PayTraceSubmit);
 
             var sb = new StringBuilder();
-            sb.AppendLine("PayTraceDeclined: " + formFields);
+            sb.AppendLine("PayTrace: Declined: " + formFields);
             var nameValuePair = ptRedirectSession.Split('|');
             var payTraceModel = new PayTraceResponse();
             foreach (var name in nameValuePair)
@@ -1740,7 +1749,7 @@ namespace CUWebinars.Web.Controllers
 
             payTraceModel.Order = order;
 
-            if (order.OrderStatus != OrderStatus.Paid)
+            if (order.OrderStatus == OrderStatus.Paid)
             {
                 _logger.Fatal("PayTrace returned user to 'Declined' but order is marked paid on order: " + order.idOrder);
                 payTraceModel.Appcode = "PayTrace reports that your transaction was declined.";
@@ -2418,7 +2427,7 @@ namespace CUWebinars.Web.Controllers
                         "<span id=\"orderStatusLabel\" class=\"label-important label\">Outstanding Balance</span>";
                     _cartControllerOrchestrator.SaveOrder(model.Order);
                 }
-                
+
                 if (
                     row.AdditionalLocation.Any())
                 {

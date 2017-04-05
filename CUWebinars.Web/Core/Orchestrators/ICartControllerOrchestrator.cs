@@ -79,5 +79,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         string InvoicedOrderIsUpdated(Order modelOrder);
         void FireMandrillNotificationEvent(string steveTtstrainCom, string s, string orderConfirmString);
         void SaveOrder(Order order);
+        string GetAddLocPrice(Webinar modelWebinar);
     }
 }

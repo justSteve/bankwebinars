@@ -42,5 +42,7 @@ namespace CUWebinars.Web.Models
         public string AffFooter { get; set; }
         public string ConfirmAccountLink { get; set; }
         public string LastName { get; set; }
+        public string Institution { get; set; }
+        public string ServiceNote { get; set; }
     }
 }

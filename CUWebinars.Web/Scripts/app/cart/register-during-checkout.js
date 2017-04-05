@@ -1173,7 +1173,7 @@ function updatePriceOnAddLocChange(addLocs, totalPrice) {
 
     var payLoad = {
         idOrderRow: cartStateManager.getOrderRowId(),
-        addLocs
+        addLocs: addLocs
     };
 
     $.ajax({

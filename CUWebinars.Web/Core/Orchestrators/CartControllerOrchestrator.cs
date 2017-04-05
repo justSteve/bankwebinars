@@ -1349,8 +1349,13 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (orderCC != null)
             {
             }
-            fields.AddLocsCost = " Please note that the per seat cost of an Additional Location is " +
-                     _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("C0") + ".";
+
+            if (row.Webinar.Title.Contains("Compliance Perspectives"))
+            {
+                fields.AddLocsCost =
+                    " Compliance Perspective events include 3 Additional Locations at no extra cost - $50 per seat afterwards.";
+            }
+
 
             document.MailMerge.Execute(fields);
 
@@ -1487,6 +1492,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void SaveOrder(Order order)
         {
             _orderManagementService.SaveOrderChanges(order, null, null);
+        }
+
+        public string GetAddLocPrice(Webinar modelWebinar)
+        {
+            return _orderManagementService.GetAdditionalLocationsPricing(modelWebinar.idWebinar).ToString("C0");
         }
 
 

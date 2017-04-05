@@ -61,7 +61,7 @@
                         <div id="wrapEmail">
                             <div>
                                 @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })<br />
-                                <div class="initialHide well well-sm" id="showhowEmailUsed">This email will be the primary address. If you are registering for someone else who will require notifications we can collect that later in the checkout process.</div>
+                                <div class="initialHide well well-sm" id="showhowEmailUsed">This email will be the <i>admin</i> address. It gets to decide who else within the organization sees the connection information vs. an address that handles the billing. </div>
                                 <span id="howEmailUsed">How is this address used? <a onclick="showHowEmailUsed(); return false;" data-html=true data-explainesItTab="This primary (or billing) email - can be changed to any more specific title later." data-asksItTextBox=true rel="tooltip" href="#" data-delay=0 data-trigger="hover focus click" data-toggle="tooltip" title="This primary (or billing) email can be changed to any more specific title later."><i class="icon-question-sign"></i></a></span>
                             </div>
                         </div>
@@ -269,7 +269,7 @@
     </div>
     <div id="UserHasAccount" class="modal-body">
         <p>
-            Use our <i>Express Me!</i> button for guest checkout. Or get instant access to your account 
+            Use our <i>Express Me!</i> button for guest checkout. Or get instant access to your account
             with the <i>'Continue to Login'</i> button.
         </p>
         <div id="ECBtns">
@@ -288,8 +288,8 @@
     </div>
     <div id="UserHasAccountUnconfirmed" class="modal-body">
         <p>
-            We've located an existing account for this email but it is currently <i>Unconfirmed</i>. Express Checkout is still available 
-            but access to your account's features is limited pending confirmation.<br/><br/>
+            We've located an existing account for this email but it is currently <i>Unconfirmed</i>. Express Checkout is still available
+            but access to your account's features is limited pending confirmation.<br /><br />
             Upon submission of this order a new link will be mailed from @globalConfig.TenantEmail with the subject line [@globalConfig.Tenant] Please confirm your account.
         </p>
         <div id="ECBtns">
