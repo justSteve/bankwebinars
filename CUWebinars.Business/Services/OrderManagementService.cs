@@ -820,13 +820,13 @@ namespace CUWebinars.Business.Services
                 pricesAndDiscounts.TaxAmount = Math.Round(row.RowPrice * Convert.ToDecimal(.055), 2);
                 _logger.Info("COC found tax on: " + row.idOrder + " found " + pricesAndDiscounts.TaxAmount);
             }
-            
+
             //Calculate order total
             order.Total = row.RowPrice + pricesAndDiscounts.TaxAmount;
             pricesAndDiscounts.Discount = row.Discount;
             pricesAndDiscounts.TotalOrderPrice = order.Total - order.TotalPaid;
             pricesAndDiscounts.TotalPaid = order.TotalPaid;
-            
+
             return pricesAndDiscounts;
         }
 
@@ -2142,12 +2142,7 @@ namespace CUWebinars.Business.Services
 
             if (!ReferenceEquals(null, thisDiscount))
             {
-                if (thisDiscount.DiscountType == DiscountType.Promo || thisDiscount.DiscountType == DiscountType.Compensation)
-                {
-                    thisDiscount = RedeemDiscount(thisDiscount, row);
-                    row.Discount = thisDiscount;
-                    _logger.Info("ApplyDiscountCode PROMO: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
-                }
+
                 if (thisDiscount.DiscountType == DiscountType.Subscription)
                 {
                     if (hasRemaining >= row.RegistrationType.CreditCost)
@@ -2170,8 +2165,14 @@ namespace CUWebinars.Business.Services
                                      thisDiscount.DiscountCode + " idOrder: " + row.idOrder + +hasRemaining +
                                      " remain but " + row.RegistrationType.CreditCost + " are required.");
                     }
+                    return thisDiscount;
                 }
+
+                thisDiscount = RedeemDiscount(thisDiscount, row);
+                row.Discount = thisDiscount;
+                _logger.Info("ApplyDiscountCode: " + JsonConvert.SerializeObject(thisDiscount));
                 return thisDiscount;
+
             }
             else
             {
@@ -2288,6 +2289,7 @@ namespace CUWebinars.Business.Services
                 case DiscountType.FivePart:
                 case DiscountType.FourPart:
                 case DiscountType.ThreePart:
+                case DiscountType.TwoPart:
                 case DiscountType.Package:
                 case DiscountType.Promo:
                 case DiscountType.Subscription:
@@ -2414,7 +2416,7 @@ namespace CUWebinars.Business.Services
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
                 .Where(o => o.OrderDate > userDiscount.DateVerified
                             || (o.InvoiceDetail.Contains("DiscountIsApplied"))
-                            && (o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid)
+                            && (o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.OutstandingBalance)
                             && !o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title.StartsWith("Compliance Perspe"));
 
             var creditsUsed = 0M;

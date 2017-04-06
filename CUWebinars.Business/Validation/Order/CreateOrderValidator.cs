@@ -35,6 +35,7 @@ namespace CUWebinars.Business.Validation.Order
                     || o.OrderStatus == OrderStatus.Submitted
                     || o.OrderStatus == OrderStatus.Billed
                     || o.OrderStatus == OrderStatus.Paid
+                    || o.OrderStatus == OrderStatus.OutstandingBalance
                     || o.OrderStatus == OrderStatus.AwaitingVerification
                     //exclude dummy user
                     || o.idUser != 26739

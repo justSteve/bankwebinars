@@ -122,6 +122,8 @@ namespace CUWebinars.Web.Controllers
                     row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson,
                         "DiscountIsApplied");
                     //row.Order.AffiliateComments = JsonHelpers.AddObjectToJsonArray(row.Order.AffiliateComments, newJson);
+                    var discountCaption = "";
+
 
                     if (myDiscount.DiscountType == DiscountType.Subscription &&
                         myDiscount.DateValidFrom != myDiscount.DateValidTo
@@ -130,19 +132,33 @@ namespace CUWebinars.Web.Controllers
                         ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
                         msg += " A $50 surcharge is added for shipping & handling.";
                     }
+                    var updateSuccessCaption = "Applied Discount";
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricingReadOnly(row.Order);
-
+                    if (pricesAndDiscounts.Discount == null)
+                    {
+                        pricesAndDiscounts.Discount = new Discount();
+                    }
+                    else
+                    {
+                        discountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                               row.Discount,
+                               row, null, 1);
+                    }
                     return
                         Json(
                             new
                             {
                                 msg = msg,
+                                UpdateSuccessCaption = updateSuccessCaption,
+                                DiscountCaption = discountCaption,
                                 regTypeShort = row.RegistrationType.OptionLabelShort,
                                 BasePrice = pricesAndDiscounts.UnitPrice,
                                 Discount = pricesAndDiscounts.TotalDiscount,
                                 OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
                                 Tax = pricesAndDiscounts.TaxAmount,
+                                TotalPaid = row.Order.TotalPaid,
+                                OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - row.Order.TotalPaid,
                                 Total = pricesAndDiscounts.TotalOrderPrice,
                                 FlatOff =
                                 (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.FlatOff : 0,
@@ -161,7 +177,7 @@ namespace CUWebinars.Web.Controllers
             catch (Exception exception)
             {
                 //ModelState.AddModelError(string.Empty, "Code Not Found.");
-                _logger.ErrorException("ApplyDiscountCode|ApplyDiscountCode failed ", exception);
+                _logger.ErrorException("ApplyDiscountCode|ApplyDiscountCode failed " + code + " orderRowId: " + orderRowId, exception);
                 return Json(new { Result = 0, Code = code, Order = orderRowId });
             }
         }
@@ -1117,6 +1133,7 @@ namespace CUWebinars.Web.Controllers
                         }
                         if (order.OrderStatus == OrderStatus.Submitted ||
                             order.OrderStatus == OrderStatus.InProcess ||
+                            order.OrderStatus == OrderStatus.OutstandingBalance ||
                             order.OrderStatus == OrderStatus.AwaitingVerification)
                         {
                             return Json(new

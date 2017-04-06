@@ -323,7 +323,7 @@ namespace CUWebinars.Business.Repository
             var orders = ((TTSWebinarsContext)db).OrderRows
                 .Include(or => or.Order)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted || o.Order.OrderStatus == OrderStatus.OutstandingBalance)
                 .Where(or => or.Webinar.Status == WebinarStatus.Recorded)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
@@ -554,7 +554,7 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Where(or => or.RowStatus == OrderRowStatus.Active)
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted || o.Order.OrderStatus == OrderStatus.OutstandingBalance)
                 .Select(o => o.Order);
 
             return GetLoadedEntitiesForOrder(orders);
@@ -581,8 +581,7 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.Order.OrderStatus == OrderStatus.Paid ||
                     or.Order.OrderStatus == OrderStatus.Billed ||
-                    or.Order.OrderStatus == OrderStatus.Submitted
-                    )
+                    or.Order.OrderStatus == OrderStatus.Submitted || or.Order.OrderStatus == OrderStatus.OutstandingBalance)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
         }
@@ -596,7 +595,7 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.Discount.idDiscount == idDiscount)
                 .Where(o => o.Order.OrderStatus == OrderStatus.Paid
                     || o.Order.OrderStatus == OrderStatus.Billed
-                    || o.Order.OrderStatus == OrderStatus.Submitted)
+                    || o.Order.OrderStatus == OrderStatus.Submitted || o.Order.OrderStatus == OrderStatus.OutstandingBalance)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
         }
@@ -608,7 +607,7 @@ namespace CUWebinars.Business.Repository
                 .Include(or => or.Order)
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowRecordingNotifications == "Yes")
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted || o.Order.OrderStatus == OrderStatus.OutstandingBalance)
                 .Select(o => o.Order);
             return GetLoadedEntitiesForOrder(orders);
         }
@@ -765,7 +764,7 @@ namespace CUWebinars.Business.Repository
             var a = items
                     .Where(o => o.idUser == user
                         && o.OrderRows.FirstOrDefault().idWebinar == webinar
-                        && (o.OrderStatus == OrderStatus.Submitted
+                        && (o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.OutstandingBalance
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Billed
                             )
@@ -839,7 +838,7 @@ namespace CUWebinars.Business.Repository
             .Include(row => row.Webinar)
             .Where(or => or.idWebinar == idWebinar)
             .Where(or => or.RowStatus == OrderRowStatus.Active)
-            .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted)
+            .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted || o.Order.OrderStatus == OrderStatus.OutstandingBalance)
             .Select(o => o.Order);
 
             return GetLoadedEntitiesForOrder(orders);
@@ -866,6 +865,7 @@ namespace CUWebinars.Business.Repository
 
             return items.Count(o => o.OrderRows.FirstOrDefault().RowStatus == OrderRowStatus.Active && (o.OrderStatus == OrderStatus.Submitted
                 || o.OrderStatus == OrderStatus.Paid
+                || o.OrderStatus == OrderStatus.OutstandingBalance
                 || o.OrderStatus == OrderStatus.Billed
                 ));
 
@@ -877,6 +877,7 @@ namespace CUWebinars.Business.Repository
                 .Webinar.idWebinar == id
                 && o.Affiliate.idUserAff == idAffiliate
                 && (o.OrderStatus == OrderStatus.Submitted
+                || o.OrderStatus == OrderStatus.OutstandingBalance
                 || o.OrderStatus == OrderStatus.Paid
                 || o.OrderStatus == OrderStatus.Billed
                 )).ToList().Count;
@@ -903,6 +904,7 @@ namespace CUWebinars.Business.Repository
                        && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Recorded
                 && (o.OrderStatus == OrderStatus.Submitted
                 || o.OrderStatus == OrderStatus.Paid
+                || o.OrderStatus == OrderStatus.OutstandingBalance
                 || o.OrderStatus == OrderStatus.Billed
                 )
                     );
@@ -922,6 +924,7 @@ namespace CUWebinars.Business.Repository
                                           &&
                                           (o.OrderStatus == OrderStatus.Submitted ||
                                            o.OrderStatus == OrderStatus.Paid ||
+                                           o.OrderStatus == OrderStatus.OutstandingBalance ||
                                            o.OrderStatus == OrderStatus.Billed
                                            )
                 );
@@ -937,6 +940,7 @@ namespace CUWebinars.Business.Repository
                                           && o.OrderRows.FirstOrDefault().Webinar.Status == WebinarStatus.Archived
                                           && (o.OrderStatus == OrderStatus.Submitted ||
                                            o.OrderStatus == OrderStatus.Paid ||
+                                           o.OrderStatus == OrderStatus.OutstandingBalance ||
                                            o.OrderStatus == OrderStatus.Billed
                                            )
                 );

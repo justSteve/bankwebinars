@@ -110,7 +110,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
                 if (row.RegistrantKey == null && row.RegistrationType.ShowLiveNotifications == "Yes"
-                    && (row.Webinar.Status == WebinarStatus.Active || row.Webinar.Status == WebinarStatus.InProgress))
+                    && (row.Webinar.Status == WebinarStatus.Active 
+                    || row.Webinar.Status == WebinarStatus.InProgress))
                     order = _orderManagementService.GenerateRegistrantKey(order);
 
                 if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).AdditionalLocation != null)

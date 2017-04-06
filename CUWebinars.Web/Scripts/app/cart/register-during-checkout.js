@@ -1247,45 +1247,66 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             headers: headers,
-            beforeSend: function () {
+            beforeSend: function() {
                 $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
                 $(self).attr('disabled', 'disabled');
             }
-        }).done(function (data) {
+        }).done(function(data) {
 
             if (data.Result == 0) {
-                alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
-            } else {
-
-                //regTypeShort = row.RegistrationType.OptionLabelShort,
-                //BasePrice = pricesAndDiscounts.UnitPrice,
-                //Discount = pricesAndDiscounts.TotalDiscount,
-                //OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
-                //Tax = pricesAndDiscounts.TaxAmount,
-                //Total = pricesAndDiscounts.TotalOrderPrice,
-                //FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                //PercentOff = pricesAndDiscounts.Discount.PercentOff
-
-                var flatOff = data.FlatOff;
-                var percentOff = data.PercentOff;
-                console.log(data);
-                var showDiscount = "";
-
-                var newTotalPrice = data.Total;
-
-                $("#amount").val(newTotalPrice);
-
-                if (newTotalPrice < 0)
-                    newTotalPrice = 0;
-
-
-                $('#discountedText').html(' <span id="totalDiscount" style="color: red;">Discounted: $' + data.Discount + '</span>').removeClass('muted');
-                //original -- what changed this? $('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
-                $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '</span>');
-                alert(data.msg);
-                $('#discountSpinner').remove();
+                alert("The discount code " +
+                    $('#CheckoutDiscountCode').val() +
+                    " was not found or had an error that prevented usage. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
             }
-        }).fail(commonFuncs.failCallBack).always(function (e) {
+            if (data.Tax > 0) {
+                $('#showTax').removeClass("hidden");
+            } else {
+                $('#showTax').addClass("hidden");
+            }
+            console.log(data);
+            var alertCaption = data.UpdateSuccessCaption;
+            $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+            $('#discountCaption').html(data.DiscountCaption);
+            $('#optionLabel').html(data.regTypeShort);
+
+            $('#baseCost').html('$' + data.BasePrice + '');
+            $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+            $('#taxAmt').html(data.Tax + '');
+            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+
+            $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+            if (data.TotalPaid !== 0) {
+                if (data.OutstandingBalance > 0) {
+                    $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' +
+                        data.OutstandingBalance +
+                        '</span>');
+
+                } else {
+                    if (data.OrderStatusCaption !== "") {
+                        $('#orderStatusLabel').html(data.OrderStatusCaption);
+                        alertCaption += " This previously paid order now has a balance due: $" +
+                            data
+                            .OutstandingBalance;
+                    }
+                    $("#ShowPayByCCModal").hide();
+                    $('#showOutstandingBalance')
+                        .html('<br><span style=\"color: green;\"  id="outstandingBalance">Due: $(' +
+                            data.OutstandingBalance +
+                            ')</span>');
+                }
+            }
+
+            if (data.Total === 0 || data.Total < 0) {
+                alertCaption += " The order is fully discounted.";
+
+                $("#ConfirmRegistrationBillMe").text("Submit Order");
+                $("#ShowPayByCCModal").hide();
+            }
+
+            alert(alertCaption);
+            $('#discountSpinner').remove();
+        
+    }).fail(commonFuncs.failCallBack).always(function (e) {
             $('#discountSpinner').remove();
             $(self).removeAttr('disabled');
         });

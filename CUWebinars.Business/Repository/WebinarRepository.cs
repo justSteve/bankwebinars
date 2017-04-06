@@ -360,6 +360,7 @@ namespace CUWebinars.Business.Repository
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.OutstandingBalance
                             || o.OrderStatus == OrderStatus.AwaitingVerification)
                             ).Select(o => o.idOrder).ToList();
         }
@@ -463,6 +464,7 @@ namespace CUWebinars.Business.Repository
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.OutstandingBalance
                             //|| o.OrderStatus == OrderStatus.AwaitingVerification
                             )
                             )
@@ -484,6 +486,7 @@ namespace CUWebinars.Business.Repository
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.OutstandingBalance
                             //|| o.OrderStatus == OrderStatus.AwaitingVerification
                             )
                             )
@@ -507,6 +510,7 @@ namespace CUWebinars.Business.Repository
                         && o.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).RegistrationType.ShowRecordingNotifications == "Yes"
                         && (o.OrderStatus == OrderStatus.Billed
                             || o.OrderStatus == OrderStatus.Paid
+                            || o.OrderStatus == OrderStatus.OutstandingBalance
                             || o.OrderStatus == OrderStatus.Submitted))
 
                 .Include(o => o.Affiliate)

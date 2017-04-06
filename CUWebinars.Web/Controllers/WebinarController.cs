@@ -648,14 +648,18 @@ namespace CUWebinars.Web.Controllers
                     try
                     {
                         InitializeDetailsStateFromExpChcSubmit(webinar, model, id.Value, incomingOrder);
-                        var logModelState = JsonConvert.SerializeObject(model.Order, Formatting.None,
-                            new JsonSerializerSettings()
-                            {
-                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                            });
 
-                        _logger.Info("Details | returning checkout session by" + currentUser + " on: " + incomingOrder +
-                                     " {" + logModelState + "}, Audit: {" + _appHelper.GetUserAuditInfo() + "}");
+                        //  logger chokes if Discount is present in Order
+                        //var logModelState = JsonConvert.SerializeObject(model.Order, Formatting.None,
+                        //    new JsonSerializerSettings()
+                        //    {
+
+                        //        MaxDepth = 1,
+                        //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        //    });
+
+                        //_logger.Info("Details | returning checkout session by" + currentUser + " on: " + incomingOrder +
+                        //             " {" + logModelState + "}, Audit: {" + _appHelper.GetUserAuditInfo() + "}");
 
                     }
                     catch (Exception ex)
@@ -1016,7 +1020,9 @@ namespace CUWebinars.Web.Controllers
                 //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
                 if (model.Order.OrderStatus == OrderStatus.Billed
                     || model.Order.OrderStatus == OrderStatus.Paid
-                    || model.Order.OrderStatus == OrderStatus.Submitted)
+                    || model.Order.OrderStatus == OrderStatus.Submitted
+                    || model.Order.OrderStatus == OrderStatus.OutstandingBalance
+                    )
                 {
                     if (_orderManagementService.FindPostEventClaimByOnDemandCode(model.Order).ExpiryDate >=
                         DateTime.Today)
@@ -1083,22 +1089,7 @@ namespace CUWebinars.Web.Controllers
 
                     //populate viewbag for expresscheckout viewmodel
                     ViewBag.Order = order;
-
-                    dynamic loggerStruc = new ExpandoObject();
-                    loggerStruc.idOrder = order.idOrder;
-                    loggerStruc.idUser = order.idUser;
-                    loggerStruc.idAffiliate = order.idAffiliate;
-                    loggerStruc.email = order.BillingEmail;
-                    loggerStruc.TimeStamp = TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat);
-
-                    var newJson =
-                        new JProperty(
-                            "BuildConfirmOrder",
-                            JsonConvert.SerializeObject(loggerStruc));
-
-                    model.Order.AdminComments = JsonHelpers.AddObjectToJsonArray(model.Order.AdminComments,
-                        "BuildConfirmOrder", loggerStruc);
-
+                    
                     order.OrderDate = DateTime.Now;
 
                     PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
@@ -1293,7 +1284,9 @@ namespace CUWebinars.Web.Controllers
                         //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
                         if (checkOrder.OrderStatus == OrderStatus.Billed
                             || checkOrder.OrderStatus == OrderStatus.Paid
-                            || checkOrder.OrderStatus == OrderStatus.Submitted)
+                            || checkOrder.OrderStatus == OrderStatus.Submitted
+                            || checkOrder.OrderStatus == OrderStatus.OutstandingBalance
+                            )
                         {
                             if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >=
                                 DateTime.Today)

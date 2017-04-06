@@ -42,7 +42,7 @@ namespace CUWebinars.Business.Services
                             .Include(o => o.OrderRows.Select(or => or.Discount))
                             .Include(o => o.OrderRows.Select(or => or.Webinar))
                             .Where(o => o.OrderRows.Any(or => or.RowStatus == OrderRowStatus.Active && or.idWebinar == idWebinar)
-                                && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
+                                && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.OutstandingBalance || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted))
                             .ToList();
             totalNumberOrders = theseOrders.Count;
 

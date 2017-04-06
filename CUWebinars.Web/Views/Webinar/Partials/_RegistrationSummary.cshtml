@@ -1,5 +1,8 @@
 ﻿
-<style type="text/css">.OrderSumUser { }</style>
+<style type="text/css">
+    .OrderSumUser {
+    }
+</style>
 @using CUWebinars.Web.Core
 @model RegistrationSummaryViewModel
 
@@ -28,7 +31,7 @@
         <script language="javascript">
             var idRegType = @orderMsgs.idRegType;
         </script>
-        
+
         if (Model.OrderRow.RegistrationType.ShowShippedNotifications.ToLower() == "yes" && Model.OrderRow.ShipmentDate != null)
         {
             showShipped = "<li>Shipped on: " + Model.OrderRow.ShipmentDate.Value.ToShortDateString() + "</li>";
@@ -38,7 +41,8 @@
                 Debug.Assert(order != null, "order != null");
                 if (Model.OrderRow.Order.OrderStatus == OrderStatus.Billed ||
                     Model.OrderRow.Order.OrderStatus == OrderStatus.Paid ||
-                    Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted)
+                    Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted 
+                    || Model.OrderRow.Order.OrderStatus == OrderStatus.OutstandingBalance)
                 {
                     <h5 style="text-align: right; background-color: darkorange; color: whitesmoke; font-weight: bold; padding-top: 2px; padding-right: 3px;" class="short_headline"><span>Connection Status</span></h5>
                     <aside style="width: 100%" class="widget clearfix">
@@ -50,7 +54,7 @@
                             else
                             {
 
-                                @Html.Partial("WebinarStatus", new WebinarStatusUpdate{Webinar = Model.OrderRow.Webinar})
+                                @Html.Partial("WebinarStatus", new WebinarStatusUpdate { Webinar = Model.OrderRow.Webinar })
                             }
                         }
                     </aside>

@@ -123,7 +123,7 @@ OCA.initializeFunctions = function () {
 
 
     OCA.hookUpApplyDiscountLogic = function (btn, orderRowId) {
-        
+
         btn.on('click', function (e) {
 
             e.preventDefault();
@@ -159,33 +159,48 @@ OCA.initializeFunctions = function () {
                 if (data.Result == 0) {
                     alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found or had an error that prevented usage. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                 }
-                //                regTypeShort = row.RegistrationType.OptionLabelShort,
-                //BasePrice = pricesAndDiscounts.UnitPrice,
-                //Discount = pricesAndDiscounts.TotalDiscount,
-                //OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
-                //Tax = pricesAndDiscounts.TaxAmount,
-                //Total = pricesAndDiscounts.TotalOrderPrice,
-                //FlatOff = pricesAndDiscounts.Discount.FlatOff,
-                //PercentOff = pricesAndDiscounts.Discount.PercentOff
-                if (data.PercentOff > 0) {
-
-                    registerDuringCheckout.totalDiscount = data.Discount;
+                if (data.Tax > 0) {
+                    $('#showTax').removeClass("hidden");
                 } else {
-                    registerDuringCheckout.totalDiscount = data.Discount;
+                    $('#showTax').addClass("hidden");
+                }
+                console.log(data);
+                var alertCaption = data.UpdateSuccessCaption;
+                $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+                $('#discountCaption').html(data.DiscountCaption);
+                $('#optionLabel').html(data.regTypeShort);
+
+                $('#baseCost').html('$' + data.BasePrice + '');
+                $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+                $('#taxAmt').html(data.Tax + '');
+                $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+
+                $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+                if (data.TotalPaid !== 0) {
+                    if (data.OutstandingBalance > 0) {
+                        $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
+
+                    } else {
+                        if (data.OrderStatusCaption !== "") {
+                            $('#orderStatusLabel').html(data.OrderStatusCaption);
+                            alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+                        }
+                        $("#ShowPayByCCModal").hide();
+                        $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="outstandingBalance">Due: $(' + data.OutstandingBalance + ')</span>');
+                    }
                 }
 
-                console.log(data);
-                var newTotalPrice = data.Total;
+                if (data.Total === 0 || data.Total < 0) {
+                    alertCaption += " The order is fully discounted.";
 
-                $("#amount").val(newTotalPrice);
+                    $("#ConfirmRegistrationBillMe").text("Submit Order");
+                    $("#ShowPayByCCModal").hide();
+                }
 
-                if (newTotalPrice < 0)
-                    newTotalPrice = 0;
+                alert(alertCaption);
 
-                $('#addlocSpiel').text('To add additional locations for this order please email us at  @globalConfig.TenantEmail.').addClass('text-info');
-
-                $('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
-                $('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                //$('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
+                //$('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
                 //$('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
 
                 $('#discountSpinner').remove();

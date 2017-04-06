@@ -4628,7 +4628,7 @@ namespace CUWebinars.Web.Controllers.Admin
             IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
             IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
 
-            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted))
+            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted|| o.OrderStatus == OrderStatus.OutstandingBalance))
             {
 
                 var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);

@@ -271,7 +271,7 @@ namespace CUWebinars.Web.Controllers
         public void MigrateCompliancePerspectivesOrders()
         {
             IList<Order> orders =
-                _orderManagementService.GetOrdersByWebinar(842).Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Paid).ToList();
+                _orderManagementService.GetOrdersByWebinar(842).Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.OutstandingBalance || o.OrderStatus == OrderStatus.Paid).ToList();
             _logger.Info("CPMigrator found " + orders.Count + " orders to process.");
             var nextCPId = _webinarManagementService.GetNextCompliancePerspectives();
 

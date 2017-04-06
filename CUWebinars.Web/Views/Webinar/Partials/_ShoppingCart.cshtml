@@ -112,7 +112,7 @@
                                     <div class="tab-pane" id="contactInfo"></div>
                                     <div class="tab-pane" id="confirmation"></div>
                                 }
-                                else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
+                                else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted || Model.Order.OrderStatus == OrderStatus.OutstandingBalance)
                                 {
                                     if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
                                     {

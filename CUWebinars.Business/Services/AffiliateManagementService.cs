@@ -94,7 +94,7 @@ namespace CUWebinars.Business.Services
                         {
                             invoice.TotalOnPaid += adjustedTotal;
                         }
-                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
+                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed || order.OrderStatus == OrderStatus.OutstandingBalance)
                         {
                             invoice.TotalOnBilled += adjustedTotal;
                         }
@@ -593,7 +593,7 @@ namespace CUWebinars.Business.Services
             {
                 invoice.TotalOnPaid += row.RowPrice;
             }
-            if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
+            if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed || order.OrderStatus == OrderStatus.OutstandingBalance)
             {
                 invoice.TotalOnBilled += row.RowPrice;
                 //_logger.Info("TotalOnBilled =  " + invoice.TotalOnBilled);
@@ -644,7 +644,7 @@ namespace CUWebinars.Business.Services
                 foreach (var affiliate in listofAffiliates)
                 {
                     BuildAffiliateInvoice(new AffiliateInvoiceDTO(), orders.Where(o => o.idAffiliate == affiliate.idUserAff
-                        && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted)).OrderBy(o => o.OrderDate)
+                        && (o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.OutstandingBalance)).OrderBy(o => o.OrderDate)
                         .ToList(), webinarID, affiliate.idUserAff);
                 }
 
@@ -906,7 +906,7 @@ namespace CUWebinars.Business.Services
                 }
                 var weekNumber = cal.GetWeekOfYear(theMonday, dfi.CalendarWeekRule,
                                      dfi.FirstDayOfWeek) + "-2016";
-                
+
                 //Console.WriteLine("The current date and time: {0:MM/dd/yy H:mm:ss zzz}",thisDate2);
                 string theFileName = theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" +
                                      idAffiliate + ".pdf";
@@ -1040,7 +1040,7 @@ namespace CUWebinars.Business.Services
                     var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                     if (registration.Affiliate.BillingModel == "TTS")
                     {
-                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
+                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.OutstandingBalance || order.OrderStatus == OrderStatus.Billed)
                         {
                             registration.TotalOnBilled += row.RowPrice;
 
@@ -1051,7 +1051,7 @@ namespace CUWebinars.Business.Services
                         }
                     }
 
-                    if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed ||
+                    if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed || order.OrderStatus == OrderStatus.OutstandingBalance ||
                         order.OrderStatus == OrderStatus.Paid)
                     {
                         registration.TotalOnPaid += row.RowPrice;

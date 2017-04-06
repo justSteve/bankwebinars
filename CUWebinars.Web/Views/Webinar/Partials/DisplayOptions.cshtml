@@ -124,7 +124,7 @@
         if ((Model.WebinarStatus == WebinarStatus.Scheduled
             || Model.WebinarStatus == WebinarStatus.Active
             || Model.WebinarStatus == WebinarStatus.InProgress
-            ) && Model.idWebinar != 2248 && Model.idWebinar != 2109)
+            ) && Model.idWebinar != 2248 && Model.idWebinar != 2109 && Model.idWebinar != 2484)
         {
             <div id="displayAddLoc">
                 @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)
