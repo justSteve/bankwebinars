@@ -488,7 +488,11 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                     });
 
                                     $('#Canceller').on('click', function (e) {
-                                        cancelOrder(orderId, webinarId);
+                                        e.preventDefault();
+
+
+                                        $('#CancelModal').modal('show');
+                                        //cancelOrder(orderId, webinarId);
                                     });
 
                                     populateAdditionalLocationsOn3rdTab();

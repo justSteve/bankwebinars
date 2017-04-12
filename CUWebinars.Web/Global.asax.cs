@@ -101,6 +101,21 @@ namespace CUWebinars.Web
                                "BWLocal.xml")));
                     }
                     break;
+                case DomainConstants.DirectorSeries:
+                    if (!Debugger.IsAttached)
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                                "DESLog4net.xml")));
+                        //"BWLocal.xml")));
+                    }
+                    else
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                           new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                               "DESLocal.xml")));
+                    }
+                    break;
 
                 case DomainConstants.CUWebinars:
                     if (!Debugger.IsAttached)

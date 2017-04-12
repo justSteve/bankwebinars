@@ -1687,7 +1687,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     model.TimeZone = model.Affiliate.WebUser.timeZone;
 
                 }
-                if (_globalConfig.Tenant == "BankWebinars")
+                if (_globalConfig.Tenant == "BankWebinars" || _globalConfig.Tenant == "CUWebinars")
                     model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
 
                 model.BasePrice = "$265";

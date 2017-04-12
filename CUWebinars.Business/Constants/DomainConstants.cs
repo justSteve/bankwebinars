@@ -47,6 +47,7 @@ namespace CUWebinars.Business.Constants
         public const string VerificationKeyForBatchChangePwd = "VerificationKeyForBatchChangePwd";
         public const string VerifyEmailLink = "VerifyEmailLink";
         public const string BankWebinars = "BankWebinars";
+        public const string DirectorSeries = "DirectorSeries";
         // ReSharper disable once InconsistentNaming
         public const string CUWebinars = "CUWebinars";
         public const string ClaimDateFormatText = "yyyy-MM-dd";
@@ -61,7 +62,6 @@ namespace CUWebinars.Business.Constants
             }
         }
 
-        
 
 
         public const string CreationModeImported = "imported";

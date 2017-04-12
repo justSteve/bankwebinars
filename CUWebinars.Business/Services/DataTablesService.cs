@@ -242,8 +242,6 @@ namespace CUWebinars.Business.Services
                     .Where(o => o.idAffiliate == idAffliate)
                     .Select(o => o.WebUser).Distinct()
                     .Include(o => o.Institution)
-                    .Include(o => o.Orders)
-
                     .Where(u => u.UserType == UserType.Customer)
                     .ToList();
             }
@@ -252,16 +250,8 @@ namespace CUWebinars.Business.Services
                 theseUsers = _context.Orders
                     .Select(o => o.WebUser).Distinct()
                     .Include(o => o.Institution)
-                    .Include(o => o.Orders)
                     .Where(u => u.UserType == UserType.Customer)
                     .ToList();
-                //theseUsers = _context.WebUsers
-                //    .Include(u => u.Institution)
-                //    .Include(u => u.Orders)
-                //    .Include(u => u.Addresses)
-                //    .Where( u => u.UserType == UserType.Customer)
-                //    .Take(200)
-                //    .ToList();
             }
 
             totalNumberUsers = theseUsers.Count;
@@ -283,31 +273,31 @@ namespace CUWebinars.Business.Services
         }
 
 
-        public IEnumerable<WebUser> GetWebUsers(int idAffliate, int totalNumberUsers, out int totalNumberUsers_)
-        {
-            IEnumerable<WebUser> theseUsers;
+        //    public IEnumerable<WebUser> GetWebUsers(int idAffliate, int totalNumberUsers, out int totalNumberUsers_)
+        //    {
+        //        IEnumerable<WebUser> theseUsers;
 
-            if (idAffliate != 19)
-            {
-                theseUsers = _context.WebUsers
-                    .Include(u => u.Institution)
-                    .Include(u => u.Orders.Where(o => o.idAffiliate == idAffliate))
-                    .Include(u => u.Addresses)
+        //        if (idAffliate != 19)
+        //        {
+        //            theseUsers = _context.WebUsers
+        //                .Include(u => u.Institution)
+        //                .Include(u => u.Orders.Where(o => o.idAffiliate == idAffliate))
+        //                .Include(u => u.Addresses)
 
-                    .ToList();
-            }
-            else
-            {
-                theseUsers = _context.WebUsers
-                    .Include(u => u.Institution)
-                    .Include(u => u.Orders)
-                    .Include(u => u.Addresses)
-                    .ToList();
-            }
+        //                .ToList();
+        //        }
+        //        else
+        //        {
+        //            theseUsers = _context.WebUsers
+        //                .Include(u => u.Institution)
+        //                .Include(u => u.Orders)
+        //                .Include(u => u.Addresses)
+        //                .ToList();
+        //        }
 
-            totalNumberUsers_ = theseUsers.Count();
+        //        totalNumberUsers_ = theseUsers.Count();
 
-            return theseUsers;
-        }
+        //        return theseUsers;
+        //    }
     }
 }

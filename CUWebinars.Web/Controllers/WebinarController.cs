@@ -1399,7 +1399,7 @@ namespace CUWebinars.Web.Controllers
 
             //_orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
             //    webinar.idWebinar);
-
+            
             // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
             model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                 new DisplayRowPriceViewModel

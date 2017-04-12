@@ -52,7 +52,6 @@ $(function () {
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
-
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
             if (desCheckout) {
@@ -128,8 +127,9 @@ $(function () {
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
 
             var data = cancelOrderForm.serialize();
-
+                
             $('#cancelRegistrationbtn').on('click', function (e) {
+
                 e.preventDefault();
                 // disable button while operation in progress
                 $('#cancelRegistration').attr('disabled', 'disabled');
@@ -426,7 +426,7 @@ function isShippingAddressRequired(jQueryObject) {
 function setUpEditButtons() {
 
     $('#addAnotherAddLoc').on('click', function (e) {
-        alert("hisd")
+        
         e.preventDefault();
 
         var newId;

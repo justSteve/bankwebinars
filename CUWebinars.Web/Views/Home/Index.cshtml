@@ -4,16 +4,20 @@
 @model List<Webinar>
 @{
 
-    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
     if (!(ViewBag.Msg == null || ViewBag.Msg == string.Empty))
     {
         <script type="text/javascript" language="javascript">
             alert(@ViewBag.Msg);
         </script>
     }
-
-
+    if (_globalConfig.Tenant == "DirectorSeries")
+    {
+        Layout = "~/Views/Shared/_Layout_DirectorSeries.cshtml";
+    }
 }
+
+
 <!-- Begin Slider
     https://github.com/woothemes/FlexSlider/issues/104?source=cc -->
 
@@ -32,14 +36,14 @@
                     <h2 align="center">Welcome!</h2>
                     <div style="margin-left: 50px;">
 
-                        <p>Welcome to the new @globalConfig.Tenant website. If you are a first time visitor, welcome. If you have visited us before, welcome back. We hope you find what you want and that the ordering process is efficient. Be sure and let us know if you have any comments by using the Help & Feedback link below. </p>
+                        <p>Welcome to the new @_globalConfig.Tenant website. If you are a first time visitor, welcome. If you have visited us before, welcome back. We hope you find what you want and that the ordering process is efficient. Be sure and let us know if you have any comments by using the Help & Feedback link below. </p>
 
                     </div>
 
                     @*<p class="more"><a class="btn btn-primary" href="~/Content/template/portfolio-single.html">Details &rarr;</a></p>*@
                 </div>
             </li>
-            @if (globalConfig.Tenant == "BankWebinars")
+            @if (_globalConfig.Tenant == "BankWebinars")
             {
                 <li>
                     <div class="img">

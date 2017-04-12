@@ -1,3 +1,15 @@
-﻿@{
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+﻿@using CUWebinars.Web.Core
+@{
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    if (_globalConfig.Tenant == "DirectorSeries")
+    {
+        Layout = "~/Views/Shared/_Layout_DirectorSeries.cshtml";
+
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    }
 }

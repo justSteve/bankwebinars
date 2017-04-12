@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web.Mvc;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Services;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Services;
 
 namespace CUWebinars.Web.Controllers
@@ -14,6 +15,7 @@ namespace CUWebinars.Web.Controllers
     //[MonitorAffiliate]
     public class HomeController : Controller
     {
+        private GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingletonCreator.UniqueInstance;
 
         private readonly IWebinarRepository _webinarRepository;
         private IStateService _stateService;
@@ -120,14 +122,14 @@ namespace CUWebinars.Web.Controllers
 
             Business.Models.Affiliate affiliate;
 
-            if (!id.HasValue)
+            if (id.HasValue)
             {
                 affiliate = _affiliateManagementService.FindById(id.Value);
             }
             else
             {
 
-                affiliate = affiliate = _affiliateManagementService.FindById(19);
+                affiliate  = _affiliateManagementService.FindById(19);
             }
 
             return View(affiliate);
@@ -148,7 +150,10 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Index()
         {
-
+            if (_globalConfig.Tenant == "DES")
+            {
+                
+            }
             ViewBag.PageStyleType = "index-flex-dark";
             if (Request.Url != null && Request.Url.PathAndQuery.ContainsIgnoreCase("email does not match"))
             {
