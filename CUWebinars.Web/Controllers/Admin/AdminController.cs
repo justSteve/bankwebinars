@@ -164,7 +164,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [ValidateInput(false)]
         [HttpPost]
-        public JsonResult AffiliateUpdate(AffiliateSettingsViewModel model)
+        public JsonResult UpdateAffiliate(AffiliateSettingsViewModel model)
         {
             try
             {
@@ -174,7 +174,7 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             catch (Exception ex)
             {
-                _logger.FatalException("AffiliateUpdate", ex);
+                _logger.FatalException("UpdateAffiliate", ex);
                 return Json(new { result = "Failed" });
             }
         }

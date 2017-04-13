@@ -42,9 +42,9 @@ namespace CUWebinars.Web.App_Start
 
             );
             routes.MapRoute(
-                name: "AffiliateUpdate",
-                url: "AffiliateUpdate",
-               defaults: new { controller = "Cart", action = "AffiliateUpdate", id = 0 }
+                name: "UpdateAffiliate",
+                url: "UpdateAffiliate",
+               defaults: new { controller = "Cart", action = "UpdateAffiliate", id = 0 }
 
             );
             routes.MapRoute(

@@ -44,6 +44,7 @@ namespace CUWebinars.Web.Models
         public string ConfirmPassword { get; set; }
 
         public UserType UserType { get; set; }
+        [Required]
         public string Title { get; set; }
         public int? idWebUser { get; set; }
 

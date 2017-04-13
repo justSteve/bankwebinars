@@ -729,9 +729,9 @@ namespace CUWebinars.Web.Controllers
                 parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
 
                 parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
-                parameters += "ApproveURL~http://d2d2b3e2.ngrok.io/cart/PayTraceApproved/|";
-                parameters += "DeclineURL~http://d2d2b3e2.ngrok.io/cart/PayTraceDeclined/|";
-                parameters += "ReturnURL~http://d2d2b3e2.ngrok.io/cart/PayTracePostBack/|";
+                parameters += "ApproveURL~http://1910a3b7.ngrok.io/cart/PayTraceApproved/|";
+                parameters += "DeclineURL~http://1910a3b7.ngrok.io/cart/PayTraceDeclined/|";
+                parameters += "ReturnURL~http://1910a3b7.ngrok.io/cart/PayTracePostBack/|";
                 //parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
                 //parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
                 //parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";

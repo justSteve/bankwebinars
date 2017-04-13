@@ -41,7 +41,7 @@
 
                 $('#AffiliateUpdate').submit(function (e) {
                     e.preventDefault();
-                    var jsonUrl = '/Admin/AffiliateUpdate';
+                    var jsonUrl = '/Admin/UpdateAffiliate';
                     var payload = $('form#AffiliateUpdate').serialize();
 
                     $.ajax({
@@ -119,7 +119,7 @@
                     color: #555;
                 }
             </style>
-            <form class="jotform-form" action="/admin/AffiliateUpdate" method="post" name="AffiliateUpdate" id="AffiliateUpdate" accept-charset="utf-8">
+            <form class="jotform-form" action="/admin/AffiliateUpdate" method="post" name="UpdateAffiliate" id="AffiliateUpdate" accept-charset="utf-8">
                 <input type="hidden" name="Affiliate.idUserAff" value="@Model.Affiliate.idUserAff" />
                 <ul class="form-section page-section">
                     <li class="form-line" data-type="control_text" id="id_37">

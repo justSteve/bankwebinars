@@ -20,6 +20,31 @@
 @Styles.Render("~/Content/data-tables")
 @Styles.Render("~/Content/notifications-ops-styles")
 
+<script type="text/javascript">
+    $(function() {
+
+        $('#frmEditAffiliate_ > span.form-body').load('/Admin/GetAffiliates',
+            function() {
+
+
+                $('#frmEditAffiliate_').on('change',
+                    function(e) {
+
+                        e.preventDefault();
+
+                        var self = this;
+
+                        var payload = {
+                            idAffiliate: $('#SelectedAffiliate').val()
+                        };
+                        console.log(payload);
+
+                        window.location = "/admin/EditAffiliate?idAffiliate=" + $('#SelectedAffiliate').val();
+                    });
+            });
+    });
+</script>
+
 
 @{
 
@@ -47,6 +72,23 @@
                             <li><a id="GetManualResetPasswordFieldsButton">Manually Reset Password</a></li> @*url: '/Admin/ManualPasswordReset',*@
                             <li><a data-toggle="collapse" href="#users"> Users</a></li>
                             <li><a id="AssignClaimHtmlButton" href="@Url.Content("~/Admin/ClaimsManagement")">Assign Claims</a></li>
+                            <li>
+                                <div>
+                                    <div id="EditAffiliate_">
+                                        @using (Html.BeginForm("EditAffiliate", "Admin", FormMethod.Get, new { id = "frmEditAffiliate_" }))
+                                        {
+                                            <span class="form-body">
+                                                @* content will be loaded here*@
+                                            </span>
+                                            <span class="result">
+                                                @* content will be loaded here*@
+                                            </span>
+
+                                        }
+                                    </div>
+
+                                </div></li>
+
                         </ul>
                     </div>
                 </div>
