@@ -723,8 +723,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (existingOrder != null)
                     {
+
                         _logger.Warn("CreateOrder found existing order: " + existingOrder.idOrder);
-                        _stateService.SetValue(DomainConstants.FoundExistingOrder, existingOrder);
+                        //_stateService.SetValue(DomainConstants.FoundExistingOrder, existingOrder);
+                        return _orderManagementService.UserHasPrexistingOrder(existingOrder);
                     }
                 }
                 beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
@@ -939,6 +941,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                     }
                     else
                     {
+                        _logger.Info("Building tempUser account: " + _stateService.GetValue<string>(WebUiConstants.SessionId));
+
                         webUser = _membershipService.CreateWebUser(
                             _globals.Tenant,
                             "Not",
@@ -956,15 +960,19 @@ namespace CUWebinars.Web.Core.Orchestrators
                     }
                 }
 
-                _logger.Info("WebUser id is {0}", webUser.idUser);
-                var reuseOrder = _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(webinar.idWebinar,
-                    webUser.email);
+                //_logger.Info("WebUser id is {0}", webUser.idUser);
+                // check for dupe is carried out in the CreateNewOrder method so do not do it here.
+                //var reuseOrder = _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(webinar.idWebinar, webUser.email);
 
-                Order newOrder = new Order();
-                if (reuseOrder != null)
-                    newOrder = _orderManagementService.GetOrderById(reuseOrder);
+                //Order newOrder = new Order();
+                //if (reuseOrder> 0)
+                //    newOrder = _orderManagementService.GetOrderById(reuseOrder);
 
-                newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+                var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+                if (newOrder.AuditInfo != null)
+                {
+                    _logger.Warn("CreateNewOrder: non-null AuditInfo: "+ orderRow.idOrderRow + " - " + newOrder.AuditInfo + " is now: " + _appHelper.GetUserAuditInfo());
+                }
                 newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
                 newOrder.Origin = DomainConstants.Cart;
 
@@ -978,13 +986,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                     newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
                 }
 
-                newOrder = _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
+                return _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
 
-                return newOrder;
+                //return newOrder;
             }
             catch (Exception ex)
             {
-                _logger.FatalException("CreateNewOrder", ex);
+                _logger.FatalException("CreateNewOrder: orderRow.idOrder" + orderRow.idOrder, ex);
+                _logger.FatalException("CreateNewOrder: orderRow.idOrderRow" + orderRow.idOrderRow, ex);
                 throw;
             }
 
@@ -1122,9 +1131,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 _logger.Fatal("UpdateAdditionalLocations");
                 throw new Exception("Invalid OrderRow passed to AdditionalLocation adjuster");
-                
+
             }
-    }
+        }
 
         public Order LoadOrder(int id)
         {

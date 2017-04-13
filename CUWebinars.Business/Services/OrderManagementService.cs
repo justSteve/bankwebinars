@@ -2550,6 +2550,51 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public Order UserHasPrexistingOrder(Order existingOrder)
+        {
+            if (existingOrder == null) return null;
+
+            var row = existingOrder.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+            Debug.Assert(row != null, "row != null");
+            var foundByEmail = _orderRepository.GetOrdersByWebinar(row.idWebinar)
+                .Where(o => o.BillingEmail == existingOrder.BillingEmail);
+
+            var byEmail = foundByEmail as IList<Order> ?? foundByEmail.ToList();
+            if (byEmail.Count() > 1)
+            {
+                //list.Where(o => o.B).Select(o => o.Txt))
+                _logger.Warn("UserHasPrexistingOrder: found:" + string.Join(",", byEmail.Select(o => o.idOrder)));
+                var foundPaidOrSubmitted = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
+                var paidOrSubmitted = foundPaidOrSubmitted as Order[] ?? foundPaidOrSubmitted.ToArray();
+                if (paidOrSubmitted.Any())
+                {
+                    _logger.Warn("UserHasPrexistingOrder: returnedPaid:" + paidOrSubmitted.FirstOrDefault().idOrder);
+                    return paidOrSubmitted.FirstOrDefault();
+                }
+
+                var foundInProcess = byEmail.Where(o => o.OrderStatus == OrderStatus.InProcess).OrderByDescending(o => o.OrderDate).ToList();
+
+                if (foundInProcess.Any())
+                {
+                        _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + foundInProcess.FirstOrDefault().idOrder);
+                    return foundInProcess.FirstOrDefault();
+                }
+
+
+                var foundCanceled = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
+                var canceled = foundCanceled as Order[] ?? foundInProcess.ToArray();
+                if (canceled.Any())
+                {
+                    _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + canceled.FirstOrDefault().idOrder);
+                    return canceled.FirstOrDefault();
+                }
+
+            }
+
+            return null;
+        }
+
         public string InvoicedOrderIsUpdated(Order order)
         {
             throw new NotImplementedException();

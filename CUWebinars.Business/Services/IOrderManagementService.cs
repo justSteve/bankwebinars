@@ -166,5 +166,6 @@ namespace CUWebinars.Business.Services
 
         string InvoicedOrderIsUpdated(Order order);
         IList<string> OrderHasCc(Order order);
+        Order UserHasPrexistingOrder(Order existingOrder);
     }
 }
