@@ -677,7 +677,7 @@ namespace CUWebinars.Web.Helpers
                 if (row.Webinar.Status == WebinarStatus.Recorded)
                 {
                     fields.PaymentCaption =
-                        "Though pre-payment is not required (we'll be happy to invoice you at " + order.BillingEmail +
+                        "Though payment at this time is not required (we'll be happy to invoice you at " + order.BillingEmail +
                         ") if you wish to pay by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
                         "'> click here.</a>" +
                         " Is someone else in your organization responsible for payments? <a href='" +

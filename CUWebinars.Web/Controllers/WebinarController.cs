@@ -1089,7 +1089,7 @@ namespace CUWebinars.Web.Controllers
 
                     //populate viewbag for expresscheckout viewmodel
                     ViewBag.Order = order;
-                    
+
                     order.OrderDate = DateTime.Now;
 
                     PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
@@ -1399,7 +1399,7 @@ namespace CUWebinars.Web.Controllers
 
             //_orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
             //    webinar.idWebinar);
-            
+
             // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
             model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                 new DisplayRowPriceViewModel
@@ -1428,7 +1428,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     lstAddLoc += additionalLocation.Email + ",";
                 }
-                model.CheckoutConfirmViewModel.DisplayRowPriceViewModel.AddressesForAdditionalLocations =lstAddLoc.TrimEnd(',');
+                model.CheckoutConfirmViewModel.DisplayRowPriceViewModel.AddressesForAdditionalLocations = lstAddLoc.TrimEnd(',');
             }
 
 
@@ -2105,7 +2105,7 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-
+                var startTime = DateTimeHelper.GetTimeInCentralStandardTime(webinar.Date);
                 var wReqUpdate = new WebinarReqUpdate
                 {
                     description = output,
@@ -2113,9 +2113,14 @@ namespace CUWebinars.Web.Controllers
                     times = new List<DateTimeRange> {
                     new DateTimeRange
                     {
-                        startTime = webinar.Date.ToUniversalTime(),
-                        endTime = webinar.Date.ToUniversalTime().AddHours((double)webinar.Duration)
+                        startTime = Convert.ToDateTime(startTime.Replace(" GMT", "")),
+                        endTime = Convert.ToDateTime(startTime.Replace(" GMT", "")).AddHours((double)webinar.Duration)
                     }
+                    //new DateTimeRange
+                    //{
+                    //    startTime = webinar.Date.ToUniversalTime(),
+                    //    endTime = webinar.Date.ToUniversalTime().AddHours((double)webinar.Duration)
+                    //}
                 },
                     timeZone = "America/Chicago",
                     locale = WebinarReqUpdate.LocaleEnum.en_US
@@ -2233,8 +2238,6 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = "Failed", Msg = ex.Message }, JsonRequestBehavior.AllowGet);
             }
 
-            // have we made sure this is called "outside" enough so updates above are retained
-            // with current positioning? 
 
             webinar.Status = WebinarStatus.Active;
 

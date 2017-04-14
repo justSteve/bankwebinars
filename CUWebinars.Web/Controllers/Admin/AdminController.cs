@@ -3141,7 +3141,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     // custom filtering by Order Status
                     if (param.selectedOrderStatuses != null)
                     {
-                        dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus)).ToList();
+                        dtoSource = dtoSource.Where(x => param.selectedOrderStatuses.Contains(x.OrderStatus) || x.OrderStatus == OrderStatus.OutstandingBalance).ToList();
                     }
 
                     List<String> columnSearch = new List<string>();
