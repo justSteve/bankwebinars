@@ -14,8 +14,8 @@
     }
 
     .regTypeDescOutdent {
-        border-top-style: dotted;
-        border-top-color: gray;
+        border-bottom-style: solid;
+        border-bottom-color: gray;
         margin-top: 10px;
         text-indent: -1em;
         padding-left: 1em;
@@ -49,6 +49,15 @@
         <button id="cancelCCEmail" class="btn" data-dismiss="modal">Cancel</button>
     </div>
 </div>
+<div id="ExplainsRegType" class="modal hide fade">
+
+    <div id="ExplainsRegTypeBody" class="modal-body">
+        
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal">Dismiss</button>
+    </div>
+</div>
 <div id="ShowsOptions">
     @{
         if (Model.OrderRowExists)
@@ -65,6 +74,9 @@
                 <dl>
                     @foreach (var myOption in Model.Options)
                     {
+                        <script language="javascript" type="text/javascript">
+                            var toolText = "@Html.Raw(myOption.Key.OptionExplain)";
+                        </script>
                         bool appendJustOnce = true;
 
                         if (!myOption.Key.SKU.Contains("Upgrade"))
@@ -78,7 +90,7 @@
                                 &nbsp;&nbsp;<b>
                                     @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;
                                 </b>
-                                <a onclick="return false;" data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>
+                                <a class="_toolTip"  data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>
                             </dt>
                         }
                         else
@@ -100,7 +112,7 @@
                                         @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;- $
                                         @myOption.Key.Price
                                     </b>&nbsp;
-                                    &nbsp;<a onclick=javascript:void(0); data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
+                                    &nbsp;<a class="_toolTip"  data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
                                     <br />
                                 </dt>
                             }
@@ -113,11 +125,21 @@
                     <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal"><span id="AttendRegTypesCaption">attendance options explained</span></a>
                 </div>
             </div>
+
             <script type="text/javascript" language="javascript">
                 $(document).ready(function () {
                     $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");
-                    $('.dt').tooltip({ selector: "a[rel=tooltip]" });
 
+                    $(document).ready(function () {
+                        $('a._toolTip').click(function () {
+                            console.log(this);
+
+                            //$("#ExplainsRegTypeBody").text(this.title);
+                            $("#AttendRegTypes").modal('show');
+
+                            return false;
+                        });
+                    });
                 });
             </script>
         }
