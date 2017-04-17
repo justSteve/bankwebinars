@@ -7,13 +7,16 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 id="myModalLabel">Additional Locations</h3>
+    @*<div class="AddLocCaption">
+            <blockquote style="margin-bottom: 0;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
+        </div>*@
     <div class="AddLocCaption">
-        <blockquote style="margin-bottom: 0;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
+        <blockquote style="margin-bottom: 0;">Additional Locations can now be entered on the Order Confirmation screen.</blockquote>
     </div>
 </div>
 <div class="modal-body">
 
-    <p><button id="AddInputsButton" class="btn btn-mini btn-success pull-right">Add Additional Location(s) - @showPrice</button></p>
+    @*<p><button id="AddInputsButton" class="btn btn-mini btn-success pull-right">Add Additional Location(s) - @showPrice</button></p>*@
     @{
         <div id="AdditionalLocationEmailWrapper">
             @{
@@ -30,11 +33,21 @@
                 }
             }
         </div>
+        <div id="cCLocationsCaption">
+            @using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "AdjustCcLocsForm", @class = "form-horizontal" }))
+            {
+                <input type="hidden" value="@Model.OrderExists" name="idOrder" />
+                <div id="cCLocationsList"> </div>
+                <div id="collectCcLocations"> </div>
+
+
+            }
+
+
+        </div>
+        <div class="modal-footer">
+            <button id="closeButton" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
     }
 </div>
-<div class="modal-footer">
-    <button id="closeButton" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-</div>
-
-
 

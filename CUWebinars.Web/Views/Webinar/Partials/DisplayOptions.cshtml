@@ -132,11 +132,8 @@
 
                     $(document).ready(function () {
                         $('a._toolTip').click(function () {
-                            console.log(this);
-
                             //$("#ExplainsRegTypeBody").text(this.title);
                             $("#AttendRegTypes").modal('show');
-
                             return false;
                         });
                     });
@@ -148,7 +145,7 @@
             || Model.WebinarStatus == WebinarStatus.InProgress
             ) && Model.idWebinar != 2248 && Model.idWebinar != 2109 && Model.idWebinar != 2484)
         {
-            <div id="displayAddLoc">
+            <div class="clearfix" id="displayAddLoc">
                 @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)
             </div>
         }

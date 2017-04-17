@@ -121,5 +121,73 @@ namespace CUWebinars.Web.Helpers
 
             return result;
         }
+
+        public static TagBuilder GetRendererOfCcLocations(IList<string> emailAddresses)
+        {
+            const string locationsSpanPrefix = "CcLocationSpan-";
+            const string breakSuffix = "-break";
+            const string additionalLocationDeleteSuffix = "-CcLocationEmail-delete";
+            const string additionalLocationEmailPrefix = "CcLocationEmail-";
+            const string nonBreakingSpace = "&nbsp;";
+            var stringBuilder = new StringBuilder();
+
+
+            var spanBuilder = new TagBuilder("span");
+            var inputBuilder = new TagBuilder("input");
+            var iconBuilder = new TagBuilder("i");
+
+            /***************** The generataed element will look like this: *****************/
+            /*
+                <span id="LocationSpan-0">
+                   <input aria-describedby="AdditionalLocationEmail_0-error" aria-invalid="false" class="valid" id="AdditionalLocationEmail-0" name="AdditionalLocations[0].Email" placeholder="Enter email address" type="email" value="test@yahoo.com">&nbsp;
+                   <i class="icon-white icon-trash" id="0-AdditionLocationEmail-delete" style="cursor: pointer"></i>
+                   <br id="0-break">
+                </span>             
+             */
+
+            if (emailAddresses.Any())
+            {
+                for (var i = 0; i < emailAddresses.Count; i++)
+                {
+                    spanBuilder = new TagBuilder("span");
+                    inputBuilder = new TagBuilder("input");
+                    iconBuilder = new TagBuilder("i");
+
+                    inputBuilder.GenerateId(additionalLocationEmailPrefix + i);
+                    inputBuilder.MergeAttributes(new Dictionary<string, string>
+                    {
+                        {"name", "CcLocations[" + i + "].Email"},
+                        {"type", "email"},
+                        {"placeholder", "Enter email address"},
+                        {"aria-invalid", "false"},
+                        {"aria-describedby", "CcLocationEmail_" + i + "-error"},
+                        {"value", emailAddresses[i]},
+                    });
+                    inputBuilder.AddCssClass("valid");
+
+                    iconBuilder.AddCssClass("icon-trash");
+                    iconBuilder.AddCssClass("icon-white");
+                    iconBuilder.MergeAttribute("style", "cursor: pointer");
+                    iconBuilder.MergeAttribute("id", string.Concat(i, additionalLocationDeleteSuffix));
+
+                    spanBuilder.GenerateId(locationsSpanPrefix + i);
+                    spanBuilder.InnerHtml = string.Concat(
+                        inputBuilder.ToString(TagRenderMode.SelfClosing),
+                        nonBreakingSpace,
+                        iconBuilder.ToString(TagRenderMode.Normal),
+                        "<br id=" + i + breakSuffix + ">"
+                        );
+
+                    stringBuilder.Append(spanBuilder.ToString(TagRenderMode.Normal));
+                }
+            }
+
+            var div = new TagBuilder("div");
+            div.GenerateId("collectCcLocations");
+            div.AddCssClass("addLocsBox");
+            div.InnerHtml = emailAddresses.Any() ? stringBuilder.ToString() : spanBuilder.ToString(TagRenderMode.Normal);
+
+            return div;
+        }
     }
 }

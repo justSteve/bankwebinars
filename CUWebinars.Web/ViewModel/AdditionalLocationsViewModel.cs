@@ -10,6 +10,7 @@ namespace CUWebinars.Web.ViewModel
         public string Addresses { get; set; }
         public decimal OptionsCost { get; set; }
         public TagBuilder AdditionalLocationsRenderer { get; set; }
+        public TagBuilder CcLocationsRenderer { get; set; }
         public EditAdditionalLocationsViewModel EditAdditionalLocationsViewModel { get; set; }
     }
 }

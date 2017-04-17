@@ -2407,7 +2407,7 @@ namespace CUWebinars.Web.Controllers
             // send back enough to make the user comfortable, adjust the screen (remove buttons, say thanks, etc.)
             return Json(new { Result = WebUiConstants.Success, msg = "Order successfully submitted - thank you! Please visit <b>My Webinars</b> (link above) for detailed information of all your events." });
         }
-
+        
         [HttpPost]
         public ActionResult UpdateAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int? newOrderRowId)
         {
@@ -2416,8 +2416,7 @@ namespace CUWebinars.Web.Controllers
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(newOrderRowId.Value);
                 var row = model.Order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active);
                 _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations.Where(a => a.Email != null), newOrderRowId.Value);
-
-
+                
                 var updateSuccessCaption = "Updated Additional Locations";
 
                 var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);

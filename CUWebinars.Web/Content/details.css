@@ -42,6 +42,10 @@ blockquote {
     margin-top: 10px;
 }
 
+#collectCcLocations {
+    margin-top: 10px;
+}
+
 #UserDetailsModal, #UserDetailsModal .modal-dialog {width:50%;}
 @media screen and (min-width: 768px) {
 	#UserDetailsModal, #UserDetailsModal  .modal-dialog, #UserDetailsModal .modal-content {width:900px;}

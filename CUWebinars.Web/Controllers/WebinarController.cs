@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
@@ -777,6 +778,21 @@ namespace CUWebinars.Web.Controllers
                     };
                     model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
                 }
+                else
+                {
+                    if (model.Order != null && !string.IsNullOrWhiteSpace(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
+                    {
+                    Debug.Assert(model.Order.OrderRows != null, "model.Order.OrderRows != null");
+                        var clickToJoinViewModel = new ClickToJoinViewModel
+                        {
+                            JoinCode = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl,
+                            RedirectLinkText = _globalConfig.TenantURL + "/" + model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl,
+                            Webinar = webinar,
+                            Order = model.Order
+                        };
+                        model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
+                    }
+                }
 
                 return View(model);
             }
@@ -1108,6 +1124,9 @@ namespace CUWebinars.Web.Controllers
                         if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.SeriesInfo == "DES")
                             desCheckout = true;
 
+                        IList<string> ccAddresses = _orderManagementService.OrderHasCc(order);
+                        if (ccAddresses == null)
+                            ccAddresses = new List<string>{""};
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             DESCheckout = desCheckout,
@@ -1187,6 +1206,7 @@ namespace CUWebinars.Web.Controllers
                                         .AdditionalLocation,
                                 Addresses = additionalLocationsViewModel.Addresses,
                                 AdditionalLocationsRenderer = ViewHelpers.GetRendererOfAdditionalLocations(additionalLocationsViewModel.Addresses.Split(',')),
+                                CcLocationsRenderer = ViewHelpers.GetRendererOfCcLocations(ccAddresses),
 
                                 OptionsCost = additionalLocationsViewModel.OptionsCost,
                                 EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel

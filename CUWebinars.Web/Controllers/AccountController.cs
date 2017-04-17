@@ -575,12 +575,10 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception)
             {
-
-                return Json(new { Result = WebUiConstants.Fail });
-
+                return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "CC List Failed!" });
             }
 
-            return Json(new { Result = WebUiConstants.Success });
+            return Json(new { Result = WebUiConstants.Success, UpdateCaption = "CC List is Updated." });
         }
 
         [System.Web.Mvc.HttpPost]
@@ -2148,10 +2146,10 @@ namespace CUWebinars.Web.Controllers
                 if (webUserId.HasValue && webUserId > 0)
                 {
                     var userAcct = _membershipService.GetUserAccountByWebUserId(_globalConfig.Tenant, webUserId.Value);
-                    
+
                     if (userAcct != null && !userAcct.HasClaim(ClaimTypes.FullName))
                     {
-                       
+
                         resultObject.Add("isConfirmed", "false");
                     }
                     else

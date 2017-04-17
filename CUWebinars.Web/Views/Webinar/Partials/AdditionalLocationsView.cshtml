@@ -13,7 +13,7 @@
         <div id="AdditionalLocationContainer">
             <h5>Additional Locations</h5>
 
-            @{ Html.Partial("Partials/_AdditionalLocationsModal"); }
+            @*@{ Html.Partial("Partials/_AdditionalLocationsModal"); }*@
             @if (Model.Webinar.Title.Contains("Compliance Perspectives"))
             {
                 <div style="display: none" id="trial">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <div style="display: none" id="addLoc4Cost">
-                    <button value="Add?" name="showAddLocModal" id="showAddLocModal">Add?</button>
+                    @*<button value="Add?" name="showAddLocModal" id="showAddLocModal">Add?</button>*@
                 </div>
             }
             else
@@ -38,13 +38,11 @@
                     <blockquote style="margin-bottom: 0;">Want your branches to participate? Facilities within your organization will be able to participate without the travel costs of coming to one location.</blockquote>
                 </div>
 
-                    <div style="padding-left: 50px;">
-                        <span>
-                            <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration.</b>
-                            <br /><a href="#AdditionalLocationsModal" role="button" class="btn" data-toggle="modal" id="AddLocationsButton">Add?</a>
-                        </span>
-                        <div id="collectAdditionalLocations"></div> @*This is where the inputs for each Additional Location will be dynamically created by the Modal dialog.*@
-                    </div>
+                <div style="font-size: small; text-align: center;">
+                    <b>Each additional location adds @Model.Price.ToString("c").Replace(".00", "") to your registration and can be entered on the next screen as you confirm your order.</b>
+                    @*<br /><a href="#AdditionalLocationsModal" role="button" class="btn" data-toggle="modal" id="AddLocationsButton">Add?</a>*@
+                    <div id="collectAdditionalLocations"></div> @*This is where the inputs for each Additional Location will be dynamically created by the Modal dialog.*@
+                </div>
 
             }
             @if (Model.OrderExists)
@@ -57,7 +55,7 @@
             }
             @Html.HiddenFor(m => m.Webinar.idWebinar)
         </div>
-                }
+    }
     if (Model.Webinar.SeriesInfo == "DES")
     {
         <div><h4 style="font-style: normal;">Billing Details:</h4><p style="font-style: normal;">The term will commence on the START DATE of this agreement and continue for 6 or 12-months. This subscription will be renewable at the end of the current term for a successive 6 or 12-month term unless either party gives written notice of its intention not to renew 15 days before the expiration of the current term.We will notify you of any changes in the terms of the subscription at least 30 days prior to the notice period for renewal or termination.</p></div>

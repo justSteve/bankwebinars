@@ -65,33 +65,34 @@
                         </div>
                     </div>
                 </div>
-                @*<div id="AdjustAddLoc" class="row initialHide">
-                        <div class="offset2 span9 ">
-                            <div id="additionalLocationsCaption" class="clear pull-right">
-
-                                Additional Locations: @Model.AdditionalLocationsViewModel.OptionsCost.ToString("c") will be added to the cost of registration for each additional seat.
-                                <a id="AddLocationsButton" class="btn" href="#AdditionalLocationsModal" role="button" data-toggle="modal">Add?</a>
-
-                                @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new {id = "AdjustAddLocsForm"}))
-                                {
-                                    <div id="additionalLocationsList"></div>
-                                }
-
-                            </div>
-                        </div>
-                    </div>*@
                 <div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
-                        <div id="additionalLocationsCaption" class="clear pull-right">
-                            Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
+                        <div id="additionalLocationsCaption">
+                            Additional Locations: (@Model.AdditionalLocationsViewModel.OptionsCost.ToString("C0")) <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
                                 <div id="additionalLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.AdditionalLocationsRenderer)</div>
                             }
                         </div>
+                        <div id="cCLocationsCaption">
+                            Or...
+                            Share Connection Info:  <button id="addCcLoc" class="btn btn-mini">add</button>
+                            @using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "AdjustCcLocsForm", @class = "form-horizontal" }))
+                            {
+                                <input type="hidden" value="@Model.OrderExists" name="idOrder" />
+                                <div id="cCLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.CcLocationsRenderer)</div>
+
+                                    @*<button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Submit</button>*@
+
+                            }
+
+
+                        </div>
                     </div>
+
                 </div>
+
                 <div id="AdjustOrder" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">

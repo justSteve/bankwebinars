@@ -1,8 +1,6 @@
 ﻿@using CUWebinars.Web.Core
 @model ClickToJoinViewModel
-<script type="text/javascript" language="javascript">
 
-</script>
 @{
     ViewBag.Title = "Gateway to Your Webinar";
 
@@ -75,7 +73,7 @@
                                 else
                                 {
                                     <p>
-                                        Please refresh this page 15-20 minutes prior to the event.<br />
+                                        To join the webinar please refresh this page 15-20 minutes prior to the event.<br />
                                     </p>
                                 }
                             }
@@ -94,20 +92,15 @@
                                 </a>
                             </p>
                             <p>
-                                Check back here after the event for a link to the recording and your Certificate of Completion. <span style="font-size: smaller">
-                                    (Visible only after recording has been uploaded.)
-                                </span>
+                                Check back here after the event for a link to the recording and your <i>Certificate of Completion</i>. 
                             </p>
-
-
-
                         }
-                        @if (row.RegistrationType.ShowLiveNotifications != "Yes")
+                        else
                         {
                             if (row.RegistrationType.ShowShippedNotifications != "Yes")
                             {
                                 <p>
-                                    A link to the recording will be announced by email and also posted on this page short within 24 hours following the event.
+                                    This registration is not currently configured to attend the live event and will not receive the connection information email. A link to the recording will be announced by email and also posted on this page within 24 hours following the event.
                                 </p>
 
                             }

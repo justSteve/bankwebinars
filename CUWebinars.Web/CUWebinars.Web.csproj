@@ -2003,7 +2003,6 @@
     <Content Include="Views\Shared\Partials\_OrderSumUser.cshtml" />
     <Content Include="Views\Shared\Partials\_CheckoutFeedback.cshtml" />
     <Content Include="Views\Webinar\EditWebinarFromDetails.cshtml" />
-    <Content Include="Views\Admin\ManageOrderFromDetailsREADYTODELETE.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\AdjustUserDetails.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowOrders.cshtml" />
     <Content Include="Views\Shared\Partials\_ShareNotifications.cshtml" />

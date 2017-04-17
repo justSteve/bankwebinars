@@ -1,7 +1,7 @@
 ﻿//  This script correlates with the Details View.
 
 
-var desCheckout, userHasDiscount, additionalLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfAdditionalLocationsTab3;
+var desCheckout, userHasDiscount, additionalLocationsList, cCLocationsList, checkoutConfirm, discount, cartStateManager, okToLeave, shippingAddressRequired, signUpForm, signUpFormContainer, storedHeight, numberOfCcLocationsTab3, numberOfAdditionalLocationsTab3;
 
 discount = '';
 checkoutConfirm = {};
@@ -10,8 +10,8 @@ pagetitle = $("h1:first").text();
 userHasDiscount = false;
 
 function getInternetExplorerVersion()
-    // Returns the version of Internet Explorer or a -1
-    // (indicating the use of another browser).
+// Returns the version of Internet Explorer or a -1
+// (indicating the use of another browser).
 {
     var rv = -1; // Return value assumes failure.
     if (navigator.appName == 'Microsoft Internet Explorer') {
@@ -100,7 +100,7 @@ $(function () {
                     utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
 
                 } else if (data.Result === 'UserHasMulti') {
-                    
+
                     utilities.goToUrl('/Cart/Checkout');
                 } else {
                     //console.error('Failed to post order');
@@ -127,7 +127,7 @@ $(function () {
             $('#cancelModalOrderId').val(cartStateManager.getOrderId());
 
             var data = cancelOrderForm.serialize();
-                
+
             $('#cancelRegistrationbtn').on('click', function (e) {
 
                 e.preventDefault();
@@ -234,6 +234,7 @@ $(function () {
         });
 
         populateAdditionalLocationsOn3rdTab();
+        populateCcLocationsOn3rdTab();
         setUpEditButtons();
 
         // Following 3 functions live in the register-during-checkout.js script
@@ -425,14 +426,49 @@ function isShippingAddressRequired(jQueryObject) {
 
 function setUpEditButtons() {
 
+    $('#addCcLoc').on('click', function (e) {
+
+        e.preventDefault();
+
+        var newId;
+        if (numberOfCcLocationsTab3 === 0) {
+
+            if ($("#cCLocationsList").length === 0) {
+                $("#cCLocationsList").after($('<button>',
+                    {
+                        id: 'applycCLocationsButton',
+                        text: 'apply',
+                        'class': 'btn btn-mini btn-primary'
+                    }));
+
+                $('#applycCLocationsButton').on('click', applyCcLocations);
+            }
+            newId = 0;
+        } else {
+            
+            $('#applycCLocationsButton').on('click', applyCcLocations);
+            // first get the last previous email input
+            var lastInput = $("#cCLocationsList").find('input[type="email"]:last');
+            // get its id
+
+            console.log(lastInput);
+            var lastInputId = lastInput.attr('id');
+            var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
+            newId = id + 1;
+        }
+        $("#cCLocationsList").append('<span id="' + cClocationsSpanPrefix + newId + '"><input id="CcLocationEmail_' + newId + '" name="cCLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-CcLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+        $("#cCLocationsList").find('i#' + newId + '-CcLocationEmail-delete').on('click', deleteAddLocInputTabb3);
+        $('#CcLocationEmail_' + newId).focus();
+        numberOfCcLocationsTab3++;
+    });
+
     $('#addAnotherAddLoc').on('click', function (e) {
-        
         e.preventDefault();
 
         var newId;
 
-        if (numberOfAdditionalLocationsTab3 == 0) {
-            if ($("#additionalLocationsList").length == 0) {
+        if (numberOfAdditionalLocationsTab3 === 0) {
+            if ($("#additionalLocationsList").length === 1) {
                 $("#additionalLocationsList").after($('<button>',
                     {
                         id: 'applyAdditionalLocationsButton',
@@ -448,6 +484,7 @@ function setUpEditButtons() {
             // first get the last previous email input
             var lastInput = $("#additionalLocationsList").find('input[type="email"]:last');
             // get its id
+
             var lastInputId = lastInput.attr('id');
             var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
             newId = id + 1;
@@ -471,7 +508,7 @@ function setUpEditButtons() {
     }
     $('#revealOptions').on('click', function (e) {
         e.preventDefault();
-        
+
         $('#AdjustOrder').slideToggle();
     });
 
@@ -486,6 +523,7 @@ function setUpEditButtons() {
 
     $('#revealAddLocsPanel').on('click', function (e) {
         e.preventDefault();
+
         $('#AdjustAddLoc').slideToggle(400, function () { wireUpHandlers(); });
 
 
@@ -505,7 +543,7 @@ function populateAdditionalLocationsOn3rdTab() {
     // Hence, the locationsSpanPrefix may already exist in some scenarios.
     if (!locationsSpanPrefix) {
         locationsSpanPrefix = 'LocationSpan-',
-        breakSuffix = '-break';
+            breakSuffix = '-break';
     }
     console.log($('#collectAdditionalLocations'));
     // This variable gets declared elsewhere. Hnce, no 'var' keyword
@@ -525,11 +563,11 @@ function populateAdditionalLocationsOn3rdTab() {
 
     if (numberOfAdditionalLocationsTab3 > 0) {
         additionalLocationsList.after($('<button>',
-        {
-            id: 'applyAdditionalLocationsButton',
-            text: 'done adding?',
-            'class': 'btn btn-mini btn-primary'
-        }));
+            {
+                id: 'applyAdditionalLocationsButton',
+                text: 'done adding?',
+                'class': 'btn btn-mini btn-primary'
+            }));
 
         $('#applyAdditionalLocationsButton').on('click', applyAdditionalLocations);
 
@@ -565,6 +603,132 @@ var deleteAddLocInputTabb3 = function (event) {
     //}
 };
 
+var applyCcLocations = function (e) {
+
+    e.preventDefault();
+
+    var self = $(this);
+
+    var adjustCcLocsForm = $('#AdjustCcLocsForm');
+
+    var url = adjustCcLocsForm.attr('action');
+    var addresses = "";
+    $.each(adjustCcLocsForm.find('input[type="email"]'), function () {
+        addresses += $(this).val() + ",";
+    });
+    
+    var formData = {
+        idOrder: cartStateManager.getOrderId(),
+        addresses:  addresses
+    };
+    
+    $.ajax({
+        type: 'POST',
+        contentType: RegistrationInCart.Constants.FormPostContentType,
+        cache: false,
+        url: url,
+        dataType: RegistrationInCart.Constants.JsonDataType,
+        data: formData,
+        beforeSend: function () {
+            self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        }
+    }).done(function (data) {
+        
+        if (data) {
+            console.log(data);
+
+            var alertCaption = data.UpdateCaption;
+            $('#flyUpdateSuccessFlag').html(data.UpdateCaption).show();
+
+            alert(alertCaption);
+
+            $("#AdjustAddLoc").slideToggle();
+        } else {
+            alert("failed to add");
+            var a = 'holder';
+        }
+        $('#waitSpinner').remove();
+    });
+};
+
+function populateCcLocationsOn3rdTab() {
+
+    // There is re-use involved with additional locations as they can be manipulated on either the 1st or 3rd tab. 
+    // Hence, the locationsSpanPrefix may already exist in some scenarios.
+    if (!cClocationsSpanPrefix) {
+        cClocationsSpanPrefix = 'cCLocationSpan-',
+            breakSuffix = '-break';
+    }
+
+    // This variable gets declared elsewhere. Hnce, no 'var' keyword
+    cCLocsOn1stTabContainer = $('#collectCcLocations');
+    var cClocations = cCLocsOn1stTabContainer.children();
+    console.log(cClocations);
+    numberOfCcLocationsTab3 = cClocations.filter('span').length;
+
+    var copyOfLocations = cClocations.clone();
+    cCLocsOn1stTabContainer.remove();
+
+    cCLocationsList = $('#cCLocationsList');
+
+    cCLocationsList.append('<input id="newOrderRowId" name="newOrderRowId"  type="hidden" value=' + cartStateManager.getOrderRowId() + ' data-val="true" data-val-number="The field newOrderRowId must be a number." data-val-required="The newOrderRowId field is required."/>');
+    cCLocationsList.append(copyOfLocations);
+
+    if (numberOfCcLocationsTab3 > 0) {
+
+        cCLocationsList.after($('<button>',
+            {
+                id: 'applyCcLocationsButton',
+                text: 'done adding?',
+                'class': 'btn btn-mini btn-primary'
+            }));
+
+        $('#applyCcLocationsButton').on('click', applyCcLocations);
+
+        var cCtrashCans = cCLocationsList.find('i');
+
+        $.each(cCtrashCans, function (idx, i) {
+            $(i).on('click', deleteCcLocInputTab3);
+        });
+
+    }
+}
+
+var deleteCcLocInputTab3 = function (event) {
+
+    numberOfCcLocationsTab3--;
+
+    var trashClicked = event.currentTarget.id;
+    var idx = trashClicked.substring(0, 1);
+    var spanToRemove = cClocationsSpanPrefix + idx;
+
+    $('#' + spanToRemove).hide(500, function () {
+        $(this).remove();
+    });
+
+    $('#' + idx + breakSuffix).hide(500, function () {
+        $(this).remove();
+    });
+
+};
+var deleteAddLocInputTabb3 = function (event) {
+
+    numberOfAdditionalLocationsTab3--;
+
+    var trashClicked = event.currentTarget.id;
+    var idx = trashClicked.substring(0, 1);
+    var spanToRemove = locationsSpanPrefix + idx;
+
+    $('#' + spanToRemove).hide(500, function () {
+        $(this).remove();
+    });
+
+    $('#' + idx + breakSuffix).hide(500, function () {
+        $(this).remove();
+    });
+
+};
+
 var applyAdditionalLocations = function (e) {
 
     e.preventDefault();
@@ -574,7 +738,7 @@ var applyAdditionalLocations = function (e) {
     var adjustAddLocsForm = $('#AdjustAddLocsForm');
 
     var url = adjustAddLocsForm.attr('action');
-    console.log(url);
+
     // Ensure array that is sent starts with index 0.
     $.each(adjustAddLocsForm.find('input[type="email"]'), function (idx, value) {
         $(value).attr('name', 'AdditionalLocations[' + idx + '].Email');
@@ -640,6 +804,8 @@ var applyAdditionalLocations = function (e) {
                 }
             }
             alert(alertCaption);
+
+            $("#AdjustAddLoc").slideToggle();
         } else {
             alert("failed to add");
             var a = 'holder';

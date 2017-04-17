@@ -4,10 +4,14 @@ var addLocationsButton,
     AdditionalLocationSubmitButton,
     newLocationsContainer;
 
-var additionalLocationEmailWrapper,
+var
+    cCLocationEmailWrapper,
+    additionalLocationEmailWrapper,
     breakSuffix,
     deleteItem,
     locationsSpanPrefix,
+    cClocationsSpanPrefix,
+    numberOfCcLocations,
     numberOfAdditionalLocations;
 deleteItem = function (event) {
     numberOfAdditionalLocations--;
@@ -42,8 +46,9 @@ $(function () {
 });
 
 function wireUpHandlers() {
-    
-    locationsSpanPrefix = 'LocationSpan-',
+
+    locationsSpanPrefix = 'LocationSpan-';
+    cClocationsSpanPrefix = 'CcLocationSpan-';
     breakSuffix = '-break';
 
     var modalFormOptions = {
@@ -54,18 +59,18 @@ function wireUpHandlers() {
 
 
     addLocationsButton.on('click', function (e) {
-        
+
         e.preventDefault();
 
         $(this).append('<i id="loadModalSpinner" class="icon-spinner icon-spin"></i>');
-        
+
         $('#additionalLocationsModalDialog > div.modal-body').load('/Cart/GetAdditionalLocationByOrderId/'
-            + webinarId +'/0', function () {
-            //+ webinarId +'/0' + (idUser || 0).toString(), function () {
-            wireUpHandlersForModal();
-            $('#AddInputsButton').focus();
-            $('#additionalLocationsModalDialog').modal(modalFormOptions);
-        });
+            + webinarId + '/0', function () {
+                //+ webinarId +'/0' + (idUser || 0).toString(), function () {
+                wireUpHandlersForModal();
+                $('#AddInputsButton').focus();
+                $('#additionalLocationsModalDialog').modal(modalFormOptions);
+            });
 
     });
 
@@ -83,7 +88,9 @@ function primeDomVariables() {
 function wireUpHandlersForModal() {
     
     var locationsCloned, locationsBakForCancel;
+    var cClocationsCloned, cClocationsBakForCancel;
     var collectAdditionalLocations = $('#collectAdditionalLocations');
+    var collectCcLocations = $('#collectCcLocations');
 
     //console.log(collectAdditionalLocations);
     //console.log(additionalLocationEmailWrapper.find('input[type="email"]:last'));
@@ -93,27 +100,41 @@ function wireUpHandlersForModal() {
         locationsCloned = locations.clone();
         locationsBakForCancel = locations.clone();
     }
+    var cClocations = collectCcLocations.children();
+
+    if (cClocations.length > 0) {
+        cClocationsCloned = cClocations.clone();
+        cClocationsBakForCancel = cClocations.clone();
+    }
 
     collectAdditionalLocations.empty();
 
     additionalLocationEmailWrapper = $('#AdditionalLocationEmailWrapper');
+    console.log("AdditionalLocationEmailWrapper = " + $('#AdditionalLocationEmailWrapper'));
+    console.log($('#AdditionalLocationEmailWrapper'));
     if (locationsCloned)
         additionalLocationEmailWrapper.append(locationsCloned);
 
+    collectCcLocations.empty();
+
+    cCLocationEmailWrapper = $('#CcLocationEmailWrapper');
+    if (cClocationsCloned)
+        cCLocationEmailWrapper.append(cClocationsCloned);
+
     $('#AddInputsButton').on('click', function (e) {
-        
+
         e.preventDefault();
         $(".AddLocCaption")
             .html("<b>Note:</b> Only use this entry for branches or other remote locations that you wish to attend. We will collect the primary (billing) email on the next screen.");
-
+        
         if (numberOfAdditionalLocations === 0) {
-            
+
             $('#AdditionalLocationEmailWrapper').after($('<button>',
-            {
-                id: 'sumbitAdditionalLocationsButton',
-                text: 'done adding?',
-                'class': 'btn btn-primary'
-            }));
+                {
+                    id: 'sumbitAdditionalLocationsButton',
+                    text: 'done adding?',
+                    'class': 'btn btn-primary'
+                }));
 
             $('#sumbitAdditionalLocationsButton').on('click', function () {
 
@@ -139,7 +160,7 @@ function wireUpHandlersForModal() {
                 });
                 if (allValid) {
                     collectAdditionalLocations.append(additionalLocationEmailWrapper.children());
-                    
+
                     $('#additionalLocationsModalDialog').modal('hide');
                     $(this).remove();
                 }
@@ -155,7 +176,7 @@ function wireUpHandlersForModal() {
             // first get the last previous email input
             var lastInput = additionalLocationEmailWrapper.find('input[type="email"]:last');
             // get its id
-            
+
             var lastInputId = lastInput.attr('id');
             var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
             newId = id + 1;
@@ -165,8 +186,39 @@ function wireUpHandlersForModal() {
         $('#AdditionalLocationEmail_' + newId).focus();
         numberOfAdditionalLocations++;
 
+
     });
 
+    //numberOfCcLocations = $('#CcLocationEmailWrapper input[type="email"]').length;
+
+    //if (numberOfCcLocations < 1) {
+    //    $('#sumbitCcLocationsButton').off('click');
+    //    alert("sdfs");
+    //} else {
+
+
+    //    $('#CcLocationEmailWrapper').after($('<button>',
+    //        {
+    //            id: 'sumbitCcLocationsButton',
+    //            text: 'done adding?',
+    //            'class': 'btn btn-primary'
+    //        }));
+
+    //    $('#sumbitCcLocationsButton').on('click', function () {
+
+    //        collectCcLocations.empty();
+    //        collectCcLocations.append(cCLocationEmailWrapper.children());
+
+    //        $('#cCLocationsModalDialog').modal('hide');
+    //        $(this).remove();
+
+    //    });
+    //    var cCtrashCans = cCLocationEmailWrapper.find('i');
+    //    console.log(cCtrashCans);
+    //    $.each(cCtrashCans, function (idx, i) {
+    //        $(i).on('click', deleteItem);
+    //    });
+    //}
     numberOfAdditionalLocations = $('#AdditionalLocationEmailWrapper input[type="email"]').length;
 
     if (numberOfAdditionalLocations < 1) {
@@ -175,11 +227,11 @@ function wireUpHandlersForModal() {
     } else {
 
         $('#AdditionalLocationEmailWrapper').after($('<button>',
-        {
-            id: 'sumbitAdditionalLocationsButton',
-            text: 'done adding?',
-            'class': 'btn btn-primary'
-        }));
+            {
+                id: 'sumbitAdditionalLocationsButton',
+                text: 'done adding?',
+                'class': 'btn btn-primary'
+            }));
 
         $('#sumbitAdditionalLocationsButton').on('click', function () {
 
@@ -199,8 +251,9 @@ function wireUpHandlersForModal() {
     }
 
     $('#closeButton, #additionalLocationsModalDialog > div > div.modal-header > button').on('click', function (e) {
+        
         if (locationsBakForCancel) {
-
+            
             $.each(locationsBakForCancel.find('i'), function (idx, i) {
                 $(i).on('click', deleteItem);
             });
