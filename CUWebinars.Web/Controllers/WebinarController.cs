@@ -759,8 +759,9 @@ namespace CUWebinars.Web.Controllers
                     BuildConfirmOrderView(model);
                     return PartialView("DetailsAffiliate", model);
                 }
-
-                InitializeInProcessProperties(id.Value, model, webinar);
+                //removing test for existing orders because we are now attempting 
+                // to trap those at order's creation
+                //InitializeInProcessProperties(id.Value, model, webinar);
                 if (_stateService.HasValue(DomainConstants.OriginExpress))
                     if (model.Order != null)
                         model.Order.Origin = DomainConstants.OriginExpress;
@@ -1014,7 +1015,7 @@ namespace CUWebinars.Web.Controllers
                     return PartialView("DetailsAffiliate", model);
                 }
 
-                InitializeInProcessProperties(id.Value, model, webinar);
+                //InitializeInProcessProperties(id.Value, model, webinar);
                 if (_stateService.HasValue(DomainConstants.OriginExpress))
                     if (model.Order != null)
                         model.Order.Origin = DomainConstants.OriginExpress;

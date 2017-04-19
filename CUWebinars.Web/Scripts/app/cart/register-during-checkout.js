@@ -233,7 +233,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         var jsonUrl = '/Account/CheckEmail';
         var email = $('#RegisterFields_Email').val();
         var token = $(this).find('input[name="__RequestVerificationToken"]').val();
-        var payload = { email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(), orderId: orderId, __RequestVerificationToken: token };
+        var payload = {
+            email: email, disregardInstitutionDomain: regUserStateManager.getDisregardIntitutionDomain(),
+            orderId: orderId, __RequestVerificationToken: token
+        };
 
         if (email.length === 0) {
             $('#RegisterFields_Email').focus();
@@ -252,6 +255,15 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             }).done(function (data) {
 
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
+                if (data.orderRowId) {
+                    cartStateManager.setOrderRowId(data.orderRowId);
+                }
+                if (data.orderId) {
+                    cartStateManager.setOrderId(data.orderId);
+                }
+
+                console.log(data);
+                console.log(cartStateManager.getOrderId());
                 
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
@@ -1126,7 +1138,7 @@ function hookUpAddLocsLogic(_addLocs) {
 // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
 // TODO: Display 'Confirm Shipping Address' via the Shipping Details modal form where the RegType chosen has a shipping address requirement.
 function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
-    
+
     registerDuringCheckout.gatherPricingData();
 
     var url = '/Cart/UpdateOrderDetails';
@@ -1170,7 +1182,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
 }
 // TODO: Display 'Confirm Shipping Address' via the Shipping Details modal form where the RegType chosen has a shipping address requirement.
 function updatePriceOnAddLocChange(addLocs, totalPrice) {
-    
+
     registerDuringCheckout.gatherPricingData();
 
     var url = '/Cart/UpdateAdditionalLocations';
@@ -1251,11 +1263,11 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
             dataType: constants.JsonDataType,
             data: JSON.stringify(payload),
             headers: headers,
-            beforeSend: function() {
+            beforeSend: function () {
                 $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
                 $(self).attr('disabled', 'disabled');
             }
-        }).done(function(data) {
+        }).done(function (data) {
 
             if (data.Result == 0) {
                 alert("The discount code " +
@@ -1290,13 +1302,13 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
                         $('#orderStatusLabel').html(data.OrderStatusCaption);
                         alertCaption += " This previously paid order now has a balance due: $" +
                             data
-                            .OutstandingBalance;
+                                .OutstandingBalance;
                     }
                     $("#ShowPayByCCModal").hide();
                     $('#showOutstandingBalance')
                         .html('<br><span style=\"color: green;\"  id="outstandingBalance">Due: $(' +
-                            data.OutstandingBalance +
-                            ')</span>');
+                        data.OutstandingBalance +
+                        ')</span>');
                 }
             }
 
@@ -1309,8 +1321,8 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
 
             alert(alertCaption);
             $('#discountSpinner').remove();
-        
-    }).fail(commonFuncs.failCallBack).always(function (e) {
+
+        }).fail(commonFuncs.failCallBack).always(function (e) {
             $('#discountSpinner').remove();
             $(self).removeAttr('disabled');
         });

@@ -369,6 +369,7 @@ $(function () {
                                 });
 
                                 populateAdditionalLocationsOn3rdTab();
+                                populateCcLocationsOn3rdTab();
                                 setUpEditButtons();
 
                                 // Following 3 functions live in the register-during-checkout.js script
@@ -431,9 +432,10 @@ function setUpEditButtons() {
         e.preventDefault();
 
         var newId;
+        console.log(numberOfCcLocationsTab3);
         if (numberOfCcLocationsTab3 === 0) {
 
-            if ($("#cCLocationsList").length === 0) {
+            if ($("#cCLocationsList").length === 1) {
                 $("#cCLocationsList").after($('<button>',
                     {
                         id: 'applycCLocationsButton',

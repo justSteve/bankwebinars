@@ -2147,6 +2147,19 @@ namespace CUWebinars.Web.Controllers
                 {
                     var userAcct = _membershipService.GetUserAccountByWebUserId(_globalConfig.Tenant, webUserId.Value);
 
+                    if (orderId != null)
+                    {
+                    var foundExistingOrder=    _orderManagementService.UserHasPrexistingOrder(
+                            _orderManagementService.GetOrderById(orderId.Value));
+                        if (foundExistingOrder != null)
+                        {
+                            resultObject.Add("orderId", foundExistingOrder.idOrder.ToString());
+                            resultObject.Add("orderRowId", foundExistingOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow.ToString());
+
+                        }
+                    }
+
+
                     if (userAcct != null && !userAcct.HasClaim(ClaimTypes.FullName))
                     {
 

@@ -27,7 +27,8 @@
     <RestorePackages>true</RestorePackages>
     <TypeScriptToolsVersion>2.1</TypeScriptToolsVersion>
     <ApplicationInsightsResourceId>/subscriptions/4aa59c5e-6984-4f30-bb2b-df7e1eb43e6e/resourcegroups/Default-Web-NorthCentralUS/providers/microsoft.insights/components/BankWebinars33</ApplicationInsightsResourceId>
-    <NuGetPackageImportStamp>f65174cb</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <UseGlobalApplicationHostFile />
     <ApplicationInsightsAnnotationResourceId>/subscriptions/4aa59c5e-6984-4f30-bb2b-df7e1eb43e6e/resourcegroups/Default-Web-NorthCentralUS/providers/microsoft.insights/components/BankWebinars33</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
@@ -38,7 +39,7 @@
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -1394,7 +1395,6 @@
     <Content Include="Notification\PreviewTemplates\PreviewConnectionInfo.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewShippedOrder.cshtml" />
     <Content Include="Notification\PreviewTemplates\PreviewRecordingPosted.cshtml" />
-    <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <Content Include="Scripts\app\webinar\identify.js" />
     <Content Include="Content\DataTables\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables\css\dataTables.jqueryui.scss" />
@@ -1812,6 +1812,7 @@
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
+    <None Include="Properties\PublishProfiles\DES33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\devtts - Web Deploy.pubxml" />
     <Content Include="Scripts\DataTables\pdfmake.min.js.map" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
@@ -2107,6 +2108,7 @@
     <Content Include="Views\Webinar\WebinarStatus.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Web.BWDev.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -2117,7 +2119,7 @@
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Web.devtts - Web Deploy.config">
+    <None Include="Web.DES33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
@@ -2711,6 +2713,13 @@ copy /Y "$(ProjectDir)Membership\Email\EmailTemplates\*" "$(SolutionDir)..\CUUse
   </PropertyGroup>
   <Import Project="..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.2.1\tools\AutoMapper.targets')" />
   <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
+  <Import Project="..\packages\SlowCheetah.2.5.48\build\SlowCheetah.targets" Condition="Exists('..\packages\SlowCheetah.2.5.48\build\SlowCheetah.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SlowCheetah.2.5.48\build\SlowCheetah.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SlowCheetah.2.5.48\build\SlowCheetah.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

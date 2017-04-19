@@ -2556,8 +2556,8 @@ namespace CUWebinars.Business.Services
 
             var row = existingOrder.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
-            Debug.Assert(row != null, "row != null");
-            var foundByEmail = _orderRepository.GetOrdersByWebinar(row.idWebinar)
+           Debug.Assert(row != null, "row != null");
+            var foundByEmail = _orderRepository.GetOrdersByUserId(existingOrder.idUser)
                 .Where(o => o.BillingEmail == existingOrder.BillingEmail);
 
             var byEmail = foundByEmail as IList<Order> ?? foundByEmail.ToList();
