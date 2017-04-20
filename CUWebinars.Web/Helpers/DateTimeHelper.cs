@@ -199,12 +199,5 @@ namespace CUWebinars.Web.Helpers
             }
 
         }
-
-        public static string GetTimeInCentralStandardTime(DateTime time)
-        {
-            TimeZoneInfo centralStandardTime = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
-            DateTimeOffset timeInCST = TimeZoneInfo.ConvertTime(time, centralStandardTime);
-            return timeInCST.ToString("yyyy-MM-dd hh:mm:ss tt\" GMT\"zzz");
-        }
     }
 }

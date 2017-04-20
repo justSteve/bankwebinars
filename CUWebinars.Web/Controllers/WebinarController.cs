@@ -1255,7 +1255,14 @@ namespace CUWebinars.Web.Controllers
 
             if (webinar.Title.StartsWith("Compliance Perspectives:"))
             {
-                webinarId = _webinarManagementService.GetNextCompliancePerspectives() ?? -1;
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+                var currentUser = User.Identity.Name ?? "anon";
+
+                if (!claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                {
+                    webinarId = _webinarManagementService.GetNextCompliancePerspectives() ?? -1;
+                }
             }
             webinar = _webinarManagementService.GetWebinar(webinarId);
         }
@@ -2126,7 +2133,7 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                var startTime = DateTimeHelper.GetTimeInCentralStandardTime(webinar.Date);
+                var startTime = webinar.Date.ToString("yyyy-MM-dd hh:mm:ss tt\" \"zzz"); ;
                 var wReqUpdate = new WebinarReqUpdate
                 {
                     description = output,
@@ -2134,8 +2141,8 @@ namespace CUWebinars.Web.Controllers
                     times = new List<DateTimeRange> {
                     new DateTimeRange
                     {
-                        startTime = Convert.ToDateTime(startTime.Replace(" GMT", "")),
-                        endTime = Convert.ToDateTime(startTime.Replace(" GMT", "")).AddHours((double)webinar.Duration)
+                        startTime = Convert.ToDateTime(startTime),
+                        endTime = Convert.ToDateTime(startTime).AddHours((double)webinar.Duration)
                     }
                     //new DateTimeRange
                     //{
