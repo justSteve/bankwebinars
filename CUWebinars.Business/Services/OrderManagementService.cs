@@ -2558,7 +2558,7 @@ namespace CUWebinars.Business.Services
 
            Debug.Assert(row != null, "row != null");
             var foundByEmail = _orderRepository.GetOrdersByUserId(existingOrder.idUser)
-                .Where(o => o.BillingEmail == existingOrder.BillingEmail);
+                .Where(o => o.BillingEmail == existingOrder.BillingEmail && row.idWebinar == o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar);
 
             var byEmail = foundByEmail as IList<Order> ?? foundByEmail.ToList();
             if (byEmail.Count() > 1)
@@ -2593,6 +2593,13 @@ namespace CUWebinars.Business.Services
             }
 
             return null;
+        }
+
+        public string CreateCompliancePerspectivesSubscription(OrderRow row)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+            return dataOperations.CreateCompliancePerspectivesSubscription(row);
         }
 
         public string InvoicedOrderIsUpdated(Order order)

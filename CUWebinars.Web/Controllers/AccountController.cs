@@ -2155,8 +2155,9 @@ namespace CUWebinars.Web.Controllers
                         {
                             resultObject.Add("orderId", foundExistingOrder.idOrder.ToString());
                             resultObject.Add("orderRowId", foundExistingOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow.ToString());
-
+                            _logger.Info("CheckEmail found existing: " + foundExistingOrder.idOrder + " when checking: " + orderId.Value);
                         }
+                        
                     }
 
 

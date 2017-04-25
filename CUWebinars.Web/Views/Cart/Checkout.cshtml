@@ -62,7 +62,7 @@
 
                             alert("There was a problem contacting our credit card processor.")
                             $('#PayByCCIsOfflineModal').modal('show');
-                            
+
                         }
 
                     });
@@ -91,43 +91,45 @@
                 foreach (RegistrationSummaryViewModel registrationSummaryViewModel in Model.RegistrationSummaryViewModels)
                 {
                     <div id="OrderSummaryContainer_@registrationSummaryViewModel.OrderRow.idOrder">
-                        @Html.Partial("~/Views/Webinar/Partials/_RegistrationSummary.cshtml", registrationSummaryViewModel)
+                        <div class="OrderSumUser" id="idWebinar-@registrationSummaryViewModel.OrderRow.idOrder">
+                            @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", registrationSummaryViewModel); }
+                        </div>
                     </div>
-                }
+                                }
 
-                if (Model.RegistrationSummaryViewModels.Count == 0)
-                {
-                    <p style="margin-top: 12px;">
-                        Your shopping cart is empty.
-                    </p>
-                }
-                else
-                {
-                    <script type="text/javascript" language="javascript">
-                        $(function () {
-
-
-                        });
-                    </script>
-                    <div id="checkout-action-container" style="margin-bottom: 10px;">
-                        @{
-                            string confirmButtonLabel = "Submit Registrations";
-                            string confirmPayTraceLabel = "Pay By Credit Card";
-                            // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
-                        }
-                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
-                        @*<button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />*@
-                        <button role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
+                                if (Model.RegistrationSummaryViewModels.Count == 0)
+                                {
+                                    <p style="margin-top: 12px;">
+                                        Your shopping cart is empty.
+                                    </p>
+                                }
+                                else
+                                {
+                                    <script type="text/javascript" language="javascript">
+                                        $(function () {
 
 
-                    </div>
-                            }
+                                        });
+                                    </script>
+                                    <div id="checkout-action-container" style="margin-bottom: 10px;">
+                                        @{
+                                            string confirmButtonLabel = "Submit Registrations";
+                                            string confirmPayTraceLabel = "Pay By Credit Card";
+                                            // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
+                                        }
+                                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
+                                        @*<button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />*@
+                                        <button role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
+
+
+                                    </div>
+                                            }
             }
 
             <div id="PayByPayTraceModal" class="modal hide fade">
 
                 <form id="PayByCCFormPTMulti" method="post" action="https://paytrace.com/api/default.pay">
-                @*<form id="PayByCCFormPTMulti" method="post" action="https://beta.paytrace.com/api/default.pay">*@
+                    @*<form id="PayByCCFormPTMulti" method="post" action="https://beta.paytrace.com/api/default.pay">*@
 
                     <input type="hidden" name="parmList" id="paraList" value="">
                     <input type="hidden" name="ordersList" id="ordersList" value="">

@@ -195,7 +195,11 @@ function ConfirmRegistrationBillMeMulti($button) {
         complete: function() {
             //console.log("complete");
             // remove spinner
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
+
             $('#loadingSpinnerContainer', $button).fadeOut();
+            $('#ConfirmRegistrationBillMeMulti').hide();
+            $('#ShowPayByCCModal').hide();
             setTimeout(function () { $('#loadingSpinnerContainer', $button).remove(); }, 1500);
         }
     });

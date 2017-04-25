@@ -447,7 +447,7 @@ function setUpEditButtons() {
             }
             newId = 0;
         } else {
-            
+
             $('#applycCLocationsButton').on('click', applyCcLocations);
             // first get the last previous email input
             var lastInput = $("#cCLocationsList").find('input[type="email"]:last');
@@ -458,7 +458,9 @@ function setUpEditButtons() {
             var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
             newId = id + 1;
         }
-        $("#cCLocationsList").append('<span id="' + cClocationsSpanPrefix + newId + '"><input id="CcLocationEmail_' + newId + '" name="cCLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-CcLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
+
+
+        $("#cCLocationsList").append('<span id=cCLocationSpan-"' + newId + '"><input id="CcLocationEmail_' + newId + '" name="cCLocations[' + newId + '].Email" type="email" placeholder="Enter email address" />&nbsp;<i class="icon-trash icon-white" style="cursor: pointer" id="' + newId + '-CcLocationEmail-delete"></i></span> <br id="' + newId + breakSuffix + '">');
         $("#cCLocationsList").find('i#' + newId + '-CcLocationEmail-delete').on('click', deleteAddLocInputTabb3);
         $('#CcLocationEmail_' + newId).focus();
         numberOfCcLocationsTab3++;
@@ -618,12 +620,12 @@ var applyCcLocations = function (e) {
     $.each(adjustCcLocsForm.find('input[type="email"]'), function () {
         addresses += $(this).val() + ",";
     });
-    
+
     var formData = {
         idOrder: cartStateManager.getOrderId(),
-        addresses:  addresses
+        addresses: addresses
     };
-    
+
     $.ajax({
         type: 'POST',
         contentType: RegistrationInCart.Constants.FormPostContentType,
@@ -635,7 +637,7 @@ var applyCcLocations = function (e) {
             self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
         }
     }).done(function (data) {
-        
+
         if (data) {
             console.log(data);
 
@@ -657,10 +659,6 @@ function populateCcLocationsOn3rdTab() {
 
     // There is re-use involved with additional locations as they can be manipulated on either the 1st or 3rd tab. 
     // Hence, the locationsSpanPrefix may already exist in some scenarios.
-    if (!cClocationsSpanPrefix) {
-        cClocationsSpanPrefix = 'cCLocationSpan-',
-            breakSuffix = '-break';
-    }
 
     // This variable gets declared elsewhere. Hnce, no 'var' keyword
     cCLocsOn1stTabContainer = $('#collectCcLocations');
@@ -702,7 +700,7 @@ var deleteCcLocInputTab3 = function (event) {
 
     var trashClicked = event.currentTarget.id;
     var idx = trashClicked.substring(0, 1);
-    var spanToRemove = cClocationsSpanPrefix + idx;
+    var spanToRemove = "cCLocationSpan"  + idx;
 
     $('#' + spanToRemove).hide(500, function () {
         $(this).remove();

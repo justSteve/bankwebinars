@@ -80,5 +80,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void FireMandrillNotificationEvent(string steveTtstrainCom, string s, string orderConfirmString);
         void SaveOrder(Order order);
         string GetAddLocPrice(Webinar modelWebinar);
+        string CreateSeriesOrders(OrderRow model);
+        string CreateCompliancePerspectivesSubscription(OrderRow row);
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Globalization;
 using System.IO;
@@ -214,8 +215,21 @@ namespace CUWebinars.Web.Controllers
                         Result = "UserHasMulti"
                     }, JsonRequestBehavior.AllowGet);
                 }
+                var createdSeriesOrders = "";
                 try
                 {
+                    if (model.Webinar.SeriesInfo.Contains("Children"))
+                        if (model.Order.OrderRows != null)
+                            createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
+
+                    
+                    if (model.Webinar.Title.Contains("Compliance Perspectives"))
+                        if (model.Order.OrderRows != null)
+                        {
+                            _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(
+                                model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
+                        }
+
                     model.Order.OrderStatus = OrderStatus.Submitted;
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email,
                         model.Order.OrderRows.FirstOrDefault());
@@ -318,8 +332,8 @@ namespace CUWebinars.Web.Controllers
                     Result = WebUiConstants.Success,
                     OrderRowID = model.Order.idOrder,
                     Msg =
-                    string.Format("Thank you! Your registration is confirmed as: " + model.Order.idOrder + ". Complete details will be emailed to {0}.",
-                        model.Order.BillingEmail)
+                    string.Format("Thank you! Your registration is confirmed as: " + model.Order.idOrder + ". Complete details will be emailed to {0}. {1}",
+                        model.Order.BillingEmail, createdSeriesOrders)
                 }, JsonRequestBehavior.AllowGet);
 
             }
@@ -402,14 +416,28 @@ namespace CUWebinars.Web.Controllers
                         _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
                     }
 
-                    _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+
+                    var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+                    Debug.Assert(row != null, "row != null");
+                    var createdSeriesOrders = "";
+                    if (row.Webinar.SeriesInfo.Contains("Children"))
+                        createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
+
+                    
+                    if (row.Webinar.Title.Contains("Compliance Perspectives"))
+                        _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
+
+
                     var orderId = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
+                    _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+
 
                     return Json(new
                     {
                         Result = WebUiConstants.Success,
                         OrderRowID = orderId,
-                        Msg = string.Format("<p>Your Order ID is {0}.</p>", orderId)
+                        Msg = string.Format("<p>Your Order ID is {0}.{1}</p>", orderId, createdSeriesOrders)
                     }, JsonRequestBehavior.AllowGet);
                 }
                 catch (Exception exception)
@@ -1881,6 +1909,17 @@ namespace CUWebinars.Web.Controllers
                     bool multi = order.AdminComments != null
                         && order.AdminComments.Contains("Multi_OrderCheckout");
 
+                    var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+                    Debug.Assert(row != null, "row != null");
+                    var createdSeriesOrders = "";
+                    if (row.Webinar.SeriesInfo.Contains("Children"))
+                        createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
+
+
+                    if (row.Webinar.Title.Contains("Compliance Perspectives"))
+                        _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
+
                     if (!multi)
                     {
                         order.AdminComments = order.AdminComments.Replace("Single_OrderCheckout", "PaidByCC");
@@ -2407,7 +2446,7 @@ namespace CUWebinars.Web.Controllers
             // send back enough to make the user comfortable, adjust the screen (remove buttons, say thanks, etc.)
             return Json(new { Result = WebUiConstants.Success, msg = "Order successfully submitted - thank you! Please visit <b>My Webinars</b> (link above) for detailed information of all your events." });
         }
-        
+
         [HttpPost]
         public ActionResult UpdateAdditionalLocations(IEnumerable<AdditionalLocation> additionalLocations, int? newOrderRowId)
         {
@@ -2416,7 +2455,7 @@ namespace CUWebinars.Web.Controllers
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(newOrderRowId.Value);
                 var row = model.Order.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active);
                 _cartControllerOrchestrator.UpdateAdditionalLocationsForOrderRow(additionalLocations.Where(a => a.Email != null), newOrderRowId.Value);
-                
+
                 var updateSuccessCaption = "Updated Additional Locations";
 
                 var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);

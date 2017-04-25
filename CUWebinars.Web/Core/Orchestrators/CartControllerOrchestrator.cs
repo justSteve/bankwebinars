@@ -724,9 +724,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (existingOrder != null)
                     {
 
-                        _logger.Warn("CreateOrder found existing order: " + existingOrder.idOrder);
                         //_stateService.SetValue(DomainConstants.FoundExistingOrder, existingOrder);
                         return _orderManagementService.UserHasPrexistingOrder(existingOrder);
+
                     }
                 }
                 beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
@@ -971,7 +971,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
                 if (newOrder.AuditInfo != null)
                 {
-                    _logger.Warn("CreateNewOrder: non-null AuditInfo: "+ orderRow.idOrderRow + " - " + newOrder.AuditInfo + " is now: " + _appHelper.GetUserAuditInfo());
+                    _logger.Warn("CreateNewOrder: non-null AuditInfo: " + orderRow.idOrderRow + " - " + newOrder.AuditInfo + " is now: " + _appHelper.GetUserAuditInfo());
                 }
                 newOrder.AuditInfo = _appHelper.GetUserAuditInfo();
                 newOrder.Origin = DomainConstants.Cart;
@@ -1506,6 +1506,102 @@ namespace CUWebinars.Web.Core.Orchestrators
         public string GetAddLocPrice(Webinar modelWebinar)
         {
             return _orderManagementService.GetAdditionalLocationsPricing(modelWebinar.idWebinar).ToString("C0");
+        }
+
+        public string CreateSeriesOrders(OrderRow model)
+        {
+            var returnString = "";
+            var listOfChildWebinars = model.Webinar.SeriesInfo.Split(':')[1].ToString().Trim(' ').Split(',');
+
+            var rowIn = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+            for (var i = 0; i < listOfChildWebinars.Length; i++)
+            {
+                try
+                {
+                    var _webinar = _webinarManagementService.GetWebinar(Convert.ToInt32(listOfChildWebinars[i]));
+                    var row = CreateOrderRow(_webinar, rowIn.AdditionalLocation.ToList(), rowIn.idRegType);
+                    switch (listOfChildWebinars.Length)
+                    {
+                        case 2:
+                            row.Discount = GetDiscountById(415);
+                            break;
+                        case 3:
+                            row.Discount = GetDiscountById(413);
+                            break;
+                        case 4:
+                            row.Discount = GetDiscountById(421);
+                            break;
+                        case 5:
+                            row.Discount = GetDiscountById(422);
+                            break;
+
+                        default:
+                            throw new Exception("invalid discount");
+                            break;
+
+                    }
+
+                    var order = CreateNewOrder(model.Order.Affiliate, model.Order.WebUser, _webinar, row);
+
+                    order.OrderStatus = OrderStatus.Paid;
+
+
+                    JProperty checkoutComment = new JProperty(
+                        JsonPropertyKeys.CheckoutMessage,
+                        "Parent Order is " + model.Order.idOrder);
+                    order.UserComments = JsonHelpers.ReplaceJsonWithStoredField(order.UserComments, checkoutComment,
+                        JsonPropertyKeys.CheckoutMessage);
+                        
+                    SaveOrder(order);
+                    returnString += order.idOrder + ",";
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("CreateSeriesOrders: " + model.Order.idOrder, ex);
+                    return "CreateSeriesOrders hit error: " + ex.Message;
+                }
+            }
+            JProperty checkoutCommentParent = new JProperty(
+                        JsonPropertyKeys.CheckoutMessage,
+                        "Child Orders are " + returnString.TrimEnd(','));
+            model.Order.UserComments = JsonHelpers.ReplaceJsonWithStoredField(model.Order.UserComments,
+                checkoutCommentParent, JsonPropertyKeys.CheckoutMessage);
+
+            SaveOrder(model.Order);
+
+            _logger.Info("CreateSeriesOrders created: " + returnString);
+            return returnString;
+        }
+
+        public string CreateCompliancePerspectivesSubscription(OrderRow row)
+        {
+            try
+            {
+                var makeCPSub = _orderManagementService.CreateCompliancePerspectivesSubscription(row);
+                if (makeCPSub != "failed")
+                {
+                    var _row = CreateOrderRow(_webinarManagementService.GetWebinar(842), row.AdditionalLocation.ToList(),
+                        row.idRegType);
+                    _row.Discount = GetDiscountById(row.idOrder);
+
+                    var _order = CreateNewOrder(row.Order.Affiliate, row.Order.WebUser,
+                        _webinarManagementService.GetWebinar(842), _row);
+                    _order.OrderStatus = row.Order.OrderStatus;
+                    SaveOrder(_order);
+                }
+                else
+                {
+                    return "failed";
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return "";
         }
 
 

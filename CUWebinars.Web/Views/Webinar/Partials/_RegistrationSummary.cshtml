@@ -41,6 +41,7 @@
                 Debug.Assert(order != null, "order != null");
                 if (Model.OrderRow.Order.OrderStatus == OrderStatus.Billed ||
                     Model.OrderRow.Order.OrderStatus == OrderStatus.Paid ||
+                    Model.OrderRow.Order.OrderStatus == OrderStatus.InProcess ||
                     Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted
                     || Model.OrderRow.Order.OrderStatus == OrderStatus.OutstandingBalance)
                 {
@@ -58,11 +59,7 @@
                             {
                                 @Html.Partial("ClickToJoin", Model.ClickToJoinModel)
                             }
-                            else
-                            {
 
-                                @Html.Partial("WebinarStatus", new WebinarStatusUpdate { Webinar = Model.OrderRow.Webinar })
-                            }
                         }
                     </aside>
                             }
