@@ -2106,6 +2106,10 @@
     <Content Include="Views\Shared\_LoginPartialDES.cshtml" />
     <Content Include="Views\Order\ChangeCC.cshtml" />
     <Content Include="Views\Webinar\WebinarStatus.cshtml" />
+    <Content Include="Views\Home\IndexDES.cshtml" />
+    <Content Include="Views\Webinar\Partials\_ShoppingCartDES.cshtml" />
+    <Content Include="Views\Cart\Partials\CheckoutOptionsDES.cshtml" />
+    <Content Include="Views\Webinar\Partials\DisplayOptionsDES.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

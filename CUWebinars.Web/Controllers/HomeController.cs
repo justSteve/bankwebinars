@@ -129,7 +129,7 @@ namespace CUWebinars.Web.Controllers
             else
             {
 
-                affiliate  = _affiliateManagementService.FindById(19);
+                affiliate = _affiliateManagementService.FindById(19);
             }
 
             return View(affiliate);
@@ -150,18 +150,26 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Index()
         {
-            if (_globalConfig.Tenant == "DES")
+            if (_globalConfig.Tenant == "DirectorSeries")
             {
-                
-            }
-            ViewBag.PageStyleType = "index-flex-dark";
-            if (Request.Url != null && Request.Url.PathAndQuery.ContainsIgnoreCase("email does not match"))
-            {
-                ViewBag.Msg = ("Order's email does not match login email.");
-            }
+                _stateService.SetValue(WebUiConstants.DesSession, "true");
 
-            var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
-            return View(lWebinars);
+
+                var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
+
+                return View("~/Views/Home/IndexDES.cshtml", lWebinars);
+            }
+            else
+            {
+                ViewBag.PageStyleType = "index-flex-dark";
+                if (Request.Url != null && Request.Url.PathAndQuery.ContainsIgnoreCase("email does not match"))
+                {
+                    ViewBag.Msg = ("Order's email does not match login email.");
+                }
+
+                var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
+                return View(lWebinars);
+            }
         }
 
         public ActionResult About()

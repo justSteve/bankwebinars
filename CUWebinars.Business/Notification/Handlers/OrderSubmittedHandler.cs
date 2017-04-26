@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using System;
+using System.Linq;
+using System.Net;
+using CUWebinars.Business.Models;
 
 namespace CUWebinars.Business.Notification.Handlers
 {
@@ -26,7 +29,13 @@ namespace CUWebinars.Business.Notification.Handlers
         public virtual void Process(OrderSubmittedEvent<T> orderSubmittedEvent)
         {
             _logger.Info("Begins OrderSubmitted Notification for {0}", orderSubmittedEvent.EventObject);
-
+            if (
+                orderSubmittedEvent.EventObject.Order.OrderRows.SingleOrDefault(
+                    r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == 2484)
+            {
+                return;
+            }
+            
             try
             {
                 if (orderSubmittedEvent.EventObject.UserCreatedInCart)

@@ -1,0 +1,127 @@
+﻿@using CUWebinars.Web.Core
+@model DisplayOptionsViewModel
+
+@{
+
+    var defaultCheck = "checked";
+
+    var explainsOptionsBuilder = new StringBuilder();
+    //explainsOptionsBuilder.Append("The following options are available for this webinar.<br>");
+}
+<style>
+    #ExplainRegistrationOptions {
+        width: 540px;
+    }
+
+    .regTypeDescOutdent {
+        border-bottom-style: solid;
+        border-bottom-color: gray;
+        margin-top: 10px;
+        text-indent: -1em;
+        padding-left: 1em;
+    }
+</style>
+<div id="AttendRegTypes" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>@GlobalConfig.GlobalConfigSingleton.TenantDomain's Attendance Options</h3>
+    </div>
+    <div id="ExplainRegistrationOptions" class="modal-body">
+        <p>
+
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Finished</button>
+    </div>
+</div>
+<div id="IsOrderForCoWorker" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="confirmCaption">Ordering for a co-worker?</h3>
+    </div>
+    <div id="confirmResult" class="modal-body">
+        <p>If you would like to share your order's notifications with a co-worker - to CC them with Connection Information and all other notifications related to the order - just enter the email in the textbox below. </p>
+        <input type="text" name="CCEmail" id="CCEmail" />
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="confirmCCEmail" role="button" data-dismiss="modal" class="btn btn-success">Continue</a>
+        <button id="cancelCCEmail" class="btn" data-dismiss="modal">Cancel</button>
+    </div>
+</div>
+<div id="ExplainsRegType" class="modal hide fade">
+
+    <div id="ExplainsRegTypeBody" class="modal-body">
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal">Dismiss</button>
+    </div>
+</div>
+<div id="ShowsOptions">
+    @{
+        if (Model.OrderRowExists)
+        {
+            <div class="pull-right">
+                @Html.Partial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel)
+            </div>
+        }
+        else
+        {
+            <button type="button" class="btn-success btn pull-right" id="AddToCart"> Sign Up </button>
+
+            <div id="RegistrationType">
+                <dl>
+                    @foreach (var myOption in Model.Options)
+                    {
+                        <script language="javascript" type="text/javascript">
+                            var toolText = "@Html.Raw(myOption.Key.OptionExplain)";
+                        </script>
+                        bool appendJustOnce = true;
+
+                        explainsOptionsBuilder.Append("<div class='regTypeDescOutdent'><b>" + myOption.Key.OptionLabel.Replace(" (days)", "").Replace(" (months)", "") + "</b>  - " + myOption.Key.OptionExplain + "</div>");
+                        //font override to apply (days)
+                        <dt style="font-weight: normal">
+                            @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())
+                            <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
+                                   value="@myOption.Key.idRegType" />
+                            &nbsp;&nbsp;
+                            @Html.Raw(myOption.Key.OptionLabel) cost is based on asset size <br /> <a id="CalcDESCost" onclick="CalcDESCost(); return false;">Calculate Your Cost</a>
+
+                            <a class="_toolTip" data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>
+                        </dt>
+
+                        defaultCheck = string.Empty;
+                    }
+                </dl>
+                <div style="text-align: right;" class="pull-right">
+                    <a id="linkIsOrderForCoworker" href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br />
+                    <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal"><span id="AttendRegTypesCaption">attendance options explained</span></a>
+                </div>
+            </div>
+
+            <script type="text/javascript" language="javascript">
+                $(document).ready(function () {
+                    $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");
+
+                    $(document).ready(function () {
+                        $('a._toolTip').click(function () {
+                            //$("#ExplainsRegTypeBody").text(this.title);
+                            $("#AttendRegTypes").modal('show');
+                            return false;
+                        });
+                    });
+                });
+            </script>
+        }
+        if ((Model.WebinarStatus == WebinarStatus.Scheduled
+            || Model.WebinarStatus == WebinarStatus.Active
+            || Model.WebinarStatus == WebinarStatus.InProgress
+            ) && Model.idWebinar != 2248 && Model.idWebinar != 2109 && Model.idWebinar != 2484)
+        {
+            <div class="clearfix" id="displayAddLoc">
+                @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)
+            </div>
+        }
+    }
+</div>

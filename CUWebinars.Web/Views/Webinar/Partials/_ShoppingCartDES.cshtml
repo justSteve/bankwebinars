@@ -2,8 +2,6 @@
 @using CUWebinars.Web.Core
 @model WebinarDetailsViewModel
 @{
-    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
-
     var byJoinCode = false;
     if (ViewBag.byJoinCode != null)
     {
@@ -81,6 +79,20 @@
                     )
                 {
                     <div id="SignUpFormContainer">
+
+                            <script type="text/javascript" language="javascript">
+
+                                $(function() {
+
+                                    $('#ConfirmRegistrationBillMe').hide();
+                                    $('#ContinueShoppingButton').hide();
+                                    $('#linkIsOrderForCoworker').hide();
+                                    $('#revealAddLocsPanel').hide();
+                                    $('#revealDiscountInput').hide();
+                                    $('#revealOptions').hide();
+                                    $('#AttendRegTypesCaption').text("Subscription Overview");
+                                });
+                            </script>
                         <div style="margin-bottom: 0; padding: 0 5px 0 8px;" class="well">
                             <ul class="nav nav-tabs" id="regTabs">
                                 <li id="signUpTab" class="active"><a href="#signUp" data-toggle="tab">@Model.SignUpCaption</a></li>
@@ -90,7 +102,7 @@
                             <div class="tab-content">
                                 @if (Model.UserOwnsThisEvent < 1)
                                 {
-                                    <div class="tab-pane active" id="signUp">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)</div>
+                                    <div class="tab-pane active" id="signUp">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsDES.cshtml", model: Model.CheckoutOptionsViewModel)</div>
                                     <div class="tab-pane" id="contactInfo"></div>
                                     <div class="tab-pane" id="confirmation"></div>
                                 }

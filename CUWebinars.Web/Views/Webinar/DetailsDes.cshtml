@@ -129,7 +129,7 @@
                 <p>You may contact us by using the Online Chat button below. </p>
             </div>
 
-            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCart.cshtml", model: Model)
+            @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCartDES.cshtml", model: Model)
 
         </div>
         <!-- opens Container div-->
@@ -139,7 +139,8 @@
                 <h5 class="short_headline">
                     <span>Publish Date</span>
                 </h5>
-                <b>@Model.Webinar.Date.ToString("MMMM") @Model.Webinar.Date.Year </b>
+                <b>@Model.Webinar.Date.ToString("MMMM") @Model.Webinar.Date.Year </b><br/>
+                1 Hour
 
             </aside>
 
