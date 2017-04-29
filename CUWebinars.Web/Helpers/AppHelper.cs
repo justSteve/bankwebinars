@@ -601,16 +601,18 @@ namespace CUWebinars.Web.Helpers
             return false;
         }
 
-        public string CleanHtmlCodesAndLogo(string body, string tenantLogo)
+        public string CleanHtmlCodesAndLogo(string body, string tenantLogo, string addloccost)
         {
             body = body.Replace("&gt;", ">");
             body = body.Replace("&lt;", "<");
             body = body.Replace("[logo]", "<img src=" + tenantLogo + " />");
+            if (!string.IsNullOrEmpty(addloccost))
+                body = body.Replace("[addloccost]", addloccost);
             return body;
         }
 
 
-        public NotificationMessageFields BuildNotiFields(Order order)
+        public NotificationMessageFields BuildNotiFields(Order order, string hasCCAddress)
         {
 
             var fields = new NotificationMessageFields();
@@ -662,9 +664,11 @@ namespace CUWebinars.Web.Helpers
             fields.AddReminder = " <a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
                                  "Add to Calendar</a>";
             fields.CCCaption =
-                " Need to share the connection information with an associate? Just share " + TenantURL + "/j/" + row.TtsJoinUrl
-                + " - valid for a single connection only. Or to add an associate's email so they are CCed on all notifications <a href='" +
-                TenantURL + "/Order/ChangeCC?idOrder=" + order.idOrder + "'>" + " visit this page.</a>";
+                " Connection info is not currently shared. <a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
+                                             "(change?)</a> ";
+            if (hasCCAddress != null && hasCCAddress != "")
+                fields.CCCaption =
+                    " Connection info is shared with <a href='" + TenantURL + "/Resume/" + order.idOrder + "'>(change?)</a>";
 
             fields.PaymentStatus = order.OrderStatus.ToString();
 
@@ -724,20 +728,20 @@ namespace CUWebinars.Web.Helpers
                     fields.ExistingAddLocs = locs.TrimEnd(',') +
                                              " is currently included as an Additional Location. " +
                                              "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
-                                             "Just let us know if you need more!</a>";
+                                             "(change?)</a>";
                 }
                 if (row.AdditionalLocation.Count > 1)
                 {
                     fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
                                              " are the included Additional Locations. " +
                                              "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
-                                             "Just let us know if you need change anything.</a>";
+                                             "(change?)</a>";
                 }
 
                 if (locs == "")
                 {
                     fields.ExistingAddLocs =
-                        " Need to support remote branches? Add additional locations for $[addloccost] per seat.  " +
+                        " Need to support remote branches? Additional locations cost [addloccost] per seat.  " +
                         "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
                         "Click here to add.</a>";
                 }

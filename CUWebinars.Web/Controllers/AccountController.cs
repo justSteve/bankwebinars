@@ -1546,54 +1546,31 @@ namespace CUWebinars.Web.Controllers
                             _orderManagementService.GetOrdersByEmail(model.Email, 19)
                                 .Where(o => o.OrderStatus == OrderStatus.InProcess)
                                 .ToList();
-
+                        var MsgForUser = "";
                         if (userPendingOrder.Count() > 1)
                         {
-                            return Json(new { result = LoggedInResult, returnUrl = "/cart/checkout" });
+                            MsgForUser =
+                                "We found these 'In Process' orders and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
+
+                            return Json(new { msgForUser = MsgForUser, result = LoggedInResult, returnUrl = "/cart/checkout" });
                         }
 
                         if (userPendingOrder.Count() == 1)
                         {
+
+                            MsgForUser =
+                                "We found an 'In Process' order and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
+
                             return
                                 Json(
                                     new
                                     {
+                                        msgForUser = MsgForUser,
                                         result = LoggedInResult,
                                         returnUrl = "/resume/" + userPendingOrder.SingleOrDefault().idOrder
                                     });
                         }
 
-                        //Affiliate affiliate = null;
-                        //if (webUser != null)
-                        //{
-                        //    _logger.Info("Signin calls DetermineAffiliateByAlternativeMeans: " + webUser.idUser);
-                        //    affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
-                        //}
-                        //else
-                        //{
-                        //    //hardwire a valid affiliate ID
-                        //    _logger.Info("Signin found anon user.");
-                        //    affiliate = _affiliateRepository.FindById(19);
-                        //    //affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
-                        //}
-
-                        // if null returned, just use whatever is stored in Session for CurrentAffiliate.
-                        //      O/w, set that value.
-                        //if (!ReferenceEquals(null, affiliate))
-                        //{
-                        //    _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
-                        //    _logger.Info("Account.SignIn. Email: {1}, Affiliate: {2},  Session: {0}",
-                        //        _appHelper.GetUserAuditInfo(),
-                        //        model.Email, affiliate.ttsDomain
-                        //    );
-                        //}
-                        //else
-                        //{
-                        //    _logger.Warn("Account.SignIn. Email: {1}, Affiliate: null, Session: {0}",
-                        //        _appHelper.GetUserAuditInfo(),
-                        //        model.Email
-                        //    );
-                        //}
                         // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
                         // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
                         var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl)
@@ -2149,15 +2126,15 @@ namespace CUWebinars.Web.Controllers
 
                     if (orderId != null)
                     {
-                    var foundExistingOrder=    _orderManagementService.UserHasPrexistingOrder(
-                            _orderManagementService.GetOrderById(orderId.Value));
+                        var foundExistingOrder = _orderManagementService.UserHasPrexistingOrder(
+                                _orderManagementService.GetOrderById(orderId.Value));
                         if (foundExistingOrder != null)
                         {
                             resultObject.Add("orderId", foundExistingOrder.idOrder.ToString());
                             resultObject.Add("orderRowId", foundExistingOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow.ToString());
                             _logger.Info("CheckEmail found existing: " + foundExistingOrder.idOrder + " when checking: " + orderId.Value);
                         }
-                        
+
                     }
 
 

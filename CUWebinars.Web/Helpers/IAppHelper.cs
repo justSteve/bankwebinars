@@ -32,7 +32,7 @@ namespace CUWebinars.Web.Helpers
         bool BuildAdjustedOrderInvoiceRow(Order order, string adjustmentDirection, OrderRow row, Dictionary<string, JToken> dict, StringBuilder discountNotes, out decimal adjustedTotal, out decimal adjustedRoyalty, ref int totalNumberDiscounts);
         void Document_FieldMerging(DocumentModel document, Affiliate affiliate);
         bool BuildPostEventOrdersInvoiceRows(Order order, StringBuilder discountNotes, out OrderRow row, out string price, ref int rowNumber, out string percent, ref int totalNumberDiscounts);
-        string CleanHtmlCodesAndLogo(string body, string tenantLogo);
-        NotificationMessageFields BuildNotiFields(Order order);
+        string CleanHtmlCodesAndLogo(string body, string tenantLogo, string addloccost);
+        NotificationMessageFields BuildNotiFields(Order order, string hasCCAddress);
     }
 }

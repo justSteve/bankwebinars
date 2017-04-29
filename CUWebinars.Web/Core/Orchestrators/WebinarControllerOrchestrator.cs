@@ -110,7 +110,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
                 if (row.RegistrantKey == null && row.RegistrationType.ShowLiveNotifications == "Yes"
-                    && (row.Webinar.Status == WebinarStatus.Active 
+                    && (row.Webinar.Status == WebinarStatus.Active
                     || row.Webinar.Status == WebinarStatus.InProgress))
                     order = _orderManagementService.GenerateRegistrantKey(order);
 
@@ -119,8 +119,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _orderManagementService.SaveChanges();
                 var body = BuildConnectionInfoMessage(order);
-                body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
-                if (reminder)
+                body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("c0"));
+
+                if (!reminder)
                 {
                     _orderManagementService.FireMandrillNotificationEvent(
                         ConfigurationManager.AppSettings["TestEmailAddress"],
@@ -150,19 +151,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                     try
                     {
                         var key = _orderManagementService.GenerateRegistrantKey(order);
-                        _orderManagementService.SaveOrderChanges(key, null, null);
-
                     }
                     catch (Exception ex)
                     {
-
                         _logger.FatalException("SendConnInfoAddLoc", ex);
                     }
 
                 }
 
                 var body = BuildConnectionInfoMessage(order, loc.Email);
-                body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
+                body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToString("C0"));
 
                 _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
 
@@ -657,9 +655,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                     }
 
                     var body = BuildRecordingIsPostedMessage(order);
-                    body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo);
+                    body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, null);
 
-                    //_orderManagementService.FireMandrillNotificationEvent(toEmail, subject, body);
                     _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], subject, body);
                 }
             }
@@ -676,14 +673,18 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             Webinar webinar = row.Webinar;
-                DocumentModel document =
-                    DocumentModel.Load(
-                        System.Web.HttpContext.Current.Server.MapPath(
-                            @"~/App_Data/mergeTemplates/ConnectionInfo2.docx"));
+            DocumentModel document =
+                DocumentModel.Load(
+                    System.Web.HttpContext.Current.Server.MapPath(
+                        @"~/App_Data/mergeTemplates/ConnectionInfo2.docx"));
+            var _hasCc = "";
+            var hasCc = _orderManagementService.OrderHasCc(order);
+            if (hasCc != null)
+                _hasCc = hasCc.ToString();
 
-                var fields = _appHelper.BuildNotiFields(order);
+            var fields = _appHelper.BuildNotiFields(order, _hasCc);
 
-                document.MailMerge.Execute(fields);
+            document.MailMerge.Execute(fields);
             if (addLoc != null)
             {
                 document =
@@ -692,7 +693,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             @"~/App_Data/mergeTemplates/ConnectionInfo2AddLoc.docx"));
 
                 order.BillingEmail = addLoc;
-                fields = _appHelper.BuildNotiFields(order);
+                fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order).ToString());
 
                 document.MailMerge.Execute(fields);
                 _logger.Info("BuildConnectionInfoMessage AddLoc: " + addLoc + " fields:" + JsonConvert.SerializeObject(fields));
@@ -776,15 +777,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     System.Web.HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserBW.docx"));
 
-            //if (_globalConfig.Tenant == "CUWebinars")
-            //{
-            //    document =
-            //       DocumentModel.Load(
-            //           System.Web.HttpContext.Current.Server.MapPath(
-            //               @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserCU.docx"));
-            //}
-
-            var fields = _appHelper.BuildNotiFields(order);
+            var fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order).ToString());
 
             var oDClaim = _orderManagementService.GetOnDemandClaimById(order.idOrder);
             var thisClaim = JsonConvert.DeserializeObject<Models.JsonModels.PostEventClaim>(oDClaim.ToString());
@@ -793,7 +786,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             fields.Expires = thisClaim.ExpiryDate.ToShortDateString();
 
             document.MailMerge.Execute(fields);
-            
+
             bool noError = true;
             try
             {
@@ -1128,7 +1121,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             _webinarManagementService.AddWebinar(webinar);
-            
+
             _webinarManagementService.SaveChanges();
         }
 

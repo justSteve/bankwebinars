@@ -140,7 +140,12 @@
                     <span>Publish Date</span>
                 </h5>
                 <b>@Model.Webinar.Date.ToString("MMMM") @Model.Webinar.Date.Year </b><br/>
-                1 Hour
+
+                <div id="ceu">
+                    <a href="#" title="@Model.CeuStatement ">
+                        @Html.Raw(Model.CeuShort)
+                    </a>
+                </div>
 
             </aside>
 

@@ -225,7 +225,7 @@ $(function () {
     });
 
     $('form#frmSignIn').submit(function (e) {
-
+        
         e.preventDefault();
 
         if (!$('#ReturnUrl').val())
@@ -260,6 +260,10 @@ $(function () {
                 }
             }
         }).done(function (data) {
+            console.log(data);
+            if (data.msgForUser && data.msgForUser != '') {
+                alert(data.msgForUser);
+            }
             if (data.result === 'LoggedIn') {
                 $('#signingInMsg').html('<i class="icon-spinner icon-spin "></i>&nbsp;&nbsp;Redirecting you now ...');
 

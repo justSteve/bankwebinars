@@ -1348,16 +1348,23 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             Webinar webinar = row.Webinar;
+
             DocumentModel document =
                 DocumentModel.Load(
-                    System.Web.HttpContext.Current.Server.MapPath(
+                    HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/OrderSubmitted_PreEvent.docx"));
 
-            NotificationMessageFields fields = _appHelper.BuildNotiFields(order);
-            var orderCC = _orderManagementService.OrderHasCc(order);
-            if (orderCC != null)
+            if (
+                webinar.Status == WebinarStatus.Recorded
+            )
             {
+                document = DocumentModel.Load(
+                        HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmitted_PostEvent.docx"));
             }
+
+
+            NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order).ToString());
 
             if (row.Webinar.Title.Contains("Compliance Perspectives"))
             {
@@ -1439,7 +1446,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             DocumentModel document = DocumentModel.Load(System.Web.HttpContext.Current.Server.MapPath(
                 @"~/App_Data/mergeTemplates/ConfirmationOfAccount.docx"));
 
-            NotificationMessageFields fields = _appHelper.BuildNotiFields(order);
+            NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order).ToString());
 
             document.MailMerge.Execute(fields);
 
@@ -1468,11 +1475,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     //return System.Text.Encoding.UTF8.GetString(fileContents);
                     //return (myString);
 
-                    myString = _appHelper.CleanHtmlCodesAndLogo(myString, _globalConfig.TenantLogo);
-                    FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
-                        , "[Test][" + _globalConfig.Tenant + "] Please confirm your account", myString);
+                    myString = _appHelper.CleanHtmlCodesAndLogo(myString, _globalConfig.TenantLogo, GetAddLocPrice(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar));
 
-
+                    FireMandrillNotificationEvent(
+                        order.BillingEmail, "[" + _globalConfig.Tenant + "] Please confirm your account", myString);
                 }
             }
             catch (Exception ex)
@@ -1552,7 +1558,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         "Parent Order is " + model.Order.idOrder);
                     order.UserComments = JsonHelpers.ReplaceJsonWithStoredField(order.UserComments, checkoutComment,
                         JsonPropertyKeys.CheckoutMessage);
-                        
+
                     SaveOrder(order);
                     returnString += order.idOrder + ",";
                 }
