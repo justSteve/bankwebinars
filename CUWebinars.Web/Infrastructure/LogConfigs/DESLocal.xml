@@ -19,7 +19,7 @@
     <bufferSize value="1" />
     <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <connectionString value="Data Source=.;Initial Catalog=BW33;Integrated Security=True;MultipleActiveResultSets=True" providerName="System.Data.SqlClient" />" providerName="System.Data.SqlClient" />
-    <commandText value="INSERT INTO LoggerDES ([Date],[Level],[Message],[Exception], [Logger]) VALUES 
+    <commandText value="INSERT INTO Logger ([Date],[Level],[Message],[Exception], [Logger]) VALUES 
                  (@log_date, @log_level, @message, @exception, @logger)" />
     <parameter>
       <parameterName value="@log_date" />

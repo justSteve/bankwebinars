@@ -1172,10 +1172,11 @@ namespace CUWebinars.Web.Controllers
                         bool desCheckout = false;
                         if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.SeriesInfo == "DES")
                             desCheckout = true;
+                        var ccAddresses = new List<string> { "" };
+                        //var _ccAddresses = _orderManagementService.OrderHasCc(order);
+                        //if (_ccAddresses == null)
+                        //    ccAddresses = (List<string>) _ccAddresses.Split(',');
 
-                        IList<string> ccAddresses = _orderManagementService.OrderHasCc(order);
-                        if (ccAddresses == null)
-                            ccAddresses = new List<string> { "" };
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             DESCheckout = desCheckout,

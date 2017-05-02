@@ -1060,19 +1060,25 @@ namespace CUWebinars.Web.Controllers
             };
             try
             {
+                var odClaimIsFound = false;
                 editModel.EditFields.PostEventClaim = onDemandClaim;
                 foreach (
                     var claim in
                     claimsViewModel.UserClaims.Where(
                         c => c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterials"
-                             || c.Type == "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended")
+                             ||
+                             c.Type ==
+                             "http://ttstrain.com/ws/2014/01/identity/claims/DisplayPostEventMaterialsExtended")
                 )
                 {
-                    var singleOrDefault =
+
+                    var row =
                         editModel.EditFields.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                    if (singleOrDefault != null && singleOrDefault.OnDemandCode != null &&
-                        claim.Value.Contains(singleOrDefault.OnDemandCode))
+
+
+                    if (row.OnDemandCode != null && claim.Value.Contains(row.OnDemandCode))
                     {
+                        odClaimIsFound = true;
                         var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.Value);
 
                         onDemandClaim.OrderId = editModel.EditFields.Order.idOrder;
@@ -1081,6 +1087,23 @@ namespace CUWebinars.Web.Controllers
 
                         editModel.EditFields.PostEventClaim = onDemandClaim;
                     }
+
+
+
+                }
+                if (!odClaimIsFound)
+                {
+
+                    var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                    Debug.Assert(row != null, "row != null @ BuildOrderInfoModel");
+                    if (string.IsNullOrEmpty(row.OnDemandCode))
+                    {
+                        row.OnDemandCode = RandomHelpers.GetUniqueCode(5);
+                        _orderManagementService.SaveOrderChanges(editModel.EditFields.Order, null, null);
+                    }
+
+                    _membershipService.AddClaimForPostEventMaterials(order.BillingEmail, row, _orderManagementService.CalculatePostEventMaterialsAccessExpiry(row), _globalConfig.Tenant);
+
                 }
             }
             catch (Exception ex)

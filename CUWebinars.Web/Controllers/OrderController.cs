@@ -849,7 +849,7 @@ namespace CUWebinars.Web.Controllers
             {
                 _logger.Info("ChangeCC Email of:" + order.BillingEmail + " to: " + order.idOrder);
                 //
-                IList<string> addresses = _orderManagementService.OrderHasCc(order);
+                IList<string> addresses = _orderManagementService.OrderHasCc(order).Split(',');
                 IList<string> ccEmailAddresses = new List<string>();
 
                 if ( addresses != null)

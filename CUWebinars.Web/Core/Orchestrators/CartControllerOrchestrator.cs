@@ -1364,7 +1364,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
 
-            NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order).ToString());
+            NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
             if (row.Webinar.Title.Contains("Compliance Perspectives"))
             {
@@ -1445,8 +1445,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             DocumentModel document = DocumentModel.Load(System.Web.HttpContext.Current.Server.MapPath(
                 @"~/App_Data/mergeTemplates/ConfirmationOfAccount.docx"));
-
-            NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order).ToString());
+            
+            NotificationMessageFields fields = _appHelper.BuildNotiFields(order, null);
 
             document.MailMerge.Execute(fields);
 

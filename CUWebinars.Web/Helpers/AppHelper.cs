@@ -668,7 +668,7 @@ namespace CUWebinars.Web.Helpers
                                              "(change?)</a> ";
             if (hasCCAddress != null && hasCCAddress != "")
                 fields.CCCaption =
-                    " Connection info is shared with <a href='" + TenantURL + "/Resume/" + order.idOrder + "'>(change?)</a>";
+                    " Connection info is shared with " + hasCCAddress + " <a href='" + TenantURL + "/Resume/" + order.idOrder + "'>(change?)</a>";
 
             fields.PaymentStatus = order.OrderStatus.ToString();
 

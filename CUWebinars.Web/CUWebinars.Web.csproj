@@ -498,6 +498,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Helpers\IInvoiceHelper.cs" />
+    <Compile Include="Helpers\InvoiceHelper.cs" />
     <Compile Include="Models\PaytraceRequestToQueueModel.cs" />
     <Compile Include="Models\AuditInfoModel.cs" />
     <Compile Include="Models\AddBillingEmail.cs" />

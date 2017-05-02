@@ -693,7 +693,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             @"~/App_Data/mergeTemplates/ConnectionInfo2AddLoc.docx"));
 
                 order.BillingEmail = addLoc;
-                fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order).ToString());
+                fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
                 document.MailMerge.Execute(fields);
                 _logger.Info("BuildConnectionInfoMessage AddLoc: " + addLoc + " fields:" + JsonConvert.SerializeObject(fields));
@@ -777,7 +777,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     System.Web.HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/RecordingIsPostedToExistingUserBW.docx"));
 
-            var fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order).ToString());
+            var fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
             var oDClaim = _orderManagementService.GetOnDemandClaimById(order.idOrder);
             var thisClaim = JsonConvert.DeserializeObject<Models.JsonModels.PostEventClaim>(oDClaim.ToString());

@@ -120,6 +120,7 @@ namespace CUWebinars.Web.App_Start
                 )).InRequestScope();
 
             kernel.Bind<IAppHelper>().To<AppHelper>().InRequestScope().WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
+            kernel.Bind<IInvoiceHelper>().To<InvoiceHelper>().InRequestScope().WithConstructorArgument(Request, x => new HttpRequestWrapper(HttpContext.Current.Request));
 
             kernel.Bind<IAffiliateRepository>().To<AffiliateRepository>().InRequestScope();
             kernel.Bind<IWebinarRepository>().To<WebinarRepository>().InRequestScope();

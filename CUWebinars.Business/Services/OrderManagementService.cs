@@ -2514,17 +2514,18 @@ namespace CUWebinars.Business.Services
             return orders;
         }
 
-        public string SetOnDemandClaimById(int myRowIdOrder)
-        {
-            //RedirectResult("Account", "Signin");
-            return null;
-        }
+        //public string SetOnDemandClaimById(int myRowIdOrder)
+        //{
+        //    //RedirectResult("Account", "Signin");
+        //    return null;
+        //}
 
-        public IList<string> OrderHasCc(Order order)
+        public string OrderHasCc(Order order)
         {
             IList<string> ccEmailAddresses = null;
-            if (!string.IsNullOrWhiteSpace(order.UserComments)
-                    && order.UserComments.Contains(JsonPropertyKeys.CarbonCopy))
+            if (string.IsNullOrWhiteSpace(order.UserComments))
+                return null;
+            if (order.UserComments.Contains(JsonPropertyKeys.CarbonCopy))
             {
 
                 var addresses = JToken.Parse(order.UserComments);
@@ -2544,7 +2545,7 @@ namespace CUWebinars.Business.Services
                     ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(_addresses);
                 }
             }
-            return ccEmailAddresses;
+            return ccEmailAddresses.ToString();
 
 
 
@@ -2556,7 +2557,7 @@ namespace CUWebinars.Business.Services
 
             var row = existingOrder.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
-           Debug.Assert(row != null, "row != null");
+            Debug.Assert(row != null, "row != null");
             var foundByEmail = _orderRepository.GetOrdersByUserId(existingOrder.idUser)
                 .Where(o => o.BillingEmail == existingOrder.BillingEmail && row.idWebinar == o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar);
 
@@ -2577,7 +2578,7 @@ namespace CUWebinars.Business.Services
 
                 if (foundInProcess.Any())
                 {
-                        _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + foundInProcess.FirstOrDefault().idOrder);
+                    _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + foundInProcess.FirstOrDefault().idOrder);
                     return foundInProcess.FirstOrDefault();
                 }
 

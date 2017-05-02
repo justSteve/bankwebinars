@@ -162,10 +162,10 @@ namespace CUWebinars.Business.Services
         List<Registrant> GetCitrixRegistrantsByWebinar(int webinarId);
        IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
 
-        string SetOnDemandClaimById(int myRowIdOrder);
+        //string SetOnDemandClaimById(int myRowIdOrder);
 
         string InvoicedOrderIsUpdated(Order order);
-        IList<string> OrderHasCc(Order order);
+        string OrderHasCc(Order order);
         Order UserHasPrexistingOrder(Order existingOrder);
         string CreateCompliancePerspectivesSubscription(OrderRow row);
     }

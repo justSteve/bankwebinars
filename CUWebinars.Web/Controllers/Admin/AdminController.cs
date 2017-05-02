@@ -82,6 +82,7 @@ namespace CUWebinars.Web.Controllers.Admin
         private readonly IOrderManagementService _orderManagementService;
         private readonly IDataTablesService _dataTablesService;
         private readonly IAppHelper _appHelper;
+        private readonly IInvoiceHelper _invoiceHelper;
         private readonly IMembershipService _membershipService;
         private readonly ILogger _logger;
         private readonly IWebinarManagementService _webinarManagementService;
@@ -103,6 +104,7 @@ namespace CUWebinars.Web.Controllers.Admin
             IOrderManagementService orderManagementService,
             IDataTablesService dataTablesService,
             IAppHelper appHelper,
+            IInvoiceHelper invoiceHelper,
             IAffiliateManagementService affiliateManagementService,
             IFormatter generalFormatter)
         {
@@ -113,6 +115,7 @@ namespace CUWebinars.Web.Controllers.Admin
             _orderManagementService = orderManagementService;
             _dataTablesService = dataTablesService;
             _appHelper = appHelper;
+            _invoiceHelper = invoiceHelper;
             _affiliateManagementService = affiliateManagementService;
             _generalFormatter = generalFormatter;
         }
@@ -306,9 +309,9 @@ namespace CUWebinars.Web.Controllers.Admin
                                   " from " + originalAffiliate.ttsDomain + " to " +
                                   newAffiliate.ttsDomain + " by " + User.Identity.Name +
                                   " on " + TtsConfig.UtcNowAsCts.ToShortDateString();
-            try
+            if (order.InvoiceDetail != null && order.InvoiceDetail.StartsWith("{\"OrderIsInvoiced"))
             {
-                if (order.InvoiceDetail != null && order.InvoiceDetail.StartsWith("{\"OrderIsInvoiced"))
+                try
                 {
                     _logger.Warn("Invoiced Order changed affiliate: " + order.idOrder + " from " +
                                  originalAffiliate.ttsDomain + " to " +
@@ -319,18 +322,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     if (nullChecked != null)
                     {
-                        //properties saved when invoiced:
-                        //"", invoice.InvoiceID),
-                        //"", TtsConfig.UtcNowAsCts,
-                        //"AmountOfOrder", order.Total),
-                        //"AmountOfRoyalty", row.Royalty),
-                        //"", row.PercentPaid),
-                        //"Affiliate", _affiliateRepository.FindById(order.idAffiliate).ttsDomain)
                         var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                        //
-                        var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-                        string preSaveValues = dataOperations.GetPreSaveValues(order.idOrder);
 
+                        Debug.Assert(row != null, "row != null @ SetAff");
                         row.Royalty = row.RowPrice * (decimal)nullChecked.First()["PercentPaid"];
                         if (order.idAffiliate != originalAffiliate.idUserAff)
                         {
@@ -340,10 +334,10 @@ namespace CUWebinars.Web.Controllers.Admin
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.FatalException("SetAffiliateAssignedToOrder Json Merge: ", ex);
+                catch (Exception ex)
+                {
+                    _logger.FatalException("SetAffiliateAssignedToOrder Json Merge: ", ex);
+                }
             }
 
             _orderManagementService.SaveChanges();
@@ -456,106 +450,56 @@ namespace CUWebinars.Web.Controllers.Admin
                     _logger.Info("Updating OrderStatus " + order.idOrder + " from: " + order.OrderStatus + " to: " +
                                  model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
 
-                    var dataOperationsV3 = new DataOperations(TtsConfig.DefaultConnectionString);
-
-                    string preSaveValues = dataOperationsV3.GetPreSaveValues(order.idOrder);
-
                     if ((model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Billed ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Submitted)
-                        && order.idAffiliate == 62
-                        && order.OrderStatus == OrderStatus.AwaitingVerification)
-                    {
-                        var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
-                        JProperty PendingACSOrderIsApproved = new JProperty(JsonPropertyKeys.PendingACSOrderIsApproved,
-                            "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
 
-                        order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, PendingACSOrderIsApproved, "PendingACSOrderIsApproved");
+                        && (order.OrderStatus == OrderStatus.AwaitingVerification || order.OrderStatus == OrderStatus.InProcess)
+                        )
+                    {
+
+                        var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
+
 
                         order.OrderDate = DateTime.Now;
-                        _orderManagementService.FireOrderSubmittedEvent(order, false, false);
+
+                        if (order.idAffiliate == 62)
+                        {
+                            _orderManagementService.FireOrderSubmittedEvent(order, false, false);
+                            JProperty pendingAcsOrderIsApproved = new JProperty(JsonPropertyKeys.PendingACSOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
+                            order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
+                        }
+                        else
+                        {
+                            JProperty incompleteOrderIsApproved = new JProperty(JsonPropertyKeys.IncompleteOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
+                            order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, incompleteOrderIsApproved, "IncompleteOrderIsApproved");
+                        }
                     }
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
                     if (model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid)
                     {
                         order.TotalPaid = order.Total;
-                        _orderManagementService.SaveOrderChanges(order, null, null);
-
                     }
-                    // the only field that we are updating at this time
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(order.InvoiceDetail) &&
-                            order.OrderStatus == OrderStatus.Canceled)
-                        {
-                            _logger.Warn("Invoiced Order is canceled: " + order.idOrder);
-
-                            var toJson = JObject.Parse(order.InvoiceDetail);
-                            var thisInvoice =
-                                toJson.Properties().FirstOrDefault(p => p.Name.StartsWith("OrderIsInvoiced"));
-
-                            if (thisInvoice != null)
-                            {
-                                var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                                //
-                                row.Royalty = 0;
-
-                                var regTypeShortened =
-                                    preSaveValues.Split(',')[4].Replace(" Package", "")
-                                        .Replace("Live Plus Six", "Live+6")
-                                        .Replace(" and Hardcopy Handouts", "")
-                                        .Replace(" Recording Only", "")
-                                        .Replace(" Plus Five", "+5");
-                                StringBuilder sb = new StringBuilder();
-
-                                sb.Append(order.idOrder + " was first invoiced on " + thisInvoice.First()["InvoiceId"] +
-                                          " as type '" + regTypeShortened + "' for $" +
-                                          preSaveValues.Split(',')[0].ToString().Replace(".0000", "").Replace(".00", "") +
-                                          ") ");
-                                sb.Append(" but was canceled " +
-                                          TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
-
-                                var adustmentAmount = 0 - (decimal)thisInvoice.First()["AmountOfRoyalty"];
-
-                                //set default direction
-                                var adjustmentDirection = "Royalty is decreased";
-
-                                sb.Append(adjustmentDirection + " by " +
-                                          adustmentAmount.ToString("C").Replace(".00", ""));
-
-                                row.RowPrice = 0;
-                                var newJson4Invoice = new JProperty(
-                                    "ChangedOrderNeedsNewInvoice",
-                                    new JObject(
-                                        new JProperty("OriginalInvoice", thisInvoice.First()["InvoiceId"].ToString()),
-                                        new JProperty("OriginalDateOfInvoice",
-                                            thisInvoice.First()["DateOfInvoice"].ToString()),
-                                        new JProperty("OriginalTotal", thisInvoice.First()["AmountOfOrder"].ToString()),
-                                        new JProperty("OriginalPercentPaid",
-                                            thisInvoice.First()["PercentPaid"].ToString()),
-                                        new JProperty("OriginalRoyaltyPaid",
-                                            thisInvoice.First()["AmountOfRoyalty"].ToString()),
-                                        new JProperty("OriginalAffiliate", thisInvoice.First()["Affiliate"].ToString()),
-                                        new JProperty(adjustmentDirection, adustmentAmount),
-                                        new JProperty("DateOfChange",
-                                            TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat)),
-                                        new JProperty("Message", sb.ToString()),
-                                        new JProperty("UnDo", order.InvoiceDetail)
-                                    ));
-
-                                order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(
-                                    order.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
-
-                            }
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
-                    }
-
                     _orderManagementService.UpdateOrderByAdmin(order);
+                    if (!string.IsNullOrEmpty(order.InvoiceDetail) &&
+                        order.OrderStatus == OrderStatus.Canceled)
+                    {
+                        try
+                        {
+                            var newJson4Invoice = _invoiceHelper.OrderIsCanceled(model.Order, order);
+
+                            if (newJson4Invoice == null)
+                                throw new NullReferenceException();
+
+                            order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(order.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
+                            _orderManagementService.UpdateOrderByAdmin(order);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
+                            return null;
+                        }
+                    }
 
                     return
                         Json(
@@ -1458,7 +1402,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 Json(
                     new
                     { Result = WebUiConstants.Success });
-            
+
 
         }
 
@@ -3268,7 +3212,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             .Replace(TenantConstant.ToString() + ",", "");
 
                     _logger.Info("GenerateWeeklyInvoicesEvent | affiliateHasAnyOrders " +
-                                 affiliateHasAnyOrders.Replace(TenantConstant +",", ""));
+                                 affiliateHasAnyOrders.Replace(TenantConstant + ",", ""));
 
                     List<InvoiceExceptions> invoiceExceptionsByAff = new List<InvoiceExceptions>();
                     List<InvoiceExceptions> postEventByAff = new List<InvoiceExceptions>();
@@ -3699,7 +3643,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         foreach (var id in listOrdersAdjusted.Split(','))
                         {
-                            if (id != TenantConstant.ToString() )
+                            if (id != TenantConstant.ToString())
                             {
                                 int variable = 0;
                                 int.TryParse(id, out variable);
@@ -4628,7 +4572,7 @@ namespace CUWebinars.Web.Controllers.Admin
             IList<IDictionary<string, string>> responsePayload = new List<IDictionary<string, string>>();
             IDictionary<string, string> responsePayloadInner = new Dictionary<string, string>();
 
-            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted|| o.OrderStatus == OrderStatus.OutstandingBalance))
+            foreach (var order in orders.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.OutstandingBalance))
             {
 
                 var orderRow = order.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
