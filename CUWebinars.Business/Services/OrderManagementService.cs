@@ -2024,31 +2024,31 @@ namespace CUWebinars.Business.Services
                         _logger.Info("GenerateRegistrantKey for " + order.idOrder + " = " + regKeyResponse);
                     }
 
-                    if (row.AdditionalLocation != null)
-                    {
-                        // This branch gets key for main Additional Locations
-                        foreach (var addLoc in row.AdditionalLocation)
-                        {
-                            registrant = CreateRegistrantKey(
-                                "c/o " + order.FirstName,
-                                order.LastName ?? " ",
-                                addLoc.Email,
-                                row.Webinar.idWebinar,
-                                row.Webinar.WebinarKey
-                            );
-                            addLoc.RegistrantKey = registrant.registrantKey.ToString();
-                            addLoc.JoinURL = registrant.joinUrl;
-                            regKeyResponse = registrant.registrantKey.ToString();
-                            if (string.IsNullOrWhiteSpace(regKeyResponse))
-                            {
-                                _logger.FatalException("GenerateRegistrantKey creation (addLoc) failed.", new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response for: " + order.idOrder));
-                            }
-                            else
-                            {
-                                _logger.Info("GenerateRegistrantKey (addLoc) for " + order.idOrder + " = " + regKeyResponse);
-                            }
-                        }
-                    }
+                    //if (row.AdditionalLocation != null)
+                    //{
+                    //    // This branch gets key for main Additional Locations
+                    //    foreach (var addLoc in row.AdditionalLocation)
+                    //    {
+                    //        registrant = CreateRegistrantKey(
+                    //            "c/o " + order.FirstName,
+                    //            order.LastName ?? " ",
+                    //            addLoc.Email,
+                    //            row.Webinar.idWebinar,
+                    //            row.Webinar.WebinarKey
+                    //        );
+                    //        addLoc.RegistrantKey = registrant.registrantKey.ToString();
+                    //        addLoc.JoinURL = registrant.joinUrl;
+                    //        regKeyResponse = registrant.registrantKey.ToString();
+                    //        if (string.IsNullOrWhiteSpace(regKeyResponse))
+                    //        {
+                    //            _logger.FatalException("GenerateRegistrantKey creation (addLoc) failed.", new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response for: " + order.idOrder));
+                    //        }
+                    //        else
+                    //        {
+                    //            _logger.Info("GenerateRegistrantKey (addLoc) for " + order.idOrder + " = " + regKeyResponse);
+                    //        }
+                    //    }
+                    //}
                 }
             }
             catch (Exception ex)
@@ -2525,26 +2525,26 @@ namespace CUWebinars.Business.Services
             IList<string> ccEmailAddresses = null;
             if (string.IsNullOrWhiteSpace(order.UserComments))
                 return null;
-            if (order.UserComments.Contains(JsonPropertyKeys.CarbonCopy))
+            if (!order.UserComments.Contains(JsonPropertyKeys.CarbonCopy))
+                return null;
+
+            var addresses = JToken.Parse(order.UserComments);
+            var isCC = "";
+            foreach (JProperty prop in addresses.Children<JObject>().SelectMany(content => content.Properties().Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
             {
-
-                var addresses = JToken.Parse(order.UserComments);
-                var isCC = "";
-                foreach (JProperty prop in addresses.Children<JObject>().SelectMany(content => content.Properties().Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
-                {
-                    isCC = prop.Value.ToString();
-                }
-
-                if (isCC != "")
-                {
-                    ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(isCC);
-                }
-                else
-                {
-                    var _addresses = JObject.Parse(order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
-                    ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(_addresses);
-                }
+                isCC = prop.Value.ToString();
             }
+
+            if (isCC != "")
+            {
+                ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(isCC);
+            }
+            else
+            {
+                var _addresses = JObject.Parse(order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
+                ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(_addresses);
+            }
+
             return ccEmailAddresses.ToString();
 
 

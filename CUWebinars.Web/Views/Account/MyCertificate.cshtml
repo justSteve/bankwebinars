@@ -69,9 +69,9 @@
             </form>
         </div>
 
-        <div id="background" style="margin: auto; margin-top: 35px; width: 960px; height: 800px; background-image: url('/Content/img/CertificateBackground.jpg'); background-repeat: no-repeat;">
-
-            <div style="padding: 120px; border: 1px; border-color: black; border-style: solid;" id="wrapper">
+       <div id="background"   style="    top: 20px; left: 60px;  display: inline-block; position: relative; ">
+            <img src="/Content/img/CertificateBackground.jpg" />
+            <div  style="padding:120px;  position: absolute; top: 0px; left: 40px; " id="wrapper">
                 <h2 style="text-align: center;">Total Training Solutions</h2>
                 <p align="center">presents this</p>
                 <h1 style="text-align: center; font-size: 34px;">Certificate of Completion</h1>
@@ -87,39 +87,29 @@
                     <br /><b>@webinar.Title</b>
                 </h3>
                 @{
-                    if (_globalConfig.Tenant == "CUWebinars")
-                    {
-                        <p align="center">
-                            1 Hour Webinar <br/>1.25 CE Credits
-                        </p>
-                    }
-                    else
-                    {
-                        <p align="center">
-                            @webinar.Duration.ToString().Replace(".00", "") Hour Webinar <br/>
-                            @Model.CeuShort
-                        </p>
-
-                    }
-}
-                    <table align="center" cellpadding="0" cellspacing="0" width="600px" border="0">
-                        <tbody>
-                            <tr>
-                                <td valign="top">
-                                    <p align="left">
-                                        Presented By: <br /><b>@Presenter</b>
-                                    </p>
-                                </td>
-                                <td valign="top">
-                                    <p align="right">@DateTimeString</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <br />
-                </div>
-            </div>
-        </body>
+                    <p align="center">
+                        @webinar.Duration.ToString().Replace(".00", "").Replace(".50", ".5") Hour Webinar <br />
+                        @Model.CeuShort
+                    </p>
                 }
-            </html>
+                <table align="center" cellpadding="0" cellspacing="0" width="600px" border="0">
+                    <tbody>
+                        <tr>
+                            <td valign="top">
+                                <p align="left">
+                                    Presented By: <br /><b>@Presenter</b>
+                                </p>
+                            </td>
+                            <td valign="top">
+                                <p align="right">@DateTimeString</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
+            </div>
+        </div>
+    </body>
+}
+</html>
 

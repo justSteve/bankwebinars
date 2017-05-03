@@ -94,7 +94,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
 
             var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
-            object test = null;
+            //object test = null;
             var sb = new StringBuilder();
             sb.Append("ListSentConnectionInfo: ");
 
@@ -114,10 +114,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     || row.Webinar.Status == WebinarStatus.InProgress))
                     order = _orderManagementService.GenerateRegistrantKey(order);
 
-                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).AdditionalLocation != null)
+                //_orderManagementService.SaveChanges();
+                if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 0)
                     SendConnectionInfoToAddLoc(order, idWebinar);
 
-                _orderManagementService.SaveChanges();
                 var body = BuildConnectionInfoMessage(order);
                 body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("c0"));
 

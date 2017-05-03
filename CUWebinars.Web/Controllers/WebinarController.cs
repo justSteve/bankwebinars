@@ -1173,9 +1173,9 @@ namespace CUWebinars.Web.Controllers
                         if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.SeriesInfo == "DES")
                             desCheckout = true;
                         var ccAddresses = new List<string> { "" };
-                        //var _ccAddresses = _orderManagementService.OrderHasCc(order);
-                        //if (_ccAddresses == null)
-                        //    ccAddresses = (List<string>) _ccAddresses.Split(',');
+                        var _ccAddresses = _orderManagementService.OrderHasCc(order);
+                        if (_ccAddresses != null)
+                            ccAddresses =  _ccAddresses.Split(',').ToList();
 
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
