@@ -1483,11 +1483,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             catch (Exception ex)
             {
-                _logger.ErrorException("BuildOrderSubmitted2Noti for: " + order.idOrder, ex);
+                _logger.ErrorException("SendAccountCreatedConfirmation for: " + order.idOrder, ex);
 
             }
 
-            _logger.Error("BuildOrderSubmitted2FloatedTooFar: " + order.idOrder);
+            _logger.Error("SendAccountCreatedConfirmation: " + order.idOrder);
 
         }
 
@@ -1547,8 +1547,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                             break;
 
                     }
-
-                    var order = CreateNewOrder(model.Order.Affiliate, model.Order.WebUser, _webinar, row);
+                    
+                    var order = CreateNewOrder(model.Order.Affiliate, _orderManagementService.GetWebUser(model.Order.idUser), _webinar, row);
 
                     order.OrderStatus = OrderStatus.Paid;
 

@@ -52,7 +52,8 @@
     <script type="text/javascript" language="javascript">
         var dataParamList = 0;
 
-        function SubmitCCForm () {
+        function SubmitCCForm() {
+
             $("#PayByCCFormPT input[name='parmList']").val(dataParamList);
             $("#PayByCCFormPT").submit();
         }
@@ -83,7 +84,7 @@
                         $("#btnSubmitCCForm").click(function () {
                             SubmitCCForm();
                         });
-                        console.log(data); 
+                        //console.log(data); 
                     }
             });
             });

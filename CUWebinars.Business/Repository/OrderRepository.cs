@@ -696,7 +696,6 @@ namespace CUWebinars.Business.Repository
                     order.ShippingPhone = shippingAddress.Phone;
                     order.ShippingState = shippingAddress.State;
                     order.ShippingZip = shippingAddress.Zip;
-                    order.Institution = webUser.Institution.InstitutionName;
 
                     //if (user.SubscriptionDiscount != null)
                     //{
@@ -717,7 +716,14 @@ namespace CUWebinars.Business.Repository
                     //}
                 }
             }
-
+            if (webUser.Institution != null)
+            {
+                order.Institution = webUser.Institution.InstitutionName;
+            }
+            else
+            {
+                order.Institution = "na";
+            }
             if (order.Origin != null)
             {
                 switch (order.Origin)

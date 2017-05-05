@@ -50,6 +50,8 @@ namespace CUWebinars.Web.Core
         public string WeeklyInvoiceEmailSubject { get; private set; }
         public string OrderSubmittedMultiFromAddress { get; private set; }
         public string OrderSubmittedMultiEmailSubject { get; private set; }
+        public string NGrokServer { get; private set; }
+        public string PayTracePassword { get; private set; }
 
         private GlobalConfig()
         {
@@ -97,6 +99,8 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.WeeklyInvoiceEmailSubject = ApplicationSettingsSection["WeeklyInvoiceEmailSubject"];
                 UniqueInstance.OrderSubmittedMultiFromAddress = ApplicationSettingsSection["OrderSubmittedMultiFromAddress"];
                 UniqueInstance.OrderSubmittedMultiEmailSubject = ApplicationSettingsSection["OrderSubmittedMultiEmailSubject"];
+                UniqueInstance.NGrokServer = ApplicationSettingsSection["NGrokServer"];
+                UniqueInstance.PayTracePassword = ApplicationSettingsSection["PayTracePassword"];
 
                 ConnectionStringSettingsCollection ConnectionStringSettings = WebConfigurationManager.ConnectionStrings;
 
@@ -145,6 +149,8 @@ namespace CUWebinars.Web.Core
                 return string.Join(";", valueNames);
             }
         }
+        
+
         public Int64 ConvertToCitrixOrgKey(string webinarOrganizerKey)
         {
             Int64 oKey;

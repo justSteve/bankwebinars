@@ -2112,6 +2112,8 @@
     <Content Include="Views\Webinar\Partials\_ShoppingCartDES.cshtml" />
     <Content Include="Views\Cart\Partials\CheckoutOptionsDES.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptionsDES.cshtml" />
+    <Content Include="Views\Cart\Partials\DisplayOptions.cshtml" />
+    <Content Include="Views\Cart\Partials\_DisplayRowPriceDES.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

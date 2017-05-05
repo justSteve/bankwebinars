@@ -222,7 +222,7 @@ namespace CUWebinars.Web.Controllers
                         if (model.Order.OrderRows != null)
                             createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
 
-                    
+
                     if (model.Webinar.Title.Contains("Compliance Perspectives"))
                         if (model.Order.OrderRows != null)
                         {
@@ -244,7 +244,7 @@ namespace CUWebinars.Web.Controllers
                         orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                             _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
 
-                        
+
                         _cartControllerOrchestrator.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"]
                             , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
@@ -424,7 +424,7 @@ namespace CUWebinars.Web.Controllers
                     if (row.Webinar.SeriesInfo.Contains("Children"))
                         createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
 
-                    
+
                     if (row.Webinar.Title.Contains("Compliance Perspectives"))
                         _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
 
@@ -741,7 +741,7 @@ namespace CUWebinars.Web.Controllers
             // to get a declined amount set: AMOUNT~1.12
 
 
-            string parameters = "UN~shuener|PSWD~Nb9rj3Sw|TERMS~Y|TRANXTYPE~Sale|";
+            string parameters = "UN~shuener|PSWD~" + _globalConfig.PayTracePassword + "|TERMS~Y|TRANXTYPE~Sale|";
 
             if (_globalConfig.EmailSendingMode != "live")
             {
@@ -757,12 +757,12 @@ namespace CUWebinars.Web.Controllers
                 parameters = "UN~demo123|PSWD~demo123|TERMS~Y|TRANXTYPE~Sale|";
 
                 parameters += "ORDERID~" + idOrder + "|AMOUNT~" + totalAmt + "|";
-                parameters += "ApproveURL~http://1910a3b7.ngrok.io/cart/PayTraceApproved/|";
-                parameters += "DeclineURL~http://1910a3b7.ngrok.io/cart/PayTraceDeclined/|";
-                parameters += "ReturnURL~http://1910a3b7.ngrok.io/cart/PayTracePostBack/|";
-                //parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
-                //parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
-                //parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
+                //parameters += "ApproveURL~" + _globalConfig.NGrokServer + "/cart/PayTraceApproved/|";
+                //parameters += "DeclineURL~" + _globalConfig.NGrokServer + "/cart/PayTraceDeclined/|";
+                //parameters += "ReturnURL~" + _globalConfig.NGrokServer + "/cart/PayTracePostBack/|";
+                parameters += "ApproveURL~https://bwdev.azurewebsites.net/cart/PayTraceApproved/|";
+                parameters += "DeclineURL~https://bwdev.azurewebsites.net/cart/PayTraceDeclined/|";
+                parameters += "ReturnURL~https://bwdev.azurewebsites.net/cart/PayTracePostBack/|";
             }
             else
             {
@@ -1898,7 +1898,7 @@ namespace CUWebinars.Web.Controllers
 
                 }
                 var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
-
+                
                 if (order == null) throw new ArgumentNullException("order");
                 order.AdminComments = order.AdminComments.Replace("\"PendingPaytraceResponse\"", JsonConvert.SerializeObject(payTraceModel));
 

@@ -1532,7 +1532,7 @@ namespace CUWebinars.Web.Controllers
                         .Where(o => o.OrderStatus == OrderStatus.InProcess)
                         .ToList();
 
-                if (userPendingOrder.Count() > 1)
+                if (userPendingOrder.Any())
                 {
                     return RedirectToAction("Checkout", "Cart");
                 }
