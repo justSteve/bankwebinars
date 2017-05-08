@@ -39,6 +39,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string PrevalidateWithMulti = "PrevalidateWithMulti";
         public static readonly string CheckoutMessage = "CheckoutMessage";
         public static readonly string IncompleteOrderIsApproved = "IncompleteOrderIsApproved";
-
+        public static readonly string SentMsg = "SentMsg";
+        
     }
 }

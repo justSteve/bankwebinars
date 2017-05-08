@@ -102,24 +102,79 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                 sb.Append(order.BillingEmail + ", ");
-                var notificationStorage = new NotificationStorage
-                {
-                    idOrder = order.idOrder,
-                    SessionStartInfo = _appHelper.GetSessionStartInfo()
-                };
 
-                order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
-                if (row.RegistrantKey == null && row.RegistrationType.ShowLiveNotifications == "Yes"
+                Debug.Assert(row != null, "row != null in FireSendConnectionInfo");
+                if ((row.RegistrantKey == null || row.RegistrantKey == "")
+                    && row.RegistrationType.ShowLiveNotifications == "Yes"
                     && (row.Webinar.Status == WebinarStatus.Active
-                    || row.Webinar.Status == WebinarStatus.InProgress))
-                    order = _orderManagementService.GenerateRegistrantKey(order);
-
-                //_orderManagementService.SaveChanges();
-                if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 0)
-                    SendConnectionInfoToAddLoc(order, idWebinar);
-
+                        || row.Webinar.Status == WebinarStatus.InProgress))
+                {
+                    var wasFound = false;
+                    foreach (var cReg in apiResponse)
+                    {
+                        if (cReg.email == order.BillingEmail)
+                        {
+                            wasFound = true;
+                            row.RegistrantKey = cReg.registrantKey.ToString();
+                            _orderManagementService.SaveChanges();
+                        }
+                    }
+                    if (!wasFound)
+                    {
+                        order = _orderManagementService.GenerateRegistrantKey(order);
+                    }
+                }
                 var body = BuildConnectionInfoMessage(order);
-                body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("c0"));
+                //body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("c0"));
+                //AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo.Replace("{\"AuditInfo\":", "").Replace("}}", "}"));
+                var jsonObject = new JObject();
+                jsonObject.Add("SendDate", DateTime.Now);
+                jsonObject.Add("SendDate", DateTime.Now);
+                jsonObject.Add("URL", "https://storeforbw.blob.core.windows.net/connectionchecklist/" + webinar.idWebinar + "/" + order.idOrder + ".htm");
+                var newJson = new JProperty(string.Concat(JsonPropertyKeys.SentMsg), jsonObject);
+
+
+                if (!reminder)
+                {
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        ConfigurationManager.AppSettings["TestEmailAddress"],
+                        "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+                    jsonObject.Add("Sender", "Sys_FirstSend");
+                }
+                else
+                {
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        ConfigurationManager.AppSettings["TestEmailAddress"],
+                        "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
+                    jsonObject.Add("Sender", "Sys_Reminder");
+                }
+
+                order.NotificationStorage = JsonHelpers.MergeJsonWithStoredField(order.NotificationStorage, newJson);
+
+                _orderManagementService.SaveChanges();
+                if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 0)
+                {
+                    SendConnectionInfoToAddLoc(order, idWebinar);
+                }
+
+            });
+
+            _logger.Info(sb.ToString());
+#if DEBUG
+            _logger.Info("d");
+#else
+                    _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
+#endif
+        }
+
+        private void SendConnectionInfoToAddLoc(Order order, int idWebinar, bool reminder = false)
+        {
+            var addLocs = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).AdditionalLocation;
+
+            foreach (var loc in addLocs)
+            {
+
+                var body = BuildConnectionInfoMessage(order, loc.Email);
 
                 if (!reminder)
                 {
@@ -133,37 +188,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                         ConfigurationManager.AppSettings["TestEmailAddress"],
                         "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
                 }
-
-            });
-
-            _logger.Info(sb.ToString());
-            _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
-        }
-
-        private void SendConnectionInfoToAddLoc(Order order, int idWebinar, bool reminder = false)
-        {
-            var addLocs = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).AdditionalLocation;
-
-            foreach (var loc in addLocs)
-            {
-                if (string.IsNullOrEmpty(loc.RegistrantKey))
-                {
-                    try
-                    {
-                        var key = _orderManagementService.GenerateRegistrantKey(order);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.FatalException("SendConnInfoAddLoc", ex);
-                    }
-
-                }
-
-                var body = BuildConnectionInfoMessage(order, loc.Email);
-                body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToString("C0"));
-
-                _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
-
             }
         }
 
@@ -692,73 +716,52 @@ namespace CUWebinars.Web.Core.Orchestrators
                         System.Web.HttpContext.Current.Server.MapPath(
                             @"~/App_Data/mergeTemplates/ConnectionInfo2AddLoc.docx"));
 
-                order.BillingEmail = addLoc;
                 fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
                 document.MailMerge.Execute(fields);
                 _logger.Info("BuildConnectionInfoMessage AddLoc: " + addLoc + " fields:" + JsonConvert.SerializeObject(fields));
             }
-
-            bool noError = true;
             try
             {
-                if (noError)
+                var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
+                    _globalConfig.StorageAccessKey);
+
+                var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
+                CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
+
+                // Retrieve reference to a previously created container.
+                CloudBlobContainer container = blobClient.GetContainerReference("connectionchecklist");
+                container.CreateIfNotExists();
+
+                CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");
+
+                //using (MemoryStream output = new MemoryStream())
+                //{
+                //    document.Save(output, SaveOptions.PdfDefault);
+                //    output.Position = 0; // reset to beginning so Upload operation can work correctly
+                //    blob.UploadFromStream(output);
+                //}
+
+                blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
+
+                byte[] fileContents;
+                using (MemoryStream output = new MemoryStream())
                 {
+                    document.Save(output, SaveOptions.HtmlDefault);
+                    output.Position = 0; // reset to beginning so Upload operation can work correctly
 
-                    //// SAVE LOCALLY if needed for easier testing
-                    //document.Save(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/" + order.idOrder + ".pdf"), SaveOptions.PdfDefault);
-
-                    var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
-                        _globalConfig.StorageAccessKey);
-
-                    var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
-                    CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
-
-                    // Retrieve reference to a previously created container.
-                    CloudBlobContainer container = blobClient.GetContainerReference("connectionchecklist");
-                    container.CreateIfNotExists();
-
-                    CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");
-
-                    using (MemoryStream output = new MemoryStream())
-                    {
-                        document.Save(output, SaveOptions.PdfDefault);
-                        output.Position = 0; // reset to beginning so Upload operation can work correctly
-                        blob.UploadFromStream(output);
-                    }
-
-                    blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
-                    using (MemoryStream output = new MemoryStream())
-                    {
-                        document.Save(output, SaveOptions.HtmlDefault);
-                        output.Position = 0; // reset to beginning so Upload operation can work correctly
-                        blob.UploadFromStream(output);
-                    }
-
-                    var blobDoc = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".docx");
-                    using (MemoryStream output = new MemoryStream())
-                    {
-                        document.Save(output, SaveOptions.DocxDefault);
-                        output.Position = 0; // reset to beginning so Upload operation can work correctly
-                        blobDoc.UploadFromStream(output);
-                    }
-
-                    byte[] fileContents;
-                    using (MemoryStream output = new MemoryStream())
-                    {
-                        document.Save(output, SaveOptions.HtmlDefault);
-                        output.Position = 0; // reset to beginning so Upload operation can work correctly
-
-                        fileContents = output.ToArray();
-                    }
-
-                    return System.Text.Encoding.UTF8.GetString(fileContents);
+                    fileContents = output.ToArray();
                 }
-                else
-                {
-                    https://ci4.googleusercontent.com/proxy/AOF0zatzFSovHlWus8P1dHxNNFo0tLbt-mot0d9e-Of2y7-y9OixCjE7b48XZyxMDreHdAqWirQiZ5bnZNro7z99YsBEbeXmAtMPk4wXt_4cag5u=s0-d-e1-ft#http://devholmen15:3538/Content/images/vrLocal/left_shadow.jpg
-                    return null;
-                }
+
+                var docToString = System.Text.Encoding.UTF8.GetString(fileContents);
+
+                docToString = _appHelper.CleanHtmlCodesAndLogo(docToString
+                , _globalConfig.TenantLogo
+                , _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToString("C0"));
+
+                blob.UploadText(docToString);
+                return docToString;
+
             }
             catch (Exception ex)
             {

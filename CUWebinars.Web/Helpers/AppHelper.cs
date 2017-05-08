@@ -659,7 +659,9 @@ namespace CUWebinars.Web.Helpers
             fields.Phone = row.Webinar.AccessPhone;
             fields.AccessCode = row.Webinar.AccessCodeAttendee;
             fields.PresenterMaterials = fileBuilder;
-            fields.ClickToJoinLink = "<a href='" + TenantURL + "/j/" + row.TtsJoinUrl + "'>" +
+            fields.ClickToJoinLink = "<a href='" + row.CitrixJoinUrl + "'>" +
+                                     row.CitrixJoinUrl + "</a>";
+            fields.ClickToJoinAddLocLink = "<a href='" + TenantURL + "/j/" + row.TtsJoinUrl + "'>" +
                                      TenantURL + "/j/" + row.TtsJoinUrl + "</a>";
             fields.AddReminder = " <a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
                                  "Add to Calendar</a>";

@@ -29,17 +29,15 @@
         var _temp = myRow.Order.UserComments.Replace("{ \"CheckoutMessage\":\"Child Orders are ", "");
             
         var _createdSeriesOrders = _temp.Split(',');
-        createdSeriesOrders = " This order for a " + _createdSeriesOrders.Length + "-part series has created orders for each of the episodes: ";
+        createdSeriesOrders = " This order for a " + _createdSeriesOrders.Length + "-part series has created orders for each of the episodes: <br>";
         var i = "";
 
         foreach (var list in _createdSeriesOrders)
         {
             i += _globalConfig.TenantPrefix + list + ", ";
         }
-        createdSeriesOrders += i.TrimEnd(' ');
-        createdSeriesOrders += i.TrimEnd(',');
-        createdSeriesOrders += ".";
-        newUserMsg += "<p> " + createdSeriesOrders + "</p>";
+        createdSeriesOrders += i.TrimEnd(' ').TrimEnd(',') ;
+        newUserMsg += "<p> " + createdSeriesOrders.Replace("{\"CheckoutMessage\":\"Child Orders are ", "").TrimEnd('}').TrimEnd('"') + ".</p>";
 
     }
 

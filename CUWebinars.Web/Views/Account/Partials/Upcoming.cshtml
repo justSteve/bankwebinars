@@ -20,8 +20,8 @@
         var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
 
         var tagBuilder = new TagBuilder("<strong>"); // emails in bold text, or whatever suits
-        //var tagBuilder = new TagBuilder(""); // above results in unclosed strong tags;
-        //tagBuilder.AddCssClass("muted");
+                                                     //var tagBuilder = new TagBuilder(""); // above results in unclosed strong tags;
+                                                     //tagBuilder.AddCssClass("muted");
 
         foreach (var additionalLocation in additionalLocationsEnumerated)
         {
@@ -67,6 +67,12 @@
         line-height: 98%;
         padding: 10px;
     }
+    .short_headline {
+        margin-bottom: 0px;
+    }
+    .widget {
+        margin-bottom: 0;
+    }
 </style>
 
 
@@ -96,7 +102,7 @@
                         remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
                     }
                     <div class=" container-fluid">
-                        <div class="row-fluid well well-large">
+                        <div class="row-fluid">
                             <div style="border-top-color: black;border-top: 10px;">
                                 <div class="pull-right span4" id="orderSum-@row.idWebinar">
                                     @*@{ Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order); }*@
@@ -126,102 +132,112 @@
                                     }
 
                                     @{ Html.RenderPartial("Partials/OrderHasAdditionalLocations", orderHasAdditionalLocationsViewModel); }
-                                    @if (row.Webinar.Status == WebinarStatus.Active
-                                         || row.Webinar.Status == WebinarStatus.InProgress)
+                                    @if (row.Webinar.SeriesInfo.Contains("Child"))
                                     {
-                                        if (row.RegistrationType.ShowLiveNotifications == "Yes")
-                                        {
-
-                                            <div><b>Connection Summary</b></div>
-
-                                            <table width="400px">
-                                                <tr>
-                                                    <td valign="top">Click-To-Join:</td>
-                                                    @if (row.Webinar.Status == WebinarStatus.InProgress)
-                                                    {
-                                                        <td>
-                                                            <a href="@Url.Action("ClickToJoin", "Webinar", new { @joinCode = row.TtsJoinUrl })"> Link</a>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>
-                                                            <a href="@Url.Action("ClickToJoin", "Webinar", new { @joinCode = row.TtsJoinUrl })"> Link</a>
-                                                            @*@Html.ActionLink("Link to page", "ClickToJoin", "Webinar", new { @joinCode = "2" })*@
-                                                        </td>
-                                                    }
-                                                </tr>
-                                                <tr>
-                                                    <td class="audio" colspan="2">Audio is delivered directly to your workstation (sound-card and speakers required). Or use the information below to connect via your telephone.</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Teleconference:</td>
-                                                    <td>@row.Webinar.AccessPhone</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="align_right">Access Code:</td>
-                                                    <td>@row.Webinar.AccessCodeAttendee</td>
-                                                </tr>
-                                            </table>
-
-                                            <br />
-                                            <div class="well well-small">
-
-                                                <b>Event Materials</b>
-                                                @{
-                                            Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);
-                                                }
-                                            </div>
-
-
-                                        }
-                                        if (row.RegistrationType.ShowLiveNotifications != "Yes")
-                                        {
-                                            <div>
-                                                The CD and handouts are typically shipped within 3-5 days following the event. Shipping
-                                                status will be displayed here. Check back here for links to the OnDemand recording
-                                                - typically posted within 1-2 days following the event.
-                                            </div>
-                                        }
+                                        // contains 'child' means this is a Series Parent
+                                        <div>This is the Series order. Each episode has it's own order (non-billable) to display connection info, presenter materials, and recordings for that given presentation.  </div>
                                     }
                                     else
                                     {
-                                        //inactive state
-                                        if (row.RegistrationType.ShowLiveNotifications != "Yes")
+                                        if (row.Webinar.Status == WebinarStatus.Active 
+                                            || row.Webinar.Status == WebinarStatus.InProgress)
                                         {
-                                            if (row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                                            if (row.RegistrationType.ShowLiveNotifications == "Yes")
                                             {
+
                                                 <div>
-                                                    Check back here for links to the OnDemand recording
-                                                    - typically posted within 1-2 days following the event. Your CD and handouts are typically shipped within 3-5 days following the event. Shipping
-                                                    status will be displayed here.
+                                                    <b>Connection Summary</b>
                                                 </div>
-                                            }
-                                            else
-                                            {
-                                                <div class="span10">
-                                                    Check back here for links to the OnDemand recording - typically posted within 1-2 days following the event.
+
+                                                <table width="400px">
+                                                    <tr>
+                                                        <td valign="top">Click-To-Join:</td>
+                                                        @if (row.Webinar.Status == WebinarStatus.InProgress)
+                                                        {
+                                                            <td>
+                                                                <a href="@Url.Action("ClickToJoin", "Webinar", new {@joinCode = row.TtsJoinUrl})"> Link</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a href="@Url.Action("ClickToJoin", "Webinar", new {@joinCode = row.TtsJoinUrl})"> Link</a>
+                                                                @*@Html.ActionLink("Link to page", "ClickToJoin", "Webinar", new { @joinCode = "2" })*@
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="audio" colspan="2">Audio is delivered directly to your workstation (sound-card and speakers required). Or use the information below to connect via your telephone.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Teleconference:</td>
+                                                        <td>@row.Webinar.AccessPhone</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="align_right">Access Code:</td>
+                                                        <td>@row.Webinar.AccessCodeAttendee</td>
+                                                    </tr>
+                                                </table>
+
+                                                <br />
+                                                <div class="well well-small">
+
+                                                    <b>Event Materials</b>
+                                                    @{
+                                                        Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);
+                                                    }
                                                 </div>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <div class="container-fluid">
-                                                <div class="span10">
-                                                    The event's connection information will be generated 3-5 days before @row.Webinar.Date.ToShortDateString(). Watch your
-                                                    email or check back here ('<b>My Webinars</b>') to review the current status of
-                                                    this event. You may wish to review this general guide to connecting to our events
-                                                    <a href="/Home/DetailedConnectionInstructions" target="_blank">@globalConfig.TenantDomain/Home/DetailedConnectionInstructions</a>.
-                                                </div>
-                                            </div>
-                                        }
-                                    }
+
+
+                                                        }
+                                                        if (row.RegistrationType.ShowLiveNotifications != "Yes")
+                                                        {
+                                                            <div>
+                                                                The CD and handouts are typically shipped within 3-5 days following the event. Shipping
+                                                                status will be displayed here. Check back here for links to the OnDemand recording
+                                                                - typically posted within 1-2 days following the event.
+                                                            </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            //inactive state
+                                                            if (row.RegistrationType.ShowLiveNotifications != "Yes")
+                                                            {
+                                                                if (row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                                                                {
+                                                                    <div>
+                                                                        Check back here for links to the OnDemand recording
+                                                                        - typically posted within 1-2 days following the event. Your CD and handouts are typically shipped within 3-5 days following the event. Shipping
+                                                                        status will be displayed here.
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="span10">
+                                                                        Check back here for links to the OnDemand recording - typically posted within 1-2 days following the event.
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="container-fluid">
+                                                                    <div class="span10">
+                                                                        The event's connection information will be generated 3-5 days before @row.Webinar.Date.ToShortDateString(). Watch your
+                                                                        email or check back here ('<b>My Webinars</b>') to review the current status of
+                                                                        this event. You may wish to review this general guide to connecting to our events
+                                                                        <a href="/Home/DetailedConnectionInstructions" target="_blank">@globalConfig.TenantDomain/Home/DetailedConnectionInstructions</a>.
+                                                                    </div>
+                                                                </div>
+                                                                }
+                                                            }
+                                                        }
                                 </div>
                             </div>
                         </div>
                     </div>
-                }
-            }
+                                                            }
+                                                        }
         </div>
     </div>
 </div>

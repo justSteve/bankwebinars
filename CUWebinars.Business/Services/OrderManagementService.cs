@@ -1996,7 +1996,6 @@ namespace CUWebinars.Business.Services
             if (order == null) throw new ArgumentNullException("order");
 
             var row = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-            var regKeyResponse = string.Empty;
 
             try
             {
@@ -2014,7 +2013,7 @@ namespace CUWebinars.Business.Services
 
                     row.CitrixJoinUrl = registrant.joinUrl;
                     row.RegistrantKey = registrant.registrantKey.ToString();
-                    regKeyResponse = registrant.registrantKey.ToString();
+                    var regKeyResponse = registrant.registrantKey.ToString();
                     if (string.IsNullOrWhiteSpace(regKeyResponse))
                     {
                         _logger.FatalException("GenerateRegistrantKey: ", new NullReferenceException("The Registration Key Response from the Citrix API resulted in a null response for: " + order.idOrder));
@@ -2049,6 +2048,8 @@ namespace CUWebinars.Business.Services
                     //        }
                     //    }
                     //}
+
+                    SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -2056,7 +2057,7 @@ namespace CUWebinars.Business.Services
                 _logger.FatalException("GenerateRegistrantKey: ", ex);
             }
 
-
+            SaveChanges();
             return order;
         }
 

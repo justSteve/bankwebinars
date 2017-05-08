@@ -1245,17 +1245,18 @@ namespace CUWebinars.Web.Controllers.Admin
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // perf bump by assigning to local variable
 
-            if (string.IsNullOrEmpty(orderRow.RegistrantKey) && orderRow.Webinar.CitrixJoinInfoAvailable())
+            if (string.IsNullOrEmpty(orderRow.RegistrantKey) 
+                && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
                 _orderManagementService.GenerateRegistrantKey(order);
 
-                if (orderRow.AdditionalLocation.Any())
-                {
-                    foreach (var additionalLocation in orderRow.AdditionalLocation)
-                    {
-                        _orderManagementService.GenerateRegistrantKey(order);
-                    }
-                }
+                //if (orderRow.AdditionalLocation.Any())
+                //{
+                //    foreach (var additionalLocation in orderRow.AdditionalLocation)
+                //    {
+                //        _orderManagementService.GenerateRegistrantKey(order);
+                //    }
+                //}
             }
 
             //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
