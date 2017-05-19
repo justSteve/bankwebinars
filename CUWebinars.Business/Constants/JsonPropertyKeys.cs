@@ -40,6 +40,9 @@ namespace CUWebinars.Business.Constants
         public static readonly string CheckoutMessage = "CheckoutMessage";
         public static readonly string IncompleteOrderIsApproved = "IncompleteOrderIsApproved";
         public static readonly string SentMsg = "SentMsg";
-        
+        public static readonly string NotiResults = "NotiResults";
+        public static readonly string SendConnectionChecklist = "SendConnectionChecklist";
+
+
     }
 }

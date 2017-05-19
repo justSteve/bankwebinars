@@ -67,14 +67,15 @@
         line-height: 98%;
         padding: 10px;
     }
+
     .short_headline {
         margin-bottom: 0px;
     }
+
     .widget {
         margin-bottom: 0;
     }
 </style>
-
 
 <div class="container">
     <!--begin main content-->
@@ -107,6 +108,7 @@
                                 <div class="pull-right span4" id="orderSum-@row.idWebinar">
                                     @*@{ Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order); }*@
                                     @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", scheduled)
+
                                     <aside class="widget">
                                         <h5 class="short_headline"><span>Share Connection Info</span></h5>
                                         @{Html.RenderPartial("Partials/_ShareNotifications", row.Order);}
@@ -139,7 +141,7 @@
                                     }
                                     else
                                     {
-                                        if (row.Webinar.Status == WebinarStatus.Active 
+                                        if (row.Webinar.Status == WebinarStatus.Active
                                             || row.Webinar.Status == WebinarStatus.InProgress)
                                         {
                                             if (row.RegistrationType.ShowLiveNotifications == "Yes")
@@ -232,6 +234,7 @@
                                                                 }
                                                             }
                                                         }
+                                    <div class="well pull-right" id="Container4ResendConfirmation"><button id="ResendOrderConfirmationButton" data-idOrder="@row.idOrder" class="btn btn-small">Re-send Order Confirmation</button></div>
                                 </div>
                             </div>
                         </div>

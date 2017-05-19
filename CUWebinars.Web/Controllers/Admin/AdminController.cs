@@ -1231,9 +1231,9 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return PartialView("~/Views/Admin/Home/_resendOrderConfirmation.cshtml", model);
         }
-
+        [AllowAnonymous]
         [HttpPost]
-        public ActionResult ResendOrderConfirmation(int orderId)
+        public ActionResult ResendOrderConfirmation(int orderId, string source = "System")
         {
             var order = _orderManagementService.GetOrderById(orderId);
 
@@ -2061,6 +2061,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
 
                 var recp = new Recipient { ListId = affiliate.idMailChimpList };
+                //var group = await manager.InterestCategories.GetAsync()
+
+
                 var segment = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
                 var _segment = segment.Where(s => s.Name == "General").FirstOrDefault();
                 if (_segment != null)

@@ -51,7 +51,8 @@
         {
             <text>This order shipped on:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>
         }
-        <i>Total Cost:</i> @Model.Total.ToString("C", nfi)
+        <i>Total Cost:</i> @Model.Total.ToString("C", nfi)<br/>
+        <i>Status: </i>@Model.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Order.OrderStatus
     </div>
 
 </div>

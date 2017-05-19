@@ -54,5 +54,6 @@ namespace CUWebinars.Business.Models
         public virtual ICollection<WebinarTopicXref> WebinarTopicXrefs { get; set; }
         public virtual Presenter Presenter { get; set; }
         public string Campaigns { get; set; }
+        public string Comments { get; set; }
     }
 }

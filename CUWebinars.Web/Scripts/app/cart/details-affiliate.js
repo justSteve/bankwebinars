@@ -8,6 +8,8 @@ OCA.checkoutConfirm = {};
 OCA.searchBy = '';
 OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
 OCA.okToLeave = true;
+OCA.ordersForConnInfoSender = [];
+OCA.counterForConnInfoSender = 0;
 
 
 function timeSince(date) {
@@ -46,7 +48,7 @@ OCA.initializeFunctions = function () {
 
         var payload = { webinarId: currentWebinarId };
         eventArgs.preventDefault();
-
+        console.log(eventArgs);
         //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
         //logStartOperation("Sending ConnectionInfo", null, true);
 
@@ -67,6 +69,12 @@ OCA.initializeFunctions = function () {
             labelCheckRemove();
 
             if (result.Result === 'Success') {
+                var listOfOrders = OCA.ordersForConnInfoSender.toString();
+                console.log(listOfOrders);
+                listOfOrders = listOfOrders.replace(",", " ");
+                $('#SenderSummary').append("Presenter notification sent to: " + result.PresenterNotified + "</br><p>Full listing of orders to be sent: <br>" + listOfOrders + "</p><div id='showSenderResults'></div>");
+                OCA.SendConnectionInfoToUser();
+
                 $('#InputFormFields').append('<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;Messsage Sent</span>');
             } else if (result.Result === 'No Orders to send for that webinar') {
                 $('#InputFormFields').append(noOrdersScreenMessage);
@@ -120,6 +128,75 @@ OCA.initializeFunctions = function () {
             $('#loadingSpinner').remove();
         });
     });
+
+    $("#sendConnInfoOrders").on('shown', (function () {
+        var self = this;
+        var payload = { idWebinar: currentWebinarId };
+        $.ajax({
+            type: 'GET',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/Webinar/ConnectionInfoSenderPrep',
+            dataType: constants.JsonDataType,
+            data: payload,
+            beforeSend: function () {
+                $(self).after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Building Prep...</span></span>');
+            }
+        }).done(function (result) {
+
+            if (result.Result === 'Success') {
+
+                $("#fireConnInfoSender").show();
+
+                var stripBracket = result.ordersToSend.replace('[', '').replace(']', '');
+                OCA.ordersForConnInfoSender = stripBracket.split(",");
+
+            } else if (result.Result === 'Fail') {
+                $('#InputFormFields').append(noOrderScreenMessage);
+            }
+            $('#spinnerLabel').remove();
+
+
+        }).fail(function () {
+
+        }).always(function () {
+            //$('#loadingSpinner').remove();
+        });
+
+    }));
+
+    OCA.SendConnectionInfoToUser =
+        function () {
+            if (OCA.counterForConnInfoSender < OCA.ordersForConnInfoSender.length) {
+
+
+                var order = OCA.ordersForConnInfoSender[OCA.counterForConnInfoSender];
+
+                var payload = { orderId: order };
+                //alert(_ordersForConnInfoSender[i]);
+
+                console.log(payload);
+                $.ajax({
+                    type: 'POST',
+                    //contentType: constants.JsonContentType,
+                    cache: false,
+                    asynch: false,
+                    url: '/Webinar/SendConnectionInfo',
+                    dataType: constants.JsonDataType,
+                    data: payload,
+                    beforeSend: function () {
+                        //$(self)
+                        //    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Building Prep...</span></span>');
+                    }
+                }).done(function (result) {
+                    OCA.counterForConnInfoSender++;
+                    OCA.SendConnectionInfoToUser();
+                    $('#showSenderResults').html("Sent: " + OCA.counterForConnInfoSender + " of " + OCA.ordersForConnInfoSender.length + " " + result.orderId);
+
+                    $('#spinnerLabel').remove();
+                });
+            }
+        };
 
 
     OCA.hookUpApplyDiscountLogic = function (btn, orderRowId) {
@@ -842,7 +919,7 @@ OCA.wireUpHandlers = function () {
 
                                     $('#confirmationTabForAffiliate a').tab('show');
                                 } else {
-
+                                    alert("hit")
                                     $('#confirmationTabForAffiliate a').tab('show');
                                     $('#loadingSpinner').remove();
                                     $('#AdjustOrder').hide();
@@ -1130,6 +1207,7 @@ OCA.wireUpHandlers = function () {
 // $(document).ready function
 $(function () {
 
+    $("#fireConnInfoSender").hide();
     OCA.initializeFunctions();
 
     OCA.initializeState();

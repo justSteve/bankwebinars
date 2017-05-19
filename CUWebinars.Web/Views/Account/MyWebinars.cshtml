@@ -48,6 +48,63 @@
         border-bottom: 2px solid darkgray;
     }
 </style>
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $('#ResendOrderConfirmationButton').on('click',
+            function () {
+                console.log(this);
+                var $this = $(this);
+                var orderId = $this.data('idorder');
+
+                var self = this;
+
+                //var logStartOperation = toastLogger.getLogFn('ResendOrderConfirmation');
+                //logStartOperation("Re-sending Order Confirmation", null, true);
+
+                var payload = { orderId: orderId };
+
+                $.ajax({
+                    type: 'POST',
+                    contentType: constants.JsonContentType,
+                    cache: false,
+                    url: '/Admin/ResendOrderConfirmation',
+                    dataType: constants.JsonDataType,
+                    data: JSON.stringify(payload),
+                    beforeSend: function () {
+                        $(self)
+                            .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                    }
+                }).done(function (result) {
+
+                    if (result.Result === 'Success') {
+                        $.ajax({
+                            type: 'POST',
+                            contentType: constants.JsonContentType,
+                            cache: false,
+                            url: '/Cart/SendOrderConfirmation2',
+                            dataType: constants.JsonDataType,
+                            data: JSON.stringify(payload),
+                            beforeSend: function () {
+                                $(self)
+                                    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                            }
+                        });
+
+                        $('#Container4ResendConfirmation').html("Your order confirmation is resent. If you do not see an email from <b> @_globalConfig.TenantEmail </b> please check your spam folder.");
+                    } else if (result.Result === 'Fail') {
+                        $('#Container4ResendConfirmation').html("We've encountered an error and are working to solve the issue. Please contact us at  @_globalConfig.TenantEmail  for more information.");
+        }
+        $('#spinnerLabel').remove();
+
+    }).fail(function () {
+        alert("There was a problem. Please try again.");
+    }).always(function () {
+        $('#spinnerLabel').remove();
+    });
+            });
+    });
+
+</script>
 
 <div class="container">
     <h2 class="short_headline">My Webinars</h2>

@@ -42,7 +42,7 @@ namespace CUWebinars.Business.Notification.Handlers
 
         public virtual void Process(SendConnectionInfoEvent<T> sendConnectionInfoEvent)
         {
-            int orderId = sendConnectionInfoEvent.EventObject.idOrderLegacy;
+            int orderId = sendConnectionInfoEvent.EventObject.idOrder;
 
             //_logger.Info("SendConnectionInfoEventMailer is processing " + sendConnectionInfoEvent.EventObject.OrderRows
             //    .Single(or => or.RowStatus == OrderRowStatus.Active).idOrder);

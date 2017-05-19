@@ -25,7 +25,7 @@
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <TypeScriptToolsVersion>2.1</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
     <ApplicationInsightsResourceId>/subscriptions/4aa59c5e-6984-4f30-bb2b-df7e1eb43e6e/resourcegroups/Default-Web-NorthCentralUS/providers/microsoft.insights/components/BankWebinars33</ApplicationInsightsResourceId>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -498,6 +498,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\NotiResultsModel.cs" />
+    <Compile Include="Models\ConnInfoSenderModel.cs" />
+    <Compile Include="Models\ConnInfoSendModel.cs" />
     <Compile Include="Helpers\IInvoiceHelper.cs" />
     <Compile Include="Helpers\InvoiceHelper.cs" />
     <Compile Include="Models\PaytraceRequestToQueueModel.cs" />

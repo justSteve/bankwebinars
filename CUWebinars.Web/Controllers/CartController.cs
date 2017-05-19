@@ -207,6 +207,7 @@ namespace CUWebinars.Web.Controllers
             {
                 _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+                var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
                 if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
                 {
@@ -218,6 +219,9 @@ namespace CUWebinars.Web.Controllers
                 var createdSeriesOrders = "";
                 try
                 {
+                    model.Order.OrderStatus = OrderStatus.Submitted;
+                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, row);
+
                     if (model.Webinar.SeriesInfo.Contains("Children"))
                         if (model.Order.OrderRows != null)
                             createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
@@ -230,65 +234,6 @@ namespace CUWebinars.Web.Controllers
                                 model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
                         }
 
-                    model.Order.OrderStatus = OrderStatus.Submitted;
-                    var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email,
-                        model.Order.OrderRows.FirstOrDefault());
-
-                    if (User.Identity.IsAuthenticated)
-                    {
-                        //M4Gen
-                        _logger.Info("ConfirmOrder UserIdent: " + User.Identity.Name);
-                        var orderConfirmString =
-                            _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-                        orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                            _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
-
-
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                            ConfigurationManager.AppSettings["TestEmailAddress"]
-                            , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
-
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
-                    }
-                    else
-                    {
-                        if (model.Order.Origin == "Express")
-                        {
-                            _logger.Info("ConfirmOrder Express: " + model.Order.idOrder);
-
-                            //M4Gen
-                            var orderConfirmString =
-                                _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-
-                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                                _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
-                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                                ConfigurationManager.AppSettings["TestEmailAddress"]
-                                , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
-
-                            _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order,
-                                userCreatedInCart: false);
-                        }
-                        else
-                        {
-                            _logger.Info("ConfirmOrder NotExpress: " + model.Order.idOrder);
-
-                            //M4Gen
-                            var orderConfirmString =
-                                _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-                            orderConfirmString =
-                                                            _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                                _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
-                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                                ConfigurationManager.AppSettings["TestEmailAddress"]
-                                , "[Test] Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
-
-                            _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order,
-                                userCreatedInCart: true);
-                        }
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -299,7 +244,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 try
                 {
-                    //_cartControllerOrchestrator.UpdateOrderPricing(model.Order);
+
                     if (model.Order.Total == 0)
                     {
                         model.Order.OrderStatus = OrderStatus.Paid;
@@ -313,18 +258,29 @@ namespace CUWebinars.Web.Controllers
                     _logger.ErrorException("ConfirmOrder|UpdateOrderPricing failed:  " + model.Order.idOrder, exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
                 }
+                //redundant
+                //try
+                //{
+                //    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.Order.BillingEmail,
+                //        model.Order.OrderRows.FirstOrDefault());
+
+                //}
+                //catch (Exception exception)
+                //{
+                //    ModelState.AddModelError(string.Empty, "ConfirmOrder|CreatePostEventClaim failed");
+                //    _logger.ErrorException("ConfirmOrder|CreatePostEventClaim failed: " + model.Order.idOrder, exception);
+                //    ErrorSignal.FromCurrentContext().Raise(exception);
+                //}
 
                 try
                 {
-                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.Order.BillingEmail,
-                        model.Order.OrderRows.FirstOrDefault());
-
+                    _SendOrderConfirmation2(model.Order.idOrder);
                 }
-                catch (Exception exception)
+
+                catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, "ConfirmOrder|CreatePostEventClaim failed");
-                    _logger.ErrorException("ConfirmOrder|CreatePostEventClaim failed: " + model.Order.idOrder, exception);
-                    ErrorSignal.FromCurrentContext().Raise(exception);
+                    Console.WriteLine(ex);
+                    throw;
                 }
 
                 return Json(new
@@ -344,7 +300,74 @@ namespace CUWebinars.Web.Controllers
             return this.ModelStateJson(ModelState);
         }
 
+        [HttpPost]
 
+        public ActionResult SendOrderConfirmation2(int orderId)
+        {
+            _SendOrderConfirmation2(orderId);
+            return null;
+        }
+
+        private void _SendOrderConfirmation2(int idOrder)
+        {
+
+            var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+            if (order == null)
+                throw new NullReferenceException();
+            var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+            if (User.Identity.IsAuthenticated)
+            {
+                //M4Gen
+                _logger.Info("ConfirmOrder UserIdent: " + User.Identity.Name);
+                var orderConfirmString =
+                    _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                    _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
+
+
+                _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                    ConfigurationManager.AppSettings["TestEmailAddress"]
+                    , "[Test] Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+
+                _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+            }
+            else
+            {
+                if (order.Origin == "Express")
+                {
+                    _logger.Info("ConfirmOrder Express: " + order.idOrder);
+
+                    //M4Gen
+                    var orderConfirmString =
+                        _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+
+                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
+                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                        ConfigurationManager.AppSettings["TestEmailAddress"]
+                        , "[Test] Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+
+                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                }
+                else
+                {
+                    _logger.Info("ConfirmOrder NotExpress: " + order.idOrder);
+
+                    //M4Gen
+                    var orderConfirmString =
+                        _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                    orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
+                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                        ConfigurationManager.AppSettings["TestEmailAddress"]
+                        , "[Test] Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+
+                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
+                }
+            }
+        }
 
         [HttpPost]
         public ActionResult ConfirmOrderForAffiliate(string referred, int? id = null, bool? adminCreatedWebUser = null)
@@ -1898,7 +1921,7 @@ namespace CUWebinars.Web.Controllers
 
                 }
                 var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
-                
+
                 if (order == null) throw new ArgumentNullException("order");
                 order.AdminComments = order.AdminComments.Replace("\"PendingPaytraceResponse\"", JsonConvert.SerializeObject(payTraceModel));
 

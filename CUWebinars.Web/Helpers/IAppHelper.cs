@@ -34,5 +34,6 @@ namespace CUWebinars.Web.Helpers
         bool BuildPostEventOrdersInvoiceRows(Order order, StringBuilder discountNotes, out OrderRow row, out string price, ref int rowNumber, out string percent, ref int totalNumberDiscounts);
         string CleanHtmlCodesAndLogo(string body, string tenantLogo, string addloccost);
         NotificationMessageFields BuildNotiFields(Order order, string hasCCAddress);
+        void ScheduleConnInfoSenderAudit(Webinar idWebinar);
     }
 }

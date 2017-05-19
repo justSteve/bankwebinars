@@ -8,9 +8,14 @@ var M = EDIT; // alias for code brevity
 $(document).ready(function () {
 
 
-
 });
 
+    var labelCheckRemove = function () {
+        if ($('#ScreenMessageSpan').length > 0) {
+            $('#ScreenMessageSpan').siblings('br').remove();
+            $('#ScreenMessageSpan').remove();
+        }
+    };
 
 // self-invoking function adds methods to EDIT namespace
 // replace EDIT with parameter 'ns' as EDIT is passed in at bottom in the self-invoking parentheses.

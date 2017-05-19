@@ -13,6 +13,12 @@
     successScreenMessage,
     waitIndicator,
     webinarFileInput;
+var labelCheckRemove = function () {
+    if ($('#ScreenMessageSpan').length > 0) {
+        $('#ScreenMessageSpan').siblings('br').remove();
+        $('#ScreenMessageSpan').remove();
+    }
+};
 
 $(function () {
 
@@ -176,12 +182,6 @@ $(function () {
         //});
     });
 
-    var labelCheckRemove = function() {
-        if ($('#ScreenMessageSpan').length > 0) {
-            $('#ScreenMessageSpan').siblings('br').remove();
-            $('#ScreenMessageSpan').remove();
-        }
-    };
 
     var resetEventFirePanel = function() {
         buttonsContainer.fadeIn(500);

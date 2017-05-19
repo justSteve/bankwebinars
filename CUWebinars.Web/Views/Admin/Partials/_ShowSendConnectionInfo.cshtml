@@ -11,43 +11,63 @@
             }
             var SCI = SENDCONNINFO;
             SCI.affiliateId = @Model.Affiliate.idUserAff;
-            
+
         </script>
     }
 
+    var orders = Model.Orders.ToList();
+    var withAddLoc = new List<Order>();
+    var withCC = new List<Order>();
+    var rowsToBeSent = new List<Order>();
+    foreach (var order in orders)
+    {
+        Debug.Assert(order.OrderRows != null, "order.OrderRows != null at showSendInfo");
+
+        var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+        if (row != null && row.RegistrationType.ShowLiveNotifications.ToLower() == "yes")
+        {
+            rowsToBeSent.Add(order);
+            if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 1)
+            {
+                withAddLoc.Add(order);
+            }
+            if (row.Order.UserComments != null && row.Order.UserComments.Contains("Carbon"))
+            {
+                withCC.Add(order);
+            }
+
+
+        }
+
+    }
+
+    var allUsers = rowsToBeSent.Count();
     var showAffColumn = Model.UserIsAdmin ? "true" : "false";
     //\Scripts\app\admin\display-orders.js
     // AdminController/BuildConnInfoViewModel
+    <div id="SenderSummary">
+        Total Orders to be notified: @allUsers.<br />
+        Orders with Additional Locations:<br />
+        @{
+            foreach (var order in withAddLoc)
+            {
+                <span>@order.idOrder<br /></span>
+            }
+        }
+        Orders with CCs:<br />
+        @{
+            foreach (var order in withCC)
+            {
+                <span>@order.idOrder<br /></span>
+            }
+        }
 
-    <table data-aff="@showAffColumn" id="connInfoTable" class="table table-striped table-bordered dataTable no-footer" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th>Order</th>
-                <th>User</th>
-                <th>Institution</th>
-                <th>Billing</th>
-                <th>Affiliate</th>
-                <th>OrderDate</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-
-        <tfoot>
-            <tr>
-                <th>Order</th>
-                <th>User</th>
-                <th>Institution</th>
-                <th>Billing</th>
-                <th>Affiliate</th>
-                <th>OrderDate</th>
-                <th>Status</th>
-            </tr>
-        </tfoot>
-    </table>
+    </div>
     <div>
         <button id="fireConnInfoSender" role="button" class="btn btn-danger">Fire Connection Info Sender</button>
     </div>
-    
+
     <div id="webinarIdDiv" data-webinarid="@Model.Webinar.idWebinar" class="initialHide">@Model.Webinar.idWebinar</div>
 }
 

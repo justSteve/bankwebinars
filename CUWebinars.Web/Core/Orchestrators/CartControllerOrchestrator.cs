@@ -1610,6 +1610,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             return "";
         }
 
+        public void SendOrderConfirmation2(OrderRow row)
+        {
+            SendOrderConfirmation2(row);
+        }
+
 
         public List<Order> GetOrdersByUser(string loggedInEmail)
         {

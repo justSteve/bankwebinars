@@ -8,7 +8,9 @@ using System.Web.Mvc;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
+using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
+using Newtonsoft.Json;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -190,6 +192,7 @@ namespace CUWebinars.Web.Controllers
 
             return Json(new { Result = WebUiConstants.Fail });
         }
+
 
         //[HttpPost]
         //public ActionResult Contact(ContactModel model)

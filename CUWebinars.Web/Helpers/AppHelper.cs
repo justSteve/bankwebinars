@@ -17,6 +17,9 @@ using CUWebinars.Web.Core;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Services;
 using GemBox.Document;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Trace = System.Diagnostics.Trace;
@@ -28,8 +31,9 @@ namespace CUWebinars.Web.Helpers
         private readonly IStateService _stateService;
 
         private readonly HttpRequestBase _request;
-        public readonly TtsConfigHelper _globalConfig;
+        //public readonly TtsConfigHelper _globalConfig;
 
+        private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
 
 
@@ -37,7 +41,7 @@ namespace CUWebinars.Web.Helpers
         {
             _request = request;
             _stateService = stateService;
-            _globalConfig = new TtsConfigHelper();
+            //_globalConfig = new TtsConfigHelper();
         }
 
         public static IEnumerable<int> StringToIntList(string str)
@@ -623,15 +627,16 @@ namespace CUWebinars.Web.Helpers
             {
                 fileBuilder += "<a href='http://ttsmedia.ttstrain.com/" + i.fileLocation + "'>" + i.fileDesc + "</a><br>";
             }
-            string TenantURL = _globalConfig.TenantURL();
-            fields.SupportEmail = _globalConfig.TenantEmail();
-            string Tenant = _globalConfig.Tenant();
+            string TenantURL = _globalConfig.TenantURL;
+            fields.SupportEmail = _globalConfig.TenantEmail;
+            string Tenant = _globalConfig.Tenant;
 
-            fields.AffFooter = "This webinar brought to you by TTS & " + _globalConfig.Tenant();
+            fields.AffFooter = "This webinar brought to you by TTS & " + _globalConfig.Tenant;
             if (order.idAffiliate != 2988 && order.idAffiliate != 19)
-                fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + _globalConfig.Tenant();
+                fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + _globalConfig.Tenant;
 
             fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
+            fields.UpdateOrderPage = " <a href='" + TenantURL + "/resume/" + order.idOrder + "'>Update Order</a> page.";
             fields.ConfirmAccountLink = " <a href='" + TenantURL + "/acc/apwd/" + order.idOrder + "'>" + TenantURL + "/acc/apwd/" + order.idOrder + "</a>";
             fields.DetailedConnectionInfoLink = " <a href='" + TenantURL + "/Home/DetailedConnectionInstructions'>" + TenantURL + "/Home/DetailedConnectionInstructions</a>";
             fields.CertificateLink = " <a href='" + TenantURL + "Account/MyCertificate?orderID=" + order.idOrder + "'>" + TenantURL + "/Account/MyCertificate?orderID=" + order.idOrder + "</a>";
@@ -645,8 +650,8 @@ namespace CUWebinars.Web.Helpers
             fields.OrderID = row.idOrder;
             fields.Institution = order.Institution;
             fields.BillingEmail = order.BillingEmail;
-            fields.TenantName = _globalConfig.Tenant();
-            fields.TenantURL = _globalConfig.TenantURL();
+            fields.TenantName = _globalConfig.Tenant;
+            fields.TenantURL = _globalConfig.TenantURL;
             fields.WebinarTitle = row.Webinar.Title;
             fields.Duration = row.Webinar.Duration.ToString().Replace(".00", "");
 
@@ -659,19 +664,28 @@ namespace CUWebinars.Web.Helpers
             fields.Phone = row.Webinar.AccessPhone;
             fields.AccessCode = row.Webinar.AccessCodeAttendee;
             fields.PresenterMaterials = fileBuilder;
-            fields.ClickToJoinLink = "<a href='" + row.CitrixJoinUrl + "'>" +
-                                     row.CitrixJoinUrl + "</a>";
-            fields.ClickToJoinAddLocLink = "<a href='" + TenantURL + "/j/" + row.TtsJoinUrl + "'>" +
+            fields.ClickToJoinAddLocLink = "<a href='" + row.Webinar.CitrixRegisterUrl + "'>" +
+                                     row.Webinar.CitrixRegisterUrl + "</a>";
+            fields.ClickToJoinLink = "<a href='" + TenantURL + "/j/" + row.TtsJoinUrl + "'>" +
                                      TenantURL + "/j/" + row.TtsJoinUrl + "</a>";
             fields.AddReminder = " <a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
                                  "Add to Calendar</a>";
-            fields.CCCaption =
-                " Connection info is not currently shared. <a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
-                                             "(change?)</a> ";
-            if (hasCCAddress != null && hasCCAddress != "")
-                fields.CCCaption =
-                    " Connection info is shared with " + hasCCAddress + " <a href='" + TenantURL + "/Resume/" + order.idOrder + "'>(change?)</a>";
+            //fields.CCCaption =
+            //    " Connection info is not currently shared. <a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
+            //                                 " (change?) </a> ";
+            fields.CCCaption = "";
 
+            if (hasCCAddress != null && hasCCAddress != "")
+            {
+                var _listOfCCs = hasCCAddress.Split(',');
+                var listOfCCs = "";
+                foreach (var cc in _listOfCCs)
+                {
+                    listOfCCs += cc;
+                }
+                fields.CCCaption =
+                    " Connection info is shared with " + listOfCCs.TrimEnd(',') + ".";
+            }
             fields.PaymentStatus = order.OrderStatus.ToString();
 
             if (order.OrderStatus == OrderStatus.Paid)
@@ -728,30 +742,46 @@ namespace CUWebinars.Web.Helpers
                 if (row.AdditionalLocation.Count == 1)
                 {
                     fields.ExistingAddLocs = locs.TrimEnd(',') +
-                                             " is currently included as an Additional Location. " +
-                                             "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
-                                             "(change?)</a>";
+                                             " is currently included as an Additional Location. ";
                 }
                 if (row.AdditionalLocation.Count > 1)
                 {
                     fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
-                                             " are the included Additional Locations. " +
-                                             "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
-                                             "(change?)</a>";
+                                             " are the included Additional Locations. " ;
                 }
 
                 if (locs == "")
                 {
                     fields.ExistingAddLocs =
-                        " Need to support remote branches? Additional locations cost [addloccost] per seat.  " +
-                        "<a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
-                        "Click here to add.</a>";
+                        " Need to support remote branches? Additional locations cost [addloccost] per seat.  " ;
                 }
 
             }
 
 
             return fields;
+
+        }
+
+        public void ScheduleConnInfoSenderAudit(Webinar webinar)
+        {
+            var _storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
+                _globalConfig.StorageAccessKey);
+            var _cloudStorageAccount = new CloudStorageAccount(_storageCredentials, false);
+            
+            var _queueClient = _cloudStorageAccount.CreateCloudQueueClient();
+
+            CloudQueue cloudQueue = _queueClient.GetQueueReference("conn-info-sender-audit");  // passed in during construction, usually from web.config
+            cloudQueue.CreateIfNotExists();
+
+
+
+            System.Threading.Thread.Sleep(TimeSpan.FromMinutes(1));
+
+
+            var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(webinar.Comments));
+            cloudQueue.EncodeMessage = true;
+            cloudQueue.AddMessage(cloudQueueMessage);
 
         }
 

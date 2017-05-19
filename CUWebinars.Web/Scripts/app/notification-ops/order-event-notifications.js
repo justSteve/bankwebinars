@@ -39,7 +39,12 @@ $(function () {
     sendOrderShippedUrl = '/Admin/SendShippedOrder';
 
     $('#WaitIndicator').hide();
-
+    var labelCheckRemove = function () {
+        if ($('#ScreenMessageSpan').length > 0) {
+            $('#ScreenMessageSpan').siblings('br').remove();
+            $('#ScreenMessageSpan').remove();
+        }
+    };
 
     $('#GetResendConnectionInfoHtmlButton').on('click', function (eventArgs) {
         eventArgs.preventDefault();
@@ -839,12 +844,7 @@ $(function () {
 
     });
 
-    var labelCheckRemove = function () {
-        if ($('#ScreenMessageSpan').length > 0) {
-            $('#ScreenMessageSpan').siblings('br').remove();
-            $('#ScreenMessageSpan').remove();
-        }
-    };
+
 });
 
 

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -193,6 +194,35 @@ namespace CUWebinars.Web.Controllers
             return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
             //return Json(new { Result = WebUiConstants.Fail });
         }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        public ActionResult NotiResults(NotiResultsModel model)
+        {
+            var order = _orderManagementService.GetOrderById(model.idOrder);
+
+
+            var recordNotiResults = "";
+            if (order == null)
+            {
+                _logger.Fatal("NotiResults found null order!" + model.Id);
+                return null;
+            }
+            var row =
+
+                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            Debug.Assert(row != null, "row != null at notiResults");
+            var webinar = _orderManagementService.GetWebinarById(row.idWebinar);
+
+            order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.NotiResults, model);
+
+            _orderManagementService.SaveChanges();
+
+            webinar.Comments = JsonHelpers.AddObjectToJsonArray(webinar.Comments, JsonPropertyKeys.NotiResults + "_" + order.idOrder + "_" + DateTime.Now, model);
+            _webinarManagementService.SaveChanges();
+            return null;
+        }
+
 
         /// <summary>
         /// Permits migration of legacy system.
@@ -852,7 +882,7 @@ namespace CUWebinars.Web.Controllers
                 IList<string> addresses = _orderManagementService.OrderHasCc(order).Split(',');
                 IList<string> ccEmailAddresses = new List<string>();
 
-                if ( addresses != null)
+                if (addresses != null)
                 {
                     //  assume user has separated email addresses with either a semi-colon or a comma, as is convention.
                     ccEmailAddresses.AddRange(addresses);

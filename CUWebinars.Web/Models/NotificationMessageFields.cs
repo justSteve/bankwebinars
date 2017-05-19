@@ -45,5 +45,6 @@ namespace CUWebinars.Web.Models
         public string Institution { get; set; }
         public string ServiceNote { get; set; }
         public string ClickToJoinAddLocLink { get; set; }
+        public string UpdateOrderPage { get; set; }
     }
 }

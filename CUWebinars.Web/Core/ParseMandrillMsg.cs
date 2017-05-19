@@ -302,6 +302,12 @@ namespace CUWebinars.Web.Core
 
         }
 
+        public static string ParseNotiActionResult(string _doc)
+        {
+
+
+            return null;
+        }
     }
 }
 

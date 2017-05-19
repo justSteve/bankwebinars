@@ -994,7 +994,7 @@ namespace CUWebinars.Business.Services
 
         public void FireMandrillNotificationEvent(string toEmail, string subject, string body)
         {
-
+            //TODO: refactor recordingIsPostedV2Message to a more generic name
             var recordingIsPostedV2Message = new MandrillNotificationMessage()
             {
                 Recipients = toEmail.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries),
@@ -1274,10 +1274,9 @@ namespace CUWebinars.Business.Services
         public void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending)
         {
 
-            var idWebinar =
-                orders[0].OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar;
+            //var idWebinar = orders[0].OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar;
 
-            var citrixRegs = GetCitrixRegistrantsByWebinar(idWebinar);
+            //var citrixRegs = GetCitrixRegistrantsByWebinar(idWebinar);
 
 
             foreach (var order in orders)
@@ -2546,7 +2545,7 @@ namespace CUWebinars.Business.Services
                 ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(_addresses);
             }
 
-            return ccEmailAddresses.ToString();
+            return string.Join(",", ccEmailAddresses);
 
 
 

@@ -554,7 +554,10 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.idWebinar == idWebinar)
                 .Where(or => or.RegistrationType.ShowLiveNotifications == "Yes")
                 .Where(or => or.RowStatus == OrderRowStatus.Active)
-                .Where(o => o.Order.OrderStatus == OrderStatus.Paid || o.Order.OrderStatus == OrderStatus.Billed || o.Order.OrderStatus == OrderStatus.Submitted || o.Order.OrderStatus == OrderStatus.OutstandingBalance)
+                .Where(o => o.Order.OrderStatus == OrderStatus.Paid
+                || o.Order.OrderStatus == OrderStatus.Billed
+                || o.Order.OrderStatus == OrderStatus.Submitted
+                || o.Order.OrderStatus == OrderStatus.OutstandingBalance)
                 .Select(o => o.Order);
 
             return GetLoadedEntitiesForOrder(orders);

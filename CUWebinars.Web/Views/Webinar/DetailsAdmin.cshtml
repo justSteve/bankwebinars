@@ -66,12 +66,12 @@
         @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)
     </div>
 
-@*<div id="showPromoLinks" class="collapse">
-        @Html.Partial("~/Views/Admin/Partials/_ShowPromoLinks.cshtml", Model.PromoLinks)
-    </div>*@
-@*    <div id="revenueReportByAffiliate" class="collapse">
-        @Html.Partial("~/Views/Admin/Partials/_ShowRevenueReport.cshtml", Model.ShowOrdersViewModel)
-    </div>*@
+    @*<div id="showPromoLinks" class="collapse">
+            @Html.Partial("~/Views/Admin/Partials/_ShowPromoLinks.cshtml", Model.PromoLinks)
+        </div>*@
+    @*    <div id="revenueReportByAffiliate" class="collapse">
+            @Html.Partial("~/Views/Admin/Partials/_ShowRevenueReport.cshtml", Model.ShowOrdersViewModel)
+        </div>*@
     @*<div id="byUserWrapper" class="collapse">
             @Html.Partial("~/Views/Admin/Partials/_ShowOrdersByUser.cshtml", Model.ShowOrdersViewModel)
         </div>*@
@@ -151,7 +151,7 @@
                                     <div class="tab-pane" id="confirmationForAffiliate"></div>
                                 </div>
                             }
-                            else 
+                            else
                             //else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
                             {
                                 <div class="tab-content">
@@ -250,7 +250,7 @@
                         <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
                         <input type="text" name="sListOfWebinarsForWeekly" />
                         @*@Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })*@
-                        
+
                         <br />
                         <input type="submit" value="submit" />
                     </div>

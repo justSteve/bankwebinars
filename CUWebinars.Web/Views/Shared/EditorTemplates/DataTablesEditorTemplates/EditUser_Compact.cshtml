@@ -27,10 +27,10 @@
                     </div>
                 </div>
                 <div class="span4 billing-field">
-                    @Html.LabelFor(model => model.EditFields.BillingAddress.Name, new { @class = "control-label span3" })
+                    @*@Html.LabelFor(model => model.EditFields.BillingAddress.Name, new { @class = "control-label span3" })*@
                     <div class="controls span8">
-                        @Html.EditorFor(model => model.EditFields.BillingAddress.Name)
-                        @Html.ValidationMessageFor(model => model.EditFields.BillingAddress.Name)
+                        @Model.EditFields.BillingAddress.Name
+                        @*@Html.ValidationMessageFor(model => model.EditFields.BillingAddress.Name)*@
                     </div>
                 </div>
                 <div class="span4 shipping-field hidden">

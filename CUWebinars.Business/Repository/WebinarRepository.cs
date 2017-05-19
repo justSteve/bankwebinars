@@ -495,6 +495,7 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.WebUser.Addresses)
                 .Include(o => o.OrderRows)
                 .Include(o => o.OrderRows.Select(or => or.Discount))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
 
                 ;
 

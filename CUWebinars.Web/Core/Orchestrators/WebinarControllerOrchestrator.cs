@@ -84,86 +84,68 @@ namespace CUWebinars.Web.Core.Orchestrators
             _jsonValidator = jsonValidator;
         }
 
-        public void FireSendConnectionInfoNotificationEvent(int idWebinar, bool reminder = false)
+        //public void FireSendConnectionInfoNotificationEvent(int idWebinar, bool reminder = false)
+        public void FireSendConnectionInfoNotificationEvent(int idOrder, bool reminder = false)
         {
-            var webinar = _webinarManagementService.GetWebinar(idWebinar);
-            var orgKey = _globalConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
-            var cWebinarKey = _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey);
-            var api = new RegistrantsApi();
-
-            var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
-
-            var orders = _orderManagementService.GetOrdersForLiveNotifications(idWebinar);
-            //object test = null;
+            // Converted from batch send to one-at-a-time loop or ad hoc
+            var order = _orderManagementService.GetOrderById(idOrder);
             var sb = new StringBuilder();
-            sb.Append("ListSentConnectionInfo: ");
+            sb.AppendLine("FireSendConnectionInfoNotificationEvent Starts at " + DateTime.Now);
+            ConnInfoSenderModel senderModel = new ConnInfoSenderModel();
+            senderModel.TimeOfSend = DateTime.Now;
 
-            orders.ToList().ForEach((order) =>
+            try
             {
+
                 var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                sb.Append(order.BillingEmail + ", ");
+                sb.AppendLine(order.BillingEmail + ", ");
+                senderModel.AddressesSent += order.BillingEmail + ",";
 
                 Debug.Assert(row != null, "row != null in FireSendConnectionInfo");
-                if ((row.RegistrantKey == null || row.RegistrantKey == "")
-                    && row.RegistrationType.ShowLiveNotifications == "Yes"
-                    && (row.Webinar.Status == WebinarStatus.Active
-                        || row.Webinar.Status == WebinarStatus.InProgress))
-                {
-                    var wasFound = false;
-                    foreach (var cReg in apiResponse)
-                    {
-                        if (cReg.email == order.BillingEmail)
-                        {
-                            wasFound = true;
-                            row.RegistrantKey = cReg.registrantKey.ToString();
-                            _orderManagementService.SaveChanges();
-                        }
-                    }
-                    if (!wasFound)
-                    {
-                        order = _orderManagementService.GenerateRegistrantKey(order);
-                    }
-                }
+
                 var body = BuildConnectionInfoMessage(order);
-                //body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar).ToString("c0"));
-                //AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo.Replace("{\"AuditInfo\":", "").Replace("}}", "}"));
-                var jsonObject = new JObject();
-                jsonObject.Add("SendDate", DateTime.Now);
-                jsonObject.Add("SendDate", DateTime.Now);
-                jsonObject.Add("URL", "https://storeforbw.blob.core.windows.net/connectionchecklist/" + webinar.idWebinar + "/" + order.idOrder + ".htm");
-                var newJson = new JProperty(string.Concat(JsonPropertyKeys.SentMsg), jsonObject);
+
+                ConnInfoSendModel conSend = new ConnInfoSendModel();
+
+                conSend.SendDate = DateTime.Now;
+                conSend.URL = "https://" + _globalConfig.StorageAccountName + ".blob.core.windows.net/connectionchecklist/" + row.idWebinar + "/" + order.idOrder + ".htm";
 
 
                 if (!reminder)
                 {
                     _orderManagementService.FireMandrillNotificationEvent(
                         ConfigurationManager.AppSettings["TestEmailAddress"],
-                        "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
-                    jsonObject.Add("Sender", "Sys_FirstSend");
+                        "Connection Checklist for " + GetWebinar(row.idWebinar).Title, body);
+                    conSend.Sender = "Sys_FirstSend";
                 }
                 else
                 {
                     _orderManagementService.FireMandrillNotificationEvent(
                         ConfigurationManager.AppSettings["TestEmailAddress"],
-                        "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
-                    jsonObject.Add("Sender", "Sys_Reminder");
+                        "Connection Reminder for " + GetWebinar(row.idWebinar).Title, body);
+                    conSend.Sender = "Sys_Reminder";
                 }
 
-                order.NotificationStorage = JsonHelpers.MergeJsonWithStoredField(order.NotificationStorage, newJson);
+                order.NotificationStorage = JsonHelpers.AddObjectToJsonArray(order.NotificationStorage, JsonPropertyKeys.SentMsg, conSend);
 
                 _orderManagementService.SaveChanges();
                 if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 0)
                 {
-                    SendConnectionInfoToAddLoc(order, idWebinar);
+                    SendConnectionInfoToAddLoc(order, row.idWebinar);
                 }
-
-            });
-
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("FireSendConnectionInfoNotificationEvent: ", e);
+            }
             _logger.Info(sb.ToString());
+
 #if DEBUG
-            _logger.Info("d");
+            _logger.Warn("FireSendConnectionInfoNotificationEvent debugging so we didn't fire legacy sender");
 #else
-                    _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
+//                    _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
+            _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
+            
 #endif
         }
 
@@ -174,16 +156,18 @@ namespace CUWebinars.Web.Core.Orchestrators
             foreach (var loc in addLocs)
             {
 
-                var body = BuildConnectionInfoMessage(order, loc.Email);
-
                 if (!reminder)
                 {
+                    var body = BuildConnectionInfoMessage(order, loc.Email);
+
                     _orderManagementService.FireMandrillNotificationEvent(
                         ConfigurationManager.AppSettings["TestEmailAddress"],
                         "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
                 }
                 else
                 {
+                    var body = BuildConnectionInfoMessage(order, loc.Email);
+
                     _orderManagementService.FireMandrillNotificationEvent(
                         ConfigurationManager.AppSettings["TestEmailAddress"],
                         "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
@@ -702,6 +686,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                     System.Web.HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/ConnectionInfo2.docx"));
             var _hasCc = "";
+
+            var storeFileName = order.idOrder.ToString();
             var hasCc = _orderManagementService.OrderHasCc(order);
             if (hasCc != null)
                 _hasCc = hasCc.ToString();
@@ -716,8 +702,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                         System.Web.HttpContext.Current.Server.MapPath(
                             @"~/App_Data/mergeTemplates/ConnectionInfo2AddLoc.docx"));
 
-                fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
-
+                fields = _appHelper.BuildNotiFields(order, null);
+                storeFileName = order.idOrder + "_" + addLoc;
                 document.MailMerge.Execute(fields);
                 _logger.Info("BuildConnectionInfoMessage AddLoc: " + addLoc + " fields:" + JsonConvert.SerializeObject(fields));
             }
@@ -742,7 +728,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //    blob.UploadFromStream(output);
                 //}
 
-                blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
+                blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + storeFileName + ".htm");
 
                 byte[] fileContents;
                 using (MemoryStream output = new MemoryStream())
@@ -1272,4 +1258,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
     }
+
+
 }

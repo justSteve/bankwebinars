@@ -22,6 +22,7 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Dynamic;
@@ -339,17 +340,92 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [System.Web.Mvc.HttpPost]
-        public JsonResult SendConnectionInfo(int webinarId, bool reminder = false)
+        [System.Web.Mvc.HttpGet]
+        public JsonResult ConnectionInfoSenderPrep(int? idWebinar)
         {
-            _logger.Info("ConnectionInfo Send is started: " + webinarId);
-            var webinar = _webinarManagementService.GetWebinar(webinarId);
+            _logger.Info("ConnectionInfo Send is prepping: " + idWebinar.Value);
+            var webinar = _webinarManagementService.GetWebinar(idWebinar.Value);
 
+            var orgKey = _globalConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
+            var cWebinarKey = _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey);
+            var api = new RegistrantsApi();
+
+            var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
+
+            var orders = _orderManagementService.GetOrdersForLiveNotifications(webinar.idWebinar);
+
+            var sb = new StringBuilder();
+            sb.Append("FireSendConnectionInfoNotificationEvent Starts at " + DateTime.Now);
+            ConnInfoSenderModel senderModel = new ConnInfoSenderModel();
+            senderModel.TimeOfSend = DateTime.Now;
 
             try
             {
-#if   DEBUG
-                _logger.Info("d");
+                orders.ToList().ForEach((order) =>
+                {
+                    var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                    senderModel.AddressesSent += order.BillingEmail + ",";
+
+                    Debug.Assert(row != null, "row != null in FireSendConnectionInfo");
+
+                    var wasFound = false;
+                    foreach (var cReg in apiResponse)
+                    {
+                        if (cReg.email == order.BillingEmail)
+                        {
+                            wasFound = true;
+                            row.RegistrantKey = cReg.registrantKey.ToString();
+                            _orderManagementService.SaveChanges();
+                            sb.AppendLine("Citrix registration matched: " + cReg.email);
+                        }
+                    }
+                    if (!wasFound)
+                    {
+                        order = _orderManagementService.GenerateRegistrantKey(order);
+
+                        sb.AppendLine("Citrix registration built: " + order.BillingEmail + " to: " + row.RegistrantKey);
+                    }
+
+                    ConnInfoSendModel conSend = new ConnInfoSendModel();
+
+                    conSend.SendDate = DateTime.Now;
+                    conSend.URL = "https://" + _globalConfig.StorageAccountName + ".blob.core.windows.net/connectionchecklist/" + webinar.idWebinar + "/" + order.idOrder + ".htm";
+
+                    order.NotificationStorage = JsonHelpers.AddObjectToJsonArray(order.NotificationStorage, JsonPropertyKeys.SentMsg, conSend);
+
+                    _orderManagementService.SaveChanges();
+
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("FireSendConnectionInfoNotificationEvent prep: ", e);
+            }
+
+
+            _logger.Info(sb.ToString());
+            senderModel.CitrixRegistrations = String.Join(",", apiResponse.Select(c => c.email).ToList());
+            webinar.Comments = JsonHelpers.AddObjectToJsonArray(webinar.Comments, JsonPropertyKeys.SendConnectionChecklist + "_" + DateTime.Now, senderModel);
+
+            _webinarManagementService.SaveChanges();
+            //_appHelper.ScheduleConnInfoSenderAudit(webinar);
+            var ordersToSend = JsonConvert.SerializeObject(orders.Select(o => o.idOrder));
+            return Json(new { Result = WebUiConstants.Success, ordersToSend = ordersToSend }, JsonRequestBehavior.AllowGet);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public JsonResult SendConnectionInfo(int? webinarId, int? orderId, bool reminder = false)
+        {
+            if (webinarId != null)
+            {
+                //_logger.Info("ConnectionInfo Send is started: " + webinarId.Value);
+                var webinar = _webinarManagementService.GetWebinar(webinarId.Value);
+
+
+                try
+                {
+#if DEBUG
+                    _logger.Info("Debug mode so no email to presenter");
 #else
                 PanelistsApi pApi = new PanelistsApi();
 
@@ -362,17 +438,24 @@ namespace CUWebinars.Web.Controllers
                     });
                 
 #endif
+                    return
+                        Json(new { Result = WebUiConstants.Success, PresenterNotified = webinar.Presenter.WebUser.email });
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("SendConnectionInfo: " + webinarId, ex);
+                }
             }
-            catch (Exception ex)
+
+            if (orderId.HasValue)
             {
-                _logger.FatalException("SendConnectionInfo: " + webinarId, ex);
+                _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(orderId.Value, reminder);
+                return Json(new { Result = WebUiConstants.Success, orderId });
+
             }
-
-            _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(webinarId, reminder);
-
-            _logger.Info("ConnectionInfo Send is ended: " + webinarId);
-            return Json(new { Result = WebUiConstants.Success });
-
+            //_logger.Info("ConnectionInfo Send is ended: " + webinarId);
+            return null;
         }
 
 
@@ -1175,7 +1258,7 @@ namespace CUWebinars.Web.Controllers
                         var ccAddresses = new List<string> { "" };
                         var _ccAddresses = _orderManagementService.OrderHasCc(order);
                         if (_ccAddresses != null)
-                            ccAddresses =  _ccAddresses.Split(',').ToList();
+                            ccAddresses = _ccAddresses.Split(',').ToList();
 
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
