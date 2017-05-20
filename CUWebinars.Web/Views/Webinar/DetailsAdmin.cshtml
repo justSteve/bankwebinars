@@ -15,6 +15,28 @@
 
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff;
 
+    if (Model.Webinar.Comments.Contains("SendConnectionChecklist"))
+    {
+
+        <script language="javascript" type="text/javascript">
+        // Need to init a bunch of JS stuff
+        var strAdminComments = "@Model.Webinar.Comments";
+
+        $(function() {
+            $("#submitSendConnInfo").html("Audit Connection Checklist Results");
+
+
+            $("#SenderAudit").jsonbrowser(strAdminComments.replace(/&quot;/g, '"'),
+            {
+                'parseURLs': false, // Whether to parse and link URLs.
+                'scheme': 'http', // URLs beginning with // are automatically completed using this value.
+                'collapsible': true, // Whether the user can collapse/expand nodes. 
+                'collapsed': true // Whether the default behavior is collapsed or not. 'collapsible' must be true.);
+
+            });
+        });
+        </script>
+    }
 
 }
 
@@ -29,7 +51,6 @@
     var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
-
 
 </script>
 
@@ -220,22 +241,8 @@
             </aside>
 
 
-
-
-            <!-- close .widget -->
-            <!-- For certificate file widget -->
-            <!-- Close certificat widget -->
-            <!-- For Generate ics file widget -->
-            @*<aside class="widget">
-                    <h5 class="short_headline"><span>iCalendar</span></h5>
-                    <button id="CreateICSButton" class="btn btn-primary">Generate ICS</button>
-                    <div class="span12" style="display:none;"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>
-                    <div id="InputFormFields" style="margin-top: 20px;"></div>
-                </aside>*@
-            <!-- Close ics file widget -->
-
             <div>
-                <button data-toggle="collapse" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
+                <button data-toggle="collapse" type="button" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
             </div>
             <div>
                 <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>

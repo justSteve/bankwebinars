@@ -171,9 +171,8 @@
       <HintPath>..\packages\MailChimp.Net.V3.1.8.0.0\lib\net45\MailChimp.Net.V3.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Mandrill.net, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mandrill.net.3.0.0\lib\net45\Mandrill.net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Mandrill.net, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mandrill.net.4.1.0\lib\net45\Mandrill.net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.6\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
