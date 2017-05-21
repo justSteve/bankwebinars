@@ -48,7 +48,7 @@ namespace CUWebinars.Web.Core
         public string PromoEmailSubject { get; private set; }
         public string WeeklyInvoiceEmailFromAddress { get; private set; }
         public string WeeklyInvoiceEmailSubject { get; private set; }
-        public string OrderSubmittedMultiFromAddress { get; private set; }
+        public string MandrillSenderAddress { get; private set; }
         public string OrderSubmittedMultiEmailSubject { get; private set; }
         public string NGrokServer { get; private set; }
         public string PayTracePassword { get; private set; }
@@ -97,7 +97,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.PromoEmailSubject = ApplicationSettingsSection["PromoEmailSubject"];
                 UniqueInstance.WeeklyInvoiceEmailFromAddress = ApplicationSettingsSection["WeeklyInvoiceEmailFromAddress"];
                 UniqueInstance.WeeklyInvoiceEmailSubject = ApplicationSettingsSection["WeeklyInvoiceEmailSubject"];
-                UniqueInstance.OrderSubmittedMultiFromAddress = ApplicationSettingsSection["OrderSubmittedMultiFromAddress"];
+                UniqueInstance.MandrillSenderAddress = ApplicationSettingsSection["MandrillSenderAddress"];
                 UniqueInstance.OrderSubmittedMultiEmailSubject = ApplicationSettingsSection["OrderSubmittedMultiEmailSubject"];
                 UniqueInstance.NGrokServer = ApplicationSettingsSection["NGrokServer"];
                 UniqueInstance.PayTracePassword = ApplicationSettingsSection["PayTracePassword"];

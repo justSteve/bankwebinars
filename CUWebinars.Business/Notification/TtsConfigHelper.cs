@@ -72,7 +72,7 @@ namespace CUWebinars.Business.Notification
         }
         public string GetMandrillFromAddress()
         {
-            return ConfigurationManager.AppSettings["OrderSubmittedMultiFromAddress"];
+            return ConfigurationManager.AppSettings["MandrillSenderAddress"];
         }
 
         public string GetOrderSubmittedMultiEmailSubject()
