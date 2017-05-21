@@ -272,6 +272,7 @@
     <Compile Include="Models\WebUserLegacy.cs" />
     <Compile Include="Notification\Email\AdditionalLocationOrderDetailsMessage.cs" />
     <Compile Include="Notification\Email\AdhocNotificationDelivery.cs" />
+    <Compile Include="Notification\Email\IMandrillNotificationMessage.cs" />
     <Compile Include="Notification\Email\IRecordingIsPosted2Message.cs" />
     <Compile Include="Notification\Email\MandrillNotificationMessage.cs" />
     <Compile Include="Notification\Email\OrderSubmitted2Message.cs" />
@@ -291,6 +292,7 @@
     <Compile Include="Notification\Events\OrderSubmittedMultiEvent.cs" />
     <Compile Include="Notification\Events\AdhocNotificationEvent.cs" />
     <Compile Include="Notification\Events\SendWeeklyInvoiceEvent.cs" />
+    <Compile Include="Notification\Handlers\MandrillNotificationsHandler.cs" />
     <Compile Include="Notification\Handlers\RecordingIsPosted2Handler.cs" />
     <Compile Include="Notification\Handlers\RecordingIsPosted2.cs" />
     <Compile Include="Notification\Handlers\OrderSubmitted2.cs" />
