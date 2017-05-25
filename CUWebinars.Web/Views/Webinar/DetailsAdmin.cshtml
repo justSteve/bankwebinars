@@ -11,30 +11,69 @@
 
 
     IStateService stateService = new StateService();
-
-
     var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff;
 
-    if (Model.Webinar.Comments.Contains("SendConnectionChecklist"))
+    if (Model.Webinar.Comments != null && Model.Webinar.Comments.Contains("SendConnectionChecklist"))
     {
 
         <script language="javascript" type="text/javascript">
-        // Need to init a bunch of JS stuff
-        var strAdminComments = "@Model.Webinar.Comments";
+            // Need to init a bunch of JS stuff
+            var strAdminComments = "@Model.Webinar.Comments";
 
-        $(function() {
-            $("#submitSendConnInfo").html("Audit Connection Checklist Results");
+            $(function() {
+                $("#submitSendConnInfo").html("Audit Connection Checklist Results");
 
 
-            $("#SenderAudit").jsonbrowser(strAdminComments.replace(/&quot;/g, '"'),
-            {
-                'parseURLs': false, // Whether to parse and link URLs.
-                'scheme': 'http', // URLs beginning with // are automatically completed using this value.
-                'collapsible': true, // Whether the user can collapse/expand nodes. 
-                'collapsed': true // Whether the default behavior is collapsed or not. 'collapsible' must be true.);
+                $("#SenderAudit").jsonbrowser(strAdminComments.replace(/&quot;/g, '"'),
+                {
+                    'parseURLs': false, // Whether to parse and link URLs.
+                    'scheme': 'http', // URLs beginning with // are automatically completed using this value.
+                    'collapsible': true, // Whether the user can collapse/expand nodes.
+                    'collapsed': true // Whether the default behavior is collapsed or not. 'collapsible' must be true.);
+                });
+
+                var idWebinar = @Model.Webinar.idWebinar;
+
+                var payload = { idWebinar };
+
+                console.log(payload);
+
+                
+                $.ajax({
+                    type: 'POST',
+                    //contentType: constants.JsonContentType,
+                    cache: false,
+                    url: '/Order/AuditConnectionChecklistSender',
+                    dataType: constants.JsonDataType,
+                    data: payload,
+                    beforeSend: function () {
+                        //$(self)
+                        //    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                    }
+                }).done(function (result) {
+
+                    if (result.Result === 'Success') {
+                        alert("Success");
+                        @*$.ajax({
+                            type: 'POST',
+                            contentType: constants.JsonContentType,
+                            cache: false,
+                            url: '/Order/AuditConnectionChecklistSender',
+                            dataType: constants.JsonDataType,
+                            data: JSON.stringify(payload),
+                            beforeSend: function () {
+                                $(self)
+                                    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                            }
+                        });
+
+                        $('#Container4ResendConfirmation').html("Your order confirmation is resent. If you do not see an email from <b> @_globalConfig.TenantEmail </b> please check your spam folder.");
+                    } else if (result.Result === 'Fail') {
+                        $('#Container4ResendConfirmation').html("We've encountered an error and are working to solve the issue. Please contact us at  @_globalConfig.TenantEmail  for more information.");*@
+                    }
+                });
 
             });
-        });
         </script>
     }
 
@@ -235,7 +274,7 @@
         <div class="span3">
 
             <aside class="widget">
-
+                
                 <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div><br>
                 @Html.ActionLink("Manage Webinar", "EditWebinarFromDetails", "Webinar", new { id = @Model.Webinar.idWebinar }, new { @class = "pull-right btn btn-default", style = "margin-top: 5px" })
             </aside>

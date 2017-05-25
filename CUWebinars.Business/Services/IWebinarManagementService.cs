@@ -59,6 +59,10 @@ namespace CUWebinars.Business.Services
         IList<Webinar> GetWebinarsForWeeklyInvoices(DateTime startDate);
         IEnumerable<Webinar> GetRelated(int? idWebinar);
         IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar);
-        
+
+        int ImportLu(WebinarLU importWebinar);
+        string ParseForSpeakerName(string descriptionText);
+        int? GetUserIdByFirstNameLastName(string fullName);
+        string ImportLUEvents();
     }
 }

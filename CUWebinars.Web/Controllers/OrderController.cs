@@ -8,6 +8,7 @@ using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Ninject.Extensions.Logging;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -213,13 +214,42 @@ namespace CUWebinars.Web.Controllers
                     order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             Debug.Assert(row != null, "row != null at notiResults");
             var webinar = _orderManagementService.GetWebinarById(row.idWebinar);
+            model.ResultId = order.idOrder + "_" + DateTime.Now.ToShortDateString().Replace(" ", "_");
 
-            order.UserComments = JsonHelpers.AddObjectToJsonArray(order.UserComments, JsonPropertyKeys.NotiResults, model);
+            JProperty msg = new JProperty(JsonPropertyKeys.NotiResults + "_" + DateTime.Now.ToShortDateString()
+                , JProperty.Parse(JsonConvert.SerializeObject(model)));
+
+            order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments,  msg);
 
             _orderManagementService.SaveChanges();
 
-            webinar.Comments = JsonHelpers.AddObjectToJsonArray(webinar.Comments, JsonPropertyKeys.NotiResults + "_" + order.idOrder + "_" + DateTime.Now, model);
+            //webinar.Comments = JsonHelpers.AddObjectToJsonArray(webinar.Comments, JsonPropertyKeys.NotiResults + "_" + order.idOrder + "_" + DateTime.Now, model);
+            webinar.Comments = JsonHelpers.MergeJsonWithStoredField(webinar.Comments, msg);
             _webinarManagementService.SaveChanges();
+            return null;
+        }
+        [HttpPost]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        public ActionResult AuditConnectionChecklistSender(int idWebinar)
+        {
+            var webinar = _orderManagementService.GetWebinarById(idWebinar);
+            var orders = _orderManagementService.GetOrdersForLiveNotifications(webinar.idWebinar);
+            dynamic notiResultsToJson = JObject.Parse(webinar.Comments);
+            Debug.Assert(notiResultsToJson != null, "notiResultsToJson != null");
+            //var listOfNotiResults = notiResultsToJson.Properties().Select(p => p.Name).ToList();
+
+            //var recordNotiResults = "";
+            //if (webinar == null)
+            //{
+            //    _logger.Fatal("Found no such webinar!" + idWebinar);
+            //    return null;
+            //}
+            //var row =
+
+            //        webinar.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            //Debug.Assert(row != null, "row != null at notiResults");
+
+
             return null;
         }
 

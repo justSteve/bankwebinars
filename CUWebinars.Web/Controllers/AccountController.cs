@@ -1136,9 +1136,14 @@ namespace CUWebinars.Web.Controllers
 
                 return JsonConvert.SerializeObject(jsonObject);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                dynamic jsonObject = new JObject();
+                jsonObject.FirstPage = "not found: " + order.idOrder;
+                jsonObject.RemoteUser = "not found ex:" + ex.Message;
+                jsonObject.Origin = order.Origin;
+
+                return JsonConvert.SerializeObject(jsonObject);
             }
         }
 

@@ -119,7 +119,13 @@ namespace CUWebinars.Web.Controllers.Admin
             _affiliateManagementService = affiliateManagementService;
             _generalFormatter = generalFormatter;
         }
+        public JsonResult ImportLearnUponEvents()
+        {
+            var LUWebianrs = _webinarManagementService.ImportLUEvents();
 
+            return Json(new { Message = LUWebianrs }, JsonRequestBehavior.AllowGet);
+
+        }
         public ActionResult GetPromoLinks(int? idWebinar, int? idAffiliate)
         {
             PromoLinks model = new PromoLinks();

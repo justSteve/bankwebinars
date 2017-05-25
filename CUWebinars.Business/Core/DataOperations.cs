@@ -1347,5 +1347,49 @@ namespace CUWebinars.Business.Core
 
             }
         }
+
+        public void insertRegTypeId(int webinarIdWebinar)
+        {
+            var result = "";
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (
+                    var insertRegType = new SqlCommand("insertDESRegType", sqlConnection))
+                {
+                    try
+                    {
+                        insertRegType.Connection = sqlConnection;
+                        insertRegType.CommandType = CommandType.StoredProcedure;
+
+                        var idWebinar = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idWebinar", Value = webinarIdWebinar };
+
+
+                        insertRegType.Parameters.Add(idWebinar);
+
+
+                        insertRegType.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'CreateCPCode' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'CreateCPCode', 9 ,";
+                            errorLogger.CommandText += "'error at CreateCPCode " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+                        }
+
+                        throw;
+                    }
+                }
+            }
+        }
     }
 }

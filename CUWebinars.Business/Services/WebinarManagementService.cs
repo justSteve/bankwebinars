@@ -11,7 +11,14 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
+using System.Web.Mvc;
+using Newtonsoft.Json;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 
 namespace CUWebinars.Business.Services
@@ -399,6 +406,227 @@ namespace CUWebinars.Business.Services
         public IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar)
         {
             return _webinarRepository.GetTopicsByWebinar(idWebinar);
+        }
+
+        public int ImportLu(WebinarLU importWebinar)
+        {
+            _logger.Info("Importing LU webinar: " + importWebinar.name);
+
+            var theYear = importWebinar.name[0].ToString() + importWebinar.name[1].ToString();
+            var theMonth = importWebinar.name[2].ToString() + importWebinar.name[3].ToString();
+            var makeDate = theMonth + "/01/" + theYear;
+
+            DateTime theDate = DateTime.Parse(Convert.ToInt32(theMonth) + "/01/" + Convert.ToInt32(theYear));
+            var title = "";
+            foreach (var item in importWebinar.name.Split(' ').Skip(1))
+            {
+                title += item + " ";
+            }
+            var fullName = ParseForSpeakerName(importWebinar.description_text);
+            int? idPresenter = _webUserRepository.GetUserIdByFirstNameLastName(fullName);
+            if (idPresenter != null && idPresenter.Value == 0)
+            {
+                _logger.Warn("Import LU webinar did not find speaker: " + importWebinar.name + " " + fullName);   //return 0;
+                idPresenter = 24;
+            }
+
+            var learnBody = ParseLearnBody(importWebinar.description_html);
+            var descBody = ParseDescBody(importWebinar.description_html);
+
+            var newWebinar = new Webinar
+            {
+                Title = title.TrimEnd(' '),
+                Date = theDate,
+                idPresenter = idPresenter.Value,
+                DescriptionLong = descBody,
+                LearnBody = learnBody,
+                ImageUrl = "",
+                SmallImageUrl = "",
+                Status = WebinarStatus.Recorded,
+                LearnCaption = "Covered Topics:",
+                WhoAttend = "",
+                Duration = .5M,
+                RecordingUrl = "",
+                WebinarKey = "",
+                OrganizerKey = "",
+                OrganizerOAuthKey = "",
+                ceu = importWebinar.minute_length + " Minutes Duration|",
+                ConnectionInfo = "",
+                DateCreated = DateTime.Now,
+                DateChanged = DateTime.Now,
+                CitrixRegisterUrl = "",
+                AccessPhone = "",
+                AccessCodeAttendee = "",
+                AccessCodePresenter = "",
+                AccessCodeOrganizer = "",
+                LivePlusFiveValue = DateTime.Now,
+                SeriesInfo = "DES",
+                AdditionalLocationPrice = 0,
+                TitleAnnouncement = "",
+                Campaigns = "",
+                Description = descBody
+            };
+            try
+            {
+                AddWebinar(newWebinar);
+                var webinar = GetAllActive().Where(w => w.Title == title.TrimEnd(' ')).FirstOrDefault();
+
+                _logger.Info("Added LU webinar: " + importWebinar.name + " " + fullName + " " + idPresenter);
+
+                //Debug.Assert(webinar != null, "webinar != null");
+                //webinar.RegTypesGroupsXref.Add(new RegTypesGroupsXref { idRegTypeGroup = 64 });
+                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+
+
+                dataOperations.insertRegTypeId(webinar.idWebinar);
+                webinar.WebinarTopicXrefs.Add(new WebinarTopicXref { idTopic = 32 });
+
+                UpdateWebinar(webinar);
+                return webinar.idWebinar;
+
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("Unable to add: " + importWebinar.name + " " + fullName + " " + idPresenter, e);
+                return 0;
+
+            }
+        }
+
+        private string ParseLearnBody(string importWebinarDescriptionText)
+        {
+            try
+            {
+                var startPos = importWebinarDescriptionText.IndexOf("<p><u><strong>Covered Topics</strong></u></p>\r\n\r\n");
+                if (startPos == -1)
+                {
+                    startPos = importWebinarDescriptionText.IndexOf("<p><u><strong>Covered Topics:</strong></u></p>\r\n\r\n");
+                    var length = importWebinarDescriptionText.IndexOf("<p><u><strong>About the Speaker") - startPos;
+                    return
+                        importWebinarDescriptionText.Substring(startPos, length)
+                            .Replace("<p><u><strong>Covered Topics:</strong></u></p>\r\n\r\n", "");
+
+                }
+                else
+                {
+                    var length = importWebinarDescriptionText.IndexOf("<p><u><strong>About the Speaker") - startPos;
+                    return
+                        importWebinarDescriptionText.Substring(startPos, length)
+                            .Replace("<p><u><strong>Covered Topics</strong></u></p>\r\n\r\n", "");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Fatal("ParseLearnBody failed!");
+                return "";
+            }
+        }
+        private string ParseDescBody(string importWebinarDescriptionText)
+        {
+            try
+            {
+
+                var startPos = 0;
+
+                var length = importWebinarDescriptionText.IndexOf("<p><u><strong>Covered") - startPos;
+                return
+                    importWebinarDescriptionText.Substring(startPos, length);
+                //.Replace("<p><u><strong>Covered Topics</strong></u></p>\r\n\r\n", "");
+
+            }
+            catch (Exception e)
+            {
+                _logger.Fatal("ParseLearnBody failed!");
+                return "";
+            }
+        }
+
+
+        public string ImportLUEvents()
+        {
+            //https://directorseries.learnupon.com/api/v1/courses
+
+            // Create a request using a URL that can receive a post.   
+            //WebRequest request = WebRequest.Create("https://directorseries.learnupon.com/api/v1/courses");
+            System.Net.HttpWebRequest request = (HttpWebRequest)WebRequest.Create(@"https://directorseries.learnupon.com/api/v1/courses");
+
+            // Set the Method property of the request to POST.  
+            request.Method = "GET";
+            request.Headers.Add("Authorization", "Basic NjNmOWJjYjNmYzFjNjk2OGM2NDM6NjQ0OWZkY2UzNzllOTBhZjhiNzUxOTFmMjcyMWI4");
+            // Set the ContentType property of the WebRequest.  
+            request.ContentType = "application/json";
+
+            // Get the request stream.  
+            Stream dataStream;
+
+            // Get the response.  
+            WebResponse response = request.GetResponse();
+            // Display the status.  
+            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+            // Get the stream containing content returned by the server.  
+            dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.  
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.  
+            string responseFromServer = reader.ReadToEnd();
+            // Display the content. 
+            List<WebinarLU> luwebinars =
+                JsonConvert.DeserializeObject<List<WebinarLU>>(responseFromServer.Replace("{\"courses\":", "").Replace("]}", "]"));
+            // Clean up the streams.  
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+            IEnumerable<Webinar> webinars = GetAllActive();
+            List<WebinarLU> importEm = new List<WebinarLU>();
+
+            foreach (var webinarLu in luwebinars)
+            {
+                var foundIt = webinarLu.id;
+                var title = "";
+                foreach (var item in webinarLu.name.Split(' ').Skip(1))
+                {
+                    title += item + " ";
+                }
+                var enumerable = webinars as Webinar[] ?? webinars.ToArray();
+                var matchedIt = enumerable.Where(w => w.Title == title.TrimEnd(' ')).Select(w => w.idWebinar).FirstOrDefault();
+
+                if (matchedIt == 0)
+                    importEm.Add(webinarLu);
+                //if (webinarLu.name)
+            }
+            var finding = new StringBuilder();
+            foreach (WebinarLU w in importEm)
+
+            {
+
+                var fullName = ParseForSpeakerName(w.description_text);
+                int? idPresenter = GetUserIdByFirstNameLastName(fullName);
+
+                finding.AppendLine(w.name + " " + idPresenter);
+
+                ImportLu(w);
+            }
+            //var notInDb = from webinarLu in luwebinars
+            //    join webinar in webinars on webinarLu.name equals webinar.Title
+            //    select webinarLu;
+
+            return finding.ToString();
+
+        }
+
+
+
+        public string ParseForSpeakerName(string importWebinarDescriptionText)
+        {
+
+            var firstName = importWebinarDescriptionText.IndexOf("About the Speaker\r\n\r\n");
+
+            return importWebinarDescriptionText.Substring(firstName).Replace("About the Speaker\r\n\r\n", "").Split(' ')[0] + " " + importWebinarDescriptionText.Substring(firstName).Replace("About the Speaker\r\n\r\n", "").Split(' ')[1];
+        }
+
+        public int? GetUserIdByFirstNameLastName(string fullName)
+        {
+            return _webUserRepository.GetUserIdByFirstNameLastName(fullName);
         }
 
         public Quiz GetQuizByOrderId(int idOrder)

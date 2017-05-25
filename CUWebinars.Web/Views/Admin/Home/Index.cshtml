@@ -21,14 +21,37 @@
 @Styles.Render("~/Content/notifications-ops-styles")
 
 <script type="text/javascript">
-    $(function() {
+    $(function () {
+
+        $("#ImportLearnUponEvents").on("click",
+            function () {
+
+                $.ajax({
+                    type: 'GET',
+                    //contentType: constants.JsonContentType,
+                    //cache: false,
+                    url: '/Admin/ImportLearnUponEvents',
+                    //dataType: constants.JsonDataType,
+                    //data: payload,
+                    beforeSend: function () {
+                        var aHolder = "1";
+                        //$(self)
+                        //    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                    }
+                }).done(function (result) {
+
+                    if (result.Message) {
+                        $("#ImportLUEventsResponse").html(result.Message);
+                    }
+                });
+            });
 
         $('#frmEditAffiliate_ > span.form-body').load('/Admin/GetAffiliates',
-            function() {
+            function () {
 
 
                 $('#frmEditAffiliate_').on('change',
-                    function(e) {
+                    function (e) {
 
                         e.preventDefault();
 
@@ -87,7 +110,8 @@
                                         }
                                     </div>
 
-                                </div></li>
+                                </div>
+                            </li>
 
                         </ul>
                     </div>
@@ -102,17 +126,22 @@
                             @*<li><a id="GetSendRecordingPostedEventHtmlButton">Recording Is Posted Notification</a></li>*@
                             @*<li><a id="GetResendOrderConfirmationHtmlButton">Confirmation of Registration Resend</a></li>
                                 <li><a id="GetResendConnectionInfoHtmlButton">Connection Info Resend</a></li>*@
-                            <li><a id="GenerateClickToJoinForAdHocCaller" href="@Url.Content("~/Admin/GenerateClickToJoinForAdHocCaller")">Generate Join Code</a></li>
                             @*<li><a id="AddQuizButton" href="@Url.Content("~/Admin/AddQuiz")">Add Quiz</a></li>*@
                             @*<div><button id="GetAdhocEventsHtmlButton" >Ad hoc Notification</button></div>*@
 
                             <li><a id="GetAdhocEventsHtmlButton">Adhoc Notification</a></li>
                             <li><a href="@Url.Content("~/Admin/GetWeeklyInvoicesEvent")" id="GenerateWeeklyInvoicesHtmlButton">Generate Weekly Invoices</a></li>
-                            @*<div class="span8"><i id="WaitIndicator" class="icon-spinner icon-spin "></i></div>*@
+
+                            @if (_globalConfig.Tenant == "DirectorSeries")
+                            {
+                                <li><a id="ImportLearnUponEvents">Import Learn Upon Events</a></li>
+                            }
+
                         </ul>
                     </div>
                 </div>
                 <div class="row">
+                    <div id="ImportLUEventsResponse"></div>
                 </div>
                 <div class="row">
                     <div id="InputFormFields" class="paddTop10"></div>
@@ -167,6 +196,5 @@
             @{ Html.RenderPartial("Admin/_SubscriptionsCP", Model.CompPersSubscriptionsModel); }
 
         </div>
-
     </div>
 </div>

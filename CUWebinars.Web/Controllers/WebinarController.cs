@@ -341,7 +341,7 @@ namespace CUWebinars.Web.Controllers
 
 
         [System.Web.Mvc.HttpGet]
-        public JsonResult ConnectionInfoSenderPrep(int? idWebinar)
+        public JsonResult SendConnectionInfoPrep(int? idWebinar)
         {
             _logger.Info("ConnectionInfo Send is prepping: " + idWebinar.Value);
             var webinar = _webinarManagementService.GetWebinar(idWebinar.Value);
@@ -405,7 +405,13 @@ namespace CUWebinars.Web.Controllers
 
             _logger.Info(sb.ToString());
             senderModel.CitrixRegistrations = String.Join(",", apiResponse.Select(c => c.email).ToList());
-            webinar.Comments = JsonHelpers.AddObjectToJsonArray(webinar.Comments, JsonPropertyKeys.SendConnectionChecklist + "_" + DateTime.Now, senderModel);
+
+            JProperty msg = new JProperty(JsonPropertyKeys.SendConnectionChecklist
+                , JProperty.Parse(JsonConvert.SerializeObject( senderModel)));
+
+
+
+            webinar.Comments = JsonHelpers.MergeJsonWithStoredField(webinar.Comments, msg);
 
             _webinarManagementService.SaveChanges();
             //_appHelper.ScheduleConnInfoSenderAudit(webinar);
@@ -2624,5 +2630,7 @@ namespace CUWebinars.Web.Controllers
             }
             return this.ModelStateJson(ModelState);
         }
+
+
     }
 }

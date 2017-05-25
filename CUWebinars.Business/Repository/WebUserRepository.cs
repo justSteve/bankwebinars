@@ -108,6 +108,15 @@ namespace CUWebinars.Business.Repository
             return presenter;
         }
 
+        public int? GetUserIdByFirstNameLastName(string fullName)
+        {
+            var firstName = fullName.Split(' ')[0];
+            var lastName = fullName.Split(' ')[1];
+            var userId = ((TTSWebinarsContext) db).WebUsers
+                .Where(p => p.FirstName == firstName && p.LastName == lastName).Select(p => p.idUser).FirstOrDefault();
+            return userId;
+        }
+
         public int? GetWebUserIdByEmail(string email)
         {
             return items.Where(w => w.email == email).Select(w => w.idUser).SingleOrDefault();

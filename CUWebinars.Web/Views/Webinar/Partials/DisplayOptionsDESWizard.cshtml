@@ -1,0 +1,302 @@
+﻿
+@using CUWebinars.Web.Core
+@model DisplayOptionsViewModel
+
+@{
+
+    var defaultCheck = "checked";
+
+    var explainsOptionsBuilder = new StringBuilder();
+    //explainsOptionsBuilder.Append("The following options are available for this webinar.<br>");
+}
+<style>
+    #ExplainRegistrationOptions {
+        width: 540px;
+    }
+
+    .regTypeDescOutdent {
+        border-bottom-style: solid;
+        border-bottom-color: gray;
+        margin-top: 10px;
+        text-indent: -1em;
+        padding-left: 1em;
+    }
+</style>
+<script type="text/javascript" language="javascript">
+
+
+    $(function () {
+        $("#AssetSizeSelector").val('1 - 5');
+        $("#askNum").val('');
+
+        $("#AddToCart").hide();
+        $("#askAssetSizeContinueBtn").hide();
+        $("[name = 'instType']").prop('checked', false);
+        $("#AssetSizeSelector").on("change", function () {
+            alert(this.value);
+            $("#askAssetSizeContinueBtn").show();
+        });
+        $("#askNum").on("input", function () {
+
+            $("#askAssetSizeContinueBtn").show();
+        });
+
+        $("#askAssetSizeContinueBtn").click(function () {
+            var calculatedCost = '$2,000';
+
+            $("input[name='RegistrationTypeId']").val(444);
+            switch ($("#AssetSizeSelector").val()) {
+                case '1 - 5':
+                    $("#RegistrationTypeId").val(444);
+                    calculatedCost = '$1,500';
+                    break;
+                case '5 - 10':
+                    calculatedCost = '$5,100';
+                    break;
+                case '10 - 20':
+                    calculatedCost = '$10,200';
+                    break;
+                case '20 - 30':
+                    calculatedCost = '$20,300';
+                    break;
+                default:
+                    calculatedCost = '$1,500';
+            }
+            if ($("#AssetSizeSelector").val() === '1 - 5') {
+
+            }
+
+            $("#showCostLink").html("Annual Subscription Cost is " + calculatedCost);
+            $("#showCost").collapse('toggle');
+            $("#askAssetSizeContinueBtn").hide();
+            $("#DissmissContinueBtn").text('Continue');
+            $("#CostCaption").text('Click "Continue" to Sign Up or request more information.');
+        });
+
+        $("[name = 'instType']").on("change", function () {
+            if (this.value === "NonBank") {
+                $("#showCostLink").html('Cost of an Annual Subscription is $1,395');
+                $("#askInstTypeLink").html('Chosen Institution Type is <i><b>Non-Bank</b></i>');
+                $("#AssetSizeCaption").html('Asset size does not apply to a non-bank institution.');
+                $("#showCost").collapse('show');
+
+                $("#askInstType").collapse('hide');
+                $("#askAssetSize").collapse('hide');
+                $("#AddToCart").show();
+
+                $("#AssetSizeSelector").val('1 - 5');
+                $("#askNum").val('');
+
+                $("#askAssetSizeContinueBtn").hide();
+            }
+            if (this.value === "Single") {
+                $("#askInstTypeLink").html('Chosen Institution Type is <i><b>Single Bank or Credit Union</b></i>');
+
+                $("#showCostLink").html('Calculating Cost of an Annual Subscription');
+                $("#AssetSizeCaption").html('Asset Size:');
+
+                $("#askNumCaption").html('Or FDIC Number: ');
+                $("#numHolder").hide();
+                $("#askAssetSize").collapse('hide');
+                $("#askInstType").collapse('hide');
+
+                $("#AddToCart").show();
+            }
+            if (this.value === "Multi") {
+                $("#askInstTypeLink").html('Chosen Institution Type is <i><b>Holding Company</b></i>');
+                $("#showCostLink").html('Calculating Cost of an Annual Subscription');
+                $("#AssetSizeCaption").html('Please choose the size of the <i>largest</i> institution plus additional number of (optional) intitutions(s) to be subscribed.');
+                $("#askAssetSize").collapse('toggle');
+
+                $("#askInstType").collapse('toggle');
+                $("#AddToCart").show();
+            }
+        });
+
+
+
+    });
+    function CalcDESCost() {
+        $("#CalcCost").modal('show');
+    }
+
+
+</script>
+<div id="CalcCost" class="modal hide fade">
+
+    <div id="CalcCostBody" class="modal-body">
+        <div class="accordion" id="CalcCostWiz">
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a id="askInstTypeLink" class="accordion-toggle" data-toggle="collapse" data-parent="#CalcCostWiz"
+                       href="#askInstType">
+                        Type of Institution
+                    </a>
+                </div>
+                <div id="askInstType" class="accordion-body collapse in">
+                    <div class="accordion-inner">
+                        <label class="radio">
+                            <input type="radio" name="instType" id="instTypeNon" value="NonBank" checked>
+                            Non-Bank
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="instType" id="instTypeSingle" value="Single" checked>
+                            Single Bank or Credit Union
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="instType" id="instTypeMulti" value="Multi" checked>
+                            Holding Company
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#CalcCostWiz"
+                       href="#askAssetSize">
+                        Asset Size
+                    </a>
+                </div>
+                <div id="askAssetSize" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                        <span id="AssetSizeCaption"></span><br />
+                        <select id="AssetSizeSelector">
+                            <option value="-">Please Choose One</option>
+                            <option value="1 - 5">1 - 5</option>
+                            <option value="5 - 10">5 - 10</option>
+                            <option value="10 - 20">10 - 20</option>
+                            <option value="20 - 30">20 - 30</option>
+                        </select><br />
+                        <div id="numHolder">
+                            <span id="askNumCaption"> Total Number of Institutions to be Subscribed</span>
+                            <br /><input id="askNum" style="width: 100px;" type="text">
+
+                        </div>
+                        <div><input id="askAssetSizeContinueBtn" class="btn btn-success" type="button" value="Continue" /></div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a id="showCostLink" class="accordion-toggle" data-toggle="collapse" data-parent="#CalcCostWiz" href="#showCost">
+                        Cost of Annual Subscription
+                    </a>
+                </div>
+                <div id="showCost" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                        <span id="CostCaption">Please indicate type of institution.</span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" id="DissmissContinueBtn" value="Dismiss" data-dismiss="modal" />Dismiss
+        </div>
+    </div>
+</div>
+
+<div id="AttendRegTypes" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>@GlobalConfig.GlobalConfigSingleton.TenantDomain's Attendance Options</h3>
+    </div>
+    <div id="ExplainRegistrationOptions" class="modal-body">
+        <p>
+
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" aria-hidden="true">Finished</button>
+    </div>
+</div>
+<div id="IsOrderForCoWorker" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="confirmCaption">Ordering for a co-worker?</h3>
+    </div>
+    <div id="confirmResult" class="modal-body">
+        <p>If you would like to share your order's notifications with a co-worker - to CC them with Connection Information and all other notifications related to the order - just enter the email in the textbox below. </p>
+        <input type="text" name="CCEmail" id="CCEmail" />
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="confirmCCEmail" role="button" data-dismiss="modal" class="btn btn-success">Continue</a>
+        <button id="cancelCCEmail" class="btn" data-dismiss="modal">Cancel</button>
+    </div>
+</div>
+<div id="ExplainsRegType" class="modal hide fade">
+
+    <div id="ExplainsRegTypeBody" class="modal-body">
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal">Dismiss</button>
+    </div>
+</div>
+<div id="ShowsOptions">
+    @{
+        if (Model.OrderRowExists)
+        {
+            <div class="pull-right">
+                @Html.Partial("~/Views/Cart/Partials/_DisplayRowPriceDES.cshtml", Model.DisplayRowPriceViewModel)
+            </div>
+        }
+        else
+        {
+            <button type="button" class="btn-success btn pull-right" id="AddToCart"> Sign Up </button>
+
+            <div id="RegistrationType">
+                <dl>
+                    @foreach (var myOption in Model.Options)
+                    {
+                        <script language="javascript" type="text/javascript">
+                            var toolText = "@Html.Raw(myOption.Key.OptionExplain)";
+                        </script>
+                        bool appendJustOnce = true;
+
+                        explainsOptionsBuilder.Append("<div class='regTypeDescOutdent'><b>" + myOption.Key.OptionLabel.Replace(" (days)", "").Replace(" (months)", "") + "</b>  - " + myOption.Key.OptionExplain + "</div>");
+                        //font override to apply (days)
+                        <dt style="font-weight: normal">
+                            @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())
+                            <input type="hidden" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
+                                   value="@myOption.Key.idRegType" />
+                            Annual subscription cost is based on asset size.<br />
+                            <a id="CalcDESCost" onclick="CalcDESCost(); return false;">Calculate Your Cost</a>
+
+
+                        </dt>
+
+                        defaultCheck = string.Empty;
+                    }
+                </dl>
+                <div style="text-align: right;" class="pull-right">
+                    <a id="linkIsOrderForCoworker" href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br />
+                    <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal"><span id="AttendRegTypesCaption">attendance options explained</span></a>
+                </div>
+            </div>
+
+            <script type="text/javascript" language="javascript">
+                $(document).ready(function () {
+                    $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");
+
+                    $(document).ready(function () {
+                        $('a._toolTip').click(function () {
+                            //$("#ExplainsRegTypeBody").text(this.title);
+                            $("#AttendRegTypes").modal('show');
+                            return false;
+                        });
+                    });
+                });
+            </script>
+        }
+        if ((Model.WebinarStatus == WebinarStatus.Scheduled
+            || Model.WebinarStatus == WebinarStatus.Active
+            || Model.WebinarStatus == WebinarStatus.InProgress
+            ) && Model.idWebinar != 2248 && Model.idWebinar != 2109 && Model.idWebinar != 2484)
+        {
+            <div class="clearfix" id="displayAddLoc">
+                @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)
+            </div>
+        }
+    }
+</div>

@@ -110,22 +110,44 @@ namespace CUWebinars.Web.Core.Orchestrators
                 conSend.SendDate = DateTime.Now;
                 conSend.URL = "https://" + _globalConfig.StorageAccountName + ".blob.core.windows.net/connectionchecklist/" + row.idWebinar + "/" + order.idOrder + ".htm";
 
-
-                if (!reminder)
+                if (ConfigurationManager.AppSettings["EmailSendingMode"] == "live")
                 {
-                    _orderManagementService.FireMandrillNotificationEvent(
-                        ConfigurationManager.AppSettings["TestEmailAddress"],
-                        "Connection Checklist for " + GetWebinar(row.idWebinar).Title, body);
-                    conSend.Sender = "Sys_FirstSend";
+                    if (!reminder)
+                    {
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            //ConfigurationManager.AppSettings["TestEmailAddress"],
+                            order.BillingEmail,
+                            "Connection Checklist for " + GetWebinar(row.idWebinar).Title, body);
+                        conSend.Sender = "Sys_FirstSend";
+                    }
+                    else
+                    {
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            //ConfigurationManager.AppSettings["TestEmailAddress"],
+                            order.BillingEmail,
+                            "Connection Reminder for " + GetWebinar(row.idWebinar).Title, body);
+                        conSend.Sender = "Sys_Reminder";
+                    }
                 }
                 else
                 {
-                    _orderManagementService.FireMandrillNotificationEvent(
-                        ConfigurationManager.AppSettings["TestEmailAddress"],
-                        "Connection Reminder for " + GetWebinar(row.idWebinar).Title, body);
-                    conSend.Sender = "Sys_Reminder";
+                    if (!reminder)
+                    {
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            ConfigurationManager.AppSettings["TestEmailAddress"],
+                            //order.BillingEmail,
+                            "Connection Checklist for " + GetWebinar(row.idWebinar).Title, body);
+                        conSend.Sender = "Sys_FirstSend";
+                    }
+                    else
+                    {
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            ConfigurationManager.AppSettings["TestEmailAddress"],
+                            //order.BillingEmail,
+                            "Connection Reminder for " + GetWebinar(row.idWebinar).Title, body);
+                        conSend.Sender = "Sys_Reminder";
+                    }
                 }
-
                 order.NotificationStorage = JsonHelpers.AddObjectToJsonArray(order.NotificationStorage, JsonPropertyKeys.SentMsg, conSend);
 
                 _orderManagementService.SaveChanges();
@@ -143,9 +165,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 #if DEBUG
             _logger.Warn("FireSendConnectionInfoNotificationEvent debugging so we didn't fire legacy sender");
 #else
-//                    _orderManagementService.FireSendConnectionInfoNotificationEvent(orders, false);
-            _orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
-            
+            //_orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
 #endif
         }
 
@@ -155,22 +175,47 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             foreach (var loc in addLocs)
             {
-
-                if (!reminder)
+                if (ConfigurationManager.AppSettings["EmailSendingMode"] == "live")
                 {
-                    var body = BuildConnectionInfoMessage(order, loc.Email);
+                    if (!reminder)
+                    {
+                        var body = BuildConnectionInfoMessage(order, loc.Email);
 
-                    _orderManagementService.FireMandrillNotificationEvent(
-                        ConfigurationManager.AppSettings["TestEmailAddress"],
-                        "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            //ConfigurationManager.AppSettings["TestEmailAddress"],
+                            loc.Email,
+                            "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+                    }
+                    else
+                    {
+                        var body = BuildConnectionInfoMessage(order, loc.Email);
+
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            //ConfigurationManager.AppSettings["TestEmailAddress"],
+                            loc.Email,
+                            "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
+                    }
                 }
                 else
                 {
-                    var body = BuildConnectionInfoMessage(order, loc.Email);
+                    if (!reminder)
+                    {
+                        var body = BuildConnectionInfoMessage(order, loc.Email);
 
-                    _orderManagementService.FireMandrillNotificationEvent(
-                        ConfigurationManager.AppSettings["TestEmailAddress"],
-                        "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            ConfigurationManager.AppSettings["TestEmailAddress"],
+                            //
+                            "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
+                    }
+                    else
+                    {
+                        var body = BuildConnectionInfoMessage(order, loc.Email);
+
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            ConfigurationManager.AppSettings["TestEmailAddress"],
+                            //
+                            "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
+                    }
                 }
             }
         }
@@ -595,43 +640,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             return false;
         }
 
-        public bool UpdateWebinarRecordingBatch(int idWebinar, string recordingURL, out string message)
-        {
-            int webinarId = 0;
-            message = string.Empty;
-
-            try
-            {
-                Webinar webinar = _webinarManagementService.GetWebinar(idWebinar); //_webinarManagementService.GetWebinar(webinarDetailsViewModel.Webinar.idWebinar);
-
-                var checkThatNewFilesExist = CheckThatFileExists(webinar.RecordingUrl);
-
-                if (checkThatNewFilesExist != "OK")
-                {
-                    message = string.Concat(webinar.RecordingUrl, " does not exist.");
-                    _logger.Error(string.Format(webinar.RecordingUrl, " does not exist."));
-                    return false;
-                }
-                webinar.RecordingUrl = webinar.RecordingUrl;
-
-                webinar.Status = WebinarStatus.Recorded;
-
-                _webinarManagementService.UpdateWebinar(webinar);
-
-                _logger.Info(string.Format("Recordings posted by UpdateWebinarRecordingBatch for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
-                SendRecordingIsPostedBatch(idWebinar);
-                return true;
-
-            }
-            catch (Exception exception)
-            {
-                _logger.ErrorException(string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId), exception);
-                message = string.Format("UpdateWebinarRecording| UpdateWebinarRecording failed {0} on idWebinar: {1}", exception.Message, webinarId);
-            }
-
-            return false;
-        }
-
         private void SendRecordingIsPostedNotifications(WebinarDetailsViewModel webinarDetailsViewModel, Webinar webinar)
         {
             var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinar(webinar.idWebinar);
@@ -836,7 +844,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 return "Error: " + ex.Message;
             }
         }
-
 
         private void AddNoteClaim(IList<Order> ordersForWebinar)
         {
