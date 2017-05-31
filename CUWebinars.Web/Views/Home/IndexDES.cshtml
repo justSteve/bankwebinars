@@ -12,10 +12,43 @@
         </script>
     }
 
-    Layout = "~/Views/Shared/_Layout_DirectorSeries.cshtml";
+    Layout = "~/Views/Shared/_Layout_DES.cshtml";
 }
 
+<script language="javascript" type="text/javascript">
+function GoToSignup() {
+    window.location = '/webinar/DetailsDes/2539';
+}
 
+    $(function () {
+
+        $("#showLearnMore").click(
+            function () {
+
+                $("#learnMore").show();
+                $("#opener").hide();
+            });
+
+
+    });
+</script>
+<style>
+    table {
+        margin-left: 100px;
+        border-width: 1px;
+        border-spacing: 2px;
+        border-style: solid;
+        border-color: black;
+    }
+
+
+    tr {
+        border-width: 1px;
+        border-spacing: 1px;
+        border-style: solid;
+        border-color: black;
+    }
+</style>
 
 <div id="page">
     <div class="container visible-phone">
@@ -34,22 +67,100 @@
         <div class="row-fluid sidebar-right">
             <!--begin row-fluid-->
             <div class="span9 primary-column large">
+                <div id="opener">
+                    <p>
+                        One annual subscription provides your entire financial institution access to our entire module library with a new module published each month. Features of the The Directors Education Series™ include:
+                    </p>
+                    <ul>
+                        <li>20-25 minutes in length (Perfect for Board Meetings)</li>
+                        <li>Audio, Video &amp; PowerPoint</li>
+                        <li>Handouts and Discussion Questions</li>
+                        <li>Course Tracking</li>
+                        <li>Accessible on a variety of devices (Tablets, Mobile Devices, Laptops, etc.)</li>
+                        <li>Printable Certificates of Completion</li>
+                        <li>12 Month Subscription $1,395
+                    </ul>
+                    <div align="center">
+                        <button id="SignUp" onclick="javascript:GoToSignup();" role="button" class="btn btn-success">Sign Up</button>
+                        <button id="showLearnMore" role="button" class="btn btn-success">Learn More</button>
+                    </div>
+                </div>
+                <div id="learnMore" class="initialHide">
+                    <p>The responsibility and liability of the Bank Director is ever increasing. It is critical your Directors stay current with the training to help them through the complexities of today's banking environment.</p>
 
-                <p>
-                    One annual subscription provides your entire financial institution access to our entire module library with a new module published each month. Features of the The Directors Education Series™ include:
-                </p>
-                <ul>
-                    <li>20-25 minutes in length (Perfect for Board Meetings)</li>
-                    <li>Audio, Video &amp; PowerPoint</li>
-                    <li>Handouts and Discussion Questions</li>
-                    <li>Course Tracking</li>
-                    <li>Accessible on a variety of devices (Tablets, Mobile Devices, Laptops, etc.)</li>
-                    <li>Printable Certificates of Completion</li>
-                    <li>12 Month Subscription $1,395
-                </ul>
-                <div align="center">
-                    <button role="button" class="btn btn-success">Sign Up</button>
-                    <button role="button" class="btn btn-success">Learn More</button>
+                    <p><strong>The Directors Education Series&trade;</strong><strong>&nbsp;</strong>is a Library of training modules focused on the role and expectations of the Bank Director's conduct, duties and liabilities. Our programs have been authored by a group of highly recognized, respected industry experts. Your subscription to this series will assist you with the responsibility you have to educate those who serve on your Board.</p>
+
+                    <p>One annual subscription provides your financial institution access to&nbsp;our entire module library with a new module published each month. Features of the&nbsp;<strong>The Directors Education Series&trade;</strong>&nbsp;include:</p>
+                    <ul>
+                        <li>20-25 minutes in length (<strong>Perfect for Board Meetings</strong>)</li>
+                        <li>Audio, Video &amp; PowerPoint</li>
+                        <li>Handouts and Discussion Questions</li>
+                        <li>Course Tracking</li>
+                        <li>Accessible on a variety of devices (Tablets, Mobile Devices, Laptops, etc.)</li>
+                        <li>Certificates of Completion</li>
+                        <li>And More!</li>
+                    </ul>
+                    <h3>Directors Education Series Pricing</h3>
+                    <table width="333">
+
+                        <tr>
+                            <td>
+                                Asset Size
+                            </td>
+                            <td>
+                                Monthly Price<br />
+                                (Billed Annually)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Less Than $499 M
+
+                            </td>
+                            <td>
+                                $125
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                $500M - $999M
+                            </td>
+                            <td>
+                                $250
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                $1B &ndash; $4.9B
+                            </td>
+                            <td>
+                                $425
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                $5B - $10B
+                            </td>
+                            <td>
+                                $600
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                $10B+
+                            </td>
+                            <td>
+                                $850
+                            </td>
+                        </tr>
+
+                    </table>
+                    <h3>Subscription Details</h3>
+                    <p>Your subscription includes access to the entire course library as well as new releases during the term of your subscription. You will have access to modules in the library through your expiration date. Access will be over the internet. You will need a computer or device with a high speed internet connection and audio producing capability.</p>
+                    <p>TTS reserves the right to remove or edit course content at any time. Topic schedules are subject to change.</p>
+                    <p>The subscription term will commence after your registration has been received and confirmed by TTS. At this time your account credentials will be sent to you. This agreement will continue for 12-months and &nbsp;will be auto renewed at the end of the current term for a successive 12-month term unless either party gives written notice of its intention not to renew 15 days before the expiration of the current term. TTS will also notify you of any changes in the terms of the Subscription at least 30 days prior to the notice period for renewal or termination.</p>
+                    <p>Subscription pricing is based on the asset size of your financial institution, holding company or other banking entity. In the case that your company is a nonbanking institution, the introductory rate is applied.</p>
+                    <p>Subscription payment will be by credit card or ACH at the time of registration. Prices are advertised in monthly terms and based on annual payment in full at the time of registration.&nbsp; For a monthly payment plan, please contact us.</p>
                 </div>
             </div>
             <!-- close span9 primary-column-->
@@ -96,14 +207,6 @@
                             <!--close #t4 -->
                             <!--close #t5 -->
                         </div>
-                        <!--close panels-->
-                        <ul class="tabs">
-                            <li class="tab"><a href="#t1">maya-angelou</a></li>
-                            <li class="tab"><a href="#t2">Lynn Hayhurst, The Bank of Georgia </a></li>
-                            <li class="tab"><a href="#t3">albert-einstein</a></li>
-                            <li class="tab"><a href="#t4">ralph-waldo-emerson</a></li>
-                            <li class="tab"><a href="#t4">ralph-waldo-emerson</a></li>
-                        </ul>
                     </div>
                     <!--close rotating-testimonials-->
                 </aside>

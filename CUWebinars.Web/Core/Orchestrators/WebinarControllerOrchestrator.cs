@@ -131,7 +131,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
                 else
                 {
-                    if (!reminder)
+                     if (!reminder)
                     {
                         _orderManagementService.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"],
@@ -148,7 +148,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         conSend.Sender = "Sys_Reminder";
                     }
                 }
-                order.NotificationStorage = JsonHelpers.AddObjectToJsonArray(order.NotificationStorage, JsonPropertyKeys.SentMsg, conSend);
+                order.NotificationStorage = JsonHelpers.AddObjectToJsonArray(order.NotificationStorage, JsonPropertyKeys.SentMsg + DateTime.Now.ToString("G").Replace(" ", ""), conSend);
 
                 _orderManagementService.SaveChanges();
                 if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 0)
@@ -161,12 +161,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _logger.FatalException("FireSendConnectionInfoNotificationEvent: ", e);
             }
             _logger.Info(sb.ToString());
-
-#if DEBUG
-            _logger.Warn("FireSendConnectionInfoNotificationEvent debugging so we didn't fire legacy sender");
-#else
-            //_orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
-#endif
+//legacy sender
+//#if DEBUG
+//            _logger.Warn("FireSendConnectionInfoNotificationEvent debugging so we didn't fire legacy sender");
+//#else
+//            //_orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
+//#endif
         }
 
         private void SendConnectionInfoToAddLoc(Order order, int idWebinar, bool reminder = false)
@@ -1101,7 +1101,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 WebinarTopicXrefs = new List<WebinarTopicXref>(),
                 WhoAttend = webinarEditModel.WhoAttend,
                 LivePlusFiveValue = webinarEditModel.LivePlusFive,
-                AdditionalLocationPrice = webinarEditModel.AdditionalLocationsPrice
+                AdditionalLocationPrice = webinarEditModel.AdditionalLocationsPrice,
+                SeriesInfo = webinarEditModel.SeriesInfo
+                
 
             };
 

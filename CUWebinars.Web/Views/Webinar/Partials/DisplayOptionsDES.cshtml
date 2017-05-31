@@ -87,11 +87,11 @@
                             <dt style="font-weight: normal">
                                 @Html.Hidden(string.Concat("IsShippingRequired_", myOption.Key.idRegType), myOption.Value.ToString())
                                 <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
-                                       value="@myOption.Key.idRegType"/>
+                                       value="@myOption.Key.idRegType" />
                                 &nbsp;&nbsp;
-                                @Html.Raw(myOption.Key.OptionLabel) - (price) @myOption.Key.Price.ToString("C0") &nbsp;&nbsp;
+                                @Html.Raw(myOption.Key.OptionLabel) - @myOption.Key.Price.ToString("C0") per month &nbsp;&nbsp;
 
-                                <a class="_toolTip" data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>
+                                @*<a class="_toolTip" data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>*@
                             </dt>
                         }
                         else
@@ -108,13 +108,13 @@
 
                                 }
                                 <dt style="font-weight: normal">
-                                    <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="regType" value="@myOption.Key.idRegType"/>
+                                    <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="regType" value="@myOption.Key.idRegType" />
                                     &nbsp;&nbsp;<b>
                                         @Html.Raw(myOption.Key.OptionLabel) - $@myOption.Key.Price &nbsp;&nbsp;- $
                                         @myOption.Key.Price
                                     </b>&nbsp;
-                                    &nbsp;<a class="_toolTip" data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
-                                    <br/>
+                                    @*&nbsp;<a class="_toolTip" data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>*@
+                                    <br />
                                 </dt>
                             }
                         }
@@ -122,22 +122,22 @@
                     }
                 </dl>
                 <div style="text-align: right;" class="pull-right">
-                    <a id="linkIsOrderForCoworker" href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br/>
+                    <a id="linkIsOrderForCoworker" href="#IsOrderForCoWorker" class="btn btn-mini " data-toggle="modal">ordering for a co-worker?</a><br />
                     <a href="#AttendRegTypes" class="btn btn-mini " data-toggle="modal"><span id="AttendRegTypesCaption">attendance options explained</span></a>
                 </div>
             </div>
 
             <script type="text/javascript" language="javascript">
                 $(document).ready(function () {
-                    $("#ExplainRegistrationOptions").html("@Html.Raw(explainsOptionsBuilder.ToString())");
+                    $("#ExplainRegistrationOptions").html("<p>Your subscription includes access to the entire course library as well as new releases during the term of your subscription. You will have access to modules in the library through your expiration date. Access will be over the internet. You will need a computer or device with a high speed internet connection and audio producing capability.</p><p>TTS reserves the right to remove or edit course content at any time. Topic schedules are subject to change.</p><p>The subscription term will commence after your registration has been received and confirmed by TTS. At this time your account credentials will be sent to you. This agreement will continue for 12-months and &nbsp;will be auto renewed at the end of the current term for a successive 12-month term unless either party gives written notice of its intention not to renew 15 days before the expiration of the current term. TTS will also notify you of any changes in the terms of the Subscription at least 30 days prior to the notice period for renewal or termination.</p><p>Subscription pricing is based on the asset size of your financial institution, holding company or other banking entity. In the case that your company is a nonbanking institution, the introductory rate is applied.</p><p>Subscription payment will be by credit card or ACH at the time of registration. Prices are advertised in monthly terms and based on annual payment in full at the time of registration.&nbsp; For a monthly payment plan, please contact us.</p>");
 
-                    $(document).ready(function () {
-                        $('a._toolTip').click(function () {
-                            //$("#ExplainsRegTypeBody").text(this.title);
-                            $("#AttendRegTypes").modal('show');
-                            return false;
-                        });
-                    });
+                    //$(document).ready(function () {
+                    //    $('a._toolTip').click(function () {
+                            
+                    //        $("#AttendRegTypes").modal('show');
+                    //        return false;
+                    //    });
+                    //});
                 });
             </script>
         }

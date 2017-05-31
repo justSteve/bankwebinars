@@ -216,15 +216,38 @@ namespace CUWebinars.Web.Controllers
             var webinar = _orderManagementService.GetWebinarById(row.idWebinar);
             model.ResultId = order.idOrder + "_" + DateTime.Now.ToShortDateString().Replace(" ", "_");
 
-            JProperty msg = new JProperty(JsonPropertyKeys.NotiResults + "_" + DateTime.Now.ToShortDateString()
-                , JProperty.Parse(JsonConvert.SerializeObject(model)));
+            JProperty msg = new JProperty(JsonPropertyKeys.NotiResults + "_" + model.idOrder + "_" + DateTime.Now.ToShortDateString()
+                , JToken.Parse(JsonConvert.SerializeObject(model)));
 
-            order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments,  msg);
+            JObject result = (JObject)JToken.FromObject(model);
+
+            JObject wComments = JObject.Parse(webinar.Comments);
+            JArray resultsArray = new JArray();
+            foreach (var pair in wComments)
+            {
+                Console.WriteLine(pair.Key);
+                if (pair.Key.StartsWith("Noti"))
+                {
+                    resultsArray = JArray.Parse(pair.Value.ToString());
+                }
+            }
+            if (resultsArray == null)
+            {
+                resultsArray = new JArray();
+                resultsArray.Add(result);
+
+            }
+            else
+            {
+                resultsArray.Add(result);
+            }
+            webinar.Comments = JsonHelpers.ReplaceJsonWithStoredField(webinar.Comments, new JProperty("NotiResults", resultsArray), JsonPropertyKeys.NotiResults);
+
+            order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, msg);
 
             _orderManagementService.SaveChanges();
 
-            //webinar.Comments = JsonHelpers.AddObjectToJsonArray(webinar.Comments, JsonPropertyKeys.NotiResults + "_" + order.idOrder + "_" + DateTime.Now, model);
-            webinar.Comments = JsonHelpers.MergeJsonWithStoredField(webinar.Comments, msg);
+            //webinar.Comments = JsonHelpers.ReplaceJsonWithStoredField();
             _webinarManagementService.SaveChanges();
             return null;
         }
@@ -234,7 +257,7 @@ namespace CUWebinars.Web.Controllers
         {
             var webinar = _orderManagementService.GetWebinarById(idWebinar);
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinar.idWebinar);
-            dynamic notiResultsToJson = JObject.Parse(webinar.Comments);
+            var notiResultsToJson = JObject.Parse(webinar.Comments);
             Debug.Assert(notiResultsToJson != null, "notiResultsToJson != null");
             //var listOfNotiResults = notiResultsToJson.Properties().Select(p => p.Name).ToList();
 

@@ -15,6 +15,71 @@
         </script>
     }
 
+
+    if (Model.Webinar.Comments != null && Model.Webinar.Comments.Contains("SendConnectionChecklist"))
+    {
+
+        <script language="javascript" type="text/javascript">
+            // Need to init a bunch of JS stuff
+            var strAdminComments = "@Model.Webinar.Comments";
+
+            $(function() {
+                //$("#submitSendConnInfo").html("Audit Connection Checklist Results");
+
+
+                $("#SenderAudit").jsonbrowser(strAdminComments.replace(/&quot;/g, '"'),
+                {
+                    'parseURLs': false, // Whether to parse and link URLs.
+                    'scheme': 'http', // URLs beginning with // are automatically completed using this value.
+                    'collapsible': true, // Whether the user can collapse/expand nodes.
+                    'collapsed': true // Whether the default behavior is collapsed or not. 'collapsible' must be true.);
+                });
+
+                var idWebinar = @Model.Webinar.idWebinar;
+
+                var payload = { idWebinar };
+
+                console.log(payload);
+
+
+                $.ajax({
+                    type: 'POST',
+
+                    cache: false,
+                    url: '/Order/AuditConnectionChecklistSender',
+                    dataType: constants.JsonDataType,
+                    data: payload,
+                    beforeSend: function () {
+                        //$(self)
+                        //    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                    }
+                }).done(function (result) {
+
+                    if (result.Result === 'Success') {
+                        alert("Success");
+                        @*$.ajax({
+                            type: 'POST',
+                            contentType: constants.JsonContentType,
+                            cache: false,
+                            url: '/Order/AuditConnectionChecklistSender',
+                            dataType: constants.JsonDataType,
+                            data: JSON.stringify(payload),
+                            beforeSend: function () {
+                                $(self)
+                                    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                            }
+                        });
+
+                        $('#Container4ResendConfirmation').html("Your order confirmation is resent. If you do not see an email from <b> @_globalConfig.TenantEmail </b> please check your spam folder.");
+                    } else if (result.Result === 'Fail') {
+                        $('#Container4ResendConfirmation').html("We've encountered an error and are working to solve the issue. Please contact us at  @_globalConfig.TenantEmail  for more information.");*@
+                    }
+                });
+
+            });
+        </script>
+    }
+
     var orders = Model.Orders.ToList();
     var withAddLoc = new List<Order>();
     var withCC = new List<Order>();
@@ -36,10 +101,7 @@
             {
                 withCC.Add(order);
             }
-
-
         }
-
     }
 
     var allUsers = rowsToBeSent.Count();
@@ -48,18 +110,25 @@
     // AdminController/BuildConnInfoViewModel
     <div id="SenderSummary">
         Total Orders to be notified: @allUsers.<br />
-        Orders with Additional Locations:<br />
         @{
-            foreach (var order in withAddLoc)
+            if (withAddLoc.Count > 0)
             {
-                <span>@order.idOrder<br /></span>
+                <span>Orders with Additional Locations:<br /></span>
+                foreach (var order in withAddLoc)
+                {
+                    var emails = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).AdditionalLocation.Select(e => e.Email);
+                    <span>@order.idOrder @string.Join(", ", emails) <br /></span>
+                }
             }
         }
-        Orders with CCs:<br />
         @{
-            foreach (var order in withCC)
+            if (withCC.Count > 0)
             {
-                <span>@order.idOrder<br /></span>
+                <span> Orders with CCs:< br /></span>
+                foreach (var order in withCC)
+                {
+                    <span>@order.idOrder<br /></span>
+                }
             }
         }
         <div>
@@ -68,10 +137,11 @@
 
     </div>
     <div id="SenderAudit">
-        Audit the Send
         <div>
             <button id="fireConnInfoSender" role="button" class="btn btn-danger">Send Reminders</button>
         </div>
+        Review of Previous Send(s)
+
     </div>
 
     <div id="webinarIdDiv" data-webinarid="@Model.Webinar.idWebinar" class="initialHide">@Model.Webinar.idWebinar</div>

@@ -150,7 +150,7 @@ OCA.initializeFunctions = function () {
                 type: 'GET',
                 contentType: constants.JsonContentType,
                 cache: false,
-                url: '/Webinar/ConnectionInfoSenderPrep',
+                url: '/Webinar/SendConnectionInfoPrep',
                 dataType: constants.JsonDataType,
                 data: payload,
                 beforeSend: function() {

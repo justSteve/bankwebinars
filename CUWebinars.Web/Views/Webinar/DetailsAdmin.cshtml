@@ -11,75 +11,13 @@
 
 
     IStateService stateService = new StateService();
-    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff;
-
-    if (Model.Webinar.Comments != null && Model.Webinar.Comments.Contains("SendConnectionChecklist"))
-    {
-
-        <script language="javascript" type="text/javascript">
-            // Need to init a bunch of JS stuff
-            var strAdminComments = "@Model.Webinar.Comments";
-
-            $(function() {
-                $("#submitSendConnInfo").html("Audit Connection Checklist Results");
+    var currentAffiliate = stateService.GetValue<Affiliate>
+    (WebUiConstants.CurrentAffiliate).idUserAff;
 
 
-                $("#SenderAudit").jsonbrowser(strAdminComments.replace(/&quot;/g, '"'),
-                {
-                    'parseURLs': false, // Whether to parse and link URLs.
-                    'scheme': 'http', // URLs beginning with // are automatically completed using this value.
-                    'collapsible': true, // Whether the user can collapse/expand nodes.
-                    'collapsed': true // Whether the default behavior is collapsed or not. 'collapsible' must be true.);
-                });
-
-                var idWebinar = @Model.Webinar.idWebinar;
-
-                var payload = { idWebinar };
-
-                console.log(payload);
-
-                
-                $.ajax({
-                    type: 'POST',
-                    //contentType: constants.JsonContentType,
-                    cache: false,
-                    url: '/Order/AuditConnectionChecklistSender',
-                    dataType: constants.JsonDataType,
-                    data: payload,
-                    beforeSend: function () {
-                        //$(self)
-                        //    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
-                    }
-                }).done(function (result) {
-
-                    if (result.Result === 'Success') {
-                        alert("Success");
-                        @*$.ajax({
-                            type: 'POST',
-                            contentType: constants.JsonContentType,
-                            cache: false,
-                            url: '/Order/AuditConnectionChecklistSender',
-                            dataType: constants.JsonDataType,
-                            data: JSON.stringify(payload),
-                            beforeSend: function () {
-                                $(self)
-                                    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
-                            }
-                        });
-
-                        $('#Container4ResendConfirmation').html("Your order confirmation is resent. If you do not see an email from <b> @_globalConfig.TenantEmail </b> please check your spam folder.");
-                    } else if (result.Result === 'Fail') {
-                        $('#Container4ResendConfirmation').html("We've encountered an error and are working to solve the issue. Please contact us at  @_globalConfig.TenantEmail  for more information.");*@
-                    }
-                });
-
-            });
-        </script>
     }
 
-}
-
-<script type="text/javascript">
+    <script type="text/javascript">
 
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
@@ -91,207 +29,207 @@
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
 
-</script>
+    </script>
 
-@section scripts{
+    @section scripts{
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/create-order-affiliate")
     @Scripts.Render("~/bundles/manage-webinar-files")
     @Scripts.Render("~/bundles/dataTables")
     @Scripts.Render("~/bundles/display-orders")
     @Scripts.Render("~/bundles/admin-notifications")
-}
+    }
 
-@Styles.Render("~/Content/create-order-details")
-@Styles.Render("~/Content/data-tables")
+    @Styles.Render("~/Content/create-order-details")
+    @Styles.Render("~/Content/data-tables")
 
-<div class="hero-unit">
-    <div id="webinarTitle" class="container">
-        <div class="pull-right">
-            @Html.Partial(@"Partials/_AdminEventButtons", Model)
+    <div class="hero-unit">
+        <div id="webinarTitle" class="container">
+            <div class="pull-right">
+                @Html.Partial(@"Partials/_AdminEventButtons", Model)
+            </div>
+            <h3>@Model.Webinar.Title</h3>
         </div>
-        <h3>@Model.Webinar.Title</h3>
     </div>
-</div>
-<!--close hero-unit-->
+    <!--close hero-unit-->
 
-<div class="container clearfix" id="main-content">
-    <!--begin main content-->
-    <div id="webinarOrders" data-affiliateid="19" class="collapse">
+    <div class="container clearfix" id="main-content">
+        <!--begin main content-->
+        <div id="webinarOrders" data-affiliateid="19" class="collapse">
 
-        @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
+            @Html.Partial("~/Views/Admin/Partials/_ShowOrders.cshtml", Model.ShowOrdersViewModel)
 
-    </div>
-    <div id="users" class="collapse">
-        @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)
-    </div>
+        </div>
+        <div id="users" class="collapse">
+            @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)
+        </div>
 
-    @*<div id="showPromoLinks" class="collapse">
+        @*<div id="showPromoLinks" class="collapse">
             @Html.Partial("~/Views/Admin/Partials/_ShowPromoLinks.cshtml", Model.PromoLinks)
         </div>*@
-    @*    <div id="revenueReportByAffiliate" class="collapse">
+        @*    <div id="revenueReportByAffiliate" class="collapse">
             @Html.Partial("~/Views/Admin/Partials/_ShowRevenueReport.cshtml", Model.ShowOrdersViewModel)
         </div>*@
-    @*<div id="byUserWrapper" class="collapse">
+        @*<div id="byUserWrapper" class="collapse">
             @Html.Partial("~/Views/Admin/Partials/_ShowOrdersByUser.cshtml", Model.ShowOrdersViewModel)
         </div>*@
 
-    <div id="sendConnInfoOrders" class="collapse">
-        @Html.Partial("~/Views/Admin/Partials/_ShowSendConnectionInfo.cshtml", Model.ShowOrdersViewModel)
-    </div>
-    <div id="webinarContent" class="row-fluid holy-grail">
-        <!--begin row-fluid-->
-        <section class="span3 sidebar">
-            <aside class="widget well-large">
+        <div id="sendConnInfoOrders" class="collapse">
+            @Html.Partial("~/Views/Admin/Partials/_ShowSendConnectionInfo.cshtml", Model.ShowOrdersViewModel)
+        </div>
+        <div id="webinarContent" class="row-fluid holy-grail">
+            <!--begin row-fluid-->
+            <section class="span3 sidebar">
+                <aside class="widget well-large">
 
-                <h5 class="short_headline"><span>Date/Time</span></h5>
+                    <h5 class="short_headline"><span>Date/Time</span></h5>
 
-                @if (Model.Webinar.Status == WebinarStatus.Recorded)
-                {
+                    @if (Model.Webinar.Status == WebinarStatus.Recorded)
+                    {
                     var expiresDate = Model.Webinar.Date.AddMonths(6);
                     var remainingDays = Convert.ToInt32((expiresDate - DateTime.Now).TotalDays);
 
                     <div style="font-size: smaller; line-height: 1.2; text-align: center; margin-bottom: 10px;">
                         This event was recorded on <i>@Html.DisplayDate(Model.Webinar.Date)</i>.
                     </div>
-                }
-                else
-                {
+                    }
+                    else
+                    {
                     <b>@Html.DisplayDate(Model.Webinar.Date)</b>
                     <br />
                     <span>@Html.Raw(Model.TimeFormatDisplay)</span>
-                }
-                <div id="ceu">
-                    <a href="#" title="@Model.CeuStatement ">
-                        @Html.Raw(Model.CeuShort)
-                    </a>
-                </div>
-                <h5 class="short_headline">
-                    <span>Topics</span>
-                </h5>
-                <ul>
-                    @foreach (var webinarTopic in Model.Topics)
-                    {
+                    }
+                    <div id="ceu">
+                        <a href="#" title="@Model.CeuStatement ">
+                            @Html.Raw(Model.CeuShort)
+                        </a>
+                    </div>
+                    <h5 class="short_headline">
+                        <span>Topics</span>
+                    </h5>
+                    <ul>
+                        @foreach (var webinarTopic in Model.Topics)
+                        {
                         <li>
                             @webinarTopic.topicDesc
                         </li>
-                    }
-                </ul>
+                        }
+                    </ul>
 
-                @{
+                    @{
                     <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
                     <div class="PresenterBio">@Html.Raw(Model.Webinar.Presenter.BiographyLong)</div>
                     @Html.Partial("Partials/_OtherEventsBySpeaker")
-                }
-            </aside>
-            <!--close aside widget-->
-        </section>
+                    }
+                </aside>
+                <!--close aside widget-->
+            </section>
 
-        <div class="span6">
-            @{
+            <div class="span6">
+                @{
                 if (Model.Webinar.Status != WebinarStatus.Archived && Model.Webinar.Status != WebinarStatus.Deleted && Model.Webinar.Status != WebinarStatus.Pending)
                 {
-                    <div id="SignUpFormContainer" class="row-fluid">
+                <div id="SignUpFormContainer" class="row-fluid">
 
-                        <div class="content span12 well">
+                    <div class="content span12 well">
 
-                            <ul class="nav nav-tabs" id="regTabs">
-                                <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
-                                <li id="createNewUserButton"><a href="#contactInfoForAffiliate" data-toggle="tab">Create New User</a></li>
-                                <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>
-                            </ul>
-                            @if (Model.UserOwnsThisEvent < 1)
-                            {
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="findUserForAffiliate">
-                                        <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
-                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
-                                    </div>
-                                    <div class="tab-pane" id="contactInfoForAffiliate"></div>
-                                    <div class="tab-pane" id="confirmationForAffiliate"></div>
-                                </div>
-                            }
-                            else
-                            //else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
-                            {
-                                <div class="tab-content">
-                                    <div class="tab-pane " id="findUserForAffiliate">
-                                        <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
-
-                                    </div>
-                                    <div class="tab-pane" id="contactInfoForAffiliate"></div>
-                                    <div class="tab-paneactive" id="confirmationForAffiliate">
-                                        @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirmForAffiliate.cshtml", model: Model.CheckoutConfirmViewModel)
-                                    </div>
-
-                                </div>
-                            }
+                        <ul class="nav nav-tabs" id="regTabs">
+                            <li id="findUserTab" class="active"><a href="#findUserForAffiliate" data-toggle="tab">@Model.SignUpCaption</a></li>
+                            <li id="createNewUserButton"><a href="#contactInfoForAffiliate" data-toggle="tab">Create New User</a></li>
+                            <li id="confirmationTabForAffiliate"><a href="#confirmationForAffiliate" data-toggle="tab">@Model.ConfirmationCaption</a></li>
+                        </ul>
+                        @if (Model.UserOwnsThisEvent < 1)
+                        {
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="findUserForAffiliate">
+                                <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
+                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptionsForAffiliate.cshtml", model: Model.CheckoutOptionsViewModel)
+                            </div>
+                            <div class="tab-pane" id="contactInfoForAffiliate"></div>
+                            <div class="tab-pane" id="confirmationForAffiliate"></div>
                         </div>
-                        <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
-                        @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
-                        {
-                            @Html.AntiForgeryToken()
-
-                            <input id="loginEmail" name="Email" type="hidden" value="">
-                            <input id="loginPassword" name="Password" type="hidden">
-                            <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
-                            <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
                         }
-
-                        @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
+                        else
+                        //else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted)
                         {
-                            @Html.AntiForgeryToken()
-                            <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
-                        }
-                        <form id="checkEmail">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="emailChecker" id="emailChecker" />
-                        </form>
-                        <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
-                        <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
-                        <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
+                        <div class="tab-content">
+                            <div class="tab-pane " id="findUserForAffiliate">
+                                <button type="button" class="btn-success btn pull-right" id="AddToCart"> Add Order</button>
 
-                    </div> <!-- closes SignUpFormContainer div-->
+                            </div>
+                            <div class="tab-pane" id="contactInfoForAffiliate"></div>
+                            <div class="tab-paneactive" id="confirmationForAffiliate">
+                                @Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutConfirmForAffiliate.cshtml", model: Model.CheckoutConfirmViewModel)
+                            </div>
+
+                        </div>
+                        }
+                    </div>
+                    <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
+                    @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
+                    {
+                    @Html.AntiForgeryToken()
+
+                    <input id="loginEmail" name="Email" type="hidden" value="">
+                    <input id="loginPassword" name="Password" type="hidden">
+                    <input id="loginRememberMe" type="hidden" value="true" name="RememberMe">
+                    <input type="hidden" name="returnUrl" value="/Webinar/Details/@Model.Webinar.idWebinar" />
+                    }
+
+                    @using (Html.BeginForm("ResetPassword", "Account", FormMethod.Post, new { id = "ResetPasswordForm" }))
+                    {
+                    @Html.AntiForgeryToken()
+                    <input id="ResetPassEmail" name="emailForReset" type="hidden" value="">
+                    }
+                    <form id="checkEmail">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="emailChecker" id="emailChecker" />
+                    </form>
+                    <form id="checkZip"><input type="hidden" name="ZipChecker" id="ZipChecker" /></form>
+                    <form id="nonUSForm"><input type="hidden" name="AddressText" id="AddressText" /></form>
+                    <form id="checkInstitution"><input type="hidden" name="InstitutionChecker" id="InstitutionChecker" /></form>
+
+                </div> <!-- closes SignUpFormContainer div-->
                 }
-            }
-            @Html.Raw(Model.Webinar.DescriptionLong)
-            <h2 class="short_headline">
-                <span>
-                    @Html.Raw(Model.Webinar.LearnCaption)
-                </span>
-            </h2>
-            @Html.Raw(Model.Webinar.LearnBody)
-            <h2 class="short_headline">
-                <span>
-                    Who Should Attend?
-                </span>
-            </h2>
-            @Html.Raw(Model.Webinar.WhoAttend)
-            <hr />
-        </div>
-
-
-        <div class="span3">
-
-            <aside class="widget">
-                
-                <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div><br>
-                @Html.ActionLink("Manage Webinar", "EditWebinarFromDetails", "Webinar", new { id = @Model.Webinar.idWebinar }, new { @class = "pull-right btn btn-default", style = "margin-top: 5px" })
-            </aside>
-
-
-            <div>
-                <button data-toggle="collapse" type="button" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
-            </div>
-            <div>
-                <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
-                <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>
-                @*<a href="/admin/PerWeekPromo?id=2060&includedEventsIds=2060,2078,2071,2072" class="btn btn-dangerx">Weekly Promotional Email</a>*@
+                }
+                @Html.Raw(Model.Webinar.DescriptionLong)
+                <h2 class="short_headline">
+                    <span>
+                        @Html.Raw(Model.Webinar.LearnCaption)
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.LearnBody)
+                <h2 class="short_headline">
+                    <span>
+                        Who Should Attend?
+                    </span>
+                </h2>
+                @Html.Raw(Model.Webinar.WhoAttend)
+                <hr />
             </div>
 
-            <div id="ListOfEvents" class="collapse out">
-                @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
-                {
+
+            <div class="span3">
+
+                <aside class="widget">
+
+                    <div class=" pull-right label label-success">@Model.Webinar.Status.ToString()</div><br>
+                    @Html.ActionLink("Manage Webinar", "EditWebinarFromDetails", "Webinar", new { id = @Model.Webinar.idWebinar }, new { @class = "pull-right btn btn-default", style = "margin-top: 5px" })
+                </aside>
+
+
+                <div>
+                    <button data-toggle="collapse" type="button" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
+                </div>
+                <div>
+                    <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
+                    <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>
+                    @*<a href="/admin/PerWeekPromo?id=2060&includedEventsIds=2060,2078,2071,2072" class="btn btn-dangerx">Weekly Promotional Email</a>*@
+                </div>
+
+                <div id="ListOfEvents" class="collapse out">
+                    @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
+                    {
                     <div>
                         <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
                         <input type="text" name="sListOfWebinarsForWeekly" />
@@ -300,17 +238,17 @@
                         <br />
                         <input type="submit" value="submit" />
                     </div>
-                }
-            </div>
-            @*<aside class="widget">
+                    }
+                </div>
+                @*<aside class="widget">
                     <h5 class="short_headline"><span>Search</span></h5>
                     <form class="searchform" method="get">
                         <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
                     </form>
                 </aside>*@
-            <!--close aside widget-->
+                <!--close aside widget-->
+            </div>
+            <!--close section tertiary-column sidebar span3-->
         </div>
-        <!--close section tertiary-column sidebar span3-->
-    </div>
 
-</div> <!-- closes main-content -->
+    </div> <!-- closes main-content -->

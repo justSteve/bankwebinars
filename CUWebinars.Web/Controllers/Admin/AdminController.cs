@@ -1251,7 +1251,7 @@ namespace CUWebinars.Web.Controllers.Admin
             var orderRow = order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
             // perf bump by assigning to local variable
 
-            if (string.IsNullOrEmpty(orderRow.RegistrantKey) 
+            if (string.IsNullOrEmpty(orderRow.RegistrantKey)
                 && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
                 _orderManagementService.GenerateRegistrantKey(order);
@@ -2064,10 +2064,13 @@ namespace CUWebinars.Web.Controllers.Admin
                 IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
                 //IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
 
-                List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+                List list = await manager.Lists.GetAsync("35b0332448").ConfigureAwait(false);
 
-                var recp = new Recipient { ListId = affiliate.idMailChimpList };
-                //var group = await manager.InterestCategories.GetAsync()
+                var recp = new Recipient { ListId = "35b0332448" };
+                var groups = await manager.InterestCategories.GetAllAsync("35b0332448", new InterestCategoryRequest{Limit = 1000});
+                var group = await manager.Interests.GetAllAsync("35b0332448", "ffdf25934a", new InterestCategoryRequest { Limit = 1000 });
+                //var group1 = await manager.Interests.GetAsync("", group.);
+
 
 
                 var segment = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);

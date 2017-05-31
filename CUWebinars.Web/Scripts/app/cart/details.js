@@ -497,7 +497,7 @@ function setUpEditButtons() {
         $('#revealDiscountInput').hide();
         $('#discountedText').hide();
         $('#revealOptions').hide();
-        $('#AttendRegTypesCaption').text("Subscription Overview");
+        $('#AttendRegTypesCaption').text("Terms & Agreement");
     }
     $('#revealOptions').on('click', function (e) {
         e.preventDefault();

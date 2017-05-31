@@ -150,6 +150,12 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        public ActionResult LearnMore()
+        {
+            ViewBag.PageStyleType = "two-columns-right-sidebar";
+            return View();
+        }
+
         public ActionResult Index()
         {
             if (_globalConfig.Tenant == "DirectorSeries")
