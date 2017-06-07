@@ -53,7 +53,7 @@ namespace CUWebinars.Business.Notification.Handlers
                         notificationMessage.Addresses = addressess.Skip(1).ToList(); // put the rest in the CC
                     }
                 }
-
+                _logger.Info("MandrillNotificationHandler fires: " + notificationMessage.Subject + " to: " +  notificationMessage.Addresses);
                 notificationMessage.From = ttsConfigHelper.GetMandrillFromAddress(); // approach for From Address TBD!
                 notificationMessage.Subject = mandrillNotificationEvent.EventObject.Subject; // or ttsConfigHelper.GetWeeklyInvoiceEmailSubject(); // needs to be done early (prior to RecordingIsPosted2.cshtml view being Rendered to String)
 
@@ -67,11 +67,12 @@ namespace CUWebinars.Business.Notification.Handlers
                 }
                 else
                 {
-                    //_logger.Error(
-                    //    string.Format("Event processing failed for MandrillNotificationEvent - OrderId {0}. ExceptionMessage: {1}",
-                    //        MandrillNotificationEvent.EventObject.Webinar.idWebinar,
-                    //        nullReferenceException.Message)
-                    //    , nullReferenceException);
+                    IList<string> strings = mandrillNotificationEvent.EventObject.Recipients.ToArray();
+                    _logger.FatalException(
+                        string.Format("Event processing failed for MandrillNotificationEvent - recipients {0}. ExceptionMessage: {1}",
+                            string.Join(", ", strings),
+                            nullReferenceException.Message)
+                        , nullReferenceException);
                 }
             }
             catch (Exception exception)

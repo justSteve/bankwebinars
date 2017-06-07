@@ -519,7 +519,7 @@ function CreateCampaign($btn, affiliateId) {
             //contentType: "application/json",
             //contentType: "json",
             success: function (Result) {
-
+                console.log(Result);
                 if (Result.Success) {
 
                     alert("Campaign Created");

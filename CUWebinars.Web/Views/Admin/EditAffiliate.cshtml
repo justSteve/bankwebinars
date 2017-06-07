@@ -177,7 +177,24 @@
                             </h4>
                         </div>
 
-                    <li class="form-line" data-type="control_dropdown" id="id_38">
+                    <li class="form-line" data-type="control_textbox" id="id_PromoSenderName">
+                        <label class="form-label form-label-right" id="label_PromoSenderName" for="PromoSenderName"> From Name </label>
+                        <div id="cid_PromoSenderName" class="form-input">
+                            <span class="form-sub-label-container" style="vertical-align: top;">
+                                <input type="text" id="PromoSenderName" name="Affiliate.PromoSenderName" value="@Model.Affiliate.PromoSenderName" />
+                            </span>
+                        </div>
+                    </li>
+
+                    <li class="form-line" data-type="control_textbox" id="id_PromoSenderEmail">
+                        <label class="form-label form-label-right" id="label_PromoSenderEmail" for="PromoSenderEmail"> From Email </label>
+                        <div id="cid_PromoSenderEmail" class="form-input">
+                            <span class="form-sub-label-container" style="vertical-align: top;">
+                                <input type="text" id="PromoSenderEmail" name="Affiliate.PromoSenderEmail" value="@Model.Affiliate.PromoSenderEmail" />
+                            </span>
+                        </div>
+                    </li>
+<li class="form-line" data-type="control_dropdown" id="id_38">
                         <label class="form-label form-label-right form-label-auto" id="label_38" for="input_38"> TimeZone </label>
                         <div id="cid_38" class="form-input">
                             <select class="form-dropdown" style="width: 150px;" id="Affiliate_WebUser_timeZone" name="Affiliate.WebUser.timeZone">

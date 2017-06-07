@@ -38,6 +38,8 @@ namespace CUWebinars.Business.Models
         public string NotiInvoices { get; set; }
         public string idMailChimpList { get; set; }
         public string DoNotPromoteList { get; set; }
+        public string PromoSenderEmail { get; set; }
+        public string PromoSenderName { get; set; }
 
         
         public virtual WebUser WebUser { get; set; }
