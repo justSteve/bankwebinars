@@ -1205,6 +1205,10 @@ namespace CUWebinars.Business.Core
                         var MailChimpListParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@idMailChimpList", Value = affiliate.idMailChimpList };
                         var NotiInvoicesParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@NotiInvoices", Value = affiliate.NotiInvoices };
                         var TimeZoneParam = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@TimeZone", Value = (int)affiliate.WebUser.timeZone };
+                        //
+                        var SenderEmailParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PromoSenderEmail", Value = affiliate.PromoSenderEmail };
+                        var SenderNameParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PromoSenderName", Value = affiliate.PromoSenderName };
+
 
                         //createDiscount.Parameters.Add(TotalCountParam);
                         updateAff.Parameters.Add(IDAffParam);
@@ -1219,6 +1223,8 @@ namespace CUWebinars.Business.Core
                         updateAff.Parameters.Add(NotiOrdersParam);
                         updateAff.Parameters.Add(NotiPromosParam);
                         updateAff.Parameters.Add(TimeZoneParam);
+                        updateAff.Parameters.Add(SenderNameParam);
+                        updateAff.Parameters.Add(SenderEmailParam);
 
                         result = (int)updateAff.ExecuteScalar();
                     }

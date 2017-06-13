@@ -99,10 +99,16 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
                 sb.AppendLine(order.BillingEmail + ", ");
-                senderModel.AddressesSent += order.BillingEmail + ",";
+                senderModel.AddressesSent += order.BillingEmail + ";";
 
                 Debug.Assert(row != null, "row != null in FireSendConnectionInfo");
-
+                var sendToAddresses = order.BillingEmail;
+                var hasCc = _orderManagementService.OrderHasCc(order);
+                if (hasCc != null)
+                {
+                    sendToAddresses = sendToAddresses + "; " + hasCc;
+                    sb.AppendLine("   CC: " + hasCc);
+                }
                 var body = BuildConnectionInfoMessage(order);
 
                 ConnInfoSendModel conSend = new ConnInfoSendModel();
@@ -116,7 +122,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     {
                         _orderManagementService.FireMandrillNotificationEvent(
                             //ConfigurationManager.AppSettings["TestEmailAddress"],
-                            order.BillingEmail,
+                            sendToAddresses,
                             "Connection Checklist for " + GetWebinar(row.idWebinar).Title, body);
                         conSend.Sender = "Sys_FirstSend";
                     }
@@ -124,14 +130,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                     {
                         _orderManagementService.FireMandrillNotificationEvent(
                             //ConfigurationManager.AppSettings["TestEmailAddress"],
-                            order.BillingEmail,
+                            sendToAddresses,
                             "Connection Reminder for " + GetWebinar(row.idWebinar).Title, body);
                         conSend.Sender = "Sys_Reminder";
                     }
                 }
                 else
                 {
-                     if (!reminder)
+                    if (!reminder)
                     {
                         _orderManagementService.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"],
@@ -161,12 +167,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _logger.FatalException("FireSendConnectionInfoNotificationEvent: ", e);
             }
             _logger.Info(sb.ToString());
-//legacy sender
-//#if DEBUG
-//            _logger.Warn("FireSendConnectionInfoNotificationEvent debugging so we didn't fire legacy sender");
-//#else
-//            //_orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
-//#endif
+            //legacy sender
+            //#if DEBUG
+            //            _logger.Warn("FireSendConnectionInfoNotificationEvent debugging so we didn't fire legacy sender");
+            //#else
+            //            //_orderManagementService.FireSendConnectionInfoNotificationEvent(new[] { order }, resending: true);
+            //#endif
         }
 
         private void SendConnectionInfoToAddLoc(Order order, int idWebinar, bool reminder = false)
@@ -1103,7 +1109,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 LivePlusFiveValue = webinarEditModel.LivePlusFive,
                 AdditionalLocationPrice = webinarEditModel.AdditionalLocationsPrice,
                 SeriesInfo = webinarEditModel.SeriesInfo
-                
+
 
             };
 

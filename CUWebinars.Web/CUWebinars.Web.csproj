@@ -1808,6 +1808,7 @@
     <Content Include="Content\mobile\Startup\vendor\typist\LICENCE" />
     <Content Include="App_Data\mergeTemplates\ConnectionInfo2.docx" />
     <Content Include="App_Data\mergeTemplates\ConnectionInfo2AddLoc.docx" />
+    <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventForOnDemandOnly.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />

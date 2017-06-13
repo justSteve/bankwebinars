@@ -10,6 +10,7 @@ using Ninject.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -987,27 +988,38 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
-        public void UpdateTimeZone()
+        public void ReplyToHandler()
         {
             var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
 
+            string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", ""); //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
+            List<MandrillIncomingMsg.mandrill_events> mandrillEventList = JsonConvert.DeserializeObject<List<MandrillIncomingMsg.mandrill_events>>(validJson);
+
             try
             {
-                StringBuilder sb = new StringBuilder();
-                _logger.Info("UpdateTimeZone Starts");
-                if (incoming != null)
-                {
-                    var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
-                    _logger.Info("UpdateTimeZone msgHtml" + msgHtml);
-                    var parsedMessage = ParseMandrillMsg.ParseIncomingMessages("<html><body>" + msgHtml.msg.html + "</body></html>", DateTime.Now.ToString());
-                    _logger.Info("UpdateTimeZone Parsed: " + JsonConvert.SerializeObject(parsedMessage));
 
+                foreach (MandrillIncomingMsg.mandrill_events mandrillEvent in mandrillEventList)
+                {
+                    if (mandrillEvent.msg.email != null)
+                    {
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            "e6a68209.ttstrain.com@amer.teams.ms",
+                            //order.BillingEmail,
+                            "A reply to a notification!", mandrillEvent.msg.text);
+                    }
                 }
 
+                foreach (MandrillIncomingMsg.mandrill_events mandrillEvent in mandrillEventList)
+                {
+                    _orderManagementService.FireMandrillNotificationEvent(
+                    "e6a68209.ttstrain.com@amer.teams.ms",
+                    //order.BillingEmail,
+                    "A reply to a notification!", mandrillEvent.msg.text);
+                }
             }
             catch (Exception ex)
             {
-                _logger.Warn("UpdateTimeZone: " + incoming + " exception: " + ex);
+                _logger.Warn("ReplyToHandler: " + incoming + " exception: " + ex);
 
             }
             //return null;

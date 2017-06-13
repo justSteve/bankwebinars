@@ -97,7 +97,7 @@
             {
                 withAddLoc.Add(order);
             }
-            if (row.Order.UserComments != null && row.Order.UserComments.Contains("Carbon"))
+            if (row.Order.UserComments != null && row.Order.UserComments.ToLower().Contains("carbon"))
             {
                 withCC.Add(order);
             }
@@ -124,7 +124,7 @@
         @{
             if (withCC.Count > 0)
             {
-                <span> Orders with CCs:< br /></span>
+                <span> Orders with CCs: <br /></span>
                 foreach (var order in withCC)
                 {
                     <span>@order.idOrder<br /></span>

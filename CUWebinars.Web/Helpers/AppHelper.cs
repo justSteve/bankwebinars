@@ -349,7 +349,7 @@ namespace CUWebinars.Web.Helpers
 
         public IList<AdditionalLocation> CheckAdditionalLocationsForValidEmail(IList<AdditionalLocation> additionalLocations)
         {
-            //TODO: this really, really needs to be finished.
+            //
             IList<AdditionalLocation> areValid = new List<AdditionalLocation>();
             if (additionalLocations != null)
                 foreach (var check in additionalLocations)
@@ -669,7 +669,7 @@ namespace CUWebinars.Web.Helpers
             fields.ClickToJoinLink = "<a href='" + TenantURL + "/j/" + row.TtsJoinUrl + "'>" +
                                      TenantURL + "/j/" + row.TtsJoinUrl + "</a>";
             fields.AddReminder = " <a href='" + TenantURL + "/Webinar/ICalOrder?icsOrder=" + order.idOrder + "'>" +
-                                 "Add to Calendar</a>";
+                                 "Add to Outlook Calendar</a>";
             //fields.CCCaption =
             //    " Connection info is not currently shared. <a href='" + TenantURL + "/Resume/" + order.idOrder + "'>" +
             //                                 " (change?) </a> ";
@@ -753,7 +753,7 @@ namespace CUWebinars.Web.Helpers
                 if (locs == "")
                 {
                     fields.ExistingAddLocs =
-                        " Need to support remote branches? Additional locations cost [addloccost] per seat.  " ;
+                        " Need to support remote branches? Additional locations cost [addloccost] per seat. " ;
                 }
 
             }

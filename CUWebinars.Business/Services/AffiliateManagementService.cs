@@ -1016,6 +1016,13 @@ namespace CUWebinars.Business.Services
             if (affiliate.BillingModel != _affiliate.BillingModel)
                 sb.Append(" BillingModel changed from: " + affiliate.BillingModel + " to: " +
                           _affiliate.BillingModel);
+            if (affiliate.PromoSenderEmail != _affiliate.PromoSenderEmail)
+                sb.Append(" PromoSenderEmail changed from: " + affiliate.PromoSenderEmail + " to: " +
+                          _affiliate.PromoSenderEmail);
+
+            if (affiliate.PromoSenderName != _affiliate.PromoSenderName)
+                sb.Append(" PromoSenderName changed from: " + affiliate.BillingModel + " to: " +
+                          _affiliate.BillingModel);
 
             DataOperations ops = new DataOperations(TtsConfig.DefaultConnectionString);
             var saveAff = ops.UpdateAffiliate(_affiliate);

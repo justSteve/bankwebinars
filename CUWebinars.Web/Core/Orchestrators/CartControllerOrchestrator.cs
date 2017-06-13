@@ -1354,6 +1354,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                     HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/OrderSubmitted_PreEvent.docx"));
 
+            if (row.RegistrationType.ShowLiveNotifications.ToLower() == "no")
+            {
+                 document =
+                DocumentModel.Load(
+                    HttpContext.Current.Server.MapPath(
+                        @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventForOnDemandOnly.docx"));
+
+            }
             if (
                 webinar.Status == WebinarStatus.Recorded
             )
@@ -1500,7 +1508,16 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)
         {
-            _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], subjectLine, orderConfirmString);
+            if (subjectLine.Contains("Please confirm your account"))
+            {
+                _orderManagementService.FireMandrillNotificationEvent(emails, subjectLine, orderConfirmString);
+            }
+            else
+            {
+                _orderManagementService.FireMandrillNotificationEvent(
+                    ConfigurationManager.AppSettings["TestEmailAddress"], subjectLine, orderConfirmString);
+
+            }
 
         }
 

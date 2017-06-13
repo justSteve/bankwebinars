@@ -2530,19 +2530,22 @@ namespace CUWebinars.Business.Services
 
             var addresses = JToken.Parse(order.UserComments);
             var isCC = "";
-            foreach (JProperty prop in addresses.Children<JObject>().SelectMany(content => content.Properties().Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
+            foreach (JProperty prop in addresses.Children<JObject>()
+                .SelectMany(content => content.Properties()
+                .Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
             {
                 isCC = prop.Value.ToString();
             }
 
             if (isCC != "")
             {
-                ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(isCC);
+                ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(isCC);
             }
             else
             {
-                var _addresses = JObject.Parse(order.UserComments).GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
-                ccEmailAddresses = CUWebinars.Business.Core.Helpers.EventHandlerHelpers.GetCcEmailAddresses(_addresses);
+                var _addresses = JObject.Parse(order.UserComments)
+                    .GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
+                ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(_addresses);
             }
 
             return string.Join(",", ccEmailAddresses);

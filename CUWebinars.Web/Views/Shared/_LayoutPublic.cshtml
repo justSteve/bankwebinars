@@ -29,15 +29,31 @@
     {
         CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
         Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
+        
     }
-
-    var footAddress = currentAffiliate.WebFooter.Split('~')[0];
+    var footAddress = "";
     var footSocial = "";
-    if (currentAffiliate.WebFooter.Split('~').Length > 1)
+
+    try
     {
-        footSocial = currentAffiliate.WebFooter.Split('~')[1];
+        footAddress = currentAffiliate.WebFooter.Split('~')[0];
+        footSocial = "";
+        if (currentAffiliate.WebFooter.Split('~').Length > 1)
+        {
+            footSocial = currentAffiliate.WebFooter.Split('~')[1];
+        }
+
     }
+    catch (Exception e)
+    {
+        var a = "holder";
+    }
+    //var footAddress = currentAffiliate.WebFooter.Split('~')[0];
+    //var footSocial = "";
+    //if (currentAffiliate.WebFooter.Split('~').Length > 1)
+    //{
+    //    footSocial = currentAffiliate.WebFooter.Split('~')[1];
+    //}
 
     var firstPage = stateService.GetValue<string>("FirstPage");
     var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
