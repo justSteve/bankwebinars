@@ -64,5 +64,6 @@ namespace CUWebinars.Business.Services
         string ParseForSpeakerName(string descriptionText);
         int? GetUserIdByFirstNameLastName(string fullName);
         string ImportLUEvents();
+        string GetSpecialMsg(int webinarIdWebinar);
     }
 }

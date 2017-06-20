@@ -323,7 +323,7 @@ namespace CUWebinars.Web.Controllers
                 var orderConfirmString =
                     _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
                 orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                    _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
+                    _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
 
 
                 _cartControllerOrchestrator.FireMandrillNotificationEvent(
@@ -343,7 +343,7 @@ namespace CUWebinars.Web.Controllers
                         _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
 
                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
+                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
                         ConfigurationManager.AppSettings["TestEmailAddress"]
                         , "[Test] Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
@@ -359,7 +359,7 @@ namespace CUWebinars.Web.Controllers
                         _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
                     orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
+                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
                         ConfigurationManager.AppSettings["TestEmailAddress"]
                         , "[Test] Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
@@ -1969,7 +1969,7 @@ namespace CUWebinars.Web.Controllers
                             var orderConfirmString =
                                 _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
                             orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                                _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
+                                _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                             _cartControllerOrchestrator.FireMandrillNotificationEvent(
                                 ConfigurationManager.AppSettings["TestEmailAddress"]
                                 ,
@@ -2014,7 +2014,7 @@ namespace CUWebinars.Web.Controllers
                                 {
                                     //M4Gen
                                     var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
-                                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar));
+                                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                                     _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
                                         , "[Test] Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title, orderConfirmString);
 

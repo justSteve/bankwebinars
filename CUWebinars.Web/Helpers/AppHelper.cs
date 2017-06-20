@@ -605,13 +605,21 @@ namespace CUWebinars.Web.Helpers
             return false;
         }
 
-        public string CleanHtmlCodesAndLogo(string body, string tenantLogo, string addloccost)
+        public string CleanHtmlCodesAndLogo(string body, string tenantLogo, string addloccost, string specialMsg = null)
         {
             body = body.Replace("&gt;", ">");
             body = body.Replace("&lt;", "<");
             body = body.Replace("[logo]", "<img src=" + tenantLogo + " />");
             if (!string.IsNullOrEmpty(addloccost))
                 body = body.Replace("[addloccost]", addloccost);
+            if (!string.IsNullOrEmpty(specialMsg))
+            {
+                body = body.Replace("[specialmsg]", specialMsg);
+            }
+            else
+            {
+                body = body.Replace("[specialmsg]", "");
+            }
             return body;
         }
 

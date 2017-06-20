@@ -1483,7 +1483,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     //return System.Text.Encoding.UTF8.GetString(fileContents);
                     //return (myString);
 
-                    myString = _appHelper.CleanHtmlCodesAndLogo(myString, _globalConfig.TenantLogo, GetAddLocPrice(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar));
+                    myString = _appHelper.CleanHtmlCodesAndLogo(myString, _globalConfig.TenantLogo, GetAddLocPrice(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar), null);
 
                     FireMandrillNotificationEvent(
                         order.BillingEmail, "[" + _globalConfig.Tenant + "] Please confirm your account", myString);

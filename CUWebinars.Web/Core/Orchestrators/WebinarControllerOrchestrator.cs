@@ -109,7 +109,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                     sendToAddresses = sendToAddresses + "; " + hasCc;
                     sb.AppendLine("   CC: " + hasCc);
                 }
-                var body = BuildConnectionInfoMessage(order);
+                var body = BuildConnectionInfoMessage(order, null, reminder);
+                body = body.Replace("It’s time to get ready for the ", "This is a reminder that ");
+                body = body.Replace("webinar coming up on ", "will be starting later today at ");
 
                 ConnInfoSendModel conSend = new ConnInfoSendModel();
 
@@ -185,19 +187,19 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     if (!reminder)
                     {
-                        var body = BuildConnectionInfoMessage(order, loc.Email);
+                        var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
 
                         _orderManagementService.FireMandrillNotificationEvent(
-                            //ConfigurationManager.AppSettings["TestEmailAddress"],
                             loc.Email,
                             "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
                     }
                     else
                     {
-                        var body = BuildConnectionInfoMessage(order, loc.Email);
+                        var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
+                        body = body.Replace("It’s time to get ready for the ", "This is a reminder that ");
+                        body = body.Replace("webinar coming up on ", "will be starting later today at ");
 
                         _orderManagementService.FireMandrillNotificationEvent(
-                            //ConfigurationManager.AppSettings["TestEmailAddress"],
                             loc.Email,
                             "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
                     }
@@ -206,20 +208,20 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     if (!reminder)
                     {
-                        var body = BuildConnectionInfoMessage(order, loc.Email);
-
+                        var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
+                        
                         _orderManagementService.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"],
-                            //
                             "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
                     }
                     else
                     {
-                        var body = BuildConnectionInfoMessage(order, loc.Email);
+                        var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
+                        body = body.Replace("It’s time to get ready for the ", "This is a reminder that ");
+                        body = body.Replace("webinar coming up on ", "will be starting later today at ");
 
                         _orderManagementService.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"],
-                            //
                             "Connection Reminder for " + GetWebinar(idWebinar).Title, body);
                     }
                 }
@@ -677,7 +679,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     }
 
                     var body = BuildRecordingIsPostedMessage(order);
-                    body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, null);
+                    body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, null, null);
 
                     _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], subject, body);
                 }
@@ -691,7 +693,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         }
 
-        public string BuildConnectionInfoMessage(Order order, string addLoc = null)
+        public string BuildConnectionInfoMessage(Order order, string addLoc = null, bool reminder = false)
         {
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             Webinar webinar = row.Webinar;
@@ -699,6 +701,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 DocumentModel.Load(
                     System.Web.HttpContext.Current.Server.MapPath(
                         @"~/App_Data/mergeTemplates/ConnectionInfo2.docx"));
+
+
             var _hasCc = "";
 
             var storeFileName = order.idOrder.ToString();
@@ -735,13 +739,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");
 
-                //using (MemoryStream output = new MemoryStream())
-                //{
-                //    document.Save(output, SaveOptions.PdfDefault);
-                //    output.Position = 0; // reset to beginning so Upload operation can work correctly
-                //    blob.UploadFromStream(output);
-                //}
-
                 blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + storeFileName + ".htm");
 
                 byte[] fileContents;
@@ -754,10 +751,11 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
 
                 var docToString = System.Text.Encoding.UTF8.GetString(fileContents);
-
+                
                 docToString = _appHelper.CleanHtmlCodesAndLogo(docToString
                 , _globalConfig.TenantLogo
-                , _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToString("C0"));
+                , _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToString("C0"),
+                _webinarManagementService.GetSpecialMsg(webinar.idWebinar));
 
                 blob.UploadText(docToString);
                 return docToString;

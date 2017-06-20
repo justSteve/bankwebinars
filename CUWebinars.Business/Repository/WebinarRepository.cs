@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CUWebinars.Business.Constants;
+using Newtonsoft.Json.Linq;
 
 namespace CUWebinars.Business.Repository
 {
@@ -144,7 +146,7 @@ namespace CUWebinars.Business.Repository
             var try4SpeakerName = searchTerm.Split(' ');
             var check4Speaker = stronglyTypedContext.Webinars.Where(w => w.idWebinar == 0);
 
-            
+
             if (try4SpeakerName.Length > 1)
             {
                 var firstName = try4SpeakerName[0].ToString();
@@ -226,11 +228,11 @@ namespace CUWebinars.Business.Repository
 
         public IQueryable<Webinar> GetDes()
         {
-                        return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
-                   .Include(w => w.Presenter.WebUser)
-                   .Where(
-                       w =>(w.SeriesInfo == "DES"))
-                   .OrderByDescending(w => w.Date);
+            return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+       .Include(w => w.Presenter.WebUser)
+       .Where(
+           w => (w.SeriesInfo == "DES"))
+       .OrderByDescending(w => w.Date);
         }
 
         public IQueryable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar)
@@ -452,6 +454,29 @@ namespace CUWebinars.Business.Repository
             //        //Logger.Debug("TopicId=" + topicId); 
 
             return webinars;
+        }
+
+        public string GetSpecialMsg(int webinarIdWebinar)
+        {
+            var webinar = items
+                .Where(
+                    w => w.idWebinar == webinarIdWebinar
+                    && w.Comments.Contains("SpecialMessage")).SingleOrDefault();
+            if (webinar != null)
+            {
+                var comments = JToken.Parse(webinar.Comments);
+                var msg = "";
+                foreach (JProperty prop in comments.Children<JObject>().Select(content => content.Properties().Where(prop => prop.Name == JsonPropertyKeys.SpecialMessage)))
+                {
+                    msg = prop.Value.ToString();
+                }
+                return msg;
+            }
+            else
+            {
+                return null;
+            }
+
         }
 
         public IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId)

@@ -13,8 +13,57 @@
             SCI.affiliateId = @Model.Affiliate.idUserAff;
 
         </script>
-    }
 
+    }
+    <script type="text/javascript" language="javascript">
+        
+                        var idWebinar = @Model.Webinar.idWebinar;
+            $(function() { //$("#submitSendConnInfo").html("Audit Connection Checklist Results");
+                $("#SubmitConnectionInfoMessage").click(
+                    function() {
+
+
+                        var msg = $("#SpecialMessageText").val();
+                        console.log(msg);
+                        var payload = { webinarId: idWebinar, msg };
+
+                        $.ajax({
+                            type: 'POST',
+
+                            cache: false,
+                            url: '/Webinar/SubmitConnectionInfoMessage',
+                            dataType: constants.JsonDataType,
+                            data: payload,
+                            beforeSend: function() {
+                                //$(self)
+                                //    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                            }
+                        }).done(function(result) {
+
+                            if (result.Result === 'Success') {
+                                alert("Success");
+                                @*$.ajax({
+                                type: 'POST',
+                                contentType: constants.JsonContentType,
+                                cache: false,
+                                url: '/Order/AuditConnectionChecklistSender',
+                                dataType: constants.JsonDataType,
+                                data: JSON.stringify(payload),
+                                beforeSend: function () {
+                                    $(self)
+                                        .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                                }
+                            });
+
+                            $('#Container4ResendConfirmation').html("Your order confirmation is resent. If you do not see an email from <b> @_globalConfig.TenantEmail </b> please check your spam folder.");
+                        } else if (result.Result === 'Fail') {
+                            $('#Container4ResendConfirmation').html("We've encountered an error and are working to solve the issue. Please contact us at  @_globalConfig.TenantEmail  for more information.");*@
+                            }
+                        });
+
+                    });
+            });
+    </script>
 
     if (Model.Webinar.Comments != null && Model.Webinar.Comments.Contains("SendConnectionChecklist"))
     {
@@ -24,8 +73,6 @@
             var strAdminComments = "@Model.Webinar.Comments";
 
             $(function() {
-                //$("#submitSendConnInfo").html("Audit Connection Checklist Results");
-
 
                 $("#SenderAudit").jsonbrowser(strAdminComments.replace(/&quot;/g, '"'),
                 {
@@ -39,7 +86,6 @@
 
                 var payload = { idWebinar };
 
-                console.log(payload);
 
 
                 $.ajax({
@@ -109,6 +155,11 @@
     //\Scripts\app\admin\display-orders.js
     // AdminController/BuildConnInfoViewModel
     <div id="SenderSummary">
+        <div id="SpecialMessage">
+            <input type="text" id="SpecialMessageText" name="SpecialMessageText"
+                   placeholder="Include Special Message" />
+            <input type="button" id="SubmitConnectionInfoMessage" value="Submit Message" />
+        </div>
         Total Orders to be notified: @allUsers.<br />
         @{
             if (withAddLoc.Count > 0)
@@ -136,7 +187,7 @@
         </div>
 
     </div>
-    <div id="SenderAudit">
+    <div id="SenderAudit" class="initialHide">
         <div>
             <button id="fireConnInfoSender" role="button" class="btn btn-danger">Send Reminders</button>
         </div>

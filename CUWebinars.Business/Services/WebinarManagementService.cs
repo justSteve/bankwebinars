@@ -614,6 +614,10 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public string GetSpecialMsg(int webinarIdWebinar)
+        {
+            return _webinarRepository.GetSpecialMsg(webinarIdWebinar);
+        }
 
 
         public string ParseForSpeakerName(string importWebinarDescriptionText)

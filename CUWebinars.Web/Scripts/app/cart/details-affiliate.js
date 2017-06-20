@@ -73,7 +73,7 @@ OCA.initializeFunctions = function () {
                 if (result.Result === 'Success') {
                     var listOfOrders = OCA.ordersForConnInfoSender.toString();
                     console.log(listOfOrders);
-                    listOfOrders = listOfOrders.replace(",", " ");
+                    listOfOrders = listOfOrders.replace(",", ", ");
                     $('#SenderSummary').append("Presenter notification sent to: " +
                         result.PresenterNotified +
                         "</br><p>Full listing of orders to be sent: <br>" +

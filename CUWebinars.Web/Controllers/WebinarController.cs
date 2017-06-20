@@ -356,15 +356,13 @@ namespace CUWebinars.Web.Controllers
 
             var sb = new StringBuilder();
             sb.Append("FireSendConnectionInfoNotificationEvent Starts at " + DateTime.Now);
-            ConnInfoSenderModel senderModel = new ConnInfoSenderModel();
-            senderModel.TimeOfSend = DateTime.Now;
 
             try
             {
                 orders.ToList().ForEach((order) =>
                 {
                     var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                    senderModel.AddressesSent += order.BillingEmail + ", ";
+                    //senderModel.AddressesSent += order.BillingEmail + ", ";
 
                     Debug.Assert(row != null, "row != null in FireSendConnectionInfo");
 
@@ -386,13 +384,6 @@ namespace CUWebinars.Web.Controllers
                         sb.AppendLine("Citrix registration built: " + order.BillingEmail + " to: " + row.RegistrantKey);
                     }
 
-                    ConnInfoSendModel conSend = new ConnInfoSendModel();
-
-                    conSend.SendDate = DateTime.Now;
-                    conSend.URL = "https://" + _globalConfig.StorageAccountName + ".blob.core.windows.net/connectionchecklist/" + webinar.idWebinar + "/" + order.idOrder + ".htm";
-
-                    order.NotificationStorage = JsonHelpers.AddObjectToJsonArray(order.NotificationStorage, JsonPropertyKeys.SentMsg + DateTime.Now.ToString("G").Replace(" ", ""), conSend);
-
                     _orderManagementService.SaveChanges();
 
                 });
@@ -404,16 +395,36 @@ namespace CUWebinars.Web.Controllers
 
 
             _logger.Info(sb.ToString());
-            senderModel.CitrixRegistrations = String.Join(", ", apiResponse.Select(c => c.email).ToList());
-            var wrapperTimeStamp = "_" + DomainConstants.BuildUtcNowAsCts.ToString("G").Replace(" ", "_");
-            JObject forComments = new JObject(new JProperty(JsonPropertyKeys.SendConnectionChecklist, JProperty.Parse(JsonConvert.SerializeObject(senderModel))));
-
-            webinar.Comments = JsonHelpers.MergeJsonWithStoredField(webinar.Comments, new JProperty("SenderWrapper" + wrapperTimeStamp, forComments));
-
-            _webinarManagementService.SaveChanges();
 
             var ordersToSend = JsonConvert.SerializeObject(orders.Select(o => o.idOrder));
             return Json(new { Result = WebUiConstants.Success, ordersToSend = ordersToSend }, JsonRequestBehavior.AllowGet);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public JsonResult SubmitConnectionInfoMessage(int? webinarId, string msg)
+        {
+            if (webinarId != null)
+            {
+                //_logger.Info("ConnectionInfo Send is started: " + webinarId.Value);
+                var webinar = _webinarManagementService.GetWebinar(webinarId.Value);
+                var hasMsg = _webinarManagementService.GetSpecialMsg(webinarId.Value);
+
+                if (hasMsg != null)
+                {
+                    
+                }
+                JObject forComments = new JObject(new JProperty(JsonPropertyKeys.SpecialMessage, msg));
+
+                if (webinar != null)
+                    webinar.Comments = JsonHelpers.MergeJsonWithStoredField(webinar.Comments, new JProperty(JsonPropertyKeys.SpecialMessage, forComments));
+
+                _webinarManagementService.SaveChanges();
+
+                return
+                    Json(new { Result = WebUiConstants.Success });
+
+            }
+            return Json(new { Result = WebUiConstants.Fail });
         }
 
         [System.Web.Mvc.HttpPost]
@@ -441,6 +452,25 @@ namespace CUWebinars.Web.Controllers
                     });
                 
 #endif
+
+                    var orgKey = _globalConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
+                    var cWebinarKey = _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey);
+                    var api = new RegistrantsApi();
+
+                    var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
+
+                    //                    var orders = _orderManagementService.GetOrdersForLiveNotifications(webinar.idWebinar);
+                    ConnInfoSenderModel senderModel = new ConnInfoSenderModel();
+                    senderModel.TimeOfSend = DateTime.Now;
+
+                    senderModel.CitrixRegistrations = String.Join(", ", apiResponse.Select(c => c.email).ToList());
+                    var wrapperTimeStamp = "_" + DomainConstants.BuildUtcNowAsCts.ToString("G").Replace(" ", "_");
+                    JObject forComments = new JObject(new JProperty(JsonPropertyKeys.SendConnectionChecklist, JProperty.Parse(JsonConvert.SerializeObject(senderModel))));
+
+                    webinar.Comments = JsonHelpers.MergeJsonWithStoredField(webinar.Comments, new JProperty("SenderWrapper" + wrapperTimeStamp, forComments));
+
+                    _webinarManagementService.SaveChanges();
+
                     return
                         Json(new { Result = WebUiConstants.Success, PresenterNotified = webinar.Presenter.WebUser.email });
 
@@ -449,10 +479,13 @@ namespace CUWebinars.Web.Controllers
                 {
                     _logger.FatalException("SendConnectionInfo: " + webinarId, ex);
                 }
+
+
             }
 
             if (orderId.HasValue)
             {
+
                 _webinarControllerOrchestrator.FireSendConnectionInfoNotificationEvent(orderId.Value, reminder);
                 return Json(new { Result = WebUiConstants.Success, orderId });
 
@@ -2037,7 +2070,7 @@ namespace CUWebinars.Web.Controllers
                 try
                 {
                     var webinarEditModel = _webinarControllerOrchestrator.BuildEditModelForWebinar(id.Value);
-                    
+
                     return PartialView("Partials/_EditWebinar", webinarEditModel);
                 }
                 catch (Exception exception)
