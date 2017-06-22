@@ -218,7 +218,7 @@ function getOrderStatusHtml() {
                 type: 'POST',
                 contentType: constants.JsonContentType,
                 cache: false,
-                url: '/Admin/ResendConnectionInfo',
+                url: '/Webinar/SendConnectionInfo',
                 dataType: constants.JsonDataType,
                 data: JSON.stringify(payload),
                 beforeSend: function () {
@@ -227,9 +227,9 @@ function getOrderStatusHtml() {
             }).done(function (result) {
 
                 if (result.Result === 'Success') {
-                    $('#InputFormFields').append(successScreenMessage);
+                    $('#ResendConnectionInfoButton').html("Message Sent");
                 } else if (result.Result === 'Fail') {
-                    $('#InputFormFields').append(noOrderScreenMessage);
+                    $('#InputFormFields').append("Failed");
                 }
                 $('#spinnerLabel').remove();
 

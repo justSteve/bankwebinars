@@ -1987,6 +1987,12 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+
+            string[] myCookies = Request.Cookies.AllKeys;
+            foreach (string cookie in myCookies)
+            {
+                Response.Cookies[cookie].Expires = DateTime.Now.AddDays(-1);
+            }
             if (User.Identity.IsAuthenticated)
             {
                 _logger.Info("Account.LogOff. Session=" + _appHelper.GetUserAuditInfo());
@@ -1996,11 +2002,6 @@ namespace CUWebinars.Web.Controllers
 
                     _accountControllerOrchestrator.LogUserOut((ClaimsPrincipal)User);
 
-                    string[] myCookies = Request.Cookies.AllKeys;
-                    foreach (string cookie in myCookies)
-                    {
-                        Response.Cookies[cookie].Expires = DateTime.Now.AddDays(-1);
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -2012,7 +2013,7 @@ namespace CUWebinars.Web.Controllers
                 }
             }
 
-            return RedirectToAction("Index", "Home");
+            return Redirect(_globalConfig.TenantURL);
         }
 
 

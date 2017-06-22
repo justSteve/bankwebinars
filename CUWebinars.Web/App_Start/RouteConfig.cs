@@ -11,7 +11,11 @@ namespace CUWebinars.Web.App_Start
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapMvcAttributeRoutes(); // enable attribute routing
-
+            routes.MapRoute(
+                name: "php",
+                url: "{page}.php",
+                defaults: new { controller = "Home", action = "Index", page = UrlParameter.Optional }
+            );
             //replicates legacy's generic connection info endpoint
             routes.MapRoute(
                     "WebinarConnectionDetails",

@@ -752,12 +752,12 @@ function replaceMasterTokensForAffiliate(aff) {
         dataType: "json",
 
         success: function (result) {
-            if (result.listName !== "") {
-                console.log(result.listName);
-                $("#opCaption").text("MC list name: " + result.listName);
-            } else {
-                $("#opCaption").text("");
-            }
+            //if (result.listName !== "") {
+            //    console.log(result.listName);
+            //    $("#opCaption").text("MC list name: " + result.listName);
+            //} else {
+            //    $("#opCaption").text("");
+            //}
             string = result.timeFormatDisplay;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

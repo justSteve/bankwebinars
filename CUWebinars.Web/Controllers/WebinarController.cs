@@ -395,9 +395,21 @@ namespace CUWebinars.Web.Controllers
 
 
             _logger.Info(sb.ToString());
+            if (webinar.Date.ToShortDateString() != DateTime.Now.ToShortDateString())
+            {
+                ViewBag.DefaultMsg = "It's time to get ready for the " + webinar.Title + " webinar upcoming on [DisplayUserDate].";
+            }
+            else
+            {
+                ViewBag.DefaultMsg = "This is a reminder that the " + webinar.Title + " webinar will be held today at [DisplayUserTimeZone]";
+            }
 
             var ordersToSend = JsonConvert.SerializeObject(orders.Select(o => o.idOrder));
-            return Json(new { Result = WebUiConstants.Success, ordersToSend = ordersToSend }, JsonRequestBehavior.AllowGet);
+            return Json(new
+            {
+                Result = WebUiConstants.Success,
+                ordersToSend = ordersToSend
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [System.Web.Mvc.HttpPost]
@@ -411,7 +423,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (hasMsg != null)
                 {
-                    
+
                 }
                 JObject forComments = new JObject(new JProperty(JsonPropertyKeys.SpecialMessage, msg));
 
@@ -1600,14 +1612,14 @@ namespace CUWebinars.Web.Controllers
             model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                 new DisplayRowPriceViewModel
                 {
-                    //Discount = row.Discount,
-                    NumberOfAdditionalLocations = orderRowForOrder.AdditionalLocation.Count(),
+            //Discount = row.Discount,
+            NumberOfAdditionalLocations = orderRowForOrder.AdditionalLocation.Count(),
                     OrderStatus = orderRowForOrder.Order.OrderStatus,
-                    //Price = Convert.ToDecimal(row.RegistrationType.Price),
-                    PricesAndDiscounts =
+            //Price = Convert.ToDecimal(row.RegistrationType.Price),
+            PricesAndDiscounts =
                         _orderManagementService.CalculateOrderCost(orderRowForOrder.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
-                    //RowPrice = row.RowPrice,
-                    RegistrationType = orderRowForOrder.RegistrationType
+            //RowPrice = row.RowPrice,
+            RegistrationType = orderRowForOrder.RegistrationType
                 };
 
             // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
@@ -1752,14 +1764,14 @@ namespace CUWebinars.Web.Controllers
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                         new DisplayRowPriceViewModel
                         {
-                            //Discount = row.Discount,
-                            NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
+                    //Discount = row.Discount,
+                    NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
                             OrderStatus = row.Order.OrderStatus,
-                            //Price = Convert.ToDecimal(row.RegistrationType.Price),
-                            PricesAndDiscounts =
+                    //Price = Convert.ToDecimal(row.RegistrationType.Price),
+                    PricesAndDiscounts =
                                 _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing),
-                            //RowPrice = row.RowPrice,
-                            RegistrationType = row.RegistrationType
+                    //RowPrice = row.RowPrice,
+                    RegistrationType = row.RegistrationType
                         };
 
                     // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel

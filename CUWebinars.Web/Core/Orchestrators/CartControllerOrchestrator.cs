@@ -1356,10 +1356,10 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (row.RegistrationType.ShowLiveNotifications.ToLower() == "no")
             {
-                 document =
-                DocumentModel.Load(
-                    HttpContext.Current.Server.MapPath(
-                        @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventForOnDemandOnly.docx"));
+                document =
+               DocumentModel.Load(
+                   HttpContext.Current.Server.MapPath(
+                       @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventForOnDemandOnly.docx"));
 
             }
             if (
@@ -1453,7 +1453,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             DocumentModel document = DocumentModel.Load(System.Web.HttpContext.Current.Server.MapPath(
                 @"~/App_Data/mergeTemplates/ConfirmationOfAccount.docx"));
-            
+
             NotificationMessageFields fields = _appHelper.BuildNotiFields(order, null);
 
             document.MailMerge.Execute(fields);
@@ -1508,7 +1508,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)
         {
-            if (subjectLine.Contains("Please confirm your account"))
+            if (subjectLine.StartsWith("Please confirm your account") ||
+             subjectLine.StartsWith("Confirmation of Registration"))
             {
                 _orderManagementService.FireMandrillNotificationEvent(emails, subjectLine, orderConfirmString);
             }
@@ -1564,7 +1565,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             break;
 
                     }
-                    
+
                     var order = CreateNewOrder(model.Order.Affiliate, _orderManagementService.GetWebUser(model.Order.idUser), _webinar, row);
 
                     order.OrderStatus = OrderStatus.Paid;
@@ -1625,6 +1626,13 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
 
             return "";
+        }
+
+        public string OrderHasCc(Order order)
+        {
+
+            return _orderManagementService.OrderHasCc(order);
+
         }
 
         public void SendOrderConfirmation2(OrderRow row)

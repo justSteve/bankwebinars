@@ -301,11 +301,41 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-
+        [AllowAnonymous]
         public ActionResult SendOrderConfirmation2(int orderId)
         {
             _SendOrderConfirmation2(orderId);
             return null;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult SendOrderConfirmation2Batch(string _orderIds)
+        {
+            IList<string> orderIds = _orderIds.Split(',');
+            foreach (var orderId in orderIds)
+            {
+                _SendOrderConfirmation2(Convert.ToInt32(orderId));
+
+            }
+            return null;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult RegChange()
+        {
+            var sb = new StringBuilder();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                sb.Append("User:" + User.Identity.Name);
+            }
+
+            sb.Append("SessionInfo" + _appHelper.GetUserAuditInfo());
+
+            _logger.Info(sb.ToString());
+            return Redirect("https://www.RegChange.com");
         }
 
         private void _SendOrderConfirmation2(int idOrder)
@@ -315,6 +345,12 @@ namespace CUWebinars.Web.Controllers
             if (order == null)
                 throw new NullReferenceException();
             var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            var sendToAddresses = order.BillingEmail;
+            var hasCc = _cartControllerOrchestrator.OrderHasCc(order);
+            if (hasCc != null)
+            {
+                sendToAddresses = sendToAddresses + "; " + hasCc;
+            }
 
             if (User.Identity.IsAuthenticated)
             {
@@ -327,10 +363,10 @@ namespace CUWebinars.Web.Controllers
 
 
                 _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                    ConfigurationManager.AppSettings["TestEmailAddress"]
-                    , "[Test] Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
-
-                _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    sendToAddresses
+                    , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+                //deprecate v1 version of notifications
+                //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
             }
             else
             {
@@ -345,10 +381,10 @@ namespace CUWebinars.Web.Controllers
                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                         _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                        ConfigurationManager.AppSettings["TestEmailAddress"]
-                        , "[Test] Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+                       sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
+                        , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
 
-                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                 }
                 else
                 {
@@ -361,10 +397,10 @@ namespace CUWebinars.Web.Controllers
                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                         _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                        ConfigurationManager.AppSettings["TestEmailAddress"]
-                        , "[Test] Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+                        sendToAddresses//ConfigurationManager.AppSettings["TestEmailAddress"]
+                        , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
 
-                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
+                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
                 }
             }
         }
@@ -430,14 +466,29 @@ namespace CUWebinars.Web.Controllers
                     model.Order.Origin = DomainConstants.CartByAffiliate;
 
 
-                    if (Request.IsAuthenticated && !adminCreatedWebUser.HasValue)
+                    //if (Request.IsAuthenticated && !adminCreatedWebUser.HasValue)
+                    //{
+                    var sendToAddresses = model.Order.BillingEmail;
+                    var hasCc = _cartControllerOrchestrator.OrderHasCc(model.Order);
+                    if (hasCc != null)
                     {
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                        sendToAddresses = sendToAddresses + "; " + hasCc;
                     }
-                    else
-                    {
-                        _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
-                    }
+                    var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
+
+                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(model.Webinar), null);
+
+                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                       sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
+                        , "Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
+
+                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
+                    //}
+                    //    else
+                    //    {
+                    //    _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
+                    //}
 
 
                     var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
@@ -454,7 +505,6 @@ namespace CUWebinars.Web.Controllers
 
                     var orderId = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).idOrderRow;
                     _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
-
 
                     return Json(new
                     {
@@ -1966,18 +2016,23 @@ namespace CUWebinars.Web.Controllers
                         else
                         {
                             //M4Gen
-                            var orderConfirmString =
-                                _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+
+                            var sendToAddresses = order.BillingEmail;
+                            var hasCc = _cartControllerOrchestrator.OrderHasCc(order);
+                            if (hasCc != null)
+                            {
+                                sendToAddresses = sendToAddresses + "; " + hasCc;
+                            }
+                            var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+
                             orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                                 _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
-                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                                ConfigurationManager.AppSettings["TestEmailAddress"]
-                                ,
-                                "[Test] Confirmation of Registration for " +
-                                order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                    .Webinar.Title, orderConfirmString);
 
-                            _cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                               sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
+                                , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+
+                            //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                         }
                     }
                     else
@@ -2013,13 +2068,22 @@ namespace CUWebinars.Web.Controllers
                                 else
                                 {
                                     //M4Gen
+                                    var sendToAddresses = order.BillingEmail;
+                                    var hasCc = _cartControllerOrchestrator.OrderHasCc(order);
+                                    if (hasCc != null)
+                                    {
+                                        sendToAddresses = sendToAddresses + "; " + hasCc;
+                                    }
                                     var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
-                                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString, _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
-                                    _cartControllerOrchestrator.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"]
-                                        , "[Test] Confirmation of Registration for " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title, orderConfirmString);
 
-                                    _cartControllerOrchestrator.FireOrderSubmittedNotification(order,
-                                        userCreatedInCart: false);
+                                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
+                                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
+
+                                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                       sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
+                                        , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+
+                                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                                 }
                             }
                             catch (Exception ex)

@@ -82,5 +82,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         string GetAddLocPrice(Webinar modelWebinar);
         string CreateSeriesOrders(OrderRow model);
         string CreateCompliancePerspectivesSubscription(OrderRow row);
+        string OrderHasCc(Order order);
     }
 }

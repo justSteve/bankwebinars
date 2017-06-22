@@ -1605,21 +1605,21 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public async Task<JsonResult> GetAffiliateTimeZoneAndList(int idAffiliate, int idWebinar)
         {
-            var idMailChimpList = _affiliateManagementService.FindById(idAffiliate).idMailChimpList;
-            var listName = "";
-            if (idMailChimpList != null)
-            {
-                IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
-                List list = await manager.Lists.GetAsync(idMailChimpList).ConfigureAwait(false);
-                listName = list.Name;
-            }
+            //var idMailChimpList = _affiliateManagementService.FindById(idAffiliate).idMailChimpList;
+            //var listName = "";
+            //if (idMailChimpList != null)
+            //{
+            //    IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+            //    List list = await manager.Lists.GetAsync(idMailChimpList).ConfigureAwait(false);
+            //    listName = list.Name;
+            //}
             Webinar webinar = _webinarManagementService.GetWebinar(idWebinar);
             var timeZone = _affiliateManagementService.FindById(idAffiliate).WebUser.timeZone;
             var TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(webinar.Date, timeZone, false) +
                                     " - " +
                                     DateTimeHelper.FormatTime(
                                         webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
-            return Json(new { timeFormatDisplay = TimeFormatDisplay, listName = listName });
+            return Json(new { timeFormatDisplay = TimeFormatDisplay});
         }
 
 
@@ -1680,7 +1680,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var upcomingWebinars = (from w in _upcoming
                                         select
-                                        "<p style=\"color: whitesmoke; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
+                                        "<p style=\"color: #f5f5f5; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
                                         _globalConfig.TenantURL + "/Webinar/Details/" +
                                         w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
                                         w.Date.ToLongDateString() + "</p>"
@@ -1746,7 +1746,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         new
                         {
                             featuredItem =
-                            "<p style=\"color: whitesmoke; text-decoration: none; \"><a style=\"color: whitesmoke; \" href=\"" +
+                            "<p style=\"color: #f5f5f5; text-decoration: none; \"><a style=\"color: whitesmoke; \" href=\"" +
                             _globalConfig.TenantURL + "/Webinar/Details/" +
                             a.idWebinar + "?idaff={aff_idUserAff}\">" + a.Title + "</a><br>" +
                             a.Date.ToLongDateString() + "</p>"
@@ -1802,7 +1802,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var upcomingWebinars = (from w in _upcoming
                                     select
-                                    "<p style=\"color: whitesmoke; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
+                                    "<p style=\"color: #f5f5f5; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
                                     _globalConfig.TenantURL + "/Webinar/Details/" +
                                     w.idWebinar + "?idaff=" + model.Affiliate.idUserAff + "\">" + w.Title + "</a><br>" +
                                     w.Date.ToLongDateString() + "</p>").ToArray();
@@ -1823,14 +1823,14 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 model.Webinar.Description = doc.DocumentNode.SelectSingleNode("//*[@id='bodyLeft']").InnerHtml;
             }
-            var bodyRight = "<h3 style=\"color: whitesmoke\">Upcoming Webinars</h3>" +
+            var bodyRight = "<h3 style=\"color: #f5f5f5\">Upcoming Webinars</h3>" +
                             model.ListOfWebinarsUpcomingRendered;
-            bodyRight += "<p style=\"color: whitesmoke\" align=\"center\"><b>OnDemand Webinars Available</b></p>";
+            bodyRight += "<p style=\"color: #f5f5f5\" align=\"center\"><b>OnDemand Webinars Available</b></p>";
             bodyRight +=
-                "<p style=\"color: whitesmoke\">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. </p>";
-            bodyRight += "<p style=\"color: whitesmoke\" align=\"center\"><b>Webinar Subscription Packages</b></p>";
+                "<p style=\"color: #f5f5f5\">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. </p>";
+            bodyRight += "<p style=\"color: #f5f5f5\" align=\"center\"><b>Webinar Subscription Packages</b></p>";
             bodyRight +=
-                "<p style=\"color: whitesmoke\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; </p>";
+                "<p style=\"color: #f5f5f5\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; </p>";
 
             model.BodyRight = bodyRight;
 
@@ -2062,11 +2062,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
                 IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
-                
+
                 List list = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
 
-                var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList};
-                
+                var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
+
 
                 var segment = await manager.ListSegments.GetAllAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
                 var _segment = segment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
@@ -2093,8 +2093,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
 
-                    return Json(new { WebUiConstants.Fail, campMsg = "No Segment Found for: " + affiliate.ttsDomain
-                });
+                    return Json(new
+                    {
+                        WebUiConstants.Fail,
+                        campMsg = "No Segment Found for: " + affiliate.ttsDomain
+                    });
                 }
 
                 //https://github.com/brandonseydel/MailChimp.Net/issues/157

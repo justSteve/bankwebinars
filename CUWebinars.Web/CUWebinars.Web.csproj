@@ -26,7 +26,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
-    <ApplicationInsightsResourceId>/subscriptions/4aa59c5e-6984-4f30-bb2b-df7e1eb43e6e/resourcegroups/Default-Web-NorthCentralUS/providers/microsoft.insights/components/BankWebinars33</ApplicationInsightsResourceId>
+    <ApplicationInsightsResourceId>/subscriptions/4aa59c5e-6984-4f30-bb2b-df7e1eb43e6e/resourcegroups/default-web-northcentralus/providers/microsoft.insights/components/bankwebinars33</ApplicationInsightsResourceId>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <UseGlobalApplicationHostFile />
@@ -1814,6 +1814,7 @@
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
     <None Include="Properties\PublishProfiles\DES33 - Web Deploy.pubxml" />
