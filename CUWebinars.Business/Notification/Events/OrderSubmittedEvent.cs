@@ -4,10 +4,10 @@ using CUWebinars.NotificationSystem.Event;
 
 namespace CUWebinars.Business.Notification.Events
 {
-    public class OrderSubmittedEvent<T> : TtsBusEvent<T>, IAllowMultiple, INotificationResendableEvent
-        where T : ConfirmOrderMessage
-    {
-        public string RelativePath { get; set; }
-        public bool ResendEvent { get; set; }
-    }
+    //public class OrderSubmittedEvent<T> : TtsBusEvent<T>, IAllowMultiple, INotificationResendableEvent
+    //    where T : ConfirmOrderMessage
+    //{
+    //    public string RelativePath { get; set; }
+    //    public bool ResendEvent { get; set; }
+    //}
 }

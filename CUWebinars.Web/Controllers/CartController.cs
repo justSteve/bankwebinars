@@ -351,7 +351,7 @@ namespace CUWebinars.Web.Controllers
             {
                 sendToAddresses = sendToAddresses + "; " + hasCc;
             }
-
+            var affiliateAddresses = order.Affiliate.NotiOrders.Replace(',', ';');
             if (User.Identity.IsAuthenticated)
             {
                 //M4Gen
@@ -365,6 +365,10 @@ namespace CUWebinars.Web.Controllers
                 _cartControllerOrchestrator.FireMandrillNotificationEvent(
                     sendToAddresses
                     , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+                _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                    affiliateAddresses
+                    , "Order Placed For " + row.Webinar.Title, orderConfirmString);
+
                 //deprecate v1 version of notifications
                 //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
             }
@@ -384,6 +388,10 @@ namespace CUWebinars.Web.Controllers
                        sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
                         , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
 
+                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                        affiliateAddresses
+                        , "Order Placed For " + row.Webinar.Title, orderConfirmString);
+
                     //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                 }
                 else
@@ -399,6 +407,10 @@ namespace CUWebinars.Web.Controllers
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
                         sendToAddresses//ConfigurationManager.AppSettings["TestEmailAddress"]
                         , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+
+                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                        affiliateAddresses
+                        , "Order Placed For " + row.Webinar.Title, orderConfirmString);
 
                     //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
                 }

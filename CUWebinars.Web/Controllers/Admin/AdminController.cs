@@ -472,7 +472,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         if (order.idAffiliate == 62)
                         {
-                            _orderManagementService.FireOrderSubmittedEvent(order, false, false);
+                            
+                            FireOrderSubmittedEvent(order, false, false);
                             JProperty pendingAcsOrderIsApproved = new JProperty(JsonPropertyKeys.PendingACSOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
                             order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
                         }
@@ -525,6 +526,27 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
             }
             return this.ModelStateJson(ModelState);
+        }
+
+        private void FireOrderSubmittedEvent(Order order, bool b, bool b1)
+        {
+
+            string parameter_list = "orderId=" + order.idOrder;
+
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            byte[] bytes = encoding.GetBytes(parameter_list);
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_globalConfig.TenantURL + "/Cart/SendOrderConfirmation2");
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = bytes.Length;
+
+            // send validation request
+            Stream str = request.GetRequestStream();
+            str.Write(bytes, 0, bytes.Length);
+            str.Flush();
+            str.Close();
+            
         }
 
         [HttpPost]
@@ -1030,8 +1052,8 @@ namespace CUWebinars.Web.Controllers.Admin
                     row.idRegType = regType.idRegType;
                     _orderManagementService.CalculateOrderCost(expressOrder, additionalLocationsPricing);
                     _orderManagementService.SaveChanges();
-                    _orderManagementService.FireOrderSubmittedEvent(expressOrder
-                        , userCreatedByCheckout);
+                    FireOrderSubmittedEvent(expressOrder
+                        , userCreatedByCheckout, false);
 
 
                     _orderManagementService.SaveChanges();
@@ -1256,18 +1278,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
                 _orderManagementService.GenerateRegistrantKey(order);
-
-                //if (orderRow.AdditionalLocation.Any())
-                //{
-                //    foreach (var additionalLocation in orderRow.AdditionalLocation)
-                //    {
-                //        _orderManagementService.GenerateRegistrantKey(order);
-                //    }
-                //}
+                
             }
 
-            //TODO: orders that have been migrated are going to have the OrderGenisis over-written by FireOrderSubmittedEvent
-            _orderManagementService.FireOrderSubmittedEvent(order, resending: true);
+
+            FireOrderSubmittedEvent(order, false, false);
 
             return Json(new { Result = WebUiConstants.Success });
         }

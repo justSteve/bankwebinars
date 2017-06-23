@@ -1034,27 +1034,27 @@ namespace CUWebinars.Web.Core.Orchestrators
             return pricesAndDiscounts;
         }
 
-        public void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null)
-        {
-            var notificationStorage = new NotificationStorage
-            {
-                idOrder = order.idOrder,
-                SessionStartInfo = _appHelper.GetSessionStartInfo()
-            };
+        //public void FireOrderSubmittedNotification(Order order, bool? userCreatedInCart = null)
+        //{
+        //    var notificationStorage = new NotificationStorage
+        //    {
+        //        idOrder = order.idOrder,
+        //        SessionStartInfo = _appHelper.GetSessionStartInfo()
+        //    };
 
-            order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
+        //    order.NotificationStorage = JsonConvert.SerializeObject(notificationStorage);
 
 
 
-            if (userCreatedInCart.HasValue)
-            {
-                _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
-            }
-            else
-            {
-                _orderManagementService.FireOrderSubmittedEvent(order, url: Request.Url);
-            }
-        }
+        //    if (userCreatedInCart.HasValue)
+        //    {
+        //        _orderManagementService.FireOrderSubmittedEvent(order, userCreatedInCart.Value, url: Request.Url);
+        //    }
+        //    else
+        //    {
+        //        _orderManagementService.FireOrderSubmittedEvent(order, url: Request.Url);
+        //    }
+        //}
 
         public void FireOrderSubmittedMultiNotification(string toEmail, string subject, string notificationCopy)
         {

@@ -116,7 +116,7 @@ namespace CUWebinars.Business.Core
                     );
             }
 
-            var notificationOrderHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedHandler));
+            //var notificationOrderHandlerLogger = new Log4NetLogger(typeof(OrderSubmittedHandler));
             //var notificationOrderAdditionalLocationHandlerLogger =
             //    new Log4NetLogger(typeof (OrderSubmittedAdditionalLocationHandler));
             var sendShippedOrderHandlerLogger = new Log4NetLogger(typeof(SendShippedOrderHandler));
@@ -137,8 +137,8 @@ namespace CUWebinars.Business.Core
 
             config.AddEventHandler(new SendPerDayPromoHandler(genericFormatter, notificationDelivery, sendPerDayPromoHandlerLogger));
             //config.AddEventHandler(new SendPerWeekPromoHandler(genericFormatter, notificationDelivery, sendPerWeekPromoHandlerLogger));
-            config.AddEventHandler(new OrderSubmittedHandler(orderConfirmationDelivery, notificationOrderHandlerLogger));
-            config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, orderConfirmedForAdditionalLocationDelivery, notificationOrderHandlerLogger));
+            //config.AddEventHandler(new OrderSubmittedHandler(orderConfirmationDelivery, notificationOrderHandlerLogger));
+            //config.AddEventHandler(new OrderSubmittedAdditionalLocationHandler(genericFormatter, orderConfirmedForAdditionalLocationDelivery, notificationOrderHandlerLogger));
             config.AddEventHandler(new SendShippedOrderHandler(genericFormatter, notificationDelivery, sendShippedOrderHandlerLogger));
             config.AddEventHandler(new SendConnectionInfoHandler(genericFormatter, notificationDelivery, sendConnectionInfoHandlerLogger, new EnvironmentInformation { BaseUrl = baseUrl }));
             config.AddEventHandler(new SendReminderHandler(genericFormatter, notificationDelivery, sendReminderHandlerLogger));

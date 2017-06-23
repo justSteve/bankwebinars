@@ -37,7 +37,7 @@ namespace CUWebinars.Business.Services
         void FireAdhocNotificationHandler(AdhocNotificationMessage adhocNotificationMessage);
         void FireAdminEmailConnectionInfoHandler(Order order, IEnumerable<string> recipients);
         void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients, bool resending = false);
-        void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
+        //void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false, Uri url = null);
         void FireOrderSubmittedMultiEvent(string toEmail, string subject, string body);
         void FireOrderSubmitted2Event(string toEmail, string subject, string body);
 

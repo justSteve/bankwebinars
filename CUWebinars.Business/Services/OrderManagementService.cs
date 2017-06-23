@@ -837,66 +837,66 @@ namespace CUWebinars.Business.Services
 
         public decimal DiscountCreditUnitCost { get; private set; }
 
-        public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
-            Uri url = null)
-        {
-            var doesUserExist = _webUserRepository.GetWebUserFullname(order.BillingEmail);
+        //public void FireOrderSubmittedEvent(Order order, bool userCreatedInCart = false, bool resending = false,
+        //    Uri url = null)
+        //{
+        //    var doesUserExist = _webUserRepository.GetWebUserFullname(order.BillingEmail);
 
-            if (doesUserExist != null)
-                userCreatedInCart = false;
+        //    if (doesUserExist != null)
+        //        userCreatedInCart = false;
 
-            string addPasswordUrl = string.Empty;
+        //    string addPasswordUrl = string.Empty;
 
-            var orderSubmittedViewModel = new ConfirmOrderMessage
-            {
-                AddPasswordUrl = string.Empty,
-                ConfirmChangeEmailUrl = string.Empty,
-                Details = order.NotificationStorage,
-                idOrder = order.idOrder,
-                Order = order,
-                OrderGenesis =
-                    userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
-                UserCreatedInCart = userCreatedInCart,
-                UserCreatedOnImport = false
-            };
+        //    var orderSubmittedViewModel = new ConfirmOrderMessage
+        //    {
+        //        AddPasswordUrl = string.Empty,
+        //        ConfirmChangeEmailUrl = string.Empty,
+        //        Details = order.NotificationStorage,
+        //        idOrder = order.idOrder,
+        //        Order = order,
+        //        OrderGenesis =
+        //            userCreatedInCart ? OrderGenesis.CreatedViaCartByNewUser : OrderGenesis.CreatedViaCartByExistingUser,
+        //        UserCreatedInCart = userCreatedInCart,
+        //        UserCreatedOnImport = false
+        //    };
 
-            if (!ReferenceEquals(null, url))
-            {
-                var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
-                addPasswordUrl = new Uri(
-                    baseUri,
-                    string.Concat(@"acc/apwd/", order.idOrder)
-                ).ToString();
-            }
+        //    if (!ReferenceEquals(null, url))
+        //    {
+        //        var baseUri = new Uri(string.Concat(url.Scheme, @"://", url.Authority), UriKind.Absolute);
+        //        addPasswordUrl = new Uri(
+        //            baseUri,
+        //            string.Concat(@"acc/apwd/", order.idOrder)
+        //        ).ToString();
+        //    }
 
-            AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
-            {
-                Details = order.NotificationStorage,
-                EventObject = orderSubmittedViewModel,
-                RelativePath = addPasswordUrl,
-                ResendEvent = resending
-            });
+        //    AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
+        //    {
+        //        Details = order.NotificationStorage,
+        //        EventObject = orderSubmittedViewModel,
+        //        RelativePath = addPasswordUrl,
+        //        ResendEvent = resending
+        //    });
 
-            foreach (var evt in GetEvents().OfType<OrderSubmittedEvent<ConfirmOrderMessage>>())
-            {
-                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-            }
+        //    foreach (var evt in GetEvents().OfType<OrderSubmittedEvent<ConfirmOrderMessage>>())
+        //    {
+        //        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+        //    }
 
-            int rowsUpdated = _orderRepository.SaveChanges();
+        //    int rowsUpdated = _orderRepository.SaveChanges();
 
-            Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
+        //    Clear(); // need to clear at this point, otherwise the OrderSubmittedEvent will be fired again when 
 
-            if (!ReferenceEquals(
-                    order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation, null)
-                && order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
-            {
-                foreach (var addLoc in order.OrderRows
-                    .Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
-                {
-                    FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email, resending);
-                }
-            }
-        }
+        //    if (!ReferenceEquals(
+        //            order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation, null)
+        //        && order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation.Count != 0)
+        //    {
+        //        foreach (var addLoc in order.OrderRows
+        //            .Single(or => or.RowStatus == OrderRowStatus.Active).AdditionalLocation)
+        //        {
+        //            FireOrderSubmittedAdditionalLocationEvent(order, addLoc.Email, resending);
+        //        }
+        //    }
+        //}
 
         public void FireAdminEmailSendShippedOrderEvent(Order order, IEnumerable<string> recipients,
             bool resending = false)
