@@ -823,6 +823,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+
         [System.Web.Mvc.HttpGet]
         public ActionResult EditUser(int? id, string returnUrl = null)
         {
@@ -835,13 +836,15 @@ namespace CUWebinars.Web.Controllers
                 if (User.Identity.IsAuthenticated)
                 {
                     editingUser = _accountControllerOrchestrator.GetWebUserFromIPrincipal();
+
+                    _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
+
+                    var editModel = BuildEditUserInfoModel(user, returnUrl);
+
+                    return View(editModel);
                 }
 
-                _logger.Info(string.Format("{0} is editing {1}", editingUser.email, user.email));
-
-                var editModel = BuildEditUserInfoModel(user, returnUrl);
-
-                return View(editModel);
+                return RedirectToAction("Login", "Account", new { ReturnURL = "/Account/EditUser/" + id });
             }
             else
             {

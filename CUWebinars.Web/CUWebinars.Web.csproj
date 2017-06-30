@@ -674,6 +674,7 @@
     <Content Include="App_Data\mergeTemplates\WebinarPromoStandalone.docx" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
+    <Content Include="Content\images\presenters\nesbitt.jpg" />
     <Content Include="Content\mobile\Documentation\assets\css\documenter_style.css" />
     <Content Include="Content\mobile\Documentation\assets\css\img\info.png" />
     <Content Include="Content\mobile\Documentation\assets\css\img\warning.png" />
@@ -2621,7 +2622,6 @@
     <Folder Include="App_Data\Notifications\" />
     <Folder Include="App_Data\Trace\" />
     <Folder Include="Content\images\email\" />
-    <Folder Include="Content\images\presenters\" />
     <Folder Include="Infrastructure\apis\citrix\GTW\" />
     <Folder Include="Infrastructure\GemBox\" />
     <Folder Include="Notification\Delivery\" />

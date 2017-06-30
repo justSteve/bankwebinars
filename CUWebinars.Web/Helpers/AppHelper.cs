@@ -640,8 +640,12 @@ namespace CUWebinars.Web.Helpers
             string Tenant = _globalConfig.Tenant;
 
             fields.AffFooter = "This webinar brought to you by TTS & " + _globalConfig.Tenant;
-            if (order.idAffiliate != 2988 && order.idAffiliate != 19)
+            if (order.idAffiliate != 2988 && order.idAffiliate != 19 && order.idAffiliate != 41382)
                 fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + _globalConfig.Tenant;
+
+            if (_globalConfig.Tenant == "CUWebinars" && order.idAffiliate != 2988 && order.idAffiliate != 62 && order.idAffiliate != 19 && order.idAffiliate != 41382)
+                fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + _globalConfig.Tenant;
+
 
             fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
             fields.UpdateOrderPage = " <a href='" + TenantURL + "/resume/" + order.idOrder + "'>Update Order</a> page.";
@@ -663,10 +667,46 @@ namespace CUWebinars.Web.Helpers
             fields.WebinarTitle = row.Webinar.Title;
             fields.Duration = row.Webinar.Duration.ToString().Replace(".00", "");
 
+            fields.Total = order.Total.ToString("C0");
             fields.FirstName = order.FirstName;
             fields.LastName = order.LastName;
             fields.ShowTimeZone = order.WebUser.timeZone.ToString();
-            fields.ShowStartTime = row.Webinar.Date.ToShortTimeString();
+
+            var hoursAdjust = row.Webinar.Date;
+            switch (order.WebUser.timeZone)
+            {
+                case USTimeZone.Pacific:
+
+                    fields.ShowStartTime = hoursAdjust.AddHours(-2).ToShortTimeString();
+                    break;
+                case USTimeZone.Mountain:
+
+                    fields.ShowStartTime = hoursAdjust.AddHours(-1).ToShortTimeString();
+                    break;
+                case USTimeZone.Central:
+
+                    fields.ShowStartTime = hoursAdjust.ToShortTimeString();
+                    break;
+                case USTimeZone.Eastern:
+
+                    fields.ShowStartTime = hoursAdjust.AddHours(1).ToShortTimeString();
+                    break;
+                case USTimeZone.Alaska:
+
+                    fields.ShowStartTime = hoursAdjust.AddHours(-3).ToShortTimeString();
+                    break;
+                case USTimeZone.Hawaii:
+
+                    fields.ShowStartTime = hoursAdjust.AddHours(-5).ToShortTimeString();
+                    break;
+
+                case USTimeZone.Caribbean:
+
+                    fields.ShowStartTime = hoursAdjust.AddHours(2).ToShortTimeString();
+                    break;
+
+
+            }
             fields.DisplayDate = DateTimeHelper.FormatDate(row.Webinar.Date) + " " + DateTimeHelper.FormatTimeWithDuration(row.Webinar.Date, order.WebUser.timeZone, true, row.Webinar.Duration);
 
             fields.Phone = row.Webinar.AccessPhone;
@@ -715,7 +755,7 @@ namespace CUWebinars.Web.Helpers
                 else
                 {
                     fields.PaymentCaption =
-                        "We'll be sending an invoice to " + order.BillingEmail + " in the next day or two. " +
+                        "We'll be sending an invoice to " + order.BillingEmail + " a few days following the webinar. " +
                         "However, if you wish to pay immediately <a href='" + TenantURL + "/Resume/" + order.idOrder +
                         "'> click here.</a>" +
                         " Is someone else in your organization responsible for payments? <a href='" +
@@ -728,13 +768,13 @@ namespace CUWebinars.Web.Helpers
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
-                    "Included in your registration are links to all event material for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    "Your registration includes access to the recording and handouts for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. <a href='" + TenantURL + "/Resume/" + order.idOrder +
                     "'>" + "We'll be happy to adjust your registration.</a> ";
             }
             else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
-                    "Your registration includes OnDemand access to all event materials but does not include a CD-ROM or printouts.  <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    "Your registration includes access to the recording and handouts for six (6) months but does not include a CD-ROM or printouts.  <a href='" + TenantURL + "/Resume/" + order.idOrder +
                     "'>" + "You can still upgrade to the Premier Package.</a>";
             }
 
@@ -755,13 +795,13 @@ namespace CUWebinars.Web.Helpers
                 if (row.AdditionalLocation.Count > 1)
                 {
                     fields.ExistingAddLocs = locs.TrimEnd(',').Replace(",", ", ") +
-                                             " are the included Additional Locations. " ;
+                                             " are the included Additional Locations. ";
                 }
 
                 if (locs == "")
                 {
                     fields.ExistingAddLocs =
-                        " Need to support remote branches? Additional locations cost [addloccost] per seat. " ;
+                        " Need to support remote branches? Additional locations cost [addloccost] per seat. ";
                 }
 
             }
@@ -776,7 +816,7 @@ namespace CUWebinars.Web.Helpers
             var _storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
                 _globalConfig.StorageAccessKey);
             var _cloudStorageAccount = new CloudStorageAccount(_storageCredentials, false);
-            
+
             var _queueClient = _cloudStorageAccount.CreateCloudQueueClient();
 
             CloudQueue cloudQueue = _queueClient.GetQueueReference("conn-info-sender-audit");  // passed in during construction, usually from web.config

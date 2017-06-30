@@ -1508,18 +1508,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)
         {
-            if (subjectLine.StartsWith("Please confirm your account") ||
-             subjectLine.StartsWith("Confirmation of Registration"))
-            {
+
                 _orderManagementService.FireMandrillNotificationEvent(emails, subjectLine, orderConfirmString);
-            }
-            else
-            {
-                _orderManagementService.FireMandrillNotificationEvent(
-                    ConfigurationManager.AppSettings["TestEmailAddress"], subjectLine, orderConfirmString);
-
-            }
-
+            
         }
 
         public void SaveOrder(Order order)

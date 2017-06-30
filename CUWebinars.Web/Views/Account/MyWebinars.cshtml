@@ -50,17 +50,14 @@
 </style>
 <script language="javascript" type="text/javascript">
     $(function () {
-        $('#ResendOrderConfirmationButton').on('click',
+        $('.ResendOrderConfirmationButton').on('click',
             function () {
                 console.log(this);
                 var $this = $(this);
                 var orderId = $this.data('idorder');
 
                 var self = this;
-
-                //var logStartOperation = toastLogger.getLogFn('ResendOrderConfirmation');
-                //logStartOperation("Re-sending Order Confirmation", null, true);
-
+                
                 var payload = { orderId: orderId };
 
                 $.ajax({

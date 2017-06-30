@@ -43,7 +43,7 @@ namespace CUWebinars.Business.Services
 
         void FireSendConnectionInfoNotificationEvent(IList<Order> orders, bool resending);
         void FireSendOrderShippedNotificationEvent(IList<Order> orders);
-        void FireSendRecordingIsPostedEvent(IList<Order> orders);
+        //void FireSendRecordingIsPostedEvent(IList<Order> orders);
 
         void FireMandrillNotificationEvent(string toEmail, string subject, string body);
         void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel);

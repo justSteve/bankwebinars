@@ -399,9 +399,8 @@ namespace CUWebinars.Web.Controllers
                     _logger.Info("ConfirmOrder NotExpress: " + order.idOrder);
 
                     //M4Gen
-                    var orderConfirmString =
-                        _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
-                    orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                    var orderConfirmString =_cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+
                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                         _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
@@ -2017,18 +2016,10 @@ namespace CUWebinars.Web.Controllers
 
                         _cartControllerOrchestrator.UpdateOrderPricing(order);
                         _logger.Info("PayTrace: " + order.idOrder + " is Approved");
-
-                        if (
-                            order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                .Webinar.SeriesInfo == "DES")
+                        if (_globalConfig.Tenant == "DirectorSeries")
                         {
                             _logger.Info("Paytrace: " + order.idOrder + " DES Subscription is detected.");
                             _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
-                        }
-                        else
-                        {
-                            //M4Gen
-
                             var sendToAddresses = order.BillingEmail;
                             var hasCc = _cartControllerOrchestrator.OrderHasCc(order);
                             if (hasCc != null)
@@ -2041,10 +2032,15 @@ namespace CUWebinars.Web.Controllers
                                 _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
 
                             _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                               sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
+                                sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
                                 , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
 
-                            //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                        }
+                        else
+                        {
+                            //M4Gen
+                            _SendOrderConfirmation2(order.idOrder);
+                            
                         }
                     }
                     else
@@ -2076,25 +2072,11 @@ namespace CUWebinars.Web.Controllers
                                 {
                                     _logger.Info("PayTrace: " + order.idOrder + "  DES Subscription is building: " + order.idOrder);
                                     _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
+
                                 }
                                 else
                                 {
-                                    //M4Gen
-                                    var sendToAddresses = order.BillingEmail;
-                                    var hasCc = _cartControllerOrchestrator.OrderHasCc(order);
-                                    if (hasCc != null)
-                                    {
-                                        sendToAddresses = sendToAddresses + "; " + hasCc;
-                                    }
-                                    var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
-
-                                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
-
-                                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                                       sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
-                                        , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
-
+                                    _SendOrderConfirmation2(order.idOrder);
                                     //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                                 }
                             }

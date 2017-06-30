@@ -1630,7 +1630,7 @@ namespace CUWebinars.Web.Controllers
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.AdditionalLocationOfferViewModel
                         .AdditionalLocations.Select(al => al.Email).ToArray();
             string lstAddLoc = "";
-            if (orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
+            if (model.CheckoutConfirmViewModel != null && orderRowForOrder.AdditionalLocation != null && orderRowForOrder.AdditionalLocation.Count > 0)
             {
                 foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
                 {

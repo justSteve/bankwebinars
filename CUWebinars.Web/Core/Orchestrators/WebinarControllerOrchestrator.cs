@@ -209,7 +209,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (!reminder)
                     {
                         var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
-                        
+
                         _orderManagementService.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"],
                             "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
@@ -635,7 +635,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 webinar.LivePlusFiveValue = Convert.ToDateTime(webinarDetailsViewModel.Webinar.LivePlusFiveValue.ToShortDateString()).AddHours(23).AddMinutes(59);
                 _webinarManagementService.UpdateWebinar(webinar);
 
-                _logger.Info(string.Format("Recordings posted for {0} is saved to {1}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl));
+                _logger.Info(string.Format("Recordings posted for {0} is saved to {1} with expiry date of: {2}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl, webinar.LivePlusFiveValue.ToShortDateString()));
                 SendRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
                 return true;
             }
@@ -650,47 +650,50 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         private void SendRecordingIsPostedNotifications(WebinarDetailsViewModel webinarDetailsViewModel, Webinar webinar)
         {
-            var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinar(webinar.idWebinar);
+            //var ordersForWebinar = _orderManagementService.GetV3OrdersByWebinar(webinar.idWebinar);
             IList<int> orderIDsForWebinar = _orderManagementService.GetV3OrdersIdsByWebinar(webinar.idWebinar);
-            // 95336
-
-
-            try
+            foreach (var orderId in orderIDsForWebinar)
             {
-                foreach (var orderId in orderIDsForWebinar)
+                try
                 {
                     var order = _orderManagementService.GetOrderById(orderId);
+                    var expiryDate =
+                        _orderManagementService.CalculatePostEventMaterialsAccessExpiry(
+                            order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
+
                     _membershipService.AddClaimForPostEventMaterials(order.BillingEmail
                         , order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
-                        , _orderManagementService.CalculatePostEventMaterialsAccessExpiry(order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active))
+                        , expiryDate
                         , _globalConfig.Tenant);
+                    _logger.Info("SendRecordingIsPostedNotification for: " + order.idOrder + " expires: " + expiryDate);
 
                     //Mandrill-specific handling
-                    var toEmail = order.BillingEmail;
-                    var subject = "[" + _globalConfig.Tenant + "] tester for  " +
-                    //var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
+                    var sendToAddresses = order.BillingEmail;
+                    var hasCc = _orderManagementService.OrderHasCc(order);
+                    if (hasCc != null)
+                    {
+                        sendToAddresses = sendToAddresses + "; " + hasCc;
+                    }
+                    //var subject = "[" + _globalConfig.Tenant + "] tester for  " +
+                    var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
                                   order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                                       .Webinar.Title;
-
-                    if (order.OrderStatus != OrderStatus.Paid)
-                    {
-                        order.OrderStatus = OrderStatus.Billed;
-                        _orderManagementService.SaveChanges();
-                    }
-
+                    
                     var body = BuildRecordingIsPostedMessage(order);
                     body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, null, null);
 
+#if DEBUG
                     _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], subject, body);
+#else
+                    _orderManagementService.FireMandrillNotificationEvent(sendToAddresses, subject, body);
+#endif
+                }
+                catch (Exception ex)
+                {
+                    _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idOrder: {1}", ex.Message, orderId), ex);
+                    _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], "Error on Recording is Posted for: " + orderId, ex.Message);
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.ErrorException(string.Format("SendRecordingIsPostedNotifications| AddClaimForPostEventMaterials failed {0} on idWebinar: {1}", ex.Message, webinar.idWebinar), ex);
-            }
-
-            _orderManagementService.FireSendRecordingIsPostedEvent(ordersForWebinar);
-
         }
 
         public string BuildConnectionInfoMessage(Order order, string addLoc = null, bool reminder = false)
@@ -751,7 +754,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
 
                 var docToString = System.Text.Encoding.UTF8.GetString(fileContents);
-                
+
                 docToString = _appHelper.CleanHtmlCodesAndLogo(docToString
                 , _globalConfig.TenantLogo
                 , _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToString("C0"),
@@ -1049,7 +1052,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 AdditionalLocationsPrice = _orderManagementService.GetAdditionalLocationsPricing(idWebinar),
                 ceu = webinar.ceu,
-                LivePlusFive = webinar.Date.AddDays(7),
+                LivePlusFive = webinar.LivePlusFiveValue,
                 PostedTopics = new PostedTopics { TopicIds = topicIdsForWebinar.Select(topic => topic.idTopic).ToArray() },
                 PostedRegTypeGroups =
                     new PostedRegTypeGroups

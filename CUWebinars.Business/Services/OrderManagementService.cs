@@ -34,6 +34,7 @@ using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Notification;
 using CUWebinars.Web.Models;
+using Mandrill.Model;
 using Ninject.Infrastructure.Language;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 using IEventSource = CUWebinars.NotificationSystem.Event.IEventSource;
@@ -1014,225 +1015,225 @@ namespace CUWebinars.Business.Services
             //
         }
 
-        public void FireSendRecordingIsPostedEvent(IList<Order> orders)
-        {
+        //public void FireSendRecordingIsPostedEvent(IList<Order> orders)
+        //{
 
-            foreach (var order in orders)
-            {
-                Double[] i = _webinarRepository.GetCostOfUpgrades(order.OrderRows.Single().idRegType);
-
-
-
-                Double basePrice = i[0];
-                Double cost6 = i[1];
-                Double costCD = i[2];
-
-                Discount discount = null;
-
-                if (ReferenceEquals(order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active), null))
-                {
-                    discount =
-                        order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active).SingleOrDefault().Discount;
-                }
-                else
-                {
-                    discount = GetDiscountById(order.idOrder);
-                }
-
-                string orderSum = OrderSummaryBuilder(order, discount);
-                _logger.Info("SendRecordingIsPosted: " + order.idOrder);
-                var postEventPublishModel = new PostEventPublishModel()
-                {
-                    Order = order,
-                    CostFor6month =
-                        (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
-                    CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
-                    //ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
-                    OrderSummaryString = orderSum
-                };
-                AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
-                {
-                    EventObject = postEventPublishModel,
-                    ResendEvent = false
-                });
-            }
-
-            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<PostEventPublishModel>>())
-            {
-                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-            }
-
-            Clear();
-
-            int numRows = _orderRepository.SaveChanges();
-        }
-
-        private string OrderSummaryBuilder(Order order, Discount discount)
-        {
-            var row = from orderRow in order.OrderRows
-                      where orderRow.RowStatus == OrderRowStatus.Active
-                      select orderRow;
-            var myRow = row.Single();
-
-            //var mySub = myRow.Order.d
-
-            var webinar = myRow.Webinar;
-            var OptionLabel = GetRegTypeOfOrderRow(myRow.idRegType).OptionLabel;
-
-            var sb = new StringBuilder();
-            if (webinar.Title.StartsWith("Compliance Perspectives"))
-            {
-
-                //var subStarted = "Valid from: " + sub
-
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            Title:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>");
-                sb.Append("Compliance Perspectives - " + webinar.Date.ToString("MMMM yyyy"));
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
-
-                //presenter cell
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            Presenter:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>Carl Pry");
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
-
-                //
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            Subscription:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>");
-                sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-", " "));
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
-                if (!ReferenceEquals(discount, null))
-                {
-                    string subscriptionSpan = "";
-                    sb.Append("<tr>");
-                    if (!ReferenceEquals(discount.DateValidFrom, null))
-                    {
-                        subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " +
-                                           discount.DateValidTo.ToString("MMM-yy");
-
-                        sb.Append(
-                            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                        sb.Append("            Term:");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                        sb.Append(
-                            "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
-                        sb.Append(
-                            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                        sb.Append("            <b>");
-                        sb.Append(subscriptionSpan);
-                        sb.Append("            </b>");
-                        sb.Append("        </span>");
-                        sb.Append("    </td>");
-                    }
-                    sb.Append("</tr>");
-                }
-
-                //insert CP-specific wording for subsrip stats.
+        //    foreach (var order in orders)
+        //    {
+        //        Double[] i = _webinarRepository.GetCostOfUpgrades(order.OrderRows.Single().idRegType);
 
 
 
-                //
+        //        Double basePrice = i[0];
+        //        Double cost6 = i[1];
+        //        Double costCD = i[2];
 
-            }
-            else
-            {
+        //        Discount discount = null;
 
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            Title:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>");
-                sb.Append(webinar.Title);
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            Date:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>");
-                sb.Append(webinar.Date.ToShortDateString());
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
-                sb.Append("<tr>");
-                sb.Append(
-                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
-                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
-                sb.Append("            Attendance Type:");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append(
-                    "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
-                sb.Append(
-                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
-                sb.Append("            <b>");
-                sb.Append(OptionLabel);
-                sb.Append("            </b>");
-                sb.Append("        </span>");
-                sb.Append("    </td>");
-                sb.Append("</tr>");
+        //        if (ReferenceEquals(order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active), null))
+        //        {
+        //            discount =
+        //                order.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active).SingleOrDefault().Discount;
+        //        }
+        //        else
+        //        {
+        //            discount = GetDiscountById(order.idOrder);
+        //        }
 
-            }
-            return sb.ToString();
+        //        string orderSum = OrderSummaryBuilder(order, discount);
+        //        _logger.Info("SendRecordingIsPosted: " + order.idOrder);
+        //        var postEventPublishModel = new PostEventPublishModel()
+        //        {
+        //            Order = order,
+        //            CostFor6month =
+        //                (Convert.ToDecimal(cost6) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
+        //            CostForCD = (Convert.ToDecimal(costCD) - Convert.ToDecimal(basePrice)).ToString().Replace(".00", ""),
+        //            //ExpiryDate = CalculatePostEventMaterialsAccessExpiry(order).ToShortDateString(),
+        //            OrderSummaryString = orderSum
+        //        };
+        //        AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
+        //        {
+        //            EventObject = postEventPublishModel,
+        //            ResendEvent = false
+        //        });
+        //    }
 
-        }
+        //    foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<PostEventPublishModel>>())
+        //    {
+        //        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+        //    }
+
+        //    Clear();
+
+        //    int numRows = _orderRepository.SaveChanges();
+        //}
+
+        //private string OrderSummaryBuilder(Order order, Discount discount)
+        //{
+        //    var row = from orderRow in order.OrderRows
+        //              where orderRow.RowStatus == OrderRowStatus.Active
+        //              select orderRow;
+        //    var myRow = row.Single();
+
+        //    //var mySub = myRow.Order.d
+
+        //    var webinar = myRow.Webinar;
+        //    var OptionLabel = GetRegTypeOfOrderRow(myRow.idRegType).OptionLabel;
+
+        //    var sb = new StringBuilder();
+        //    if (webinar.Title.StartsWith("Compliance Perspectives"))
+        //    {
+
+        //        //var subStarted = "Valid from: " + sub
+
+        //        sb.Append("<tr>");
+        //        sb.Append(
+        //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+        //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+        //        sb.Append("            Title:");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append(
+        //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+        //        sb.Append(
+        //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+        //        sb.Append("            <b>");
+        //        sb.Append("Compliance Perspectives - " + webinar.Date.ToString("MMMM yyyy"));
+        //        sb.Append("            </b>");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append("</tr>");
+
+        //        //presenter cell
+        //        sb.Append("<tr>");
+        //        sb.Append(
+        //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+        //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+        //        sb.Append("            Presenter:");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append(
+        //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+        //        sb.Append(
+        //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+        //        sb.Append("            <b>Carl Pry");
+        //        sb.Append("            </b>");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append("</tr>");
+
+        //        //
+        //        sb.Append("<tr>");
+        //        sb.Append(
+        //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+        //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+        //        sb.Append("            Subscription:");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append(
+        //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+        //        sb.Append(
+        //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+        //        sb.Append("            <b>");
+        //        sb.Append(myRow.RegistrationType.OptionLabel.Replace(" Subscription", "").Replace("-", " "));
+        //        sb.Append("            </b>");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append("</tr>");
+        //        if (!ReferenceEquals(discount, null))
+        //        {
+        //            string subscriptionSpan = "";
+        //            sb.Append("<tr>");
+        //            if (!ReferenceEquals(discount.DateValidFrom, null))
+        //            {
+        //                subscriptionSpan = discount.DateValidFrom.ToString("MMM-yy") + " until " +
+        //                                   discount.DateValidTo.ToString("MMM-yy");
+
+        //                sb.Append(
+        //                    "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+        //                sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+        //                sb.Append("            Term:");
+        //                sb.Append("        </span>");
+        //                sb.Append("    </td>");
+        //                sb.Append(
+        //                    "    <td width='350px' style='text-align: left; color: red; background-color: #B4D1EC; padding-left: 6px;'>");
+        //                sb.Append(
+        //                    "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+        //                sb.Append("            <b>");
+        //                sb.Append(subscriptionSpan);
+        //                sb.Append("            </b>");
+        //                sb.Append("        </span>");
+        //                sb.Append("    </td>");
+        //            }
+        //            sb.Append("</tr>");
+        //        }
+
+        //        //insert CP-specific wording for subsrip stats.
+
+
+
+        //        //
+
+        //    }
+        //    else
+        //    {
+
+        //        sb.Append("<tr>");
+        //        sb.Append(
+        //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+        //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+        //        sb.Append("            Title:");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append(
+        //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+        //        sb.Append(
+        //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+        //        sb.Append("            <b>");
+        //        sb.Append(webinar.Title);
+        //        sb.Append("            </b>");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append("</tr>");
+        //        sb.Append("<tr>");
+        //        sb.Append(
+        //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+        //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+        //        sb.Append("            Date:");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append(
+        //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+        //        sb.Append(
+        //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+        //        sb.Append("            <b>");
+        //        sb.Append(webinar.Date.ToShortDateString());
+        //        sb.Append("            </b>");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append("</tr>");
+        //        sb.Append("<tr>");
+        //        sb.Append(
+        //            "    <td valign='top' width='150px' style='text-align: right; background-color: #CCCCCC; padding-right: 6px; font-family: Arial, Helvetica, sans-serif; font-size: 10px'>");
+        //        sb.Append("        <span align='right' style='vert-align: top; font-size: 10px;'>");
+        //        sb.Append("            Attendance Type:");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append(
+        //            "    <td width='350px' style='text-align: left; background-color: #B4D1EC; padding-left: 6px;'>");
+        //        sb.Append(
+        //            "        <span style='color: #000000; font-family: Arial, Helvetica, sans-serif; font-size: 12px;'>");
+        //        sb.Append("            <b>");
+        //        sb.Append(OptionLabel);
+        //        sb.Append("            </b>");
+        //        sb.Append("        </span>");
+        //        sb.Append("    </td>");
+        //        sb.Append("</tr>");
+
+        //    }
+        //    return sb.ToString();
+
+        //}
 
 
         public void FireSendPerDayPromoEvent(WebinarPromoViewModel webinarPromoViewModel)
@@ -1319,36 +1320,36 @@ namespace CUWebinars.Business.Services
             int numRows = _orderRepository.SaveChanges();
         }
 
-        public void FireSendRecordingPostedNotificationEvent(IList<Order> orders)
-        {
-            var title = orders[0].OrderRows.SingleOrDefault().Webinar.Title;
+        //public void FireSendRecordingPostedNotificationEvent(IList<Order> orders)
+        //{
+        //    var title = orders[0].OrderRows.SingleOrDefault().Webinar.Title;
 
-            _logger.Info("Begins RecordingPostedNotification for {1} with {0} orders.", orders.Count, title);
-            var x = 0;
-            foreach (var order in orders)
-            {
-                _logger.Info("RecordingPostedNotification {0} of {1} sent to {2} for {3}.", x, orders.Count,
-                    order.BillingEmail, title);
+        //    _logger.Info("Begins RecordingPostedNotification for {1} with {0} orders.", orders.Count, title);
+        //    var x = 0;
+        //    foreach (var order in orders)
+        //    {
+        //        _logger.Info("RecordingPostedNotification {0} of {1} sent to {2} for {3}.", x, orders.Count,
+        //            order.BillingEmail, title);
 
-                var postEventPublishModel = new PostEventPublishModel()
-                {
-                    Order = order
-                };
-                AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
-                {
-                    EventObject = postEventPublishModel
-                });
-            }
+        //        var postEventPublishModel = new PostEventPublishModel()
+        //        {
+        //            Order = order
+        //        };
+        //        AddEvent(new SendRecordingPostedEvent<PostEventPublishModel>
+        //        {
+        //            EventObject = postEventPublishModel
+        //        });
+        //    }
 
-            foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<PostEventPublishModel>>())
-            {
-                _ttsConfig.NotificationEventBus.RaiseEvent(evt);
-            }
+        //    foreach (var evt in GetEvents().OfType<SendRecordingPostedEvent<PostEventPublishModel>>())
+        //    {
+        //        _ttsConfig.NotificationEventBus.RaiseEvent(evt);
+        //    }
 
-            Clear();
+        //    Clear();
 
-            int numRows = _orderRepository.SaveChanges();
-        }
+        //    int numRows = _orderRepository.SaveChanges();
+        //}
 
         public void FireSendWeeklyInvoiceEvent(SendWeeklyInvoiceViewModel weeklyInvoiceViewModel)
         {
