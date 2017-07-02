@@ -89,7 +89,7 @@
         <div id="webinarContent" class="row-fluid holy-grail">
             <!--begin row-fluid-->
 
-            <div class="row-fluid span6">
+            <div class="row-fluid span6 offset3">
                 <p>The responsibility and liability of the Bank Director is ever increasing. It is critical your Directors stay current with the training to help them through the complexities of today's banking environment.</p>
 
                 <p>
@@ -111,50 +111,6 @@
 
                 @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCartDES.cshtml", model: Model)
 
-                <h3>Subscription Details</h3>
-                <p>Your subscription includes access to the entire course library as well as new releases during the term of your subscription. You will have access to modules in the library through your expiration date. Access will be over the internet. You will need a computer or device with a high speed internet connection and audio producing capability.</p>
-                <p>TTS reserves the right to remove or edit course content at any time. Topic schedules are subject to change.</p>
-                <p>The subscription term will commence after your registration has been received and confirmed by TTS. At this time your account credentials will be sent to you. This agreement will continue for 12-months and &nbsp;will be auto renewed at the end of the current term for a successive 12-month term unless either party gives written notice of its intention not to renew 15 days before the expiration of the current term. TTS will also notify you of any changes in the terms of the Subscription at least 30 days prior to the notice period for renewal or termination.</p>
-                <p>Subscription pricing is based on the asset size of your financial institution, holding company or other banking entity. In the case that your company is a nonbanking institution, the introductory rate is applied.</p>
-                <p>Subscription payment will be by credit card or ACH at the time of registration. Prices are advertised in monthly terms and based on annual payment in full at the time of registration.&nbsp; For a monthly payment plan, please contact us.</p>
-            </div>
-
-            <section class="span3 sidebar secondary-column" id="secondary-nav">
-                <aside class="widget">
-                    <div class="rotating-testimonials">
-                        <!--"rotating-testimonials" is a required class-->
-                        <h5 class="short_headline"><span>Testimonials</span></h5>
-                        <div class="panels">
-
-                            <div id="t1">
-                                <blockquote>
-                                    <p>We are loving the program for our Directors.  Training has now become a more regular event and the format and timing of the training is just right for the BOD.  They have found the information very helpful in understanding their roles as directors.</p>
-                                    <footer>Maureen Daehn, Maple Bank</footer>
-                                </blockquote>
-                            </div>
-                            <!--close #t5 -->
-                        </div>
-                        <!--close panels-->
-                    </div>
-
-                    <!--close rotating-testimonials-->
-                </aside>
-                <aside class="widget">
-                    <h5 class="short_headline"><span>Stay Updated</span></h5>
-                    @{Html.RenderPartial("Partials/_AddToMailingBox");}
-                </aside>
-                <!--close aside .widget -->
-
-                <aside class="widget">
-                    <h5 class="short_headline"><span>Search</span></h5>
-                    <form class="searchform" method="get">
-                        <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
-                    </form>
-                </aside>
-                <!--close aside widget-->
-            </section>
-            <!--close aside .widget-->
-            <!--close section sidebar span3-->
         </div>
     </div>
                         }
@@ -168,14 +124,12 @@
                                     <!--begin row-fluid-->
                                     <section class="row-fluid span3 sidebar">
                                         <aside class="widget well-large">
-                                            @{
-                                                if (Model.Webinar.idWebinar != 1952)
-                                                {
-                                                    <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
-                                                    @Html.Raw(Model.Webinar.Presenter.BiographyLong)
-                                                    @Html.Partial("Partials/_OtherEventsBySpeaker")
-                                                }
-                                            }
+
+                                            <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
+                                            @Html.Raw(Model.Webinar.Presenter.BiographyLong)
+                                            @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
+
+
                                         </aside>
                                         <!--close aside widget-->
                                     </section>

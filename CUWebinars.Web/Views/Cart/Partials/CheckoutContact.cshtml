@@ -61,7 +61,7 @@
                         <div id="wrapEmail">
                             <div>
                                 @Html.TextBoxFor(model => model.RegisterFields.Email, new { style = "width: 180px;" })<br />
-                                <div class="initialHide well well-sm" id="showhowEmailUsed">This email will be the <i>admin</i> address. It gets to decide who else within the organization sees the connection information vs. an address that handles the billing. </div>
+                                <div class="initialHide well well-sm" id="showhowEmailUsed">This email will create the <i>managerial</i> user account for the subscription. The account will have the ability to create users, generate reports, receive notifications of new releases and more. Information of the individual paying for the subscription will be gathered later in the registration process. </div>
                                 <span id="howEmailUsed">How is this address used? <a onclick="showHowEmailUsed(); return false;" data-html=true data-explainesItTab="This primary (or billing) email - can be changed to any more specific title later." data-asksItTextBox=true rel="tooltip" href="#" data-delay=0 data-trigger="hover focus click" data-toggle="tooltip" title="This primary (or billing) email can be changed to any more specific title later."><i class="icon-question-sign"></i></a></span>
                             </div>
                         </div>

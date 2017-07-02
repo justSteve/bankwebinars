@@ -1514,6 +1514,9 @@ namespace CUWebinars.Web.Controllers
         [System.Web.Mvc.AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            if (_globalConfig.Tenant == "DirectorSeries")
+                return Redirect("http://my.directorseries.com/users/sign_in");
+
             try
             {
                 ViewBag.PageStyleType = "register";
@@ -1526,6 +1529,21 @@ namespace CUWebinars.Web.Controllers
             }
         }
 
+
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult LoginAdmin(string returnUrl)
+        {
+            try
+            {
+                ViewBag.PageStyleType = "register";
+                return View(_accountControllerOrchestrator.BuildLoginModel(returnUrl));
+            }
+            catch (Exception exception)
+            {
+                _logger.ErrorException("In Login Action", exception);
+                throw;
+            }
+        }
 
 
         [System.Web.Mvc.HttpPost]
