@@ -2118,6 +2118,19 @@ namespace CUWebinars.Web.Controllers.Admin
                 //https://github.com/brandonseydel/MailChimp.Net/issues/157
                 // or find a way to nav to URL
 
+                var affiliatePromoSenderEmail = "";
+                var affiliatePromoSenderName = "";
+#if DEBUG
+
+                affiliatePromoSenderEmail = "steve@ttstrain.com";
+                affiliatePromoSenderName = "steve";
+
+#else
+
+                var affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
+                var affiliatePromoSenderName = affiliate.PromoSenderName;
+#endif
+
                 var newCamp = new Campaign
                 {
                     ContentType = "html",
@@ -2134,8 +2147,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         AutoFooter = true,
                         AutoTweet = false,
                         ToName = "*|FNAME|* *|LNAME|* ",
-                        FromName = affiliate.PromoSenderName,
-                        ReplyTo = affiliate.PromoSenderEmail,
+                        FromName = affiliatePromoSenderName,
+                        ReplyTo = affiliatePromoSenderEmail,
                         UseConversation = true,
                     },
                     Tracking = new Tracking
@@ -2165,8 +2178,18 @@ namespace CUWebinars.Web.Controllers.Admin
                 var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
                 List<string> sendToEmails = new List<string>();
-                sendToEmails.Add("all.of.us@ttstrain.com");
+#if DEBUG
 
+
+                sendToEmails.Add("steve@ttstrain.com");
+
+#else
+
+
+
+                sendToEmails.Add("all.of.us@ttstrain.com");
+                
+#endif
                 sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
 
                 CampaignTestRequest emails = new CampaignTestRequest

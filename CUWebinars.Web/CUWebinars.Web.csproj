@@ -2120,6 +2120,7 @@
     <Content Include="Views\Cart\Partials\_DisplayRowPriceDES.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptionsDESWizard.cshtml" />
     <Content Include="Views\Home\LearnMore.cshtml" />
+    <Content Include="Views\Account\LoginAdmin.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

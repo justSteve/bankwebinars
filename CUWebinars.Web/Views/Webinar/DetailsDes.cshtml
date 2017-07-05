@@ -111,98 +111,100 @@
 
                 @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCartDES.cshtml", model: Model)
 
+            </div>
+
         </div>
     </div>
-                        }
-                        else
+}
+else
+{
+
+    <div class="container clearfix" id="main-content">
+        <!--begin main content-->
+
+        <div id="webinarContent" class="row-fluid holy-grail">
+            <!--begin row-fluid-->
+            <section class="row-fluid span3 sidebar">
+                <aside class="widget well-large">
+
+                    <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
+                    @Html.Raw(Model.Webinar.Presenter.BiographyLong)
+                    @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
+
+
+                </aside>
+                <!--close aside widget-->
+            </section>
+            <div class="row-fluid span6">
+                @if (!Model.CheckoutInProcess)
+                {
+                    <div id="EventDescription">
+                        @Html.Raw(Model.Webinar.DescriptionLong)
+                        <h2 class="short_headline">
+                            <span>
+                                @Html.Raw(Model.Webinar.LearnCaption)
+                            </span>
+                        </h2>
+                        @Html.Raw(Model.Webinar.LearnBody)
+                        @*<h2 class="short_headline">
+                                <span>
+                                    Who Should Attend?
+                                </span>
+                            </h2>
+                            @Html.Raw(Model.Webinar.WhoAttend)
+                            <hr />*@
+                    </div>
+                }
+                <div class="warnIE" style="display: none;" id="iePre10">
+                    <p>
+                        <b>Please note:</b> This site employs features that may cause unexpected behavior in older versions of Internet Explorer. If you experience a problem, try refreshing your screen. If this doesn't solve the problem, click on this link.
+                        <br /><a id="warnIE" class="btn btn-mini btn-success" rel="nofollow" href="/cart/@ExpressCheckoutURL?idWebinar=@Model.Webinar.idWebinar&idAffiliate=@ViewBag.currentAffiliateId&idOrder=0">Express Checkout</a>
+                    </p>
+                    <p>You may contact us by using the Online Chat button below. </p>
+                </div>
+
+                @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCartDES.cshtml", model: Model)
+
+            </div>
+            <!-- opens Container div-->
+
+            <div class="row-fluid span3">
+                <aside class="widget">
+                    <h5 class="short_headline">
+                        <span>Publish Date</span>
+                    </h5>
+                    <b>@Model.Webinar.Date.ToString("MMMM") @Model.Webinar.Date.Year </b><br />
+
+                    <div id="ceu">
+                        <a href="#" title="@Model.CeuStatement ">
+                            @Html.Raw(Model.CeuShort)
+                        </a>
+                    </div>
+
+                </aside>
+
+                <aside class="widget">
+                    <h5 class="short_headline">
+                        <span>Related Topics</span>
+                    </h5>
+                    <ul>
+                        @foreach (var webinarTopic in Model.Topics)
                         {
+                            <li>
+                                @webinarTopic.topicDesc
+                            </li>
+                        }
+                    </ul>
+                </aside>
+                <!--close aside .widget -->
+                <aside class="widget">
+                    <h5 class="short_headline"><span>Stay Updated</span></h5>
+                    @{Html.RenderPartial("Partials/_AddToMailingBox");}
+                </aside>
+                <!--close aside .widget -->
+            </div>
+            <!--close section tertiary-column sidebar span3-->
+        </div>
 
-                            <div class="container clearfix" id="main-content">
-                                <!--begin main content-->
-
-                                <div id="webinarContent" class="row-fluid holy-grail">
-                                    <!--begin row-fluid-->
-                                    <section class="row-fluid span3 sidebar">
-                                        <aside class="widget well-large">
-
-                                            <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
-                                            @Html.Raw(Model.Webinar.Presenter.BiographyLong)
-                                            @*@Html.Partial("Partials/_OtherEventsBySpeaker")*@
-
-
-                                        </aside>
-                                        <!--close aside widget-->
-                                    </section>
-                                    <div class="row-fluid span6">
-                                        @if (!Model.CheckoutInProcess)
-                                        {
-                                            <div id="EventDescription">
-                                                @Html.Raw(Model.Webinar.DescriptionLong)
-                                                <h2 class="short_headline">
-                                                    <span>
-                                                        @Html.Raw(Model.Webinar.LearnCaption)
-                                                    </span>
-                                                </h2>
-                                                @Html.Raw(Model.Webinar.LearnBody)
-                                                @*<h2 class="short_headline">
-                                                        <span>
-                                                            Who Should Attend?
-                                                        </span>
-                                                    </h2>
-                                                    @Html.Raw(Model.Webinar.WhoAttend)
-                                                    <hr />*@
-                                            </div>
-                                        }
-                                        <div class="warnIE" style="display: none;" id="iePre10">
-                                            <p>
-                                                <b>Please note:</b> This site employs features that may cause unexpected behavior in older versions of Internet Explorer. If you experience a problem, try refreshing your screen. If this doesn't solve the problem, click on this link.
-                                                <br /><a id="warnIE" class="btn btn-mini btn-success" rel="nofollow" href="/cart/@ExpressCheckoutURL?idWebinar=@Model.Webinar.idWebinar&idAffiliate=@ViewBag.currentAffiliateId&idOrder=0">Express Checkout</a>
-                                            </p>
-                                            <p>You may contact us by using the Online Chat button below. </p>
-                                        </div>
-
-                                        @Html.Partial(partialViewName: "~/Views/Webinar/Partials/_ShoppingCartDES.cshtml", model: Model)
-
-                                    </div>
-                                    <!-- opens Container div-->
-
-                                    <div class="row-fluid span3">
-                                        <aside class="widget">
-                                            <h5 class="short_headline">
-                                                <span>Publish Date</span>
-                                            </h5>
-                                            <b>@Model.Webinar.Date.ToString("MMMM") @Model.Webinar.Date.Year </b><br />
-
-                                            <div id="ceu">
-                                                <a href="#" title="@Model.CeuStatement ">
-                                                    @Html.Raw(Model.CeuShort)
-                                                </a>
-                                            </div>
-
-                                        </aside>
-
-                                        <aside class="widget">
-                                            <h5 class="short_headline">
-                                                <span>Related Topics</span>
-                                            </h5>
-                                            <ul>
-                                                @foreach (var webinarTopic in Model.Topics)
-                                                {
-                                                    <li>
-                                                        @webinarTopic.topicDesc
-                                                    </li>
-                                                }
-                                            </ul>
-                                        </aside>
-                                        <!--close aside .widget -->
-                                        <aside class="widget">
-                                            <h5 class="short_headline"><span>Stay Updated</span></h5>
-                                            @{Html.RenderPartial("Partials/_AddToMailingBox");}
-                                        </aside>
-                                        <!--close aside .widget -->
-                                    </div>
-                                    <!--close section tertiary-column sidebar span3-->
-                                </div>
-
-                            </div> <!-- closes main-content -->
-                                                }
+    </div> <!-- closes main-content -->
+                        }
