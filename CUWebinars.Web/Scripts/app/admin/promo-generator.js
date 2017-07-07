@@ -45,21 +45,33 @@ $(document).ready(function () {
 
             e.preventDefault();
             var $btn = $(this);
-            $btn.blur();
+            //$btn.blur();
 
             var _sendTime = 10;
             var sendTime = prompt("Time To Send: ", _sendTime);
 
-            var subjectForCampaign = prompt("Subject line: ", subjectForCampaign);
+            var subjectForCampaign = prompt("Subject line: ", "Webinar: " + $("#Webinar_Title").val());
 
-            CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign)
-            $(".tab-pane").each(function (idx) {
+            $("#showCampaign").find('li').each(function () {
+
                 var $tab = $(this);
-                var affiliateId = $tab.data("pane-affid");
-                alert("hit");
-                if (affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+                var affiliateId = $tab.text().split(":")[1];
+                if (!affiliateId || affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
                     return;
-                CreateCampaign($btn, affiliateId);
+
+                var localCopy = "";
+                var affObj = arrayLookup(affs, "idUserAff", affiliateId);
+                if (affObj != null) {
+                    localCopy = replaceMasterTokensForAffiliate(affObj);
+                }
+
+                $("#editor_" + affiliateId, $tab).val(localCopy);
+
+                console.log("running MC generate for: '" + affiliateId + "' subject: " + subjectForCampaign);
+
+
+                CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
+
             });
         }
     });
@@ -73,17 +85,30 @@ $(document).ready(function () {
             return false;
         } else {
 
+            var subject = prompt("Subject Line", "ANNOUNCING: " + $("#Webinar_Title").val());
+
             e.preventDefault();
             var $btn = $(this);
-            $btn.blur();
+            //$btn.blur();
 
-            // check to see if we are on the master, we should be, since this button should only be on the master
-            if (currentAffId == 0) {
-                $("#editor_0").val(GetCurrentEditorCopy());
-                // store what is in the editor as the latest and greatest for use by replaceMasterTokensForAffiliate
-            }
+            $("#showAll").find('li').each(function () {
 
-            SendAll($btn);
+                var $tab = $(this);
+                var affiliateId = $tab.text().split(":")[1];
+                if (!affiliateId || affiliateId == 0)
+                    return;
+
+                var localCopy = "";
+                var affObj = arrayLookup(affs, "idUserAff", affiliateId);
+                if (affObj != null) {
+                    localCopy = replaceMasterTokensForAffiliate(affObj);
+                }
+
+                $("#editor_" + affiliateId, $tab).val(localCopy);
+                console.log("SendAllToAffiliate: '" + affiliateId + "' subject: " + subject);
+                
+                SendToAff(affiliateId, subject);
+            });
         }
     });
 
@@ -153,15 +178,18 @@ $(document).ready(function () {
         var _sendTime = 10;
         var sendTime = prompt("Time To Send: ", _sendTime);
 
-        var subjectForCampaign = prompt("Subject line: ", _subjectForCampaign);
-
+        var subjectForCampaign = prompt("Subject line: ", "Webinar: " + $("#Webinar_Title").val());
+        console.log(subjectForCampaign);
         CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
 
     });
 
     $(".send-to-affiliate").on("click", function (e) {
         var affiliateId = $(this).closest(".tab-pane").data("pane-affid");
-        SendToAff(affiliateId);
+
+        var subject = prompt("Subject Line", "ANNOUNCING: " + $("#Webinar_Title").val());
+
+        SendToAff(affiliateId, subject);
     });
 
     $(".write-markup-to-storage").on("click", function (e) {
@@ -349,27 +377,6 @@ function SetCopyToClipboardTextArea(selectText) {
 function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
     var localCopy = affiliateCopy;
 
-    //$.ajax({
-    //    url: '/Admin/GetAffiliateTimeZone',
-    //    type: 'POST',
-    //    data: {
-    //        "idAffiliate": affiliateId,
-    //        "idWebinar": $("#Webinar_idWebinar").val()
-    //    },
-    //    dataType: "json",
-
-    //    success: function (result) {
-    //        console.log(result);
-    //        SetAffTimeString(result.timeFormatDisplay);
-    //        //timeString = result.timeFormatDisplay;
-    //    },
-    //    error: function (XMLHttpRequest, textStatus, errorThrown) {
-    //        alert(textStatus + " " + errorThrown);
-    //    }
-    //});
-
-    // if it's blank, run master conversion
-
     //update by sjh while trying to adapt for affiliate's use of this method
     // -- can not find conditions where this test ever evaluates to true - strange
     // -- because logging affiliateId and localCopy will always show expected values
@@ -435,95 +442,95 @@ function GetMasterMarkupAJAX($btn) {
 
 }
 
-function SendAll($btn) {
+//function SendAll($btn) {
 
-    var subject = prompt("Subject Line", _subject);
+//    var subject = prompt("Subject Line", _subject);
 
-    if (subject != null) {
+//    if (subject != null) {
 
-        // setup UI for user feedback
-        var origBtnText = $btn.text();
-        $btn.text("Saving...");
-        $btn
-            .append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
+//        // setup UI for user feedback
+//        var origBtnText = $btn.text();
+//        $btn.text("Saving...");
+//        $btn
+//            .append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
 
-        var errorAffs = [];
-        var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
-        var callsComplete = 0;
-        var messages = [];
+//        var errorAffs = [];
+//        var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
+//        var callsComplete = 0;
+//        var messages = [];
 
-        // loop through all tabs...
-        $(".tab-pane")
-            .each(function (idx) {
-                var $tab = $(this);
-                var affiliateId = $tab.data("pane-affid");
+//        // loop through all tabs...
+//        $(".tab-pane")
+//            .each(function (idx) {
+//                var $tab = $(this);
+//                var affiliateId = $tab.data("pane-affid");
 
-                if (affiliateId == 0)
-                    // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
-                    return;
+//                if (affiliateId == 0)
+//                    // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
+//                    return;
 
-                // get affiliate specific copy
-                var isActive = $tab
-                    .hasClass("active");
-                // should ALWAYS be false in this method, as the Save All button is only on the master tab
-                var currCopy = GetAffiliateCopy(affiliateId, isActive);
+//                // get affiliate specific copy
+//                var isActive = $tab
+//                    .hasClass("active");
+//                // should ALWAYS be false in this method, as the Save All button is only on the master tab
+//                var currCopy = GetAffiliateCopy(affiliateId, isActive);
 
-                var affObj = arrayLookup(affs, "idUserAff", affiliateId);
-                //currCopy = replaceMasterTokensForAffiliate(affObj);
+//                var affObj = arrayLookup(affs, "idUserAff", affiliateId);
+//                currCopy = replaceMasterTokensForAffiliate(affObj);
 
-                if (currCopy == "") // if they don't have customized copy we'll need to create it
-                {
-                    // generate from master...
+//                if (currCopy == "") // if they don't have customized copy we'll need to create it
+//                {
+//                    // generate from master...
 
-                    var affObj = arrayLookup(affs, "idUserAff", affiliateId);
-                    if (affObj != null) {
+//                    var affObj = arrayLookup(affs, "idUserAff", affiliateId);
+//                    if (affObj != null) {
 
-                        console.log(affObj);
-                        currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
+//                        console.log(affObj);
+//                        currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
 
-                    }
-                }
+//                    }
+//                }
 
 
-                $.ajax({
-                    url: '/Admin/SendSinglePromo',
-                    type: 'POST',
-                    data: {
-                        "affiliateId": affiliateId,
-                        "subject": subject,
-                        "messageBodyHtml": currCopy,
-                        "webinarId": $("#Webinar_idWebinar").val(),
-                        "sendDate": $("#SendDate").val()
-                    },
-                    dataType: "json",
-                    success: function (result) {
+//                $.ajax({
+//                    url: '/Admin/SendSinglePromo',
+//                    type: 'POST',
+//                    data: {
+//                        "affiliateId": affiliateId,
+//                        "subject": subject,
+//                        "messageBodyHtml": currCopy,
+//                        "webinarId": $("#Webinar_idWebinar").val(),
+//                        "sendDate": $("#SendDate").val()
+//                    },
+//                    dataType: "json",
+//                    success: function (result) {
 
-                        //add feedback to promo sender
-                        //$('#PromoSentToAffiliate').text($('#PromoSentToAffiliate').text() + "\n" + result.)
-                        //$('#send' + affID).text("Success");
-                        console.log(result);
-                    },
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        // $('#send' + affID).text(textStatus + " " + errorThrown);
-                        alert("error " + textStatus + " " + errorThrown);
-                    }
-                });
-                // remove spinner
-                $('#submitSpinWrapper').remove();
-                $btn.text("Send!");
+//                        //add feedback to promo sender
+//                        //$('#PromoSentToAffiliate').text($('#PromoSentToAffiliate').text() + "\n" + result.)
+//                        //$('#send' + affID).text("Success");
+//                        console.log(result);
+//                    },
+//                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+//                        // $('#send' + affID).text(textStatus + " " + errorThrown);
+//                        alert("error " + textStatus + " " + errorThrown);
+//                    }
+//                });
+//                // remove spinner
+//                $('#submitSpinWrapper').remove();
+//                $btn.text("Send!");
 
-                setTimeout(function () { $btn.text(origBtnText); }, 2000);
+//                setTimeout(function () { $btn.text(origBtnText); }, 2000);
 
-            });
-    }
-}
+//            });
+//    }
+//}
 
 
 function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
 
 
     var origBtnText = $btn.text();
-    $btn.text("Processing...");
+    $btn.text("Processing " + affiliateId);
     $btn
         .append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
 
@@ -562,19 +569,14 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
         success: function (Result) {
             console.log(Result);
             if (Result.Success) {
-
-                alert("Campaign Created");
-
+                $("#r_" + affiliateId).text("sent: ");
             } else {
 
                 alert("error: " + Result);
-
             }
-            //$('#send' + affID).text("Success");
         },
         error: function (result) {
-
-            // $('#send' + affID).text(textStatus + " " + errorThrown);
+            alert("Error!");
 
         },
         complete: function (result) {
@@ -674,7 +676,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
                 // technical issues, errors, ajax, etc.
                 if (errorAffs.length) {
                     var errorMsg = "Errors encountered during the save of the following affiliates, please review: " + errorAffs.join(",");
-                    console.log(errorMsg)
+                    console.log(errorMsg);
                     alert(errorMsg);
                 }
 
@@ -744,13 +746,10 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
     });
 }
 
-function SendToAff(affiliateId) {
-
-    var subject = prompt("Subject Line", _subject);
+function SendToAff(affiliateId, subject) {
 
     if (subject != null) {
-
-        //alert($("#SendToList_" + affiliateId).val());
+        
         var currCopy = GetCurrentEditorCopy();
 
 
@@ -766,8 +765,8 @@ function SendToAff(affiliateId) {
             dataType: "json",
             //contentType: "json",
             success: function (result) {
-                //$('#send' + affID).text("Success");
-                alert('Success');
+
+                $("#e_" + affiliateId).text("sent: ");
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 // $('#send' + affID).text(textStatus + " " + errorThrown);

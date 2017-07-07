@@ -472,7 +472,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         if (order.idAffiliate == 62)
                         {
-                            
+
                             FireOrderSubmittedEvent(order, false, false);
                             JProperty pendingAcsOrderIsApproved = new JProperty(JsonPropertyKeys.PendingACSOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
                             order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
@@ -546,7 +546,7 @@ namespace CUWebinars.Web.Controllers.Admin
             str.Write(bytes, 0, bytes.Length);
             str.Flush();
             str.Close();
-            
+
         }
 
         [HttpPost]
@@ -1278,7 +1278,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 && orderRow.Webinar.CitrixJoinInfoAvailable())
             {
                 _orderManagementService.GenerateRegistrantKey(order);
-                
+
             }
 
 
@@ -1634,7 +1634,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                     " - " +
                                     DateTimeHelper.FormatTime(
                                         webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
-            return Json(new { timeFormatDisplay = TimeFormatDisplay});
+            return Json(new { timeFormatDisplay = TimeFormatDisplay });
         }
 
 
@@ -2035,6 +2035,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 catch (Exception exception)
                 {
                     _logger.ErrorException("SendSinglePromo action", exception);
+                    return Json(new { Result = WebUiConstants.Fail, Msg = exception.Message });
                 }
             }
             return this.ModelStateJson(ModelState);
@@ -2127,8 +2128,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
 #else
 
-                var affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
-                var affiliatePromoSenderName = affiliate.PromoSenderName;
+                affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
+                affiliatePromoSenderName = affiliate.PromoSenderName;
 #endif
 
                 var newCamp = new Campaign

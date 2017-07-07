@@ -2116,40 +2116,50 @@ namespace CUWebinars.Web.Controllers
             }
             try
             {
+                if (_globalConfig.Tenant == "DirectorSeries")
+                {
+                    webinarEditModel.SeriesInfo = "DES";
+
+
+                }
                 _webinarControllerOrchestrator.UpdateWebinarFromViewInput(webinarEditModel);
 
                 return Json(new { Result = WebUiConstants.Success });
             }
-            catch (ValidationException validationException)
-            {
-                validationException.Errors.ForEach(
-                    error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName, error.ErrorMessage));
+            // commenting out to better send error messages to client
+            //catch (ValidationException validationException)
+            //{
+            //    validationException.Errors.ForEach(
+            //        error => ModelState.AddModelError(FromFluentPrefix + error.PropertyName
+            //        , error.ErrorMessage));
 
-                return this.ModelStateJsonFromFluentValidator(ModelState);
-            }
-            catch (DbEntityValidationException dbEntityValidationException)
-            {
-                var stringBuilder = new StringBuilder();
+            //    _logger.Error("WebinarEditor dbEntityValidationException errors | {0}",
+            //        stringBuilder.ToString());
+            //    return this.ModelStateJsonFromFluentValidator(ModelState);
+            //}
+            //catch (DbEntityValidationException dbEntityValidationException)
+            //{
+            //    var stringBuilder = new StringBuilder();
 
-                foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-                        //    validationError.ErrorMessage);
-                        stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
-                            validationError.ErrorMessage);
-                    }
-                }
-                _logger.Error("UpdateShippingDetails dbEntityValidationException errors | {0}",
-                    stringBuilder.ToString());
-                return null;
-            }
+            //    foreach (var validationErrors in dbEntityValidationException.EntityValidationErrors)
+            //    {
+            //        foreach (var validationError in validationErrors.ValidationErrors)
+            //        {
+            //            //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+            //            //    validationError.ErrorMessage);
+            //            stringBuilder.AppendFormat("Property: {0} Error: {1} ", validationError.PropertyName,
+            //                validationError.ErrorMessage);
+            //        }
+            //    }
+            //    _logger.Error("WebinarEditor dbEntityValidationException errors | {0}",
+            //        stringBuilder.ToString());
+            //    return Json(new { Result = WebUiConstants.Fail, Msg = stringBuilder.ToString() });
+            //}
             catch (Exception exception)
             {
                 _logger.ErrorException(string.Format("Edit Webinar | Session{0}", _appHelper.GetUserAuditInfo()),
                     exception);
-                return Json(new { Result = WebUiConstants.Fail });
+                return Json(new { Result = WebUiConstants.Fail, Msg = exception.Message });
             }
         }
 

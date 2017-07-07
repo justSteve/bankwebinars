@@ -39,7 +39,7 @@ $(function () {
     whoAttendEditor.disable(false);
 
 
-    MW.webinarSearchInput.focus(); 
+    MW.webinarSearchInput.focus();
 });
 
 // self-invoking function.
@@ -57,7 +57,7 @@ $(function () {
             ns.addAdditionalLocationsPriceButton = $('#AddAdditionalLocationsPriceButton');
             ns.addAdditionalLocationsPriceInput = $('#AddAdditionalLocationsPriceInput');
             ns.additionalLocationsPrices = $('#AdditionalLocationsPrices');
-        } 
+        }
 
         if (operation === ns.create) {
             ns.submitCreatedDetailsButton = $('#submitCreatedDetailsButton');
@@ -71,7 +71,7 @@ $(function () {
         }
     };
 
-    ns.wireUpHandlers = function(operation) {
+    ns.wireUpHandlers = function (operation) {
 
         if (operation === ns.edit) {
             ns.submitEditedDetailsButton.on('click', ns.submitWebinarDetails);
@@ -96,16 +96,16 @@ $(function () {
 
         $(this).append('<span id="crunchingSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
 
-        ns.webinarContent.load('/webinar/edit/' + searchString, function(response, status, xhr) {
+        ns.webinarContent.load('/webinar/edit/' + searchString, function (response, status, xhr) {
 
             if (status === 'error') {
                 var statusCode = xhr['status'];
 
-                switch(statusCode) {
+                switch (statusCode) {
                     case 404:
-                    {
-                        ns.webinarSearchButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">' + xhr['statusText'] + '</span></span>');
-                    }
+                        {
+                            ns.webinarSearchButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">' + xhr['statusText'] + '</span></span>');
+                        }
                 }
             } else {
                 if (xhr['responseText'].toString().slice(0, 1) === '{') { // if json response, we have an error condition 
@@ -216,7 +216,7 @@ $(function () {
                 } else {
                     ns.primeDomVariables(ns.create);
                     ns.wireUpHandlers(ns.create);
-                    
+
                     ns.ceuTextArea.cleditor(ns.optionsForEditors);
                     ns.learnBodyTextArea.cleditor(ns.optionsForEditors);
                     ns.whoAttendTextArea.cleditor(ns.optionsForEditors);
@@ -241,7 +241,7 @@ $(function () {
 
     };
 
-    ns.submitWebinarDetails = function(e) {
+    ns.submitWebinarDetails = function (e) {
 
         e.preventDefault();
 
@@ -258,17 +258,17 @@ $(function () {
             url: '/webinar/edit',
             dataType: constants.JsonDataType,
             data: payload += addedPayloadData,
-            beforeSend: function() {
+            beforeSend: function () {
                 $('#feedbackLabel').remove();
                 $('.webinar-form-error').remove();
                 formProcessor.clearValidationSummary($('#EditWebinarValSummary'));
             }
         }).done(function (data) {
-
-            if (data.Result === 'Success') { 
+            console.log(data);
+            if (data.Result === 'Success') {
                 ns.submitEditedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-success">&nbsp;The operation has succeeded.</span></span>');
             } else if (data.Result === 'Fail') {
-                ns.submitEditedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">&nbsp;The operation has failed. Please contact the administrator for assistance.</span></span>');
+                ns.submitEditedDetailsButton.after('<span id="feedbackLabel">&nbsp;<span class="label label-important">&nbsp;The operation has failed. ' + data.Msg + '</span></span>');
             } else if (!data.isSuccessful) {
                 formProcessor.lightUpValidationSummary('EditWebinarValSummary', data);
 
@@ -300,8 +300,8 @@ $(function () {
         });
     };
 
-    ns.submitNewWebinarDetails = function(e) {
-        
+    ns.submitNewWebinarDetails = function (e) {
+
         e.preventDefault();
 
         ns.submitCreatedDetailsButton.append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
@@ -317,7 +317,7 @@ $(function () {
             url: '/webinar/create',
             dataType: constants.JsonDataType,
             data: payload += addedPayloadData,
-            beforeSend: function() {
+            beforeSend: function () {
                 $('.webinar-form-error').remove();
                 $('#feedbackLabel').remove();
                 formProcessor.clearValidationSummary($('#AddWebinarValSummary'));
@@ -348,7 +348,7 @@ $(function () {
                         $('#' + id).after('<span class="webinar-form-error label label-important"><i class="icon icon-exclamation-sign"></i>&nbsp;invalid</span>');
                     } catch (e) {
                         console.log(key);
-                    } 
+                    }
                 });
             }
 
@@ -357,7 +357,7 @@ $(function () {
     };
 
     ns.submitCloneWebinarDetails = function (e) {
-        
+
         e.preventDefault();
 
         ns.submitCloneDetailsButton.append('<span id="crunchingSpinnerOfSubmit">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
@@ -373,7 +373,7 @@ $(function () {
             url: '/webinar/clone',
             dataType: constants.JsonDataType,
             data: payload += addedPayloadData,
-            beforeSend: function() {
+            beforeSend: function () {
                 $('.webinar-form-error').remove();
                 $('#feedbackLabel').remove();
                 formProcessor.clearValidationSummary($('#CloneWebinarValSummary'));
@@ -413,7 +413,7 @@ $(function () {
         });
     };
 
-    ns.popAdditionalLocationsPrice = function(e) {
+    ns.popAdditionalLocationsPrice = function (e) {
 
         e.preventDefault();
 
@@ -458,25 +458,25 @@ $(function () {
         width: 600, // width not including margins, borders or padding
         height: 250, // height not including margins, borders or padding
         bodyStyle: // style to assign to document body contained within the editor
-                'margin: 4px; font: 11pt Helvetica Neue,Helvetica,Arial,sans-serif; cursor:text',
+        'margin: 4px; font: 11pt Helvetica Neue,Helvetica,Arial,sans-serif; cursor:text',
         colors: // colors in the color popup
-                'FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF ' +
-                'CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F ' +
-                'BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C ' +
-                '999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C ' +
-                '666 900 C60 C93 990 090 399 33F 60C 939 ' +
-                '333 600 930 963 660 060 366 009 339 636 ' +
-                '000 300 630 633 330 030 033 006 309 303',
+        'FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF ' +
+        'CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F ' +
+        'BBB F00 F90 FC6 FF0 3F3 6CC 3CF 66C C6C ' +
+        '999 C00 F60 FC3 FC0 3C0 0CC 36F 63F C3C ' +
+        '666 900 C60 C93 990 090 399 33F 60C 939 ' +
+        '333 600 930 963 660 060 366 009 339 636 ' +
+        '000 300 630 633 330 030 033 006 309 303',
         controls: // controls to add to the toolbar
-            'bold italic underline | font size style | highlight removeformat | bullets numbering | outdent indent | alignleft center alignright | ' +
-            'rule image link unlink | source',
+        'bold italic underline | font size style | highlight removeformat | bullets numbering | outdent indent | alignleft center alignright | ' +
+        'rule image link unlink | source',
         docCSSFile: '', // CSS file used to style the document contained within the editor
         fonts: // font names in the font popup
-            'Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond, Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana',
+        'Arial,Arial Black,Comic Sans MS,Courier New,Narrow,Garamond, Georgia,Impact,Sans Serif,Serif,Tahoma,Trebuchet MS,Verdana',
         styles: // styles in the style popup
-            [['Paragraph', '<p>'], ['Header 3', '<h3>'], ['Header 4', '<h4>'], ['Header 5', '<h5>'], ['Header 6', '<h6>'], ['BlockQuote', '<blockquote>']],
+        [['Paragraph', '<p>'], ['Header 3', '<h3>'], ['Header 4', '<h4>'], ['Header 5', '<h5>'], ['Header 6', '<h6>'], ['BlockQuote', '<blockquote>']],
         useCSS: false // use CSS to style HTML when possible (not supported in ie)
     };
 
-    
+
 })(MW);
