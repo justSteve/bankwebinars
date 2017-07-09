@@ -138,11 +138,11 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        [HttpPost]
-        public ActionResult ConfirmOrder(FormCollection formCollection)
-        {
-            return View();
-        }
+        //[HttpPost]
+        //public ActionResult ConfirmOrder(FormCollection formCollection)
+        //{
+        //    return View();
+        //}
 
         public ActionResult ContactUs()
         {

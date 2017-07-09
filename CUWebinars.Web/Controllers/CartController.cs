@@ -233,7 +233,30 @@ namespace CUWebinars.Web.Controllers
                             _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(
                                 model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
                         }
+                    if (_globalConfig.Tenant == "DirectorSeries")
+                    {
+                        Order order = model.Order;
+                        Discount desSub = new Discount
+                        {
+                            DiscountType = DiscountType.DirectorSeries,
+                            DateValidTo = order.OrderDate.AddYears(1),
+                            DateValidFrom = order.OrderDate,
+                            Cost = row.RowPrice,
+                            DateBilled = DateTime.UtcNow,
+                            DateVerified = DateTime.Now,
+                            DiscountCode = "DES" + order.idOrder,
+                            FlatOff = 0,
+                            Notes = "V3 entry",
+                            PercentOff = 0,
+                            RenewalTerm = 1,
+                            Status = "Active",
+                            TotalCount = 1,
+                            idAffiliate = order.idAffiliate,
+                            idDiscount = order.idOrder
 
+                        };
+                        row.Discount = desSub;
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -251,36 +274,15 @@ namespace CUWebinars.Web.Controllers
                         model.Order.TotalPaid = model.Order.Total;
                     }
 
+                    _cartControllerOrchestrator.SaveOrder(model.Order);
+                    _SendOrderConfirmation2(model.Order.idOrder);
+                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                 }
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, "ConfirmOrder|UpdateOrderPricing failed.");
                     _logger.ErrorException("ConfirmOrder|UpdateOrderPricing failed:  " + model.Order.idOrder, exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
-                }
-                //redundant
-                //try
-                //{
-                //    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.Order.BillingEmail,
-                //        model.Order.OrderRows.FirstOrDefault());
-
-                //}
-                //catch (Exception exception)
-                //{
-                //    ModelState.AddModelError(string.Empty, "ConfirmOrder|CreatePostEventClaim failed");
-                //    _logger.ErrorException("ConfirmOrder|CreatePostEventClaim failed: " + model.Order.idOrder, exception);
-                //    ErrorSignal.FromCurrentContext().Raise(exception);
-                //}
-
-                try
-                {
-                    _SendOrderConfirmation2(model.Order.idOrder);
-                }
-
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    throw;
                 }
 
                 return Json(new
@@ -352,6 +354,13 @@ namespace CUWebinars.Web.Controllers
                 sendToAddresses = sendToAddresses + "; " + hasCc;
             }
             var affiliateAddresses = order.Affiliate.NotiOrders.Replace(',', ';');
+            //if (_globalConfig.Tenant == "DirectorSeries")
+            //{
+            //    _logger.Info("ConfirmOrder: " + order.idOrder + "  DES Subscription is building");
+            //    _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
+
+            //}
+
             if (User.Identity.IsAuthenticated)
             {
                 //M4Gen
@@ -396,10 +405,10 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
-                    _logger.Info("ConfirmOrder NotExpress: " + order.idOrder);
+                    _logger.Info("ConfirmOrder of New User: " + order.idOrder);
 
                     //M4Gen
-                    var orderConfirmString =_cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
+                    var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
 
                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                         _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
@@ -785,7 +794,8 @@ namespace CUWebinars.Web.Controllers
                         ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40)) + " (" +
                                         _globalConfig.TenantPrefix + _order.idOrder + ")" + Environment.NewLine;
                     }
-
+                    if (_globalConfig.Tenant == "DirectorSeries")
+                        ProdDescText = "Directors Education Series Subscription";
                     _logger.Info("Paytrace: " + idOrder + "MultiPreValidate ProdDesc ends. ");
                 }
             }
@@ -818,6 +828,8 @@ namespace CUWebinars.Web.Controllers
                 ProdDescText += wTitle.Substring(0, Math.Min(wTitle.Length, 40))
                     + " (" + _globalConfig.TenantPrefix + order.idOrder + ") " + Environment.NewLine;
 
+                if (_globalConfig.Tenant == "DirectorSeries")
+                    ProdDescText = "Directors Education Series Subscription";
             }
 
             //format parameters for request 
@@ -2016,32 +2028,9 @@ namespace CUWebinars.Web.Controllers
 
                         _cartControllerOrchestrator.UpdateOrderPricing(order);
                         _logger.Info("PayTrace: " + order.idOrder + " is Approved");
-                        if (_globalConfig.Tenant == "DirectorSeries")
-                        {
-                            _logger.Info("Paytrace: " + order.idOrder + " DES Subscription is detected.");
-                            _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
-                            var sendToAddresses = order.BillingEmail;
-                            var hasCc = _cartControllerOrchestrator.OrderHasCc(order);
-                            if (hasCc != null)
-                            {
-                                sendToAddresses = sendToAddresses + "; " + hasCc;
-                            }
-                            var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(order);
 
-                            orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                                _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
-
-                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                                sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
-                                , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
-
-                        }
-                        else
-                        {
-                            //M4Gen
-                            _SendOrderConfirmation2(order.idOrder);
-                            
-                        }
+                        //M4Gen
+                        _SendOrderConfirmation2(order.idOrder);
                     }
                     else
                     {
@@ -2066,19 +2055,9 @@ namespace CUWebinars.Web.Controllers
                                     order.OrderRows.FirstOrDefault());
 
                                 _cartControllerOrchestrator.UpdateOrderPricing(order);
-                                if (
-                                    order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                        .Webinar.SeriesInfo == "DES")
-                                {
-                                    _logger.Info("PayTrace: " + order.idOrder + "  DES Subscription is building: " + order.idOrder);
-                                    _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
 
-                                }
-                                else
-                                {
-                                    _SendOrderConfirmation2(order.idOrder);
-                                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
-                                }
+                                _SendOrderConfirmation2(order.idOrder);
+                                //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                             }
                             catch (Exception ex)
                             {

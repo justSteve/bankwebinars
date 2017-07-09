@@ -960,7 +960,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             cpSubscription.DateBilled = discount.DateBilled;
             cpSubscription.FlatOff = discount.FlatOff;
             cpSubscription.PercentOff = discount.PercentOff;
-            cpSubscription.Status = discount.Status;
+            
             cpSubscription.DiscountCode = discount.DiscountCode;
 
             return cpSubscription;
@@ -988,7 +988,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.DateBilled = orderDiscount.DateBilled;
             discountModel.FlatOff = orderDiscount.FlatOff;
             discountModel.PercentOff = orderDiscount.PercentOff;
-            discountModel.Status = orderDiscount.Status;
+            
             discountModel.DiscountCode = orderDiscount.DiscountCode;
 
 

@@ -674,6 +674,7 @@
     <Content Include="App_Data\mergeTemplates\WebinarPromoStandalone.docx" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
+    <Content Include="Content\images\compass.png" />
     <Content Include="Content\images\presenters\nesbitt.jpg" />
     <Content Include="Content\mobile\Documentation\assets\css\documenter_style.css" />
     <Content Include="Content\mobile\Documentation\assets\css\img\info.png" />
@@ -955,8 +956,6 @@
     <Content Include="Content\images\CoC_DS_Back.png" />
     <Content Include="Content\images\collection.png" />
     <Content Include="Content\images\collection_hover.png" />
-    <Content Include="Content\images\compass.jpg" />
-    <Content Include="Content\images\compass.png" />
     <Content Include="Content\images\confirmHead.png" />
     <Content Include="Content\images\connectionHead.png" />
     <Content Include="Content\images\copy.png" />

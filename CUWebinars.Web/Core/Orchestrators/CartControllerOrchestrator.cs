@@ -1250,7 +1250,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             var dsMergeFields = new
             {
                 AttendType = row.RegistrationType.OptionLabelShort,
-                RegDesc = regDesc,
+                RegDesc = order.FirstName + " " + order.LastName + "<br>" + order.Institution + "<br>" + order.BillingCity + ", " + order.BillingState,
                 TenantSignature = "The " + _globalConfig.Tenant + " Staff",
                 OrderID = row.idOrder,
                 BillingEmail = order.BillingEmail,
@@ -1340,6 +1340,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             var account = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
+            NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
 
             if (!account.HasClaim(ClaimTypes.FullName))
@@ -1371,8 +1372,31 @@ namespace CUWebinars.Web.Core.Orchestrators
                             @"~/App_Data/mergeTemplates/OrderSubmitted_PostEvent.docx"));
             }
 
+            if (_globalConfig.Tenant == "DirectorSeries")
+            {
+                document =
+                    DocumentModel.Load(
+                        System.Web.HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmittedDES.docx"));
 
-            NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
+                fields = new NotificationMessageFields
+                {
+                    AttendType = row.RegistrationType.OptionLabelShort,
+                    RegDesc = order.FirstName + " " + order.LastName + "<br>" + order.Institution + "<br>" + order.BillingCity + ", " + order.BillingState,
+                    TenantSignature = "The " + _globalConfig.Tenant + " Staff",
+                    OrderID = row.idOrder,
+                    BillingEmail = order.BillingEmail,
+                    TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
+                    OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
+                    LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
+                    TenantName = _globalConfig.Tenant,
+                    WebinarTitle = webinar.Title,
+                    FirstName = order.FirstName
+
+                };
+
+
+            }
 
             if (row.Webinar.Title.Contains("Compliance Perspectives"))
             {
