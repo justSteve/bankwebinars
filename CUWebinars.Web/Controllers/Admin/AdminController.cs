@@ -1630,10 +1630,7 @@ namespace CUWebinars.Web.Controllers.Admin
             //}
             Webinar webinar = _webinarManagementService.GetWebinar(idWebinar);
             var timeZone = _affiliateManagementService.FindById(idAffiliate).WebUser.timeZone;
-            var TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(webinar.Date, timeZone, false) +
-                                    " - " +
-                                    DateTimeHelper.FormatTime(
-                                        webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
+            var TimeFormatDisplay = _appHelper.ReplaceTimeString(webinar, timeZone);
             return Json(new { timeFormatDisplay = TimeFormatDisplay });
         }
 
@@ -2014,12 +2011,18 @@ namespace CUWebinars.Web.Controllers.Admin
         public ActionResult SendSinglePromo(int affiliateId, string messageBodyHtml, int webinarId, string subject)
         // WebinarPromoViewModel model
         {
+            var aff = _affiliateManagementService.FindById(affiliateId);
+
+            if (messageBodyHtml.Contains("{aff_EmailFooter}"))
+            {
+                messageBodyHtml = _appHelper.ReplaceMergeCodes(messageBodyHtml, aff);
+            }
 
             var timeString = GetAffiliateTimeZoneAndList(affiliateId, webinarId).ToString();
 
             WebinarPromoViewModel model = new WebinarPromoViewModel
             {
-                Affiliate = _affiliateManagementService.FindById(affiliateId),
+                Affiliate = aff,
                 EventBody = messageBodyHtml.Replace("{timeString}", timeString),
                 Webinar = _webinarManagementService.GetWebinar(webinarId),
                 Subject = subject
@@ -2047,10 +2050,18 @@ namespace CUWebinars.Web.Controllers.Admin
         public async Task<JsonResult> GenerateMailChimpCampaign(int affiliateId, string messageBodyHtml, int webinarId,
             string sendDate, string sendTime, string subject)
         {
+            Affiliate aff = _affiliateManagementService.FindById(affiliateId);
+
             _logger.Info("GenerateMailChimpCampaign starting");
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
             TimeZone zone = TimeZone.CurrentTimeZone;
+
+            if (messageBodyHtml.Contains("{aff_EmailFooter}"))
+            {
+                messageBodyHtml = _appHelper.ReplaceMergeCodes(messageBodyHtml, aff);
+            }
+
 
             string standard = zone.StandardName;
             string daylight = zone.DaylightName;
@@ -2058,6 +2069,11 @@ namespace CUWebinars.Web.Controllers.Admin
 
             var theTime = (int)affiliate.WebUser.timeZone;
 
+            if (messageBodyHtml.Contains("{timeString}"))
+            {
+                var timeString = _appHelper.ReplaceTimeString(webinar, affiliate.WebUser.timeZone);
+                messageBodyHtml = messageBodyHtml.Replace("{timeString}", timeString);
+            }
             if (flag)
             {
                 theTime = (int)affiliate.WebUser.timeZone + 1;
@@ -2083,18 +2099,21 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
 
-
+                
                 var segment = await manager.ListSegments.GetAllAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
                 var _segment = segment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
                 if (_segment != null)
                 {
 
-                    var segmentMembers =
-                        await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
-                            _segment.Id.ToString()).ConfigureAwait(false);
+                    //var segmentMembers =
+                    //    await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
+                    //        _segment.Id.ToString(), new QueryableBaseRequest
+                    //        {
+                                
+                    //        }).ConfigureAwait(false);
 
-                    if (segmentMembers.Any())
-                        _logger.Info("Segment found: " + _segment.Id.ToString());
+                    //if (segmentMembers.Any())
+                    //    _logger.Info("Segment found: " + _segment.Id.ToString());
                     recp = new Recipient
                     {
                         ListId = _globalConfig.TenantMailChimpList,

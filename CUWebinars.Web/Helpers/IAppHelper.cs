@@ -35,5 +35,7 @@ namespace CUWebinars.Web.Helpers
         string CleanHtmlCodesAndLogo(string body, string tenantLogo, string addloccost, string specialMsg);
         NotificationMessageFields BuildNotiFields(Order order, string hasCCAddress);
         void ScheduleConnInfoSenderAudit(Webinar idWebinar);
+        string ReplaceMergeCodes(string messageBodyHtml, Affiliate affiliateId);
+        string ReplaceTimeString(Webinar webinar, USTimeZone timeZone);
     }
 }

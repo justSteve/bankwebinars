@@ -57,7 +57,7 @@
                 var orderId = $this.data('idorder');
 
                 var self = this;
-                
+
                 var payload = { orderId: orderId };
 
                 $.ajax({
@@ -155,7 +155,7 @@
 
             @if (!ReferenceEquals(Model.Subscription, null))
             {
-                //Html.RenderPartial("Partials/Subscription", userSubscription );
+
                 Html.RenderPartial("DisplayTemplates/ShowDiscountSubscription", Model.Subscription);
             }
             else
@@ -181,60 +181,101 @@
                             </p>
                         </section>
                     </div>
-                    <div style="margin-top: 6px;">
-                        <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
-                    </div>
-                    <div class="span5 ">
-                        <table width="80%" align="center" style="border: black; margin-top: 6px;">
-                            <tr style="color: white; background-color: black">
-                                <td>Memebership Level</td>
-                                <td># of Credits</td>
-                                <td>Price</td>
-                            </tr>
-                            <tr style="background-color: lightcyan">
-                                <td>Bronze</td>
-                                <td>5</td>
-                                <td>$1,125</td>
-                            </tr>
-                            <tr style="background-color: lightblue">
-                                <td>Silver</td>
-                                <td>10</td>
-                                <td>$2,100</td>
-                            </tr>
-                            <tr style="background-color: lightcyan">
-                                <td>Gold</td>
-                                <td>15</td>
-                                <td>$2,850</td>
-                            </tr>
-                            <tr style="background-color: lightblue">
-                                <td>Platinum</td>
-                                <td>20</td>
-                                <td>$3,500</td>
-                            </tr>
-                            <tr style="background-color: lightcyan">
-                                <td>6 Month Unlimited</td>
-                                <td>-</td>
-                                <td>$4,950</td>
-                            </tr>
-                            <tr style="background-color: lightblue">
-                                <td>12 Month Unlimited</td>
-                                <td>-</td>
-                                <td>$8,250</td>
-                            </tr>
-                            <tr style="background-color: lightcyan">
-                                <td>6 Month Unlimited w/<br />Compliance Perspectives</td>
-                                <td></td>
-                                <td>$5,800</td>
-                            </tr>
-                            <tr style="background-color: lightblue">
-                                <td>12 Month Unlimited w/<br />Compliance Perspectives</td>
-                                <td></td>
-                                <td>$9,775</td>
-                            </tr>
-                        </table>
 
+                    <div class="span4">
+                        @{
+                            if (_globalConfig.Tenant == "BankWebinars")
+                            {
+                                <table align="center" style="border: black; margin-top: 6px;">
+                                    <tr style="color: white; background-color: black">
+                                        <td>Memebership Level</td>
+                                        <td># of Credits</td>
+                                        <td>Price</td>
+                                        <td>Savings</td>
+                                    </tr>
+                                    <tr style="background-color: lightcyan">
+                                        <td>Bronze</td>
+                                        <td>5</td>
+                                        <td>$1,150</td>
+                                        <td>10%</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>Silver</td>
+                                        <td>10</td>
+                                        <td>$2,395</td>
+                                        <td>15%</td>
+                                    </tr>
+                                    <tr style="background-color: lightcyan">
+                                        <td>Gold</td>
+                                        <td>20</td>
+                                        <td>$4,495</td>
+                                        <td>20%</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>Platinum</td>
+                                        <td>50</td>
+                                        <td>$3,500</td>
+                                        <td>25%</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>Diamond</td>
+                                        <td>100</td>
+                                        <td>$19,650</td>
+                                        <td>30%</td>
+                                    </tr>
 
+                                </table>
 
+                                <div style="margin-top: 6px;">
+                                    <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
+                                </div>
+                            }
+                            if (_globalConfig.Tenant == "CUWebinars")
+                            {
+                                <table align="center" style="border: black; margin-top: 6px;">
+                                    <tr style="color: white; background-color: black">
+                                        <td>Memebership Level</td>
+                                        <td># of Credits</td>
+                                        <td>Price</td>
+                                        <td>Savings</td>
+                                    </tr>
+                                    <tr style="background-color: lightcyan">
+                                        <td>Bronze</td>
+                                        <td>5</td>
+                                        <td>$895</td>
+                                        <td>10%</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>Silver</td>
+                                        <td>10</td>
+                                        <td>$1,695</td>
+                                        <td>15%</td>
+                                    </tr>
+                                    <tr style="background-color: lightcyan">
+                                        <td>Gold</td>
+                                        <td>20</td>
+                                        <td>$3,195</td>
+                                        <td>20%</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>Platinum</td>
+                                        <td>50</td>
+                                        <td>$7,350</td>
+                                        <td>25%</td>
+                                    </tr>
+                                    <tr style="background-color: lightblue">
+                                        <td>Diamond</td>
+                                        <td>100</td>
+                                        <td>$13,650</td>
+                                        <td>30%</td>
+                                    </tr>
+                                </table>
+
+                                <div style="margin-top: 6px;">
+                                    <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/53546890227967', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
+                                </div>
+                            }
+                        }
 
 
                     </div>
@@ -247,10 +288,8 @@
                             <li>Premier Package - 1.5 Credit</li>
                         </ul>
                     </div>
-
-
                 </div>
-            }
+                            }
         </div>
 
         @if (Model.CompliancePerspectives != null)

@@ -41,6 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <PublishDatabases>false</PublishDatabases>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -493,6 +494,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\AccountInfoModel.cs" />
     <Compile Include="Models\NotiResultsModel.cs" />
     <Compile Include="Models\ConnInfoSenderModel.cs" />
     <Compile Include="Models\ConnInfoSendModel.cs" />
@@ -1806,6 +1808,7 @@
     <Content Include="App_Data\mergeTemplates\ConnectionInfo2.docx" />
     <Content Include="App_Data\mergeTemplates\ConnectionInfo2AddLoc.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventForOnDemandOnly.docx" />
+    <Content Include="App_Data\mergeTemplates\PasswordResetRequest.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
@@ -2132,6 +2135,7 @@
     </None>
     <None Include="Web.DES33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>

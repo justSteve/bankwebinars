@@ -5,7 +5,7 @@ var timeString = "";
 $(document).ready(function () {
     $(".removeCamp").on("click",
         function (e) {
-            $(this.parentNode).remove();
+            $(this.closest("li").remove());
         });
     $("#showCampaignsBtn").button();
 
@@ -53,9 +53,9 @@ $(document).ready(function () {
             var subjectForCampaign = prompt("Subject line: ", "Webinar: " + $("#Webinar_Title").val());
 
             $("#showCampaign").find('li').each(function () {
-
                 var $tab = $(this);
                 var affiliateId = $tab.text().split(":")[1];
+
                 if (!affiliateId || affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
                     return;
 
@@ -65,9 +65,8 @@ $(document).ready(function () {
                     localCopy = replaceMasterTokensForAffiliate(affObj);
                 }
 
-                $("#editor_" + affiliateId, $tab).val(localCopy);
+                console.log("running MC generate for: '" + affiliateId + "' localCopy: " + localCopy);
 
-                console.log("running MC generate for: '" + affiliateId + "' subject: " + subjectForCampaign);
 
 
                 CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
@@ -90,13 +89,15 @@ $(document).ready(function () {
             e.preventDefault();
             var $btn = $(this);
             //$btn.blur();
-
+            console.log("sending");
             $("#showAll").find('li').each(function () {
 
                 var $tab = $(this);
                 var affiliateId = $tab.text().split(":")[1];
-                if (!affiliateId || affiliateId == 0)
+                if (!affiliateId || affiliateId === 0)
                     return;
+                console.log("SendAllToAffiliate: '" + affiliateId + "' subject: " + subject);
+
 
                 var localCopy = "";
                 var affObj = arrayLookup(affs, "idUserAff", affiliateId);
@@ -105,8 +106,7 @@ $(document).ready(function () {
                 }
 
                 $("#editor_" + affiliateId, $tab).val(localCopy);
-                console.log("SendAllToAffiliate: '" + affiliateId + "' subject: " + subject);
-                
+
                 SendToAff(affiliateId, subject);
             });
         }
@@ -343,7 +343,7 @@ function SetwStatus() {
 function GetAffiliateCopy(affiliateId, isActive) {
 
     var currCopy = "";
-    console.log("GetAffiliateCopy was passed: " + affiliateId + " isActive: " + isActive);
+    console.log("GetAffiliateCopy was passed: " + affiliateId + " Active: " + isActive);
 
     // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
     // Addendum: this test is returning false at the point where true is expected. 
@@ -548,7 +548,7 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
     // get affiliate specific copy
     var isActive = $tab
         .hasClass("active");
-    // should ALWAYS be false in this method, as the Save All button is only on the master tab
+
     var currCopy = GetAffiliateCopy(affiliateId, true);
 
     $.ajax({
@@ -569,7 +569,8 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
         success: function (Result) {
             console.log(Result);
             if (Result.Success) {
-                $("#r_" + affiliateId).text("sent: ");
+                $("#r_" + affiliateId).closest("li").text("sent!");
+                //$(this.closest("li").remove());
             } else {
 
                 alert("error: " + Result);
@@ -749,7 +750,7 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
 function SendToAff(affiliateId, subject) {
 
     if (subject != null) {
-        
+
         var currCopy = GetCurrentEditorCopy();
 
 
@@ -766,7 +767,7 @@ function SendToAff(affiliateId, subject) {
             //contentType: "json",
             success: function (result) {
 
-                $("#e_" + affiliateId).text("sent: ");
+                $("#e_" + affiliateId).remove();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 // $('#send' + affID).text(textStatus + " " + errorThrown);
@@ -805,6 +806,7 @@ function replaceMasterTokensForAffiliate(aff) {
         }
     });
     var copy = $("#editor_0").val(); // 0 is master
+
     copy = copy.replace(/\{aff_EmailBanner\}/gi, aff.EmailBanner);
     copy = copy.replace(/\{aff_EmailFooter\}/gi, aff.EmailFooter);
     copy = copy.replace(/\{aff_ttsdomain\}/gi, aff.ttsDomain);
@@ -826,5 +828,6 @@ function arrayLookup(array, prop, val) {
             return array[i];
         }
     }
+
     return null;
 }

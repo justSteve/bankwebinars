@@ -140,24 +140,24 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                         foundAff
                         );
                 }
-                //try
-                //{
-                //    _stateService.SetValue(
-                //        WebUiConstants.CurrentAffiliate,
-                //        _orderManagementService.GetAffiliateByIdLoaded(loadAff, a => a.WebUser)
-                //        );
-                //}
-                //catch (Exception exception)
-                //{
-                //    ILog logger = LogManager.GetLogger(typeof(MonitorAffiliateFilter));
-                //    logger.ErrorFormat("ERROR: failed to load idAff code: {0}", HttpContext.Current.Request.Url);
-                //    logger.Error(exception.Message);
-                //    _stateService.SetValue(
-                //        WebUiConstants.CurrentAffiliate,
-                //        _orderManagementService.GetAffiliateByIdLoaded(19, a => a.WebUser)
-                //        );
+                try
+                {
+                    _stateService.SetValue(
+                        WebUiConstants.CurrentAffiliate,
+                        _orderManagementService.GetAffiliateByIdLoaded(loadAff, a => a.WebUser)
+                        );
+                }
+                catch (Exception exception)
+                {
+                    ILog logger = LogManager.GetLogger(typeof(MonitorAffiliateFilter));
+                    logger.ErrorFormat("ERROR: failed to load idAff code: {0}", HttpContext.Current.Request.Url);
+                    logger.Error(exception.Message);
+                    _stateService.SetValue(
+                        WebUiConstants.CurrentAffiliate,
+                        _orderManagementService.GetAffiliateByIdLoaded(19, a => a.WebUser)
+                        );
 
-                //}
+                }
             }
             else
             {

@@ -833,6 +833,30 @@ namespace CUWebinars.Web.Helpers
 
         }
 
+        public string ReplaceMergeCodes(string copy, Affiliate aff)
+        {
+            copy = copy.Replace("{aff_EmailBanner}", aff.EmailBanner);
+            copy = copy.Replace("{aff_EmailFooter}", aff.EmailFooter);
+            copy = copy.Replace("{aff_ttsdomain}", aff.ttsDomain);
+            copy = copy.Replace("{aff_idUserAff}", aff.idUserAff.ToString());
+            //copy = copy.Replace("{aff_timeZone}", aff.timeZone);
+            copy = copy.Replace("{aff_ContactPerson}", aff.ContactPerson);
+            copy = copy.Replace("{aff_NotiPromos}", aff.NotiPromos);
+            copy = copy.Replace("{aff_ContactPhone}", aff.ContactPhone);
+            //copy = copy.Replace("{aff_ContactPhone}", aff.ContactPhone);
+
+            return copy;
+
+        }
+
+        public string ReplaceTimeString(Webinar webinar, USTimeZone timeZone)
+        {
+          return  "<i>" + DateTimeHelper.FormatTime(webinar.Date, timeZone, false) +
+                " - " +
+                DateTimeHelper.FormatTime(
+                    webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
+        }
+
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {
             if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");

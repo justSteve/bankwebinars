@@ -52,15 +52,7 @@ namespace CUWebinars.Business.Notification.Handlers
                 // parse potential multiple emails, concept from http://stackoverflow.com/questions/14689044/regex-split-on-comma-space-or-semi-colon-delimitted-string
                 char[] delimiters = new[] { ',', ';', ' ' };  // List of your delimiters
                 List<string> addressess = sendPerDayPromoEvent.EventObject.Affiliate.NotiPromos.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).ToList();
-                //var sbListOfRecpt = new StringBuilder();
 
-                //var sendToEmails = "\"all.of.us@ttstrain.com\", \"" + sendPerDayPromoEvent.EventObject.Affiliate.NotiPromos.Replace(",", "\",\"") + "\"";
-
-                //foreach (var address in addressess)
-                //{
-                //    sbListOfRecpt.Append("'" + address + "',");
-                //}
-                
                 if (addressess.Count > 0)
                 {
                     notificationMessage.To = addressess[0];

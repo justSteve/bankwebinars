@@ -1465,10 +1465,12 @@ namespace CUWebinars.Web.Core.Orchestrators
         public LoginModel BuildLoginModel(string returnUrl)
         {
             var urlHelper = new UrlHelper(_request.RequestContext);
-
+            var sessionOrigin = _appHelper.GetUserAuditInfo();
+            
             var loginModel = new LoginModel
             {
                 FindLinkModel = new FindLinkModel(),
+                AccountInfoModel = new AccountInfoModel(),
                 SignIn = new SignInModel(),
                 ResetPassword = new ResetPasswordModel(),
                 Register = new RegisterViewModel

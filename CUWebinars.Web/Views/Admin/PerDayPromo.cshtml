@@ -63,7 +63,7 @@
     var _subject = "ANNOUNCING: @Model.Webinar.Title";
     var _testEmails = "all.of.us@ttstrain.com,";
     var valOfStatus = "@Model.Webinar.Status";
-
+    
     $(document)
         .ready(function() {
 
@@ -100,7 +100,7 @@
 
                     @foreach (var aff in Model.Affiliates)
                     {
-                        <li id="li_@aff.idUserAff"><a href="#na" class="removeCamp" id="e_@aff.idUserAff" data-link-affid="@aff.idUserAff">-</a><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
+                        <li id="li_@aff.idUserAff"><input type="checkbox" class="removeCamp" id="e_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
                     }
                 </ul>
                 <ul id="showCampaign" class="nav nav-pills nav-stacked" style="display: none; margin: 0; padding: 0;">
@@ -108,7 +108,7 @@
 
                     @foreach (var aff in Model.Affiliates.Where(a => a.idMailChimpList != null))
                     {
-                        <li id="li_@aff.idUserAff"><a href="#na" class="removeCamp" id="r_@aff.idUserAff" data-link-affid="@aff.idUserAff">-</a><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
+                        <li id="li_@aff.idUserAff"><input type="checkbox"  class="removeCamp" id="r_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
                     }
                 </ul>
             </div>

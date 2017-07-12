@@ -347,7 +347,7 @@ namespace CUWebinars.Web
                     //StateService.SetValue(WebUiConstants.SubdomainBranding, ConfigurationManager.AppSettings[AppConst.TESTING_URL]);  //TODO: [dar] I think this can be deleted
 
                     //following are values to be stored for audit purposes.
-                    if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null)
+                    if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null && HttpContext.Current.Request.UrlReferrer.ToString().ToLower().Contains("webinars"))
                         StateService.SetValue(WebUiConstants.SubdomainBranding,
                             HttpContext.Current.Request.UrlReferrer.ToString().Trim());
 
@@ -366,14 +366,14 @@ namespace CUWebinars.Web
 
                             if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                             {
-                                //Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser);
                                 Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
 
                                 if (!ReferenceEquals(foundAff, null))
                                 {
                                     StateService.SetValue(WebUiConstants.CurrentAffiliate,
                                         affiliateRepository.FindByIdWithIncluding(loadAff));
-                                    //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
+                                    StateService.SetValue("AffiliateSessionSource", "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff));
+
                                     logger.Info(string.Format("Resolving Affiliate via query string with id {0}",
                                         loadAff));
 
@@ -383,22 +383,6 @@ namespace CUWebinars.Web
                                     logger.Info(SessionStartError + "failed to load idAff code: " +
                                                 HttpContext.Current.Request.Url);
                                 }
-                                //    tries to lighten the expense of session start by removing try/catch
-                                //try
-                                //{
-                                //    StateService.SetValue("AffiliateSessionSource", WebUiConstants.AffiliateId + Pipe + loadAff);
-                                //    // determine the current affiliate
-                                //    StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(loadAff, a => a.WebUser));
-                                //    logger.Info(string.Format("Resolving Affiliate via query string with id {0}", loadAff));
-
-                                //}
-                                //catch (Exception ex)
-                                //{
-                                //    logger.Fatal(ex);
-                                //    logger.Info(SessionStartError + "failed to load idAff code: " +
-                                //                HttpContext.Current.Request.Url.ToString());
-                                //    throw;
-                                //}
                             }
                             else
                             {
@@ -487,7 +471,7 @@ namespace CUWebinars.Web
                     StateService.SetValue(WebUiConstants.FirstCookies, allCookies.ToString());
                     if (User.Identity.IsAuthenticated)
                     {
-                        logger.Info("{\"Name\": \"" + User.Identity.Name
+                        logger.Info("Authenticated Session Starts with: {\"Name\": \"" + User.Identity.Name
                                     + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
                                     + "\", \"QueryString\": \"" +
                                     StateService.GetValue<string>(WebUiConstants.InitialQueryString)
