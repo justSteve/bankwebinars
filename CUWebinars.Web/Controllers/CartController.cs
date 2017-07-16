@@ -227,7 +227,9 @@ namespace CUWebinars.Web.Controllers
                             createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
 
 
-                    if (model.Webinar.Title.Contains("Compliance Perspectives"))
+                    if (model.Webinar.Title.Contains("Compliance Perspectives")
+                    //test if CP code needs to be created by ensuring it's not a trial
+                    && row.RowPrice > 200)
                         if (model.Order.OrderRows != null)
                         {
                             _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(
@@ -354,12 +356,7 @@ namespace CUWebinars.Web.Controllers
                 sendToAddresses = sendToAddresses + "; " + hasCc;
             }
             var affiliateAddresses = order.Affiliate.NotiOrders.Replace(',', ';');
-            //if (_globalConfig.Tenant == "DirectorSeries")
-            //{
-            //    _logger.Info("ConfirmOrder: " + order.idOrder + "  DES Subscription is building");
-            //    _cartControllerOrchestrator.BuildOrderSubmitted2DESNotification(order);
 
-            //}
 
             if (User.Identity.IsAuthenticated)
             {
@@ -376,10 +373,8 @@ namespace CUWebinars.Web.Controllers
                     , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
                 _cartControllerOrchestrator.FireMandrillNotificationEvent(
                     affiliateAddresses
-                    , "Order Placed For " + row.Webinar.Title, orderConfirmString);
+                    , "Order Placed For " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
 
-                //deprecate v1 version of notifications
-                //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
             }
             else
             {
@@ -399,9 +394,9 @@ namespace CUWebinars.Web.Controllers
 
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
                         affiliateAddresses
-                        , "Order Placed For " + row.Webinar.Title, orderConfirmString);
+                        , "Order Placed For " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
 
-                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                    
                 }
                 else
                 {
@@ -418,9 +413,8 @@ namespace CUWebinars.Web.Controllers
 
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
                         affiliateAddresses
-                        , "Order Placed For " + row.Webinar.Title, orderConfirmString);
+                        , "Order Placed For " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
 
-                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: true);
                 }
             }
         }
@@ -519,7 +513,9 @@ namespace CUWebinars.Web.Controllers
                         createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
 
 
-                    if (row.Webinar.Title.Contains("Compliance Perspectives"))
+                    if (row.Webinar.Title.Contains("Compliance Perspectives")
+                    //test if CP code needs to be created by ensuring it's not a trial
+                        && row.RowPrice > 200)
                         _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
 
 
@@ -1550,6 +1546,35 @@ namespace CUWebinars.Web.Controllers
         }
 
 
+        [HttpPost]
+        public JsonResult SendHardcopy(int idOrder)
+        {
+            var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+            var updateCaption = "Problem updating the order.";
+
+            try
+            {
+                var sendHardcopy = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).SendHardcopy;
+                if (sendHardcopy.HasValue)
+                    if (sendHardcopy.Value == true)
+                    {
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).SendHardcopy = false;
+                        updateCaption = "Order is updated to not send hardcopies.";
+                    }
+                    else
+                    {
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).SendHardcopy = true;
+                        updateCaption = "Order is updated to send hardcopies.";
+                    }
+                _cartControllerOrchestrator.SaveOrder(order);
+            }
+            catch (Exception)
+            {
+                return Json(new { Result = WebUiConstants.Fail, UpdateCaption = updateCaption });
+            }
+
+            return Json(new { Result = WebUiConstants.Success, UpdateCaption = updateCaption });
+        }
         public ActionResult Resume(int id)
         {
             if (Request.IsAuthenticated)
@@ -2013,7 +2038,9 @@ namespace CUWebinars.Web.Controllers
                         createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
 
 
-                    if (row.Webinar.Title.Contains("Compliance Perspectives"))
+                    if (row.Webinar.Title.Contains("Compliance Perspectives")
+                    //test if CP code needs to be created by ensuring it's not a trial
+                        && row.RowPrice > 200)
                         _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
 
                     if (!multi)

@@ -33,7 +33,7 @@ namespace CUWebinars.Web.ViewModel
         public string UserDetails { get; set; }
         public string UserFullname { get; set; }
         public UserType UserType { get; set; }
-
+        public bool SendHardcopy { get; set; }
         //public Order Order { get; set; }
 
     }

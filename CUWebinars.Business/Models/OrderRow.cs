@@ -30,6 +30,7 @@ namespace CUWebinars.Business.Models
 
         public virtual ICollection<AdditionalLocation> AdditionalLocation { get; set; }
         public virtual Order Order { get; set; }
+        public bool? SendHardcopy { get; set; }
         public virtual Webinar Webinar { get; set; }
     }
 }

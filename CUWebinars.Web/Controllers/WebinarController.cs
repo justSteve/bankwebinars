@@ -1307,49 +1307,18 @@ namespace CUWebinars.Web.Controllers
                         var _ccAddresses = _orderManagementService.OrderHasCc(order);
                         if (_ccAddresses != null)
                             ccAddresses = _ccAddresses.Split(',').ToList();
-
+                        bool sendHardcopy = !(orderRow.SendHardcopy.HasValue && orderRow.SendHardcopy.Value == false);
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
-                            //AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
-                            //{
-                            //    Email = webUser.email,
-                            //    FirstName = webUser.FirstName,
-                            //    idUser = webUser.idUser,
 
-                            //    LastName = webUser.LastName,
-                            //    Title = webUser.Title,
-                            //    Institution = orderRow.Order.Institution,
-                            //    BillingAddress = new AddressModel()
-                            //    {
-                            //        TypeOfAddress = AddressType.Billing,
-                            //        StreetAddress = order.BillingAddress,
-                            //        StreetAddress2 = order.BillingAddress2,
-                            //        City = order.BillingCity,
-                            //        Name = order.FirstName + ' ' + order.LastName,
-                            //        Phone = order.BillingPhone,
-                            //        State = order.BillingState,
-                            //        Zip = order.BillingZip
-                            //    },
-                            //    ShippingAddress = new AddressModel()
-                            //    {
-                            //        TypeOfAddress = AddressType.Shipping,
-                            //        StreetAddress = order.ShippingAddress,
-                            //        StreetAddress2 = order.ShippingAddress2,
-                            //        City = order.ShippingCity,
-                            //        Name = order.FirstName + ' ' + order.LastName,
-                            //        Phone = order.ShippingPhone,
-                            //        State = order.ShippingState,
-                            //        Zip = order.ShippingZip
-                            //    }
-                            //},
-                            //Affiliate = aff,
                             AdminComments = order.AdminComments,
                             //AffiliateComments = model.Order.AffiliateComments,
                             //CCUserDetails = "",
                             CheckoutDiscountCode =
                                 orderRow.Discount == null ? string.Empty : orderRow.Discount.DiscountCode,
+                            SendHardcopy = sendHardcopy,
                             DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                             {
                                 Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
@@ -1612,14 +1581,15 @@ namespace CUWebinars.Web.Controllers
             model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                 new DisplayRowPriceViewModel
                 {
-            //Discount = row.Discount,
-            NumberOfAdditionalLocations = orderRowForOrder.AdditionalLocation.Count(),
+                    //Discount = row.Discount,
+                    NumberOfAdditionalLocations = orderRowForOrder.AdditionalLocation.Count(),
                     OrderStatus = orderRowForOrder.Order.OrderStatus,
-            //Price = Convert.ToDecimal(row.RegistrationType.Price),
-            PricesAndDiscounts =
+                    //Price = Convert.ToDecimal(row.RegistrationType.Price),
+                    PricesAndDiscounts =
                         _orderManagementService.CalculateOrderCost(orderRowForOrder.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
-            //RowPrice = row.RowPrice,
-            RegistrationType = orderRowForOrder.RegistrationType
+                    //RowPrice = row.RowPrice,
+                    RegistrationType = orderRowForOrder.RegistrationType,
+                    SendHardcopy = true
                 };
 
             // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
@@ -1764,14 +1734,15 @@ namespace CUWebinars.Web.Controllers
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                         new DisplayRowPriceViewModel
                         {
-                    //Discount = row.Discount,
-                    NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
+                            //Discount = row.Discount,
+                            NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
                             OrderStatus = row.Order.OrderStatus,
-                    //Price = Convert.ToDecimal(row.RegistrationType.Price),
-                    PricesAndDiscounts =
+                            //Price = Convert.ToDecimal(row.RegistrationType.Price),
+                            PricesAndDiscounts =
                                 _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing),
-                    //RowPrice = row.RowPrice,
-                    RegistrationType = row.RegistrationType
+                            //RowPrice = row.RowPrice,
+                            RegistrationType = row.RegistrationType,
+                            SendHardcopy = true
                         };
 
                     // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel

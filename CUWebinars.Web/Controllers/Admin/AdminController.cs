@@ -2099,7 +2099,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
 
-                
+
                 var segment = await manager.ListSegments.GetAllAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
                 var _segment = segment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
                 if (_segment != null)
@@ -2109,7 +2109,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     //    await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
                     //        _segment.Id.ToString(), new QueryableBaseRequest
                     //        {
-                                
+
                     //        }).ConfigureAwait(false);
 
                     //if (segmentMembers.Any())

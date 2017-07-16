@@ -209,8 +209,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         if (row.Webinar.SeriesInfo == "DES")
                             desCheckout = true;
+                        bool sendHardcopy = true;
+                        if (row.SendHardcopy.HasValue && row.SendHardcopy.Value == false)
+                            sendHardcopy = false;
                         var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
+                            SendHardcopy = sendHardcopy,
                             DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(row),
                             AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
@@ -520,7 +524,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
                         //RowPrice = orderRow.RowPrice,
-                        RegistrationType = orderRow.RegistrationType
+                        RegistrationType = orderRow.RegistrationType,
+                        SendHardcopy = true
                     };
 
                     _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
@@ -865,21 +870,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                     form.DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
                         PricesAndDiscounts = displayRowPriceViewModel,
-                        //Discount = orderRow.Discount,
-                        //NumberOfAdditionalLocations = additionalLocationsCount,
-                        //OrderStatus = expressOrder.OrderStatus,
-                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
-
                         RegistrationType = orderRow.RegistrationType,
-                        //RowPrice = orderRow.RowPrice
+                        SendHardcopy = true
                     };
 
                 }
 
-                //_orderManagementService.FireOrderSubmittedEvent(expressOrder, userCreatedByCheckout);
-
-                //expressOrder.idOrderLegacy = _orderManagementService.SynchExpressCheckoutOrder(expressOrder);
-                //_orderManagementService.SaveChanges();
                 return form;
 
             }
@@ -1208,134 +1204,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _orderManagementService.UserHasMultipleEvents(order.idUser);
         }
 
-        public string BuildOrderSubmitted2DESNotification(Order order)
-        {
-
-            OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-
-            Discount desSub = new Discount
-            {
-                DiscountType = DiscountType.DirectorSeries,
-                DateValidTo = order.OrderDate.AddYears(1),
-                DateValidFrom = order.OrderDate,
-                Cost = row.RowPrice,
-                DateBilled = DateTime.UtcNow,
-                DateVerified = DateTime.Now,
-                DiscountCode = "DES" + order.idOrder,
-                FlatOff = 0,
-                Notes = "V3 entry",
-                PercentOff = 0,
-                RenewalTerm = 1,
-                Status = "Active",
-                TotalCount = 1,
-                idAffiliate = order.idAffiliate,
-                idDiscount = order.idOrder
-
-            };
-            row.Discount = desSub;
-
-            _orderManagementService.SaveOrderChanges(order, null, null);
-
-            Webinar webinar = row.Webinar;
-            DocumentModel document =
-                DocumentModel.Load(
-                    System.Web.HttpContext.Current.Server.MapPath(
-                        @"~/App_Data/mergeTemplates/OrderSubmittedDES.docx"));
-
-
-            string theOrderSummary = "";
-            string regDesc = "";
-
-
-            var dsMergeFields = new
-            {
-                AttendType = row.RegistrationType.OptionLabelShort,
-                RegDesc = order.FirstName + " " + order.LastName + "<br>" + order.Institution + "<br>" + order.BillingCity + ", " + order.BillingState,
-                TenantSignature = "The " + _globalConfig.Tenant + " Staff",
-                OrderID = row.idOrder,
-                BillingEmail = order.BillingEmail,
-                TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
-                OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
-                LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
-                TenantName = _globalConfig.Tenant,
-                WebinarTitle = webinar.Title,
-                FirstName = order.FirstName
-
-            };
-
-            document.MailMerge.Execute(dsMergeFields);
-
-
-            bool noError = true;
-            try
-            {
-                if (noError)
-                {
-                    _logger.Info("BuildOrderSubmitted2DES begins: " + order.idOrder);
-
-                    //// SAVE LOCALLY if needed for easier testing
-                    //document.Save(System.Web.HttpContext.Current.Server.MapPath(@"~/App_Data/mergeTemplates/" + order.idOrder + ".pdf"), SaveOptions.PdfDefault);
-
-                    var storageCredentials = new StorageCredentials(_globalConfig.StorageAccountName,
-                        _globalConfig.StorageAccessKey);
-
-                    var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
-                    CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
-
-                    // Retrieve reference to a previously created container.
-                    CloudBlobContainer container = blobClient.GetContainerReference("desregistrations");
-                    container.CreateIfNotExists();
-
-                    CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");
-
-                    using (MemoryStream output = new MemoryStream())
-                    {
-                        document.Save(output, SaveOptions.PdfDefault);
-                        output.Position = 0; // reset to beginning so Upload operation can work correctly
-                        blob.UploadFromStream(output);
-                    }
-
-                    //blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".gif");
-                    //using (MemoryStream output = new MemoryStream())
-                    //{
-                    //    document.Save(output, new ImageSaveOptions() { Format = ImageSaveFormat.Gif});
-                    //    output.Position = 0; // reset to beginning so Upload operation can work correctly
-                    //    blob.UploadFromStream(output);
-                    //}
-
-                    blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
-                    using (MemoryStream output = new MemoryStream())
-                    {
-                        document.Save(output, new HtmlSaveOptions() { EmbedImages = true });
-                        output.Position = 0; // reset to beginning so Upload operation can work correctly
-                        blob.UploadFromStream(output);
-                    }
-
-                    byte[] fileContents;
-                    using (MemoryStream output = new MemoryStream())
-                    {
-                        document.Save(output, SaveOptions.HtmlDefault);
-                        output.Position = 0; // reset to beginning so Upload operation can work correctly
-
-                        fileContents = output.ToArray();
-                    }
-                    _orderManagementService.FireMandrillNotificationEvent(ConfigurationManager.AppSettings["TestEmailAddress"], "Welcome To The Director Series", System.Text.Encoding.UTF8.GetString(fileContents));
-                    return System.Text.Encoding.UTF8.GetString(fileContents);
-                }
-                else
-                {
-                    https://ci4.googleusercontent.com/proxy/AOF0zatzFSovHlWus8P1dHxNNFo0tLbt-mot0d9e-Of2y7-y9OixCjE7b48XZyxMDreHdAqWirQiZ5bnZNro7z99YsBEbeXmAtMPk4wXt_4cag5u=s0-d-e1-ft#http://devholmen15:3538/Content/images/vrLocal/left_shadow.jpg
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorException("BuildOrderSubmitted2DES for: " + order.idOrder, ex);
-                return "Error: " + ex.Message;
-            }
-
-        }
-
         public string BuildOrderSubmitted2Notification(Order order)
         {
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
@@ -1343,7 +1211,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
 
-            if (!account.HasClaim(ClaimTypes.FullName))
+            if (!account.HasClaim(ClaimTypes.FullName) && _globalConfig.Tenant != "DirectorSeries")
             {
                 SendAccountCreatedConfirmation(order);
             }
@@ -1394,8 +1262,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                     FirstName = order.FirstName
 
                 };
-
-
             }
 
             if (row.Webinar.Title.Contains("Compliance Perspectives"))
@@ -1425,19 +1291,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                     CloudBlobContainer container = blobClient.GetContainerReference("order-submitted");
                     container.CreateIfNotExists();
 
-                    CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".pdf");
-
-                    using (MemoryStream output = new MemoryStream())
-                    {
-                        document.Save(output, SaveOptions.PdfDefault);
-                        output.Position = 0; // reset to beginning so Upload operation can work correctly
-                        blob.UploadFromStream(output);
-
-
-                    }
-
-
-                    blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
+                    CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
+                    if (_globalConfig.Tenant == "DirectorSeries")
+                        blob = container.GetBlockBlobReference(order.idOrder + ".htm");
                     using (MemoryStream output = new MemoryStream())
                     {
                         document.Save(output, new HtmlSaveOptions() { EmbedImages = true });
@@ -1518,9 +1374,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _logger.ErrorException("SendAccountCreatedConfirmation for: " + order.idOrder, ex);
 
             }
-
-            _logger.Error("SendAccountCreatedConfirmation: " + order.idOrder);
-
         }
 
 
@@ -1533,8 +1386,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)
         {
 
-                _orderManagementService.FireMandrillNotificationEvent(emails, subjectLine, orderConfirmString);
-            
+            _orderManagementService.FireMandrillNotificationEvent(emails, subjectLine, orderConfirmString);
+
         }
 
         public void SaveOrder(Order order)

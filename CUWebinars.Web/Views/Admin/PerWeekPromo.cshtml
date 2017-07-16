@@ -94,20 +94,20 @@
 
         <div class="row-fluid">
             <div class="span2" style="height:98%; overflow: auto;">
-                <ul id="showAll" class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;">
+                <ul id="showAll" class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;  ">
                     <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
 
                     @foreach (var aff in Model.Affiliates)
                     {
-                        <li><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain - @aff.idUserAff</a></li>
+                        <li id="li_@aff.idUserAff"><input type="checkbox" class="removeCamp" id="e_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
                     }
                 </ul>
-                <ul id="showCampaign" class="nav nav-pills nav-stacked" style=" display: none; margin: 0; padding: 0;">
+                <ul id="showCampaign" class="nav nav-pills nav-stacked" style="display: none; margin: 0; padding: 0;">
                     <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
 
                     @foreach (var aff in Model.Affiliates.Where(a => a.idMailChimpList != null))
                     {
-                        <li><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain - @aff.idUserAff</a></li>
+                        <li id="li_@aff.idUserAff"><input type="checkbox" class="removeCamp" id="r_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
                     }
                 </ul>
             </div>
@@ -130,6 +130,7 @@
                                 <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
 
                                 <button id="sendAll" class="button btn btn-small">Send@(isAffiliateRestricted ? " Affiliate" : " All")</button>
+                                <button id="generateAll" class="button btn btn-small">Generate All</button>
                             }
                         </p>
                         <p>

@@ -174,6 +174,7 @@ $(function () {
 
 
     cartStateManager.SetCartState();
+    $('#SendHardcopy').on('click', applySendHardcopy);
 
     $("[id^='regTypeID_']").on("click", function (oEvent) {
         cartStateManager.CheckIfAddLocShouldHide(oEvent.currentTarget.value);
@@ -594,6 +595,42 @@ var deleteAddLocInputTabb3 = function (event) {
     //        $(this).remove();
     //    });
     //}
+};
+
+var applySendHardcopy = function (e) {
+    
+    e.preventDefault();
+    var self = $(this);
+
+    console.log(self);
+
+    var url = "/cart/SendHardcopy";
+    
+    var formData = {
+        idOrder: cartStateManager.getOrderId(),
+    };
+
+    $.ajax({
+        type: 'POST',
+        contentType: RegistrationInCart.Constants.FormPostContentType,
+        cache: false,
+        url: url,
+        dataType: RegistrationInCart.Constants.JsonDataType,
+        data: formData,
+        beforeSend: function () {
+            self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+        }
+    }).done(function (data) {
+        if (data) {
+            console.log(data);
+            $('#flyUpdateSuccessFlag').html(data.UpdateCaption).show();
+            alert(data.UpdateCaption);
+            
+        } else {
+            alert("Failed to update");
+        }
+        $('#waitSpinner').remove();
+    });
 };
 
 var applyCcLocations = function (e) {
