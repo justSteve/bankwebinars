@@ -422,7 +422,7 @@ function setUpEditButtons() {
         e.preventDefault();
 
         var newId;
-        console.log(numberOfCcLocationsTab3);
+        //console.log(numberOfCcLocationsTab3);
         if (numberOfCcLocationsTab3 === 0) {
 
             if ($("#cCLocationsList").length === 1) {
@@ -443,7 +443,7 @@ function setUpEditButtons() {
             var lastInput = $("#cCLocationsList").find('input[type="email"]:last');
             // get its id
 
-            console.log(lastInput);
+            //console.log(lastInput);
             var lastInputId = lastInput.attr('id');
             var id = parseInt(lastInputId.charAt(lastInputId.length - 1));
             newId = id + 1;
@@ -726,8 +726,9 @@ var deleteCcLocInputTab3 = function (event) {
 
     var trashClicked = event.currentTarget.id;
     var idx = trashClicked.substring(0, 1);
-    var spanToRemove = "cCLocationSpan"  + idx;
-
+    var spanToRemove = "CcLocationSpan-"  + idx;
+    console.log(spanToRemove);
+    
     $('#' + spanToRemove).hide(500, function () {
         $(this).remove();
     });

@@ -1371,7 +1371,7 @@ namespace CUWebinars.Web.Controllers
                                 }
                             },
                             OrderRowExists = true,
-                            OrderRowHasId = true,
+                            OrderRowHasId = order.idOrder,
                             OrderStatus = order.OrderStatus, //OrderStatus.InProcess,
                             Origin = model.Order.Origin,
                             UserComments = model.Order.UserComments,

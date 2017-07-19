@@ -21,7 +21,7 @@ namespace CUWebinars.Web.ViewModel
         public bool OrderExists { get; set; }
         public AdditionalLocationsViewModel AdditionalLocationsViewModel { get; set; }
         public bool OrderRowExists { get; set; }
-        public bool OrderRowHasId { get; set; }
+        public int OrderRowHasId { get; set; }
         public OrderStatus OrderStatus { get; set; }
         public string Origin { get; set; }
         public Affiliate Affiliate { get; set; }

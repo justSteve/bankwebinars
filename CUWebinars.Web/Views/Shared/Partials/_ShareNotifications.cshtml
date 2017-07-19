@@ -35,7 +35,7 @@
                     ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(addresses.ToString());
                     if (!ReferenceEquals(null, ccEmailAddresses))
                     {
-                        <span>You are currently sharing this order's notifications with <b>@ccEmailAddresses[0]</b></span>
+                        <span>You are currently sharing this order's notifications with <b>@Html.Raw(addresses.ToString().Replace(",","<br>"))</b></span>
                     }
                     else
                     {
@@ -44,6 +44,7 @@
                             <span class="input-append">
                                 <input type="text" id="addresses_@Model.idOrder" placeholder="Email Address" class="span9" name="addresses" />
                                 <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                                <input type="hidden" value="cc" name="idOrder" />
                                 <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Submit</button>
                             </span>
                             <div id="shareFormCaption" style="text-align: center;">

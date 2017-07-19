@@ -282,7 +282,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             OrderExists = row.Order != null,
                             AdditionalLocationsViewModel = additionalLocationsViewModel,
                             OrderRowExists = true,
-                            OrderRowHasId = true,
+                            OrderRowHasId = order.idOrder,
                             OrderStatus = order.OrderStatus,
                             Origin = order.Origin,
                             UserComments = order.UserComments,
@@ -297,10 +297,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                         if (checkoutConfirmViewModel.OrderRowExists)
                         {
                             if (row.idOrder > 0)
-                                checkoutConfirmViewModel.OrderRowHasId = true;
-
-                            if (checkoutConfirmViewModel.OrderRowHasId)
+                            {
+                                checkoutConfirmViewModel.OrderRowHasId = row.idOrder;
                                 checkoutConfirmViewModel.OptionLabel = row.RegistrationType.OptionLabel;
+                            }
+                            else
+                            {
+                                checkoutConfirmViewModel.OrderRowHasId = 0;
+                            }
                         }
 
                         if (Request["referred"] != null &&

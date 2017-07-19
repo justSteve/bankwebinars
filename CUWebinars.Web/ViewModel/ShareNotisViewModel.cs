@@ -7,7 +7,7 @@ namespace CUWebinars.Web.ViewModel
     {
         public string addresses { get; set; }
         public int idOrder { get; set; }
-        public NotiType NotiType { get; set; }
+        //public NotiType NotiType { get; set; }
     }
 
     public enum NotiType

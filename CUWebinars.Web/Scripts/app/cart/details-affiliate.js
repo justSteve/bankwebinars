@@ -47,58 +47,58 @@ OCA.initializeFunctions = function () {
 
     $('#fireConnInfoSender').on('click', function (eventArgs) {
 
-            var payload = { webinarId: currentWebinarId };
-            eventArgs.preventDefault();
-            console.log(eventArgs);
-            //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
-            //logStartOperation("Sending ConnectionInfo", null, true);
+        var payload = { webinarId: currentWebinarId };
+        eventArgs.preventDefault();
+        console.log(eventArgs);
+        //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
+        //logStartOperation("Sending ConnectionInfo", null, true);
 
-            $.ajax({
-                type: 'POST',
-                contentType: constants.JsonContentType,
-                cache: false,
-                url: '/Webinar/SendConnectionInfo',
-                dataType: constants.JsonDataType,
-                data: JSON.stringify(payload),
-                beforeSend: function() {
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: '/Webinar/SendConnectionInfo',
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
 
-                    $('#fireConnInfoSender')
-                        .prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                $('#fireConnInfoSender')
+                    .prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
 
-                }
-            }).done(function(result) {
+            }
+        }).done(function (result) {
 
-                labelCheckRemove();
+            labelCheckRemove();
 
-                if (result.Result === 'Success') {
-                    var listOfOrders = OCA.ordersForConnInfoSender.toString();
-                    console.log(listOfOrders);
-                    listOfOrders = listOfOrders.replace(",", ", ");
-                    $('#SenderSummary').append("Presenter notification sent to: " +
-                        result.PresenterNotified +
-                        "</br><p>Full listing of orders to be sent: <br>" +
-                        listOfOrders +
-                        "</p><div id='showSenderResults'></div>");
-                    OCA.SendConnectionInfoToUser();
+            if (result.Result === 'Success') {
+                var listOfOrders = OCA.ordersForConnInfoSender.toString();
+                console.log(listOfOrders);
+                listOfOrders = listOfOrders.replace(",", ", ");
+                $('#SenderSummary').append("Presenter notification sent to: " +
+                    result.PresenterNotified +
+                    "</br><p>Full listing of orders to be sent: <br>" +
+                    listOfOrders +
+                    "</p><div id='showSenderResults'></div>");
+                OCA.SendConnectionInfoToUser();
 
-                    $('#InputFormFields')
-                        .append('<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;Messsage Sent</span>');
-                } else if (result.Result === 'No Orders to send for that webinar') {
-                    $('#InputFormFields').append(noOrdersScreenMessage);
-                }
+                $('#InputFormFields')
+                    .append('<br /><span id="ScreenMessageSpan" class="label label-success">&nbsp;Messsage Sent</span>');
+            } else if (result.Result === 'No Orders to send for that webinar') {
+                $('#InputFormFields').append(noOrdersScreenMessage);
+            }
 
-            }).fail(function(jqXHR, textStatus, errorThrown) {
+        }).fail(function (jqXHR, textStatus, errorThrown) {
 
-                labelCheckRemove();
+            labelCheckRemove();
 
-                $('#InputFormFields').append(failedScreenMessage);
-                //Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
-                //Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
+            $('#InputFormFields').append(failedScreenMessage);
+            //Rollbar.error({ 'oen-#23': { 'statusCode': jqXHR && jqXHR.statusCode().status } });
+            //Rollbar.error({ 'oen-#24': { 'errorThrown': errorThrown } });
 
-            }).always(function() {
-                $('#loadingSpinner').remove();
-            });
-        
+        }).always(function () {
+            $('#loadingSpinner').remove();
+        });
+
     });
     $('#doNotPromoteButton').on("click", function () {
 
@@ -140,7 +140,7 @@ OCA.initializeFunctions = function () {
     $("#sendConnInfoOrders").on('shown', (function () {
 
         if ($("#submitSendConnInfo").html() == "Audit Connection Checklist Results") {
-            
+
             $("#SenderSummary").hide();
         } else {
 
@@ -153,11 +153,11 @@ OCA.initializeFunctions = function () {
                 url: '/Webinar/SendConnectionInfoPrep',
                 dataType: constants.JsonDataType,
                 data: payload,
-                beforeSend: function() {
+                beforeSend: function () {
                     $(self)
                         .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Building Prep...</span></span>');
                 }
-            }).done(function(result) {
+            }).done(function (result) {
 
                 if (result.Result === 'Success') {
 
@@ -172,9 +172,9 @@ OCA.initializeFunctions = function () {
                 $('#spinnerLabel').remove();
 
 
-            }).fail(function() {
+            }).fail(function () {
 
-            }).always(function() {
+            }).always(function () {
                 //$('#loadingSpinner').remove();
             });
         }
@@ -390,15 +390,16 @@ OCA.initializeFunctions = function () {
             $('#AdjustDiscount').slideToggle();
         });
 
-        $('#revealAddLocsPanel').on('click', function (e) {
-            e.preventDefault();
+        $('#revealAddLocsPanel').on('click', function () {
+            //alert("stop");
+            //e.preventDefault();
             $('#AdjustAddLoc').slideToggle();
         });
         $('#editUserDetails').on('click', function (e) {
             e.preventDefault();
             $('#AdjustUserDetails').slideToggle(400, function () { $('#editUserResult').remove(); });
         });
-
+        
         $('#SubmitUserDetailEdits').on('click', function (e) {
 
             e.preventDefault();
@@ -550,6 +551,54 @@ OCA.initializeFunctions = function () {
         //        $(this).remove();
         //    });
         //}
+    };
+
+    OCA.applyCcLocations = function (e) {
+
+        e.preventDefault();
+
+        var self = $(this);
+
+        var adjustCcLocsForm = $('#AdjustCcLocsForm');
+
+        var url = adjustCcLocsForm.attr('action');
+        var addresses = "";
+        $.each(adjustCcLocsForm.find('input[type="email"]'), function () {
+            addresses += $(this).val() + ",";
+        });
+
+        var formData = {
+            idOrder: cartStateManager.getOrderId(),
+            addresses: addresses
+        };
+
+        $.ajax({
+            type: 'POST',
+            contentType: RegistrationInCart.Constants.FormPostContentType,
+            cache: false,
+            url: url,
+            dataType: RegistrationInCart.Constants.JsonDataType,
+            data: formData,
+            beforeSend: function () {
+                self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+            }
+        }).done(function (data) {
+
+            if (data) {
+                console.log(data);
+
+                var alertCaption = data.UpdateCaption;
+                $('#flyUpdateSuccessFlag').html(data.UpdateCaption).show();
+
+                alert(alertCaption);
+
+                $("#AdjustAddLoc").slideToggle();
+            } else {
+                alert("failed to add");
+                var a = 'holder';
+            }
+            $('#waitSpinner').remove();
+        });
     };
 
     OCA.applyAdditionalLocations = function (e) {

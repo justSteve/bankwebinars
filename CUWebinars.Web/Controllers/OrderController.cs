@@ -607,7 +607,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (idRegType == 0)
                 {
-                    _logger.Fatal(string.Format("idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};",
+                    _logger.Fatal(string.Format("ImportOrder  | idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};",
                         importedOrder.RegistrationType, importedOrder.Email, importedOrder.OrderDate));
                     return
                         Json(
@@ -1001,6 +1001,12 @@ namespace CUWebinars.Web.Controllers
                 {
                     if (mandrillEvent.msg.email != null)
                     {
+                        _logger.Info("ReplyToHandler is hit");
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            "e6a68209.ttstrain.com@amer.teams.ms",
+                            //order.BillingEmail,
+                            "A reply to a notification", mandrillEvent.msg.text);
+
                         string[] splitIncoming = Regex.Split(mandrillEvent.msg.text, "From:");
                         var userMsg = splitIncoming[0];
 

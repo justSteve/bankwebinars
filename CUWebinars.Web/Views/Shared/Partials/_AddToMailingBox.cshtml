@@ -5,32 +5,36 @@
     var url = "";
     if (@ConfigurationManager.AppSettings["Tenant"] == "BankWebinars")
     {
-        url = "http://form.jotformpro.com/form/43463497084968?yourEmail21=";
+        url = "http://eepurl.com/cQV2f5";
     }
     if (@ConfigurationManager.AppSettings["Tenant"] == "CUWebinars")
     {
-        url = "http://form.jotform.us/form/32764012877155?yourEmail21=";
+        url = "http://eepurl.com/cQe9Gf";
 
     }
 
 }
 
 <script language="javascript" type="text/javascript">
+    $('#getEmailForMC').on('click', function (e) {
+        e.preventDefault();
+        window.open('@url', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+    });
+
     function openJWindow() {
-        window.open('@url' + $("#getEmail").val(), 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
+        window.open('@url', 'blank', 'scrollbars=yes,toolbar=no,width=700,height=500');
     }
 </script>
 
 <section>
     <p style="font-size: small;">
         Learn about upcoming events.<br />
-        @*<form action="/account/addtomailing" method="post">*@
+        
         <span class="input-append">
-            <input type="email" id="getEmail" placeholder="Email Address" class="span6" name="email" />
+            <input type="email" id="getEmailForMC" placeholder="Email Address" class="span6" name="email" />
             <button onclick="javascript: openJWindow();" class="btn btn-primary">Sign Up</button>
 
-        </span>
-        @*</form>*@<br />
+        </span><br />
         (We <i>will not</i> share your email address.)
     </p>
 </section>

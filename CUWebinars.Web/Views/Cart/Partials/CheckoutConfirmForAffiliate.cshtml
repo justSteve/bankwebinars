@@ -12,13 +12,14 @@
             isAdmin = true;
         }
     }
-
+    var orderRowID = 0;
+    var orderID = 0;
     if (Model.OrderExists)
     {
-        var orderRowID = 0;
-        var orderID = 0;
-        if (Model.OrderRowExists && Model.OrderRowHasId)
+
+        if (Model.OrderRowExists && Model.OrderRowHasId > 0)
         {
+            orderID = Model.OrderRowHasId;
             if (Model.OrderStatus != OrderStatus.Error)
             {
                 <b>Please review this order summary and choose billing method.</b>
@@ -70,16 +71,33 @@
                 </div>
                 <div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
-                        <div id="additionalLocationsCaption" class="clear pull-right">
-                            Additional Locations: <button id="addAnotherAddLoc" class="btn btn-mini">add</button>
+                        <div id="additionalLocationsCaption">
+
+                            <b>Additional Locations: </b><i>(@Model.AdditionalLocationsViewModel.OptionsCost.ToString("C0")) </i><button id="addAnotherAddLoc" class="btn btn-mini">add</button>
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
+                                <span>Need to support multiple branches? Each address entered here creates a new Connection Link billable at @Model.AdditionalLocationsViewModel.OptionsCost.ToString("C0").</span>
                                 <div id="additionalLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.AdditionalLocationsRenderer)</div>
                             }
                         </div>
+                        <div id="cCLocationsCaption">
+
+                            <h5 class="short_headline"><span>Share Connection Info</span></h5>
+                            @{ Html.RenderPartial("Partials/_ShareNotifications", model: new Order {idOrder =orderID });}
+                            @*<b>Share Connection Info: </b><i>(not billable)</i>  <button id="addCcLoc" class="btn btn-mini">add</button>
+                            @using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "AdjustCcLocsForm", @class = "form-horizontal" }))
+                            {
+                                <span>In the event that a co-worker will be the one actually connecting to the webinar this form will share the connection information with the given address. </span>
+                                <input type="hidden" value="@Model.OrderExists" name="idOrder" />
+                                <div id="cCLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.CcLocationsRenderer)</div>
+                            }*@
+                        </div>
                     </div>
+
                 </div>
+
+
                 <div id="AdjustOrder" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="RegTypeChanger" class="clear pull-right">
