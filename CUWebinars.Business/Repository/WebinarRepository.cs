@@ -363,7 +363,8 @@ namespace CUWebinars.Business.Repository
                             || o.OrderStatus == OrderStatus.Paid
                             || o.OrderStatus == OrderStatus.Submitted
                             || o.OrderStatus == OrderStatus.OutstandingBalance
-                            || o.OrderStatus == OrderStatus.AwaitingVerification)
+                            //|| o.OrderStatus == OrderStatus.AwaitingVerification
+                            )
                             ).Select(o => o.idOrder).ToList();
         }
 

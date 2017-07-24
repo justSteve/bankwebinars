@@ -1014,7 +1014,7 @@ namespace CUWebinars.Web.Controllers
                         if (idOrder != "")
                         {
                             _orderManagementService.FireMandrillNotificationEvent(
-                                "e6a68209.ttstrain.com@amer.teams.ms",
+                                "2afda898.ttstrain.com@amer.teams.ms",
                                 //order.BillingEmail,
                                 "A reply to a notification - orderId" + idOrder, mandrillEvent.msg.text);
                         }
@@ -1022,7 +1022,7 @@ namespace CUWebinars.Web.Controllers
                         {
 
                             _orderManagementService.FireMandrillNotificationEvent(
-                                "e6a68209.ttstrain.com@amer.teams.ms",
+                                "2afda898.ttstrain.com@amer.teams.ms",
                                 //order.BillingEmail,
                                 "A reply to a notification" , mandrillEvent.msg.text);
                         }
