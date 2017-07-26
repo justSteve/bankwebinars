@@ -323,7 +323,7 @@ namespace CUWebinars.Web.Controllers
 
             if (eventsToShow == "des")
             {
-                webinars = _webinarManagementService.GetDesWebinars().OrderByDescending(w => w.Date);
+                webinars = _webinarManagementService.GetDesWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date);
                 ViewBag.Title = "All Director Education Series Courses";
                 return View("~/Views/Webinar/AllActiveDes.cshtml", webinars);
             }

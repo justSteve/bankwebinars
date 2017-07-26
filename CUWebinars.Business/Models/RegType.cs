@@ -18,39 +18,60 @@ namespace CUWebinars.Business.Models
         {
             get
             {
-                //return this.OptionLabel.Replace(" Package", "").Replace("Live Plus Six", "Live+6").Replace(" and Hardcopy Handouts", "").Replace(" Recording Only", "").Replace(" Plus Five", "+5");
-                // from EditOrder_Compact.cshtml...
-                var abbvLable = "";
-                if (this.OptionLabel.StartsWith("Live Plus Five"))
+                if (OptionLabel.StartsWith("Live Plus Five"))
                 {
-                    abbvLable = "Live";
-                }                
-                if (this.OptionLabel.StartsWith("Live+5"))
-                {
-                    abbvLable = "Live";
+                    return "Live";
                 }
-                if (this.OptionLabel.StartsWith("Live Plus Six"))
+                if (OptionLabel.StartsWith("Live+5"))
                 {
-                    abbvLable = "Live Plus OnDemand";
+                    return "Live";
                 }
-                if (this.OptionLabel.StartsWith("OnDemand"))
+                if (OptionLabel.StartsWith("Live Plus Six"))
                 {
-                    abbvLable = "OnDemand";
+                    return "Live Plus OnDemand";
                 }
-                if (this.OptionLabel.StartsWith("6-"))
+                if (OptionLabel.StartsWith("OnDemand"))
                 {
-                    abbvLable = "OnDemand";
+                    return "OnDemand";
                 }
-                if (this.OptionLabel.StartsWith("CD"))
+                if (OptionLabel.StartsWith("6-"))
                 {
-                    abbvLable = "CD-ROM";
+                    return "OnDemand";
                 }
-                if (this.OptionLabel.StartsWith("Premier"))
+                if (OptionLabel.StartsWith("CD"))
                 {
-                    abbvLable = "Premier";
+                    return "CD-ROM";
+                }
+                if (OptionLabel.StartsWith("Premier"))
+                {
+                    return "Premier";
+                }
+                if (OptionLabel.StartsWith("Non"))
+                {
+                    return "Non-bank or < 499M";
                 }
 
-                return abbvLable;
+                if (OptionLabel.StartsWith("$50"))
+                {
+                    return "$500M - 999M";
+                }
+
+                if (OptionLabel.StartsWith("$1 "))
+                {
+                    return "$1 - 5B";
+                }
+
+                if (OptionLabel.StartsWith("$5 "))
+                {
+                    return "$5 - 10B";
+                }
+
+                if (OptionLabel.StartsWith(">"))
+                {
+                    return "> 10B - $850";
+                }
+                return "UnKnown";
+
             }
         }
         public decimal CreditCost { get; set; }
@@ -67,7 +88,7 @@ namespace CUWebinars.Business.Models
         public string Stage2EmailConfirmationMsg { get; set; }
         //public virtual ICollection<OptionsXref> OptionsXrefs { get; set; }
         //public virtual ICollection<AdditionalLocation> AdditionalLocation { get; set; }
-        
-        
+
+
     }
 }

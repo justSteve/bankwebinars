@@ -1007,25 +1007,17 @@ namespace CUWebinars.Web.Controllers
                             //order.BillingEmail,
                             "A reply to a notification", mandrillEvent.msg.text);
 
-                        string[] splitIncoming = Regex.Split(mandrillEvent.msg.text, "From:");
-                        var userMsg = splitIncoming[0];
+                        //string[] splitIncoming = Regex.Split(mandrillEvent.msg.text, "From:");
+                        //var userMsg = splitIncoming[0];
 
-                        var idOrder = Regex.Match(splitIncoming[1], @"(?<=\bOrder ID:\s+)\p{L}+").Groups[1].Value;
-                        if (idOrder != "")
-                        {
-                            _orderManagementService.FireMandrillNotificationEvent(
-                                "2afda898.ttstrain.com@amer.teams.ms",
-                                //order.BillingEmail,
-                                "A reply to a notification - orderId" + idOrder, mandrillEvent.msg.text);
-                        }
-                        else
-                        {
-
-                            _orderManagementService.FireMandrillNotificationEvent(
-                                "2afda898.ttstrain.com@amer.teams.ms",
-                                //order.BillingEmail,
-                                "A reply to a notification" , mandrillEvent.msg.text);
-                        }
+                        //var idOrder = Regex.Match(splitIncoming[1], @"(?<=\bOrder ID:\s+)\p{L}+").Groups[1].Value;
+                        //if (idOrder != "")
+                        //{
+                        //    _orderManagementService.FireMandrillNotificationEvent(
+                        //        "2afda898.ttstrain.com@amer.teams.ms",
+                        //        //order.BillingEmail,
+                        //        "A reply to a notification - orderId" + idOrder, mandrillEvent.msg.text);
+                        //}
                     }
                 }
                 

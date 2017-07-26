@@ -107,7 +107,7 @@ namespace CUWebinars.Web.Controllers
 
         public string GetDesModules()
         {
-            var desWebinars = _webinarRepository.GetDes().OrderByDescending(w => w.Date).Take(8).ToList();
+            var desWebinars = _webinarRepository.GetDes().Where(w => w.idWebinar != 2485 ).OrderByDescending(w => w.Date).Take(8).ToList();
 
             var recordedWebinarsListItems = new StringBuilder();
 

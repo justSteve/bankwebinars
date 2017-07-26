@@ -1215,7 +1215,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
 
-            if (!account.HasClaim(ClaimTypes.FullName) && _globalConfig.Tenant != "DirectorSeries")
+            if ( _globalConfig.Tenant != "DirectorSeries" && !account.HasClaim(ClaimTypes.FullName) && _globalConfig.Tenant != "DirectorSeries")
             {
                 SendAccountCreatedConfirmation(order);
             }
@@ -1254,7 +1254,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 fields = new NotificationMessageFields
                 {
                     AttendType = row.RegistrationType.OptionLabelShort,
-                    RegDesc = order.FirstName + " " + order.LastName + "<br>" + order.Institution + "<br>" + order.BillingCity + ", " + order.BillingState,
+                    RegDesc = order.FirstName + " " + order.LastName + "<br>" + order.Institution + "<br>" + order.BillingCity + ", " + order.BillingState + "<br>Subscription Tier: " + row.RegistrationType.OptionLabelShort,
                     TenantSignature = "The " + _globalConfig.Tenant + " Staff",
                     OrderID = row.idOrder,
                     BillingEmail = order.BillingEmail,
