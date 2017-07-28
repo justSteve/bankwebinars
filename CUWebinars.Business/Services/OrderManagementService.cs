@@ -2263,7 +2263,7 @@ namespace CUWebinars.Business.Services
                 ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(_addresses);
             }
 
-            return string.Join(",", ccEmailAddresses);
+            return string.Join(";", ccEmailAddresses);
 
 
 

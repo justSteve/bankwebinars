@@ -209,12 +209,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                         if (row.Webinar.SeriesInfo == "DES")
                             desCheckout = true;
-                        bool sendHardcopy = true;
+                        bool SendHardcopy = false;
                         if (row.SendHardcopy.HasValue && row.SendHardcopy.Value == false)
-                            sendHardcopy = false;
+                            SendHardcopy = false;
                         var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
-                            SendHardcopy = sendHardcopy,
+                            SendHardcopy = SendHardcopy,
                             DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(row),
                             AdjustUserDetailsPanel = new AdjustUserDetailsEditModel
@@ -529,7 +529,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
                         //RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType,
-                        SendHardcopy = true
+                        SendHardcopy = false
                     };
 
                     _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
@@ -875,7 +875,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     {
                         PricesAndDiscounts = displayRowPriceViewModel,
                         RegistrationType = orderRow.RegistrationType,
-                        SendHardcopy = true
+                        SendHardcopy = false
                     };
 
                 }

@@ -43,7 +43,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string NotiResults = "NotiResults";
         public static readonly string SendConnectionChecklist = "SendConnectionChecklist";
         public static readonly string SpecialMessage = "SpecialMessage";
-
+        public static readonly string AddBillingEmail = "AddBillingEmail";
         
     }
 }

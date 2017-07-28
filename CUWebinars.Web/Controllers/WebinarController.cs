@@ -1589,7 +1589,7 @@ namespace CUWebinars.Web.Controllers
                         _orderManagementService.CalculateOrderCost(orderRowForOrder.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
                     //RowPrice = row.RowPrice,
                     RegistrationType = orderRowForOrder.RegistrationType,
-                    SendHardcopy = true
+                    SendHardcopy = false
                 };
 
             // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
@@ -1742,7 +1742,7 @@ namespace CUWebinars.Web.Controllers
                                 _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing),
                             //RowPrice = row.RowPrice,
                             RegistrationType = row.RegistrationType,
-                            SendHardcopy = true
+                            SendHardcopy = false
                         };
 
                     // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel

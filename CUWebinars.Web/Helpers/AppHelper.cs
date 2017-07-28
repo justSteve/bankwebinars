@@ -738,15 +738,15 @@ namespace CUWebinars.Web.Helpers
 
             if (order.OrderStatus == OrderStatus.Paid)
             {
-                fields.PaymentCaption = "Thank you for your payment!";
+                fields.PaymentCaption = "";
             }
             else
             {
                 if (row.Webinar.Status == WebinarStatus.Recorded)
                 {
                     fields.PaymentCaption =
-                        "Though payment at this time is not required (we'll be happy to invoice you at " + order.BillingEmail +
-                        ") if you wish to pay by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                        "We will be sending an invoice to " + order.BillingEmail +
+                        ". If you wish to pay by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
                         "'> click here.</a>" +
                         " Is someone else in your organization responsible for payments? <a href='" +
                         TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" +
@@ -761,21 +761,26 @@ namespace CUWebinars.Web.Helpers
                         " Is someone else in your organization responsible for payments? <a href='" +
                         TenantURL + "/Order/AddBillingEmail?idOrder=" + order.idOrder + "'>" +
                         "Enter their email here</a> and we will send the required information directly.";
-
                 }
             }
 
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
-                    "Your registration includes access to the recording and handouts for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM and printouts of the event's materials. <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                    "'>" + "We'll be happy to adjust your registration.</a> ";
+                    "Your registration includes access to the recording and handouts for five (5) business days. You can upgrade your order to gain 6 months OnDemand access - or get the Premier Package which includes a CD-ROM. <a href='" +
+                    TenantURL + "/Resume/" + order.idOrder +
+                    "'>" + " We'll be happy to adjust your registration.</a> ";
             }
             else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
-                    "Your registration includes access to the recording and handouts for six (6) months but does not include a CD-ROM or printouts.  <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                    "'>" + "You can still upgrade to the Premier Package.</a>";
+                    "Your registration includes access to the recording and handouts for six (6) months. <a href='" +
+                    TenantURL + "/Resume/" + order.idOrder +
+                    "'>" + " You can still upgrade your order to include the CD-ROM.</a>";
+            }
+            if (row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+            {
+                fields.RegDesc = " Your CD-ROM will ship in 5-7 business days. Your registration also includes access to the recording and handouts for six (6) months.";
             }
 
             if (row.AdditionalLocation != null)
@@ -851,10 +856,10 @@ namespace CUWebinars.Web.Helpers
 
         public string ReplaceTimeString(Webinar webinar, USTimeZone timeZone)
         {
-          return  "<i>" + DateTimeHelper.FormatTime(webinar.Date, timeZone, false) +
-                " - " +
-                DateTimeHelper.FormatTime(
-                    webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
+            return "<i>" + DateTimeHelper.FormatTime(webinar.Date, timeZone, false) +
+                  " - " +
+                  DateTimeHelper.FormatTime(
+                      webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
         }
 
         public static string[] AddNonvalidToArray(string[] zipCentricFields)

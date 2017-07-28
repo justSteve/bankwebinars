@@ -44,6 +44,7 @@
                             <span class="input-append">
                                 <input type="text" id="addresses_@Model.idOrder" placeholder="Email Address" class="span9" name="addresses" />
                                 <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                                <input type="hidden" value="/Account/ShareNotifications" class="source" />
                                 <input type="hidden" value="cc" name="idOrder" />
                                 <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Submit</button>
                             </span>
@@ -60,6 +61,7 @@
                         <span class="input-append">
                             <input type="text" id="getEmail" placeholder="Email Address" class="span9" name="addresses" />
                             <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                            <input type="hidden" value="/Account/ShareNotifications" class="source" />
                             <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Send</button>
                         </span>
                         <div id="caption" style="text-align: center;">

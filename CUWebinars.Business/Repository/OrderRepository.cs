@@ -109,7 +109,7 @@ namespace CUWebinars.Business.Repository
                 // The RowPrice is just the starting point. The full price for an 
                 // order is calculated in CalculateOrderCost of the OrderManagementService
                 newOrderRow.RowPrice = Convert.ToDecimal(newOrderRow.RegistrationType.Price);
-                newOrderRow.SendHardcopy = true;
+                newOrderRow.SendHardcopy = false;
                 return newOrderRow;
 
             }

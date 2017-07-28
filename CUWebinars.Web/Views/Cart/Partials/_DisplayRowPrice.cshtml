@@ -126,14 +126,14 @@
 
         if (Model.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
         {
-            if (Model.SendHardcopy)
-            {
-                rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. <input type=\"checkbox\" id=\"SendHardcopy\" checked=@Model.SendHardcopy data-SendHarCopy=\"\"/></div>");
-            }
-            else
-            {
-                rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. <input type=\"checkbox\" id=\"SendHardcopy\" checked=@Model.SendHardcopy data-SendHarCopy=\"\"/></div>");
-            }
+            //if (Model.SendHardcopy)
+            //{
+            //    rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. <input type=\"checkbox\" id=\"SendHardcopy\" checked=@Model.SendHardcopy data-SendHardCopy=\"\"/></div>");
+            //}
+            //else
+            //{
+            rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. <input type=\"checkbox\" id=\"SendHardcopy\" checked=@Model.SendHardcopy data-SendHardCopy=\"\"/></div>");
+            //}
         }
 
         rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id=optionLabel>"

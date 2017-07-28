@@ -559,8 +559,8 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/_EditNameTitle", model);
         }
 
-        //[System.Web.Mvc.HttpPost]
-        //[HandleAjaxException]
+        [System.Web.Mvc.AllowAnonymous]
+        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public JsonResult ShareNotifications(ShareNotisViewModel shareNotis)
         {
             var order = _orderManagementService.GetOrderById(shareNotis.idOrder);
@@ -578,7 +578,7 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "CC List Failed!" });
             }
 
-            return Json(new { Result = WebUiConstants.Success, UpdateCaption = "CC List is Updated." });
+            return Json(new { Result = WebUiConstants.Success, UpdateCaption = "CC list is updated to include: " + shareNotis.addresses });
         }
 
         [System.Web.Mvc.HttpPost]
@@ -1045,7 +1045,7 @@ namespace CUWebinars.Web.Controllers
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(order, orderRow.Webinar.AdditionalLocationPrice),
                         RegistrationType = orderRow.RegistrationType,
-                        SendHardcopy = true
+                        SendHardcopy = false
                         //RowPrice = orderRow.RowPrice
                     },
                     Discount = discount,

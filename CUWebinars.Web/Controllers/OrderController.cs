@@ -24,6 +24,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models.Importers;
+using CUWebinars.Web.ViewModel;
 using DDay.iCal;
 using Newtonsoft.Json.Linq;
 
@@ -905,21 +906,27 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
-        public ActionResult AddBillingEmail(string emailToAdd, int idOrder)
+        public ActionResult AddBillingEmail(ShareNotisViewModel shareNotis)
         {
 
-            var order = _orderManagementService.GetOrderById(idOrder);
+            var order = _orderManagementService.GetOrderById(shareNotis.idOrder);
+            try
+            {
+                var newJson = new JProperty(JsonPropertyKeys.AddBillingEmail, shareNotis.addresses);
+                order.UserComments = JsonHelpers.ReplaceJsonWithStoredField(order.UserComments, newJson, JsonPropertyKeys.AddBillingEmail);
 
-            if (order != null)
-            {
-                _logger.Info("AddBilling Email of:" + order.BillingEmail + " to: " + order.idOrder);
-                //
-                return Json(new { Result = "Success. Future billing notifications will include <b>" + emailToAdd + ".</b>" }, JsonRequestBehavior.AllowGet);
+                _orderManagementService.SaveChanges();
+                _orderManagementService.FireMandrillNotificationEvent(
+                    "e6a68209.ttstrain.com@amer.teams.ms",
+                    //order.BillingEmail,
+                    "Add Billing Email " + shareNotis.addresses + " on order " + shareNotis.idOrder, "Add Billing Email " + shareNotis.addresses + " on order " + shareNotis.idOrder);
             }
-            else
+            catch (Exception)
             {
-                return Json(new { Result = "0" }, JsonRequestBehavior.AllowGet);
+                return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Update Failed!" });
             }
+
+            return Json(new { Result = WebUiConstants.Success, UpdateCaption = "Future billing related notifications will include " + shareNotis.addresses + "." });
 
         }
         [AllowAnonymous]
@@ -1020,7 +1027,7 @@ namespace CUWebinars.Web.Controllers
                         //}
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {

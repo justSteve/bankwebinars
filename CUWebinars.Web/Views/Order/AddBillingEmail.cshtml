@@ -3,6 +3,8 @@
 @using CUWebinars.Web.Core
 @using Newtonsoft.Json.Linq
 @model Order
+<script language="javascript" src="~\Scripts/app/mywebinars/share-notis.js" type="text/javascript"></script>
+
 <div class="hero-unit">
     <div id="webinarTitle" class="container">
         <div class="span10">
@@ -14,9 +16,6 @@
     ViewBag.Title = "Email for Billing";
 
     Layout = "~/Views/Shared/_LayoutPublic.cshtml";
-    <script  language="javascript" type="text/javascript">
-        $("#shareFormCaption").html("<p>Enter the email you would like to share billing notifications with.</p>")
-    </script>
 
     <div class="container clearfix" id="main-content">
         <!--begin main content-->
@@ -24,7 +23,29 @@
             <div class="span6 offset2">
                 <aside class="widget">
                     <h5 class="short_headline"><span>Add Email To Invoice Notifications</span></h5>
-                    @{Html.RenderPartial("Partials/_ShareNotifications");}
+
+                    <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                    <div id="ShareContainer" style="padding: 12px;" class="well-large">
+                        <section>
+                            <div style="font-size: small;">
+                                @{
+                                    using (Html.BeginForm("AddBillingEmail", "Order", FormMethod.Post, new { id = "shareInfoForm_" + Model.idOrder, @class = "form-horizontal" }))
+                                    {
+                                        <span class="input-append">
+                                            <input type="text" id="getEmail" placeholder="Email Address" class="span9" name="addresses" />
+                                            <input type="hidden" value="@Model.idOrder" name="idOrder" />
+                                            <input type="hidden" value="/Order/AddBillingEmail" class="source" />
+
+                                            <button id="submitThis_@Model.idOrder" class="submitThis btn btn-primary">Send</button>
+                                        </span>
+                                        <div id="caption" style="text-align: center;">
+                                            Enter the email you would like to share billing notifications with.
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </section>
+                    </div>
                 </aside>
             </div>
         </div>

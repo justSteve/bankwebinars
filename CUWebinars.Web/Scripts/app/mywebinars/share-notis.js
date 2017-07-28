@@ -12,11 +12,12 @@ $(document).ready(function () {
         var self = $(this);
         e.preventDefault();
         e.stopImmediatePropagation();
-
         var payload = {
             addresses: $(this).siblings(".span9").val(),
-            idOrder: this.id.split('_')[1]
+            idOrder: this.id.split('_')[1],
+            source: $(this).siblings(".source").val()
         };
+        console.log("this source " + payload.source)
         if (!isValidEmailAddress(payload.addresses)) {
 
             var hasMulti = payload.addresses.split(',');
@@ -40,16 +41,16 @@ $(document).ready(function () {
 });
 
 function postAddress(payload, e) {
-    //var self = $(this);
-    //e.preventDefault();
-    //e.stopImmediatePropagation();
-    console.log(e);
+    var self = $(this);
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    console.log(payload.source);
     $.ajax({
         type: 'POST',
 
         contentType: constants.JsonContentType,
         cache: false,
-        url: '/Account/ShareNotifications',
+        url: payload.source,
         dataType: constants.JsonDataType,
         data: JSON.stringify(payload),
         beforeSend: function () {
@@ -61,16 +62,10 @@ function postAddress(payload, e) {
         .done(function (data) {
             if (data.Result === "Success") {
 
-                alert("Submission was successful. " +
-                    payload.addresses +
-                    " will receive future notifications on this order.");
-                //$(self).find('addSpinner').remove();
+                alert(data.UpdateCaption);
 
-                //$(self["#caption"]).html('<span>Notifications will be CCed to ' +
-                //    payload.addresses +
-                //    '</span>');
             } else {
-                alert("serverFail");
+                alert("Action Failed");
 
                 //$(self["#caption"]).html('<span>Notifications are CCed to</span>');
             }
