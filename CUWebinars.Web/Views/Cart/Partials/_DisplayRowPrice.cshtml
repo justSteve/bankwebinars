@@ -11,7 +11,9 @@
         var outerSpan = new TagBuilder("span");
         outerSpan.GenerateId("discountedText");
 
-
+        var cbSendHardcopy = "";
+        if (Model.SendHardcopy)
+            cbSendHardcopy = "checked";
         var totalDiscountElement = new TagBuilder("span");
         totalDiscountElement.GenerateId("totalDiscount");
         totalDiscountElement.SetInnerText(Model.PricesAndDiscounts.TotalDiscount.ToString(CurrencyFormatToken));
@@ -132,7 +134,7 @@
             //}
             //else
             //{
-            rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. <input type=\"checkbox\" id=\"SendHardcopy\" checked=@Model.SendHardcopy data-SendHardCopy=\"\"/></div>");
+            rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. <input type=\"checkbox\" id=\"SendHardcopy\" @cbSendHardcopy data-SendHardCopy=\"\"/></div>");
             //}
         }
 

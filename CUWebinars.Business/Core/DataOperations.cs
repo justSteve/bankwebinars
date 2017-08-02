@@ -1273,6 +1273,7 @@ namespace CUWebinars.Business.Core
                         var BioLongParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@BiographyLong", Value = newPresenter.BiographyLong };
                         var PhotoFullParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PhotoFull", Value = newPresenter.PhotoFull };
                         var PhotoThumbParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@PhotoThumb", Value = newPresenter.PhotoThumb };
+                        var EmailParam = new SqlParameter { SqlDbType = SqlDbType.VarChar, ParameterName = "@Email", Value = newPresenter.Email };
 
                         updatePresenter.Parameters.Add(IDUserParam);
                         updatePresenter.Parameters.Add(BioParam);
@@ -1280,6 +1281,7 @@ namespace CUWebinars.Business.Core
                         updatePresenter.Parameters.Add(PhotoFullParam);
                         updatePresenter.Parameters.Add(PhotoThumbParam);
 
+                        updatePresenter.Parameters.Add(EmailParam);
                         result = (int)updatePresenter.ExecuteScalar();
                     }
                     catch (Exception ex)

@@ -356,7 +356,10 @@ namespace CUWebinars.Web.Controllers
                 sendToAddresses = sendToAddresses + "; " + hasCc;
             }
             var affiliateAddresses = order.Affiliate.NotiOrders.Replace(',', ';');
-
+#if DEBUG
+            sendToAddresses = ConfigurationManager.AppSettings["TestEmailAddress"];
+            affiliateAddresses = ConfigurationManager.AppSettings["TestEmailAddress"];
+#endif
 
             if (User.Identity.IsAuthenticated)
             {
@@ -420,7 +423,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult ConfirmOrderForAffiliate(string referred, int? id = null, bool? adminCreatedWebUser = null)
+        public ActionResult ConfirmOrderForAffiliate(string sendHardcopy, int? id = null, bool? adminCreatedWebUser = null)
         {
             if (ModelState.IsValid)
             {
@@ -479,31 +482,7 @@ namespace CUWebinars.Web.Controllers
 
                     model.Order.Origin = DomainConstants.CartByAffiliate;
 
-
-                    //if (Request.IsAuthenticated && !adminCreatedWebUser.HasValue)
-                    //{
-                    var sendToAddresses = model.Order.BillingEmail;
-                    var hasCc = _cartControllerOrchestrator.OrderHasCc(model.Order);
-                    if (hasCc != null)
-                    {
-                        sendToAddresses = sendToAddresses + "; " + hasCc;
-                    }
-                    var orderConfirmString = _cartControllerOrchestrator.BuildOrderSubmitted2Notification(model.Order);
-
-                    orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
-                        _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(model.Webinar), null);
-
-                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                       sendToAddresses //ConfigurationManager.AppSettings["TestEmailAddress"]
-                        , "Confirmation of Registration for " + model.Webinar.Title, orderConfirmString);
-
-                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: false);
-                    //}
-                    //    else
-                    //    {
-                    //    _cartControllerOrchestrator.FireOrderSubmittedNotification(model.Order, userCreatedInCart: true);
-                    //}
-
+                    _SendOrderConfirmation2(model.Order.idOrder);
 
                     var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 

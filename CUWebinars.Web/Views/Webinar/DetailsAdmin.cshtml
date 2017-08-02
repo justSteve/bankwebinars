@@ -117,7 +117,7 @@
                     </ul>
 
                     @{
-                    <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName</span></h5>
+                        <h5 class="short_headline"><span>@Model.Webinar.Presenter.WebUser.FullName (<a href="@globalConfig.TenantURL/Account/EditPresenter/@Model.Webinar.Presenter.idUser">edit</a>)</span></h5>
                     <div class="PresenterBio">@Html.Raw(Model.Webinar.Presenter.BiographyLong)</div>
                     @Html.Partial("Partials/_OtherEventsBySpeaker")
                     }

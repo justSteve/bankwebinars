@@ -71,7 +71,6 @@
             <ul class="nav nav-tabs">
 
                 <li><a href="#Name" data-toggle="tab">Name</a></li>
-                <li><a href="#Summary" data-toggle="tab">Summary</a></li>
                 <li><a href="#Bio" data-toggle="tab">Bio</a></li>
                 <li><a href="#Web" data-toggle="tab">Photo</a></li>
                 <li><a href="#Thumb" data-toggle="tab">Thumbnail</a></li>
@@ -85,13 +84,6 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="Summary">
-                <div class="control-label">Bio - Email</div>
-                <div class="controls">
-                    @Html.EditorFor(model => model.BioShort)
-                    @Html.ValidationMessageFor(model => model.BioShort)
-                </div>
-            </div>
             <div class="tab-pane active" id="Name">
 
                 @Html.LabelFor(model => model.WebUser.email, new { @class = "control-label" })

@@ -2,7 +2,8 @@
     @using (Html.BeginForm("confirmOrderForAffiliate", "Cart", null, FormMethod.Post, new { id = "confirmOrderForAffiliateForm" }))
     {
         @Html.AntiForgeryToken()
-        
+
+        <input type="hidden" id="frmSendHardcopy"  name="sendHardcopy" />
         <input type="hidden" name="id" />
         <input type="hidden" id="userCreatedByAdmin" name="adminCreatedWebUser" value="" />
         <div class="modal-header">

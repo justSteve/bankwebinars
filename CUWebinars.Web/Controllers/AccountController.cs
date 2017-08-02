@@ -1263,7 +1263,8 @@ namespace CUWebinars.Web.Controllers
                         BiographyLong = model.EditFields.BioLong,
                         Biography = model.EditFields.BioShort,
                         PhotoFull = model.EditFields.PhotoFull,
-                        PhotoThumb = model.EditFields.PhotoThumb
+                        PhotoThumb = model.EditFields.PhotoThumb,
+                        Email = model.EditFields.WebUser.email
                     };
 
                     var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
@@ -1272,39 +1273,7 @@ namespace CUWebinars.Web.Controllers
                     var results = Json(new { Result = WebUiConstants.Success });
                     if (UpdatePresenterBySproc == 0)
                         results = Json(new { Result = WebUiConstants.Fail });
-                    var user = _membershipService.GetWebUserById(model.EditFields.WebUser.idUser);
 
-                    try
-                    {
-                        if (user.email != model.WebUser.email || user.FirstName != model.WebUser.FirstName ||
-                            user.Initial != model.WebUser.Initial || user.LastName != model.WebUser.LastName ||
-                            user.Institution.InstitutionName != model.WebUser.Institution.InstitutionName)
-                            _membershipService.UpdateUserDetails(_globalConfig.Tenant,
-                                model.EditFields.WebUser.FirstName, model.EditFields.WebUser.LastName, user.email,
-                                model.EditFields.WebUser.Institution.InstitutionName,
-                                user.Addresses.SingleOrDefault(a => a.AddressType == "Billing"),
-                                user.Addresses.SingleOrDefault(a => a.AddressType == "Shipping"), model.WebUser.Title,
-                                user.SageAccountId, (int)model.WebUser.timeZone);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.ErrorException("In EditPresenter DETAILS: ", ex);
-
-                        results = Json(new { Result = WebUiConstants.Fail });
-                    }
-
-                    try
-                    {
-                        if (user.email != model.EditFields.WebUser.email)
-                            _membershipService.UpdateUserEmail(user.email, model.WebUser.email, _globalConfig.Tenant);
-
-                        results = Json(new { Result = WebUiConstants.Fail });
-                    }
-                    catch (Exception ex)
-                    {
-
-                        _logger.ErrorException("In EditPresenter EMAIL: ", ex);
-                    }
 
                     return results;
                 }
