@@ -399,7 +399,7 @@ OCA.initializeFunctions = function () {
             e.preventDefault();
             $('#AdjustUserDetails').slideToggle(400, function () { $('#editUserResult').remove(); });
         });
-        
+
         $('#SubmitUserDetailEdits').on('click', function (e) {
 
             e.preventDefault();
@@ -687,11 +687,7 @@ OCA.initializeFunctions = function () {
 
             e.preventDefault();
 
-            $('frmSendHardcopy').val($('#SendHardcopy').val());
-            alert($('#SendHardcopy').val());
             var confirmOrderForm = $('#confirmOrderForAffiliateForm');
-            
-            console.log(confirmOrderForm);
             confirmOrderForm.submit();
         });
 
@@ -737,7 +733,7 @@ OCA.initializeFunctions = function () {
         var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
         OCA.cartStateManager.getConfirmOrderForm().on('submit', function (e) {
-            
+
             e.preventDefault();
 
             if (OCA.selectedWebUserInput.val() == OCA.adminCreatedUserInput.val()) {
@@ -748,7 +744,7 @@ OCA.initializeFunctions = function () {
             self.find('input[name="id"]').val(OCA.cartStateManager.getOrderRowId());
             var data = $(this).serialize();
             confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-            
+
             $.ajax({
                 type: 'POST',
                 contentType: constants.FormPostContentType,

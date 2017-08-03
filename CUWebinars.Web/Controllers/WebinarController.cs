@@ -39,6 +39,7 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Bugsnag.Clients;
 using Citrix.GoToWebinar.Api;
 using Citrix.GoToWebinar.Api.Model;
 using CUWebinars.Business.Notification.ViewModel;
@@ -743,7 +744,8 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int? id, int? idOrder, string joinCode)
         {
-
+            //WebMVCClient.Notify(new ArgumentException("Non-fatal"));
+            //client.Notify(new ArgumentException("Non-fatal"));
             if (_globalConfig.Tenant == "DirectorSeries")
             {
                 _stateService.SetValue(WebUiConstants.DesSession, "true");
@@ -1589,7 +1591,8 @@ namespace CUWebinars.Web.Controllers
                         _orderManagementService.CalculateOrderCost(orderRowForOrder.Order, orderRowForOrder.Webinar.AdditionalLocationPrice),
                     //RowPrice = row.RowPrice,
                     RegistrationType = orderRowForOrder.RegistrationType,
-                    SendHardcopy = false
+                    SendHardcopy = orderRowForOrder.SendHardcopy != null && orderRowForOrder.SendHardcopy.Value,
+                    idOrder = orderRowForOrder.idOrder
                 };
 
             // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel
@@ -1742,7 +1745,8 @@ namespace CUWebinars.Web.Controllers
                                 _orderManagementService.CalculateOrderCost(row.Order, additionalLocationsPricing),
                             //RowPrice = row.RowPrice,
                             RegistrationType = row.RegistrationType,
-                            SendHardcopy = false
+                            SendHardcopy = row.SendHardcopy != null && row.SendHardcopy.Value,
+                            idOrder = row.idOrder
                         };
 
                     // populate AdditionalLocationOfferViewModel and AdditionalLocationAddViewModel

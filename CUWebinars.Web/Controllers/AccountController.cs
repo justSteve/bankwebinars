@@ -1045,7 +1045,8 @@ namespace CUWebinars.Web.Controllers
                         PricesAndDiscounts =
                             _orderManagementService.CalculateOrderCost(order, orderRow.Webinar.AdditionalLocationPrice),
                         RegistrationType = orderRow.RegistrationType,
-                        SendHardcopy = false
+                        SendHardcopy = orderRow.SendHardcopy != null && orderRow.SendHardcopy.Value,
+                        idOrder = order.idOrder
                         //RowPrice = orderRow.RowPrice
                     },
                     Discount = discount,

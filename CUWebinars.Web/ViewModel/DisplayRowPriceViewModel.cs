@@ -6,6 +6,8 @@ namespace CUWebinars.Web.ViewModel
 {
     public class DisplayRowPriceViewModel
     {
+        public int idOrder { get; set; }
+
         //public Discount Discount { get; set; }
         public int NumberOfAdditionalLocations { get; set; }
         public string AddressesForAdditionalLocations { get; set; }

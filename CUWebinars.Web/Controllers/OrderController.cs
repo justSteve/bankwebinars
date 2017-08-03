@@ -608,8 +608,12 @@ namespace CUWebinars.Web.Controllers
 
                 if (idRegType == 0)
                 {
-                    _logger.Fatal(string.Format("ImportOrder  | idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};",
-                        importedOrder.RegistrationType, importedOrder.Email, importedOrder.OrderDate));
+                    var msg = string.Format("ImportOrder  | idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2}", importedOrder.RegistrationType, importedOrder.Email, importedOrder.OrderDate);
+                    _logger.Fatal(msg);
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        "steve@ttstrain.com", msg, msg);
+                        //order.BillingEmail,
+                        
                     return
                         Json(
                             new
@@ -783,7 +787,12 @@ namespace CUWebinars.Web.Controllers
 
             if (idRegType == 0)
             {
-                _logger.Fatal(string.Format("idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2};", importedOrder.RegistrationType, importedOrder.Email, importedOrder.OrderDate));
+                var msg = string.Format("ImportOrder  | idRegType comes up 0. RegType = {0}; email = {1}; orderDate = {2}", importedOrder.RegistrationType, importedOrder.Email, importedOrder.OrderDate);
+                _logger.Fatal(msg);
+                _orderManagementService.FireMandrillNotificationEvent(
+                    "steve@ttstrain.com", msg, msg);
+                //order.BillingEmail,
+
                 return Json(new { Result = WebUiConstants.Fail, Error = "Invalid Registration Type: " + importedOrder.RegistrationType });
             }
             importedOrder.RegistrationType = idRegType.ToString();
@@ -917,7 +926,7 @@ namespace CUWebinars.Web.Controllers
 
                 _orderManagementService.SaveChanges();
                 _orderManagementService.FireMandrillNotificationEvent(
-                    "e6a68209.ttstrain.com@amer.teams.ms",
+                    "accounting@ttstrain.com",
                     //order.BillingEmail,
                     "Add Billing Email " + shareNotis.addresses + " on order " + shareNotis.idOrder, "Add Billing Email " + shareNotis.addresses + " on order " + shareNotis.idOrder);
             }

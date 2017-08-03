@@ -1542,9 +1542,10 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
-                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).SendHardcopy = false;
+                        order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).SendHardcopy = true;
                         updateCaption = "Order is updated to send hardcopies.";
                     }
+                _logger.Info("SendHardcopy on idOrder: " + idOrder + " is: " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).SendHardcopy.Value);
                 _cartControllerOrchestrator.SaveOrder(order);
             }
             catch (Exception)

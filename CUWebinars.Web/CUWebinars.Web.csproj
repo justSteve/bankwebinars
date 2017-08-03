@@ -74,6 +74,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\BrockAllen.MembershipReboot.WebHost.7.1.0\lib\net45\BrockAllen.MembershipReboot.WebHost.dll</HintPath>
     </Reference>
+    <Reference Include="Bugsnag, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bugsnag.1.3.0.0\lib\Net45\Bugsnag.dll</HintPath>
+    </Reference>
     <Reference Include="Citrix.GoToCoreLib.NET, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Citrix.GoToCoreLib.NET.0.10.0.0\lib\net40\Citrix.GoToCoreLib.NET.dll</HintPath>
       <Private>True</Private>

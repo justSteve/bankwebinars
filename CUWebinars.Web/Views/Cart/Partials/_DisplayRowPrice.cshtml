@@ -11,9 +11,6 @@
         var outerSpan = new TagBuilder("span");
         outerSpan.GenerateId("discountedText");
 
-        var cbSendHardcopy = "";
-        if (Model.SendHardcopy)
-            cbSendHardcopy = "checked";
         var totalDiscountElement = new TagBuilder("span");
         totalDiscountElement.GenerateId("totalDiscount");
         totalDiscountElement.SetInnerText(Model.PricesAndDiscounts.TotalDiscount.ToString(CurrencyFormatToken));
@@ -128,19 +125,25 @@
 
         if (Model.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
         {
-            //if (Model.SendHardcopy)
-            //{
-            //    rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. <input type=\"checkbox\" id=\"SendHardcopy\" checked=@Model.SendHardcopy data-SendHardCopy=\"\"/></div>");
-            //}
-            //else
-            //{
-            rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. <input type=\"checkbox\" id=\"SendHardcopy\" @cbSendHardcopy data-SendHardCopy=\"\"/></div>");
-            //}
+            rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. " +
+                             "<input type=\"checkbox\" id=\"SendHardcopy\"  /></div>");
+
+            var cbSendHardcopy = "";
+            if (Model.SendHardcopy)
+            {
+                <script language="javascript" type="text/javascript">
+
+                    $(function () {
+                        $('#SendHardcopy').prop('checked', true);
+                    });
+                </script>
+            }
+
         }
 
         rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id=optionLabel>"
-    + Model.RegistrationType.OptionLabel + "</span>: <span id='baseCost'>"
-    + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
++ Model.RegistrationType.OptionLabel + "</span>: <span id='baseCost'>"
++ Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
 
         if (Model.PricesAndDiscounts.Discount == null)
         {
@@ -237,4 +240,53 @@
             }
         </div>
     }
+    <script type="text/javascript" language="javascript">
+
+        var applySendHardcopy = function (e) {
+            e.preventDefault();
+            //var self = $(this);
+            
+            //
+
+            var url = "/cart/SendHardcopy";
+
+            var formData = {
+                idOrder: @Model.idOrder
+            };
+
+            $.ajax({
+                type: 'POST',
+                contentType: "application/x-www-form-urlencoded",
+                cache: false,
+                url: url,
+                dataType: 'json',
+                data: formData,
+                beforeSend: function () {
+                    console.log("self");
+
+                    //self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+                }
+            }).done(function(data) {
+                if (data) {
+                    var result = data.UpdateCaption.includes(" not ");
+                    $('#flyUpdateSuccessFlag').html(data.UpdateCaption).show();
+                    alert(data.UpdateCaption);
+                    console.log(result);
+                    if (result) {
+                        $('#SendHardcopy').prop('checked', false);
+                    } else {
+                        $('#SendHardcopy').prop('checked', true);
+                    }
+
+                } else {
+                    alert("Failed to update");
+                }
+                $('#waitSpinner').remove();
+            });
+        };
+
+        $(function() {
+            $('#SendHardcopy').on('click', applySendHardcopy);
+        });
+    </script>
 }
