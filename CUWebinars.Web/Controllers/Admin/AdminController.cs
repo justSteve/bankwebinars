@@ -4666,7 +4666,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + orderRow.Discount.PercentOff.ToString() + "%</span>";
                 }
-                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + showDiscount + "<br>Total: $" + order.Total.ToString().Replace(".00", "");
+                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace("Plus Five", "Only") + showDiscount + "<br>Total: $" + order.Total.ToString().Replace(".00", "");
                 var discountColumn = orderRow.Discount.DiscountCode;
 
 
@@ -4705,7 +4705,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 var orderColumn = order.idOrderLegacy.ToString() + ", " + order.Origin;
                 var userColumn = "<a href='/account/edituser/" + order.idUser + "' target='_new' />" + order.LastName + ", " + order.FirstName + "</a>";
                 var institutionColumn = order.Institution;
-                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace(" and Hardcopy Handouts", "").Replace("Plus Five", "Only") + "<br>Total: " + order.Total.ToString().Replace(".00", "");
+                var billingColumn = orderRow.RegistrationType.OptionLabel.Replace("Plus Five", "Only") + "<br>Total: " + order.Total.ToString().Replace(".00", "");
 
                 var resendMsg = "Resend Confirmation";
                 if (orderRow.Webinar.Status == WebinarStatus.Active)

@@ -7,6 +7,10 @@
             {
                 var href = "/webinar/GetWebinarFile?idWebinarFile=" + file.idWebinarFile;
                 <a style="display: inline-block;" href=@href target='_blank'><span><i class="icon-print"></i></span> @file.fileDesc </a><br />
-        }
+                if (Model.WebinarFiles.Count < 1)
+                {
+                    <span>Materials Coming Soon</span>
+                }
+            }
     }
 </div>

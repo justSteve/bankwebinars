@@ -54,7 +54,7 @@ namespace CUWebinars.Web.Helpers
             var regTypeShortened =
                 preSaveValues.Split(',')[4].Replace(" Package", "")
                     .Replace("Live Plus Six", "Live+6")
-                    .Replace(" and Hardcopy Handouts", "")
+                    
                     .Replace(" Recording Only", "")
                     .Replace(" Plus Five", "+5");
             StringBuilder sb = new StringBuilder();

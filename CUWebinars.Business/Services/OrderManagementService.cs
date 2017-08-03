@@ -1141,7 +1141,7 @@ namespace CUWebinars.Business.Services
                 string regTypeShortened =
                     preSaveValues.Split(',')[4].Replace(" Package", "")
                         .Replace("Live Plus Six", "Live+6")
-                        .Replace(" and Hardcopy Handouts", "")
+                        
                         .Replace(" Recording Only", "")
                         .Replace(" Plus Five", "+5");
                 int idRegTypeOfOrg = Convert.ToInt32(preSaveValues.Split(',')[5]);
