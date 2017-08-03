@@ -630,7 +630,7 @@ namespace CUWebinars.Web.Helpers
             var fields = new NotificationMessageFields();
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
-            var fileBuilder = "";
+            var fileBuilder = "Materials Coming Soon";
             foreach (var i in row.Webinar.WebinarFiles)
             {
                 fileBuilder += "<a href='http://ttsmedia.ttstrain.com/" + i.fileLocation + "'>" + i.fileDesc + "</a><br>";
