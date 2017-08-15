@@ -137,7 +137,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     var displayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                     {
-                        Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
+                        //Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
+                        Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
                         OrderRowId = idOrderRow.Value,
                         OrderRowRegistrationType = orderRow.RegistrationType
                     };
@@ -253,8 +254,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                             //CCUserDetails =
                             //    "None <a href=\"#AddCCModal\" role=\"button\" class=\"btn btn-mini\" data-toggle=\"modal\"> Add?</a> ", // CC user removed at request
                             DiscountModel = BuildDiscountModel(webUser),
-                            DisplayOptionsInDropDownViewModel =
-                                BuildDisplayOptionsInDropDownViewModel(row, idOrder),
+                            DisplayOptionsInDropDownViewModel = BuildDisplayOptionsInDropDownViewModel(row, idOrder),
                             DisplayRowPriceViewModel =
                                 BuildDisplayRowPriceViewModel(row, idOrder,
                                     additionalLocationsViewModel.OptionsCost),

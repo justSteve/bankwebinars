@@ -266,6 +266,22 @@ namespace CUWebinars.Business.Services
             }
             return aff;
         }
+        public IDictionary<RegType, bool> GetOptionsAvailableToExistingOrder(int id, bool b, Order order)
+        {
+
+            string cachKey = "options-" + id;
+            //var options = _cachingService.Get(cachKey);
+
+            //if (options == null)
+            //{
+            var options = _regTypeRepository.FindRegTypesAvailableToExistingOrder(id, false, order);
+
+            //    // keeps options object in cache for 1 hour.
+            //    _cachingService.Add(cachKey, options, DomainConstants.BuildUtcNowAsCts.AddHours(1));
+            //}
+
+            return (IDictionary<RegType, bool>)options;
+        }
 
 
         public IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached)
@@ -2320,6 +2336,7 @@ namespace CUWebinars.Business.Services
 
             return dataOperations.CreateCompliancePerspectivesSubscription(row);
         }
+
 
         public string InvoicedOrderIsUpdated(Order order)
         {

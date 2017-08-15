@@ -1723,6 +1723,9 @@ namespace CUWebinars.Web.Controllers.Admin
                                              DateTimeHelper.GetDateOfNextDay(model.SendDate, DayOfWeek.Friday);
                 List<int> featureWebinarIDs = new List<int>();
                 var upcomingDetail = new StringBuilder();
+                if (_globalConfig.Tenant == "BankWebinars" || _globalConfig.Tenant == "CUWebinars")
+                    model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
+
                 if (TempData["ListOfWebinarsForWeekly"] != null)
                 {
                     foreach (var webinar in (IList<Webinar>)TempData["ListOfWebinarsForWeekly"])
@@ -3070,7 +3073,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 string searchTerm = param.searchTerm;
                 if (param.searchTerm != null && param.searchTerm.Contains("@"))
-                    searchTerm = param.searchTerm.Replace("_", "@");
+                    searchTerm = param.searchTerm.Replace("_", "@").Trim();
+                if (param.searchTerm != null && param.searchTerm.Contains("mailto:"))
+                    searchTerm = param.searchTerm.Replace("mailto:", "").Trim();
+
                 int affiliateId = param.affiliateId ?? 19; // 19 is magic internal / house affiliate id
                 bool showAllEvents = param.showAllEvents ?? false;
 
@@ -3078,7 +3084,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
-
                     // custom filtering by Webinar Id
                     if (!showAllEvents)
                     {

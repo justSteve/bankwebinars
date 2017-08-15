@@ -399,7 +399,7 @@ namespace CUWebinars.Web.Controllers
                         affiliateAddresses
                         , "Order Placed For " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
 
-                    
+
                 }
                 else
                 {
@@ -1368,6 +1368,33 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = WebUiConstants.Success });
             }
             return Json(new { });
+        }
+
+        [HttpGet]
+        public void FixSeriesOrdersWithIncorrectRoyalty(int? idOrder = null)
+        {
+            int orderIDTracker = 0;
+            if (idOrder.HasValue)
+            {
+                try
+                {
+                    var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+
+                    var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(order);
+                    _logger.Info("FixSeriesOrdersWithIncorrectRoyalty suceeded: " + idOrder);
+                    
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException(
+                        String.Format("FixSeriesOrdersWithIncorrectRoyalty failed on {0} with {1} Session={2}", idOrder,
+                            exception.Message, _appHelper.GetUserAuditInfo()), exception);
+                    //ErrorSignal.FromCurrentContext().Raise(exception);
+
+                    //return Json(new { Result = WebUiConstants.Fail });
+
+                }
+            }
         }
 
         [HttpPost]

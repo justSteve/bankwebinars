@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using CUWebinars.Business.Services;
 
@@ -158,10 +159,33 @@ namespace CUWebinars.Business.AccountService
 
         public UserAccount GetUserAccountByEmail(string tenant, string email)
         {
-            if (tenant == null) throw new ArgumentNullException("tenant");
-            if (email == null) throw new ArgumentNullException("email");
-            // While attempting to naviate to the definition of GetByEmail 
-            return _userAccountService.GetByEmail(tenant, email);
+            if (tenant == null) throw new ArgumentNullException("tenant_GetUserAccountByEmail");
+            if (email == null) throw new ArgumentNullException("email_GetUserAccountByEmail");
+
+            var userAccount = _userAccountService.GetByEmail(tenant, email);
+            if (userAccount == null)
+            {
+                _logger.Warn("GetUserAccountByEmail | Account did not exist: " + email);
+
+                var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+                var reply = dataOperations.User_HealThySelf(email, tenant);
+
+                if (reply == "AccountCreated")
+                {
+                    _logger.Info("GetUserAccountByEmail | Account did not exist and was self-healed: " + reply);
+                    return _userAccountService.GetByEmail(tenant, email);
+                }
+                else
+                {
+                    _logger.Fatal("GetUserAccountByEmail | Account did not exist and was not self-healed: " + reply);
+                    return null;
+                }
+            }
+            else
+            {
+                return userAccount;
+            }
         }
         public UserAccount GetUserAccountByVerificationKey(string key)
         {
@@ -455,7 +479,7 @@ namespace CUWebinars.Business.AccountService
         public void RemoveClaim(string tenant, string email, string claim, string claimValue = null)
         {
             var userAccount = GetUserAccountByEmail(tenant, email);
-            
+
             if (string.IsNullOrWhiteSpace(claimValue))
                 _userAccountService.RemoveClaim(userAccount.ID, claim);
             else
@@ -630,7 +654,7 @@ namespace CUWebinars.Business.AccountService
         {
             return _webUserRepository.GetPresenterById(userIdUser);
         }
-        
+
 
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {
@@ -701,7 +725,7 @@ namespace CUWebinars.Business.AccountService
             }
             catch (Exception ex)
             {
-                _logger.FatalException("AddClaimForPostEventMaterials| MR record not found " + email , ex);
+                _logger.FatalException("AddClaimForPostEventMaterials| MR record not found " + email, ex);
             }
 
         }
@@ -789,7 +813,7 @@ namespace CUWebinars.Business.AccountService
                 USTimeZone tz = USTimeZone.Central;
                 if (timeZone.HasValue)
                 {
-                     tz = (USTimeZone) timeZone.Value;
+                    tz = (USTimeZone)timeZone.Value;
                 }
                 webUser.email = email;
                 webUser.FirstName = firstName;

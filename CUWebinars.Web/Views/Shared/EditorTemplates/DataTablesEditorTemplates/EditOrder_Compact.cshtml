@@ -251,6 +251,23 @@
                             </div>
                         </div>
                     }
+                    if (
+                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.TwoPart || 
+                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.ThreePart || 
+                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.FourPart || 
+                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.FivePart 
+                        )
+                    {
+                        <div class="control-group">
+                            <br />
+                            <div class="controls">
+                                @Model.EditFields.Discount.DiscountCode (@Model.EditFields.Discount.idDiscount )<br />
+                                @*Credits Used: @Model.EditFields.Discount.CreditsUsed
+                                    <br />
+                                    Credits Remain: @Model.EditFields.Discount.CreditsRemain*@
+                            </div>
+                        </div>
+                    }
                 }
             </div>
         </div>

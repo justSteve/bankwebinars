@@ -35,14 +35,14 @@ namespace CUWebinars.Business.Repository
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
             IList<RegType> regTypes = new List<RegType>();
-            
+
             var regTypeIds = dataOperations.FindAllPossibleRegTypesByWebinarId(id);
 
             foreach (var idRegType in regTypeIds)
             {
                 regTypes.Add(FindRegType(idRegType));
             }
-            
+
 
             var regTypes_ =
                 regTypes
@@ -61,20 +61,89 @@ namespace CUWebinars.Business.Repository
             return regTypes_;
 
         }
+
+        public IDictionary<RegType, bool> FindRegTypesAvailableToExistingOrder(int id, bool detached, Order order)
+        {
+            var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            var oRegType = row.RegistrationType;
+            
+            var stronglyTypedContext = (TTSWebinarsContext)db;
+
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+            IList<RegType> regTypes = new List<RegType>();
+
+
+            var regTypeIds = dataOperations.FindAllPossibleRegTypesByWebinarId(id);
+
+            foreach (var idRegType in regTypeIds)
+            {
+                regTypes.Add(FindRegType(idRegType));
+            }
+
+
+            var regTypes_ =
+                regTypes.Where(r => r.idRegType != row.idRegType)
+                    .Distinct()
+                    .ToList()
+                    .ToDictionary(r => r,
+                        rt => rt.ShowShippedNotifications.Trim().Equals("Yes", StringComparison.OrdinalIgnoreCase),
+                        new RegTypeComparer());
+            bool webinarIsPast = dataOperations.WebinarIsPast(id);
+            if (webinarIsPast)
+            {
+                if (oRegType.ShowLiveNotifications.ToLower() == "yes")
+                {
+                    regTypes_ =
+                        regTypes.Where(r => r.ShowLiveNotifications.ToLower() == "yes" && r.idRegType != row.idRegType
+                        //&& r.ShowRecordingNotifications.ToLower() == "yes"
+                        )
+                            .Distinct()
+                            .ToList()
+                            .ToDictionary(r => r,
+                                rt => rt.ShowShippedNotifications.Trim()
+                                    .Equals("Yes", StringComparison.OrdinalIgnoreCase),
+                                new RegTypeComparer());
+                    //if ()
+                }
+                else
+                {
+                    regTypes_ =
+                        regTypes.Where(r => r.ShowLiveNotifications.ToLower() != "yes" && r.idRegType != row.idRegType 
+                        //&& r.ShowRecordingNotifications.ToLower() == "yes"
+                        )
+                            .Distinct()
+                            .ToList()
+                            .ToDictionary(r => r,
+                                rt => rt.ShowShippedNotifications.Trim()
+                                    .Equals("Yes", StringComparison.OrdinalIgnoreCase),
+                                new RegTypeComparer());
+                }
+            }
+            if (!detached)
+                return regTypes_;
+
+            foreach (var regType in regTypes_)
+            {
+                stronglyTypedContext.Entry(regType.Key).State = EntityState.Detached;
+            }
+
+            return regTypes_;
+        }
         public IDictionary<RegType, bool> FindRegTypesByWebinarId(int id, bool detached)
         {
             //IDictionary<RegType, bool> regTypesAndShippingRequirement = new Dictionary<RegType, bool>();
 
-            var stronglyTypedContext = (TTSWebinarsContext) db;
+            var stronglyTypedContext = (TTSWebinarsContext)db;
 
             var webinars = stronglyTypedContext.Webinars
                 .Where(w => w.idWebinar == id);
 
             // There can be only one RegTypesGroupsXrefs per webinar at any one time
             var regTypesGroupsXrefs = webinars.SelectMany(w => w.RegTypesGroupsXref);
-            
+
             //when pre-event
-            //  For each of those RegTypesGroupsXrefs, get the relevant OptionGroup
+            //  Foreach of those RegTypesGroupsXrefs, get the relevant OptionGroup
             var regtypesGroups = regTypesGroupsXrefs.Include(o => o.RegTypesGroup).Select(o => o.RegTypesGroup);
 
             //  Get all OptionsXrefs for those RegTypesGroups
@@ -161,6 +230,8 @@ namespace CUWebinars.Business.Repository
             return regTypeFound;
 
         }
+
+
     }
 
 

@@ -199,6 +199,9 @@ namespace CUWebinars.Web.Controllers
 
 
             string searchTerm = Request["searchTerm"].Trim(' ').Replace("_", "@");
+            if (searchTerm != null && searchTerm.Contains("mailto:"))
+                searchTerm = searchTerm.Replace("mailto:", "");
+
             ViewBag.SearchTerm = searchTerm;
             _logger.Info("Searching on: " + searchTerm + " by: " + _appHelper.GetUserAuditInfo());
 
@@ -1248,6 +1251,7 @@ namespace CUWebinars.Web.Controllers
 
         private void BuildConfirmOrderView(WebinarDetailsViewModel model)
         {
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
             Affiliate aff = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
 
@@ -1261,6 +1265,20 @@ namespace CUWebinars.Web.Controllers
                     model.RegistrationSummaryViewModel.AdditionalLocationsViewModel;
                 var orderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
                 var order = orderRow.Order;
+
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type != Business.Constants.ClaimTypes.Admin) &&
+                    claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type != Business.Constants.ClaimTypes.Affiliate)
+                )
+                {
+                    if (model.Webinar.Status == WebinarStatus.Recorded)
+                        model.OptionsToDisplay =
+                            _orderManagementService.GetOptionsAvailableToExistingOrder(model.Webinar.idWebinar, false, order);
+                }
+
+
                 var webUser = orderRow.Order.WebUser;
                 var userFullName = string.Concat(webUser.FirstName, " ", webUser.LastName);
                 var addresses = webUser.Addresses.ToArray();
@@ -1323,7 +1341,8 @@ namespace CUWebinars.Web.Controllers
                             SendHardcopy = sendHardcopy,
                             DisplayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                             {
-                                Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
+                                Options = model.OptionsToDisplay,
+                                //Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
                                 OrderRowId = orderRow.idOrderRow,
                                 OrderRowRegistrationType = orderRow.RegistrationType
                             },
@@ -1701,7 +1720,7 @@ namespace CUWebinars.Web.Controllers
                         // DisplayRowPriceViewModel property is assigned further below as more data comes to hand. 
                         EventTitle = model.Webinar.Title,
                         idWebinar = model.Webinar.idWebinar,
-                        Options = _orderManagementService.GetOptionsByWebinarId(id, false),
+                        Options = _orderManagementService.GetOptionsAvailableToExistingOrder(id, false, model.Order),
                         OrderRowExists = orderRowForOrder != null,
                         WebinarDuration = model.Webinar.Duration,
                         WebinarStatus = model.Webinar.Status
@@ -1793,7 +1812,7 @@ namespace CUWebinars.Web.Controllers
                         WebinarStatus = webinar.Status
                     };
                 }
-            }
+           }
         }
 
         /// <summary>

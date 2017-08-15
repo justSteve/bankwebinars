@@ -844,9 +844,9 @@ namespace CUWebinars.Business.Services
             List<Uri> links = new List<Uri>();
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
             System.Globalization.Calendar cal = dfi.Calendar;
-            var urlBase = "https://storeforcu.blob.core.windows.net/affiliateinvoices/";
+            var urlBase = "https://storeforcu.blob.core.windows.net/invoicesprivate/";
 
-            if (tenant == "BankWebinars") urlBase = "https://storeforbw.blob.core.windows.net/affiliateinvoices/";
+            if (tenant == "BankWebinars") urlBase = "https://storeforbw.blob.core.windows.net/invoicesprivate/";
 
             var firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/2/2017");
 

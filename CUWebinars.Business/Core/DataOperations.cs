@@ -1399,5 +1399,115 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
+        
+        public bool WebinarIsPast(int id)
+        {
+            bool webinarIsPast = false;
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var myConn = new SqlCommand("WebinarIsPast", sqlConnection))
+                {
+                    try
+                    {
+                        myConn.Connection = sqlConnection;
+                        myConn.CommandType = CommandType.StoredProcedure;
+                        var idWebinar = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@id",
+                            Value = id
+                        };
+                        myConn.Parameters.Add(idWebinar);
+                        var message = myConn.ExecuteScalar().ToString();
+
+                        if (message == "true")
+                        {
+                            webinarIsPast = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'WebinarIsPast' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'WebinarIsPast', 9 ,";
+                            errorLogger.CommandText += "'error at WebinarIsPast " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            
+            return webinarIsPast;
+        }
+
+        public string User_HealThySelf(string email, string tenant)
+        {
+            var reply = "";
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (var myConn = new SqlCommand("FixMissingUserAccount", sqlConnection))
+                {
+                    try
+                    {
+                        myConn.Connection = sqlConnection;
+                        myConn.CommandType = CommandType.StoredProcedure;
+                        var emailParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@email",
+                            Value = email
+                        };
+                        myConn.Parameters.Add(emailParam);
+
+                        var tenantParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@tenant",
+                            Value = tenant
+                        };
+                        myConn.Parameters.Add(tenantParam);
+
+
+
+
+                        using (var reader = myConn.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                reply = reader[0].ToString();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'FixMissingUserAccount' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'FixMissingUserAccount', 9 ,";
+                            errorLogger.CommandText += "'error at FixMissingUserAccount " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            return reply;
+        }
     }
 }

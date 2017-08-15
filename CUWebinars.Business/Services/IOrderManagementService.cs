@@ -168,5 +168,6 @@ namespace CUWebinars.Business.Services
         string OrderHasCc(Order order);
         Order UserHasPrexistingOrder(Order existingOrder);
         string CreateCompliancePerspectivesSubscription(OrderRow row);
+        IDictionary<RegType, bool> GetOptionsAvailableToExistingOrder(int id, bool b, Order modelOrder);
     }
 }

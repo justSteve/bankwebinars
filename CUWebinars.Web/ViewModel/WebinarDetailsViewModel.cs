@@ -36,5 +36,6 @@ namespace CUWebinars.Web.ViewModel
         public WebUser WebUser { get; set; }
         public object Testamoan { get; set; }
         public PromoLinks PromoLinks { get; set; }
+        public IDictionary<RegType, bool> OptionsToDisplay { get; set; }
     }
 }
