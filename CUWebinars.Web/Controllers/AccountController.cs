@@ -1000,7 +1000,7 @@ namespace CUWebinars.Web.Controllers
             }
             DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
             {
-                Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
+                Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, true),
 
                 //Options = _orderManagementService.GetOptionsAvailableToExistingOrder(orderRow.idWebinar, false, order),
                 OrderRowId = orderRow.idOrderRow,

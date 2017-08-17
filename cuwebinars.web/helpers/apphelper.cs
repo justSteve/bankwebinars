@@ -631,6 +631,8 @@ namespace CUWebinars.Web.Helpers
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
             var fileBuilder = "Materials Coming Soon";
+            if (row.Webinar.WebinarFiles.Count > 0)
+                fileBuilder = "";
             foreach (var i in row.Webinar.WebinarFiles)
             {
                 fileBuilder += "<a href='http://ttsmedia.ttstrain.com/" + i.fileLocation + "'>" + i.fileDesc + "</a><br>";
