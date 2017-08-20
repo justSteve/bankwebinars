@@ -1267,15 +1267,30 @@ namespace CUWebinars.Web.Controllers
                 var order = orderRow.Order;
 
 
-                if (claimsIdentityOfAuthenticatedUser.HasClaim(
-                        (claim) => claim.Type != Business.Constants.ClaimTypes.Admin) &&
-                    claimsIdentityOfAuthenticatedUser.HasClaim(
-                        (claim) => claim.Type != Business.Constants.ClaimTypes.Affiliate)
+                if (!claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Admin) &&
+                    !claimsIdentityOfAuthenticatedUser.HasClaim(
+                        (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate)
                 )
                 {
                     if (model.Webinar.Status == WebinarStatus.Recorded)
+                    {
                         model.OptionsToDisplay =
-                            _orderManagementService.GetOptionsAvailableToExistingOrder(model.Webinar.idWebinar, false, order);
+                            _orderManagementService.GetOptionsAvailableToExistingOrder(model.Webinar.idWebinar, false,
+                                order);
+                    }
+                    else
+                    {
+                        model.OptionsToDisplay =
+                            _orderManagementService.GetAllPossibleOptionsByWebinarId(model.Webinar.idWebinar, false);
+
+                    }
+                }
+                else
+                {
+                    model.OptionsToDisplay =
+                        _orderManagementService.GetAllPossibleOptionsByWebinarId(model.Webinar.idWebinar, false);
+
                 }
 
 

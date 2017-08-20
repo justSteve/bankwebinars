@@ -64,15 +64,6 @@
             @Html.Partial("~/Views/Admin/Partials/_ShowUsers.cshtml", Model.ShowOrdersViewModel)
         </div>
 
-        @*<div id="showPromoLinks" class="collapse">
-            @Html.Partial("~/Views/Admin/Partials/_ShowPromoLinks.cshtml", Model.PromoLinks)
-        </div>*@
-        @*    <div id="revenueReportByAffiliate" class="collapse">
-            @Html.Partial("~/Views/Admin/Partials/_ShowRevenueReport.cshtml", Model.ShowOrdersViewModel)
-        </div>*@
-        @*<div id="byUserWrapper" class="collapse">
-            @Html.Partial("~/Views/Admin/Partials/_ShowOrdersByUser.cshtml", Model.ShowOrdersViewModel)
-        </div>*@
 
         <div id="sendConnInfoOrders" class="collapse">
             @Html.Partial("~/Views/Admin/Partials/_ShowSendConnectionInfo.cshtml", Model.ShowOrdersViewModel)
@@ -222,8 +213,15 @@
                     <button data-toggle="collapse" type="button" data-target="#sendConnInfoOrders" id="submitSendConnInfo" role="button" class="btn btn-danger">Send Connection Info</button>
                 </div>
                 <div>
-                    <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
-                    <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>
+                    @if (globalConfig.Tenant == "DirectorSeries")
+                    {
+                        <a href="/admin/despromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">DES Promotional Email</a>
+                    }
+                    else
+                    {
+                        <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
+                        <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>
+                    }
                     @*<a href="/admin/PerWeekPromo?id=2060&includedEventsIds=2060,2078,2071,2072" class="btn btn-dangerx">Weekly Promotional Email</a>*@
                 </div>
 

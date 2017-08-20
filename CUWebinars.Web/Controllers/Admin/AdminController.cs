@@ -1639,6 +1639,75 @@ namespace CUWebinars.Web.Controllers.Admin
         public JsonResult GeneratePromo(WebinarPromoViewModel model)
         {
 
+            if (model.TemplateType == "DES")
+            {
+
+                model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
+                model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
+                ViewBag.SubjectForCampaign = "Webinar: " + model.Webinar.Title;
+                if (model.Affiliate.idUserAff != null && model.Affiliate.idUserAff > 0)
+                {
+                    model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
+                    model.TimeZone = model.Affiliate.WebUser.timeZone;
+
+                }
+
+
+                // populate the dropdown selector (not currently implemented)
+                TempData["ListOfWebinarsForUpcoming"] =
+                    _webinarManagementService.GetDesWebinars().OrderByDescending(w => w.Date).Take(10).ToList();
+
+
+                if (model.ListOfWebinarsForUpcoming == null)
+                {
+                    model.ListOfWebinarsForUpcoming =
+                        _webinarManagementService.GetDesWebinars()
+                            .OrderByDescending(w => w.Date)
+                            .Take(10)
+                            .Select(w => w.idWebinar)
+                            .ToArray();
+                }
+
+                var _upcoming =
+                    _webinarManagementService.GetDesWebinars()
+                        .Where(w => w.idWebinar != model.Webinar.idWebinar)
+                        .OrderByDescending(w => w.Date)
+                        .Take(7);
+
+
+                var doc = new HtmlDocument();
+                doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
+
+                var root = doc.DocumentNode;
+                root.SelectSingleNode("(//img)[1]").Remove();
+
+                model.PresenterW_OutPic = root.InnerHtml;
+
+                var upcomingWebinars = (from w in _upcoming
+                                        select
+                                        "<p style=\"color: #f5f5f5; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
+                                        _globalConfig.TenantURL + "/Webinar/Details/" +
+                                        w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
+                                        w.Date.ToLongDateString() + "</p>"
+                ).ToArray();
+
+                if (upcomingWebinars.Count() > 0)
+                    model.ListOfWebinarsUpcomingRendered = String.Join("\r\n", upcomingWebinars);
+
+                model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
+                                          " - " +
+                                          DateTimeHelper.FormatTime(
+                                              model.Webinar.Date.AddHours((double)model.Webinar.Duration),
+                                              model.TimeZone,
+                                              true) + "<br /></i>";
+
+                model.EventBody =
+                    HttpUtility.HtmlDecode(
+                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendDESPromoMaster.cshtml").Body);
+                // get Template with new method
+
+                return Json(new { masterText = model.EventBody });
+            }
             if (model.TemplateType == "Daily")
             {
 
@@ -1715,7 +1784,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 return Json(new { masterText = model.EventBody });
             }
-            else
+            if (model.TemplateType == "Weekly")
             {
 
                 ViewBag.SubjectForCampaign = "Webinars: Week of " +
@@ -1786,7 +1855,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 return Json(new { masterText = model.EventBody });
             }
-            //return null;
+
+            return null;
         }
 
         private void GeneratePromoDocuments(WebinarPromoViewModel model)
@@ -1982,6 +2052,47 @@ namespace CUWebinars.Web.Controllers.Admin
                 SendDate = TtsConfig.UtcNowAsCts,
                 Webinar = _webinarManagementService.GetWebinar(id),
                 TemplateType = "Daily"
+            };
+
+
+            // check for Admins vs Affiliates and limit if Affiliate
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+            if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+            {
+                model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
+            }
+            else
+            {
+                // limit affiliates (non-admins)...
+                int affId = -1;
+                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                if (affiliate != null)
+                {
+                    model.Affiliate = affiliate; // used on View to manipulate displayed verbiage
+                    affId = affiliate.idUserAff;
+                }
+
+                model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily")
+                    .Where(a => a.idUserAff == affId).ToList();
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> DESPromo(int id)
+        {
+
+            var webinarsForUpcoming = _webinarManagementService.GetDesWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date).Take(8);
+            //var recordedWebinars = _webinarRepository.GetRecorded().Where(w => w.SeriesInfo != "DES").OrderByDescending(w => w.Date).Take(8).ToList();
+
+            TempData["ListOfWebinarsForWeekly"] = webinarsForUpcoming;
+
+            WebinarPromoViewModel model = new WebinarPromoViewModel()
+            {
+                TimeZone = USTimeZone.Eastern,
+                SendDate = TtsConfig.UtcNowAsCts,
+                Webinar = _webinarManagementService.GetWebinar(id),
+                TemplateType = "DES"
             };
 
 

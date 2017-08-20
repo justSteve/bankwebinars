@@ -96,8 +96,8 @@ namespace CUWebinars.Business.Repository
                 {
                     regTypes_ =
                         regTypes.Where(r => r.ShowLiveNotifications.ToLower() == "yes" && r.idRegType != row.idRegType
-                        //&& r.ShowRecordingNotifications.ToLower() == "yes"
-                        )
+                                //&& r.ShowRecordingNotifications.ToLower() == "yes"
+                            )
                             .Distinct()
                             .ToList()
                             .ToDictionary(r => r,
@@ -109,9 +109,9 @@ namespace CUWebinars.Business.Repository
                 else
                 {
                     regTypes_ =
-                        regTypes.Where(r => r.ShowLiveNotifications.ToLower() != "yes" && r.idRegType != row.idRegType 
-                        //&& r.ShowRecordingNotifications.ToLower() == "yes"
-                        )
+                        regTypes.Where(r => r.ShowLiveNotifications.ToLower() != "yes" && r.idRegType != row.idRegType
+                                //&& r.ShowRecordingNotifications.ToLower() == "yes"
+                            )
                             .Distinct()
                             .ToList()
                             .ToDictionary(r => r,
@@ -120,9 +120,13 @@ namespace CUWebinars.Business.Repository
                                 new RegTypeComparer());
                 }
             }
+            else
+            {
+                return regTypes_;
+            }
             if (!detached)
                 return regTypes_;
-
+             
             foreach (var regType in regTypes_)
             {
                 stronglyTypedContext.Entry(regType.Key).State = EntityState.Detached;

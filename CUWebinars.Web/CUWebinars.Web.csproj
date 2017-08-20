@@ -31,6 +31,7 @@
     </NuGetPackageImportStamp>
     <UseGlobalApplicationHostFile />
     <ApplicationInsightsAnnotationResourceId>/subscriptions/4aa59c5e-6984-4f30-bb2b-df7e1eb43e6e/resourcegroups/Default-Web-NorthCentralUS/providers/microsoft.insights/components/BankWebinars33</ApplicationInsightsAnnotationResourceId>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -1812,6 +1813,7 @@
     <Content Include="App_Data\mergeTemplates\ConnectionInfo2AddLoc.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventForOnDemandOnly.docx" />
     <Content Include="App_Data\mergeTemplates\PasswordResetRequest.docx" />
+    <Content Include="Notification\Templates\SendDESPromoMaster.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
@@ -2123,6 +2125,7 @@
     <Content Include="Views\Webinar\Partials\DisplayOptionsDESWizard.cshtml" />
     <Content Include="Views\Home\LearnMore.cshtml" />
     <Content Include="Views\Account\LoginAdmin.cshtml" />
+    <Content Include="Views\Admin\DESPromo.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
