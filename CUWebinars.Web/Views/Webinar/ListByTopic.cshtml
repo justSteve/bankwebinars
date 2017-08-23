@@ -48,18 +48,175 @@
     var topicBody = "";
 
     // run against BW's db and paste output here:
-    // exec BuildTopicDescriptions
+    @*listing is produced by SPROC: EXEC BuildTopicDescriptions*@
+if (globalConfig.Tenant == "BankWebinars")
+{
+    switch (topic.ToString())
+    {
+        case "15":
+            topicCaption = "Compliance ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "16":
+            topicCaption = "IRAs ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " IRA webinar training covers topics ranging from IRA terms and plan types to distributions and rollovers to distributions and beneficiaries and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "17":
+            topicCaption = "Customer Service ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " customer service webinar training covers topics ranging from excelling on the job to call center training to coaching and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "18":
+            topicCaption = "Security ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " security webinar training covers topics ranging from robbery to check fraud to cybercrime and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "19":
+            topicCaption = "Operations ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " operations webinar training covers topics ranging from check and deposit issues to new accounts manuals to underwriting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "20":
+            topicCaption = "Auditing ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " auditing webinar training covers topics ranging from risk-based compliance audit to call reports to regulatory exam preparation and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "21":
+            topicCaption = "Sales ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " sales webinar training covers topics ranging from coaching to building a sales plan to sales teams and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "22":
+            topicCaption = "Lending ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " lending webinar training covers topics ranging from handling loan applications to accounting principles to underwriting to TRID and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "23":
+            topicCaption = "Human Resources ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " human resources webinar training covers topics ranging from background checks to employment records to improving employee performance and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "25":
+            topicCaption = "Computer Skills ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " computer skills webinar training covers topics including Microsoft Excel and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "26":
+            topicCaption = "Risk Management/Legal ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " risk management webinar training covers topics ranging from BSA confidentiality to subpoenas to the allowance for loan and lease losses to security and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "27":
+            topicCaption = "Teller ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " teller webinar training covers topics ranging from teller security to endorsements to fraudulent cashier's checks and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "30":
+            topicCaption = "BSA ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " BSA webinar training covers topics ranging from AML to OFAC to CIP to CDD to examinations and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "31":
+            topicCaption = "Deposit Accounts ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " deposit accounts webinar training covers topics ranging from Opening Accounts to Regulations to Fraud and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "32":
+            topicCaption = "Executive/Director ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " director/executive webinar training covers topics ranging from directors training to regulations to strategic planning and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "33":
+            topicCaption = "Management/Employee Development ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " management/employee development webinar training covers topics ranging from coaching to sales to teller training and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "34":
+            topicCaption = "Reporting ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " reporting webinar training covers topics ranging from call reports to IRS reporting and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "36":
+            topicCaption = "Safe Deposit ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " safe deposit webinar training covers topics ranging from safe deposit security to past due boxes and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "37":
+            topicCaption = "TRID ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " TRID webinar training covers topics ranging from Know Before You Owe to TILA to RESPA and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "39":
+            topicCaption = "Director Eduction Series ";
+            topicBody = " ";
+            break;
+        case "41":
+            topicCaption = "Accounting/Financials ";
+            topicBody = " ";
+            break;
+        case "42":
+            topicCaption = "Auditing/Reporting ";
+            topicBody = " ";
+            break;
+        case "43":
+            topicCaption = "BSA/AML ";
+            topicBody = " ";
+            break;
+        case "44":
+            topicCaption = "Compliance/Regulations ";
+            topicBody = " ";
+            break;
+        case "45":
+            topicCaption = "Other ";
+            topicBody = " ";
+            break;
+        case "46":
+            topicCaption = "Risk Management ";
+            topicBody = " ";
+            break;
+        case "47":
+            topicCaption = "Technology/Security ";
+            topicBody = " ";
+            break;
+        case "51":
+            topicCaption = "USA Patriot Act & OFAC Compliance ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "52":
+            topicCaption = "References And Pre-Employment Testing ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+        case "53":
+            topicCaption = "Function and Operations of Banks ";
+            topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> ";
+            break;
+
+        default:
+            topicCaption = " ";
+            break;
+    }
+}
+if (globalConfig.Tenant == "CUWebinars")
+{
+    switch (topic.ToString())
+    {
+        case "15": topicCaption = "Compliance "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "16": topicCaption = "IRAs "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " IRA training covers topics ranging from IRA terms and plan types to distributions and rollovers to distributions and beneficiaries and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "17": topicCaption = "Customer Service "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " customer service training covers topics ranging from excelling on the job to call center training to coaching and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "18": topicCaption = "Security "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " security training covers topics ranging from robbery to check fraud to cybercrime and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "19": topicCaption = "Operations "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " operations training covers topics ranging from check and deposit issues to new accounts manuals to underwriting and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "20": topicCaption = "Auditing "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " auditing training covers topics ranging from risk-based compliance audit to call reports to regulatory exam preparation and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "21": topicCaption = "Sales "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " sales training covers topics ranging from coaching to building a sales plan to sales teams and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "22": topicCaption = "Lending "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " lending training covers topics ranging from handling loan applications to accounting principles to underwriting to TRID and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "23": topicCaption = "Human Resources "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " human resources training covers topics ranging from background checks to employment records to improving employee performance and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "25": topicCaption = "Computer Skills "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " bank computer skills training covers topics including Microsoft Excel and more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "26": topicCaption = "Risk Management "; topicBody = " "; break;
+        case "27": topicCaption = "Teller "; topicBody = " "; break;
+        case "30": topicCaption = "BSA "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " bank BSA training covers topics ranging from AML to OFAC to CIP to CDD to examinations and more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "31": topicCaption = "Deposit Accounts "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " bank deposit accounts training covers topics ranging from Opening Accounts to Regulations to Fraud and more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "33": topicCaption = "Executive/Director "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " bank director/executive training covers topics ranging from directors training to regulations to strategic planning and more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "34": topicCaption = "Management/Employee Development "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " bank management/employee development training covers topics ranging from coaching to sales to teller training and more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "35": topicCaption = "Risk Management/Legal "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " risk management training covers topics ranging from BSA confidentiality to subpoenas to the allowance for loan and lease losses to security and many more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+        case "36": topicCaption = "TRID "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " bank TRID training covers topics ranging from Know Before You Owe to TILA to RESPA and more. All of our bank training webinars are led by experts from the financial industry.</blockquote> "; break;
+
+    }
+}
+if (globalConfig.Tenant == "DirectorSeries")
+{
     switch (topic.ToString())
     {
         case "15": topicCaption = "Compliance "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "16": topicCaption = "IRAs "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " IRA webinar training covers topics ranging from IRA terms and plan types to distributions and rollovers to distributions and beneficiaries and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "17": topicCaption = "Customer Service "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " customer service webinar training covers topics ranging from excelling on the job to call center training to coaching and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "18": topicCaption = "Security "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " security webinar training covers topics ranging from robbery to check fraud to cybercrime and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
-        case "19": topicCaption = "Operations "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " operations webinar training covers topics ranging from check and deposit issues to new accounts manuals to underwriting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "19": topicCaption = "Operations "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Operations topics cover areas such as: Management, BSA (Bank Secrecy Act) and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "20": topicCaption = "Auditing "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " auditing webinar training covers topics ranging from risk-based compliance audit to call reports to regulatory exam preparation and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "21": topicCaption = "Sales "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " sales webinar training covers topics ranging from coaching to building a sales plan to sales teams and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
-        case "22": topicCaption = "Lending "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " lending webinar training covers topics ranging from handling loan applications to accounting principles to underwriting to TRID and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
-        case "23": topicCaption = "Human Resources "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " human resources webinar training covers topics ranging from background checks to employment records to improving employee performance and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "22": topicCaption = "Lending "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Lending topics cover areas such as: Fair Lending, Repaying Loans, Troubled Debt Restructuring, Compliance Decisions and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "23": topicCaption = "Human Resources "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Human Resources topics cover areas such as: Succession Planning, Board Composition and Committee Makeup, Record Keeping, Board Legal Issues and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "25": topicCaption = "Computer Skills "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " computer skills webinar training covers topics including Microsoft Excel and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "26": topicCaption = "Risk Management/Legal "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " risk management webinar training covers topics ranging from BSA confidentiality to subpoenas to the allowance for loan and lease losses to security and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "27": topicCaption = "Teller "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " teller webinar training covers topics ranging from teller security to endorsements to fraudulent cashier's checks and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
@@ -71,29 +228,24 @@
         case "36": topicCaption = "Safe Deposit "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " safe deposit webinar training covers topics ranging from safe deposit security to past due boxes and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "37": topicCaption = "TRID "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " TRID webinar training covers topics ranging from Know Before You Owe to TILA to RESPA and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "39": topicCaption = "Director Eduction Series "; topicBody = " " ; break;
-        case "41": topicCaption = "Accounting/Financials "; topicBody = " " ; break;
-        case "42": topicCaption = "Auditing/Reporting "; topicBody = " " ; break;
-        case "43": topicCaption = "BSA/AML "; topicBody = " " ; break;
-        case "44": topicCaption = "Compliance/Regulations "; topicBody = " " ; break;
-        case "45": topicCaption = "Other "; topicBody = " " ; break;
-        case "46": topicCaption = "Risk Management "; topicBody = " " ; break;
-        case "47": topicCaption = "Technology/Security "; topicBody = " " ; break;
+        case "41": topicCaption = "Accounting/Financials "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Accounting/Financials topics cover the areas of Accounting, Analysis, Cash Flow, Financial Statements, Ratios, Reporting and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "42": topicCaption = "Auditing/Reporting "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Auditing/Reporting topics cover the areas of Allowance for Loan and Lease Losses, BSA, Interest Rates, Troubled Debt Restructuring, Examination, Cash Flow, Ratios, Financial Statements and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "43": topicCaption = "BSA/AML "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " BSA/AML topics cover the areas of the Bank Secrecy Act and Anti-Money Laundering from both the compliance and operations perspectives. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "44": topicCaption = "Compliance/Regulations "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Compliance/Regulations topics cover all areas of compliance and regulation including: Regulation O, Fair Lending, Risk Management, Cyber Security and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "45": topicCaption = "Other "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Other topics cover areas such as: Board Composition and Makeup, Risk Assessment, Compliance, Onboarding, the Operation of Financial Institutions, Strategic Planning, Leadership Development and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "46": topicCaption = "Risk Management "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Risk Management topics cover areas such as: ERM and Audit, Cybersecurity, Credit Risk, Interest Rates, Third Party Relationships, Enterprise Risk Management and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
+        case "47": topicCaption = "Technology/Security "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " Technology/Security topics cover areas such as: Cybersecurity, Cybercrime and more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "51": topicCaption = "USA Patriot Act & OFAC Compliance "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "52": topicCaption = "References And Pre-Employment Testing "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
         case "53": topicCaption = "Function and Operations of Banks "; topicBody = "<blockquote>Total Training Solutions' " + topicPrefix.ToLower() + " compliance webinar training covers topics ranging from deposit and lending regulations to BSA to IRS information reporting and many more. All of our" + topicPrefix.ToLower() + "training webinars are led by experts from the financial industry.</blockquote> " ; break;
-
-        default:
-            topicCaption = " ";
-            break;
     }
+}
+GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+IStateService stateService = new StateService();
 
-    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
-
-    IStateService stateService = new StateService();
-
-    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-    var claimsIdentity = (ClaimsIdentity)User.Identity;
+var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+var claimsIdentity = (ClaimsIdentity)User.Identity;
 
 }
 

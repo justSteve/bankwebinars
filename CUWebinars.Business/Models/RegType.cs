@@ -70,7 +70,7 @@ namespace CUWebinars.Business.Models
                 {
                     return "> 10B - $850";
                 }
-                return "UnKnown";
+                return OptionLabel;
 
             }
         }

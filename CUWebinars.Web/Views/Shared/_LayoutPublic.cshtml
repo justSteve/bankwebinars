@@ -13,7 +13,7 @@
     if (currentUrl.ToLower().Contains("complianceperspectives") && !currentUrl.Contains("883"))
     {
         <script type="text/javascript">
-          window.location.href = "https://www.complianceperspectives.com/883/compliance-perspectives-a-monthly-update";
+            window.location.href = "https://www.complianceperspectives.com/883/compliance-perspectives-a-monthly-update";
         </script>
     }
 
@@ -29,7 +29,7 @@
     {
         CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
         Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
-        
+
     }
     var footAddress = "";
     var footSocial = "";
@@ -299,24 +299,43 @@
                     <ul class="primary_menu">
                         <li class="parent"><a href="/webinar/calendar">calendar</a></li>
                         <li class="parent">
-                            <a href="javascript:void(0)">topics<i></i></a>
-                            <ul>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/30">BSA</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/25">Computer Skills</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/31">Deposit Accounts</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/32">Executive/Director</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRAs</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/33">Management/Employee Development</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/34">Reporting</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management/Legal</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/36">Safe Deposit</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/37">TRID</a></li>
-                            </ul>
-                        </li>
+                        <a href="javascript:void(0)">topics<i></i></a>
+                            @*listing is produced by SPROC: EXEC BuildTopicDescriptions*@
+                            @if (globalConfig.Tenant == "BankWebinars")
+                            {
+                                <ul>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/30">BSA</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/25">Computer Skills</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/31">Deposit Accounts</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/32">Executive/Director</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRAs</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/33">Management/Employee Development</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/34">Reporting</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management/Legal</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/36">Safe Deposit</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/37">TRID</a></li>
+                                </ul>
+                            }
+                            @if (globalConfig.Tenant == "CUWebinars")
+                            {
+                                <ul>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/30">BSA</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/31">Deposit Accounts</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRAs</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/34">Management/Employee Development</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/35">Risk Management/Legal</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
+                                </ul>
+                            }
+
                         <li class="parent">
                             <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
 
@@ -414,13 +433,13 @@
     @using (Html.BeginForm("ICalOrder", "Webinar", FormMethod.Get, new { name = "frmAddIcs", id = "frmAddIcs" }))
     {
         <input type="hidden" id="icsWebinar" name="icsWebinar" />
-        <input type="hidden" id="icsOrder" name="icsOrder" />
+            <input type="hidden" id="icsOrder" name="icsOrder" />
 
     }
     @using (Html.BeginForm("ICalOrder", "Webinar", FormMethod.Post, new { name = "frmAddGmail", id = "frmAddGmail" }))
     {
         <input type="hidden" id="glWebinar" name="glWebinar" />
-        <input type="hidden" id="glOrder" name="glOrder" />
+            <input type="hidden" id="glOrder" name="glOrder" />
     }
     <div class="modal hide fade in" id="DisplayErrorModal">
         <div class="modal-header">

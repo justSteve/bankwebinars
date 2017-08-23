@@ -1923,7 +1923,7 @@ namespace CUWebinars.Web.Controllers
 
             var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
                 _globalConfig.TenantURL + " is Webinars for the financial industry.",
-                new Uri("http://www.bankwebinars.com"), postItems)
+                new Uri(_globalConfig.TenantURL), postItems)
             {
 
             };
@@ -1968,7 +1968,7 @@ namespace CUWebinars.Web.Controllers
 
             var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
                 _globalConfig.TenantURL + " <i>is</i> Webinars for the financial industry.",
-                new Uri("http://www.bankwebinars.com/"), postItems)
+                new Uri(_globalConfig.TenantURL), postItems)
             {
 
             };

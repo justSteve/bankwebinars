@@ -51,6 +51,7 @@
         <div>
             <form class="jotform-form" action="https://submit.jotformpro.com/submit/60898267714974/" method="post" name="form_60898267714974" id="60898267714974" accept-charset="utf-8">
                 <input type="hidden" name="id" id="cancelModalOrderId" value="@Model.idOrder" />
+
                 <input type="hidden" name="formID" value="60898267714974" />
                 <div class="form-all">
                     <ul class="form-section page-section">
@@ -58,6 +59,12 @@
                             <label class="form-label form-label-top form-label-auto" id="label_27" for="input_27">  </label>
                             <div id="cid_27" class="form-input-wide always-hidden jf-required">
                                 <input type="text" class=" form-textbox" data-type="input-textbox" id="input_27" name="q27_idOrder" size="20" value="" />
+                            </div>
+                        </li>
+                        <li class="form-line always-hidden" data-type="control_textbox" id="id_28">
+                            <label class="form-label form-label-top form-label-auto" id="label_28" for="input_28"> url </label>
+                            <div id="cid_28" class="form-input-wide always-hidden jf-required">
+                                <input type="text" id="input_28" name="q28_url" data-type="input-textbox" class="form-textbox" value="@globalConfig.TenantURL" data-component="textbox" />
                             </div>
                         </li>
                         <li class="form-line jf-required" data-type="control_checkbox" id="id_26">
