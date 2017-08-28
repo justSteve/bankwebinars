@@ -263,7 +263,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         Discounts =
                             _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
                                 .Where(d => d.DiscountType == DiscountType.Subscription)
-                                .ToList()
+                                .ToList(),
+                        Affiliate = affiliate
                     },
 
                     CompPersSubscriptionsModel = new CompPersSubscriptionsModel

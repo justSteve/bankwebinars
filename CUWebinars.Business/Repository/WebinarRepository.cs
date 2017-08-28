@@ -456,29 +456,7 @@ namespace CUWebinars.Business.Repository
 
             return webinars;
         }
-
-        public string GetSpecialMsg(int webinarIdWebinar)
-        {
-            var webinar = items
-                .Where(
-                    w => w.idWebinar == webinarIdWebinar
-                    && w.Comments.Contains("SpecialMessage")).SingleOrDefault();
-            if (webinar != null)
-            {
-                var comments = JToken.Parse(webinar.Comments);
-                var msg = "";
-                foreach (JProperty prop in comments.Children<JObject>().Select(content => content.Properties().Where(prop => prop.Name == JsonPropertyKeys.SpecialMessage)))
-                {
-                    msg = prop.Value.ToString();
-                }
-                return msg;
-            }
-            else
-            {
-                return null;
-            }
-
-        }
+        
 
         public IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId)
         {

@@ -605,20 +605,74 @@ namespace CUWebinars.Web.Helpers
             return false;
         }
 
-        public string CleanHtmlCodesAndLogo(string body, string tenantLogo, string addloccost, string specialMsg = null)
+
+        public static string DisplayUserTimeZone(Order order)
+        {
+            OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            if (row == null) throw new NullReferenceException();
+
+            var hoursAdjust = row.Webinar.Date;
+
+            switch (order.WebUser.timeZone)
+            {
+                case USTimeZone.Pacific:
+
+                    return hoursAdjust.AddHours(-2).ToShortTimeString() + " " + order.WebUser.timeZone.ToString();
+                    break;
+                case USTimeZone.Mountain:
+
+                    return hoursAdjust.AddHours(-1).ToShortTimeString() + " " + order.WebUser.timeZone.ToString();
+                    break;
+                case USTimeZone.Central:
+
+                    return hoursAdjust.ToShortTimeString() + " " + order.WebUser.timeZone.ToString();
+                    break;
+                case USTimeZone.Eastern:
+
+                    return hoursAdjust.AddHours(1).ToShortTimeString() + " " + order.WebUser.timeZone.ToString();
+                    break;
+                case USTimeZone.Alaska:
+
+                    return hoursAdjust.AddHours(-3).ToShortTimeString() + " " + order.WebUser.timeZone.ToString();
+                    break;
+                case USTimeZone.Hawaii:
+
+                    return hoursAdjust.AddHours(-5).ToShortTimeString() + " " + order.WebUser.timeZone.ToString();
+                    break;
+
+                case USTimeZone.Caribbean:
+
+                    return hoursAdjust.AddHours(2).ToShortTimeString() + " " + order.WebUser.timeZone.ToString();
+                    break;
+            }
+            return "";
+        }
+
+        public static string DisplayUserDate(Order order)
+        {
+            OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            if (row == null) throw new NullReferenceException();
+            return DateTimeHelper.FormatDate(row.Webinar.Date) + " " + DateTimeHelper.FormatTimeWithDuration(row.Webinar.Date, order.WebUser.timeZone, true, row.Webinar.Duration);
+
+        }
+
+        public string CleanHtmlCodesAndLogo(string body
+            , string tenantLogo
+            , string addloccost
+            , string openingMessage = null)
         {
             body = body.Replace("&gt;", ">");
             body = body.Replace("&lt;", "<");
             body = body.Replace("[logo]", "<img src=" + tenantLogo + " />");
             if (!string.IsNullOrEmpty(addloccost))
                 body = body.Replace("[addloccost]", addloccost);
-            if (!string.IsNullOrEmpty(specialMsg))
+            if (!string.IsNullOrEmpty(openingMessage))
             {
-                body = body.Replace("[specialmsg]", specialMsg);
+                body = body.Replace("[OpeningMessage]", openingMessage);
             }
             else
             {
-                body = body.Replace("[specialmsg]", "");
+                body = body.Replace("[OpeningMessage]", "");
             }
             return body;
         }
@@ -675,6 +729,7 @@ namespace CUWebinars.Web.Helpers
             fields.ShowTimeZone = order.WebUser.timeZone.ToString();
 
             var hoursAdjust = row.Webinar.Date;
+
             switch (order.WebUser.timeZone)
             {
                 case USTimeZone.Pacific:
@@ -876,5 +931,6 @@ namespace CUWebinars.Web.Helpers
 
             return fixedArray;
         }
+
     }
 }

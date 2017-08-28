@@ -1,24 +1,48 @@
-﻿@* this partial view is intended for use in a DataTables.net table. *@
+﻿
+@* this partial view is Depricated *@
 @* magic strings [ORDERSTATUS] and [ORDERID] are replaced in client-side script for each Row *@
+@*@{
+    var isAffiliate = true;
 
-<form class="form-compact compact-order-status-edit-form" novalidate="novalidate">
-    <input type="hidden" name="Id"/>
-    @Html.AntiForgeryToken()
-    <input type="hidden" name="Order.OrderStatus" />
+    if (User != null && User.Identity.IsAuthenticated)
+    {
+        ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
-    <div class="dropdown">
+        if (claimsIdentityOfAuthenticatedUser.HasClaim(
+            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+        {
+            isAffiliate = false;
+        }
+    }        <span>here!</span>
+    if (!isAffiliate)
+    {
 
-        <a class="dropdown-toggle btn btn-mini" role="button" href="#" data-toggle="dropdown">[ORDERSTATUS]&nbsp;<b class="caret"></b></a>
-        <ul class="dropdown-menu" role="menu">
+        <form class="form-compact compact-order-status-edit-form" id="here" novalidate="novalidate">
+            <input type="hidden" name="Id"/>
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Order.OrderStatus"/>
 
-            @foreach (string name in Enum.GetNames(typeof (OrderStatus)))
-            {
-                if (name.Contains("Submitted") || name.Contains("Billed") || name.Contains("Paid") || name.Contains("Canceled") || name.Contains("AwaitingVerification"))
-                {
-                    <li role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], '@name'); return false;">@name</a></li>
-                }
-            }
+            <div class="dropdown">
 
-        </ul>
-    </div>
-</form>
+                <a class="dropdown-toggle btn btn-mini" role="button" href="#" data-toggle="dropdown">[ORDERSTATUS]&nbsp;<b class="caret"></b></a>
+                <ul class="dropdown-menu" role="menu">
+
+                    @foreach (string name in Enum.GetNames(typeof(OrderStatus)))
+                    {
+                        if (name.Contains("Submitted") || name.Contains("Billed") || name.Contains("Paid") || name.Contains("Canceled") || name.Contains("AwaitingVerification"))
+                        {
+                            <li role="presentation"><a tabindex="-1" role="menuitem" href="#" onclick="updateOrderStatus(this, [ORDERID], '@name');return false;">@name</a></li>
+                        }
+                    }
+
+                </ul>
+            </div>
+        </form>
+    }
+    if (isAffiliate)
+    {
+        <span>Order Status = [ORDERSTATUS]</span>
+    }
+}
+
+}*@

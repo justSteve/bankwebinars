@@ -399,20 +399,28 @@ namespace CUWebinars.Web.Controllers
 
 
             _logger.Info(sb.ToString());
+            var defaultMsg = "";
             if (webinar.Date.ToShortDateString() != DateTime.Now.ToShortDateString())
             {
-                ViewBag.DefaultMsg = "It's time to get ready for the " + webinar.Title + " webinar upcoming on [DisplayUserDate].";
+                defaultMsg = "It's time to get ready for the <i> " + webinar.Title + " </i> webinar upcoming on [DisplayUserDate].";
+                if (webinar.Title.StartsWith("The"))
+                    defaultMsg = "It's time to get ready for <i> " + webinar.Title + " </i> webinar upcoming on [DisplayUserDate].";
             }
             else
             {
-                ViewBag.DefaultMsg = "This is a reminder that the " + webinar.Title + " webinar will be held today at [DisplayUserTimeZone]";
+                defaultMsg = "This is a reminder that the <i>" + webinar.Title + "</i> webinar will be held today at [DisplayUserTimeZone]";
+                if (webinar.Title.StartsWith("The"))
+                {
+                    defaultMsg = "This is a reminder that <i>" + webinar.Title + "</i> webinar will be held today at [DisplayUserTimeZone]";
+                }
             }
 
             var ordersToSend = JsonConvert.SerializeObject(orders.Select(o => o.idOrder));
             return Json(new
             {
                 Result = WebUiConstants.Success,
-                ordersToSend = ordersToSend
+                ordersToSend,
+                defaultMsg
             }, JsonRequestBehavior.AllowGet);
         }
 
@@ -423,16 +431,9 @@ namespace CUWebinars.Web.Controllers
             {
                 //_logger.Info("ConnectionInfo Send is started: " + webinarId.Value);
                 var webinar = _webinarManagementService.GetWebinar(webinarId.Value);
-                var hasMsg = _webinarManagementService.GetSpecialMsg(webinarId.Value);
-
-                if (hasMsg != null)
-                {
-
-                }
-                JObject forComments = new JObject(new JProperty(JsonPropertyKeys.SpecialMessage, msg));
-
+                
                 if (webinar != null)
-                    webinar.Comments = JsonHelpers.MergeJsonWithStoredField(webinar.Comments, new JProperty(JsonPropertyKeys.SpecialMessage, forComments));
+                    webinar.OpeningMessage = msg;
 
                 _webinarManagementService.SaveChanges();
 
@@ -444,10 +445,12 @@ namespace CUWebinars.Web.Controllers
         }
 
         [System.Web.Mvc.HttpPost]
-        public JsonResult SendConnectionInfo(int? webinarId, int? orderId, bool reminder = false)
+        public JsonResult SendConnectionInfo(int? webinarId, int? orderId, bool reminder = false, string defaultMsg = "")
         {
             if (webinarId != null)
             {
+                if (defaultMsg != "")
+                    SubmitConnectionInfoMessage(webinarId, defaultMsg);
                 //_logger.Info("ConnectionInfo Send is started: " + webinarId.Value);
                 var webinar = _webinarManagementService.GetWebinar(webinarId.Value);
 
@@ -495,8 +498,6 @@ namespace CUWebinars.Web.Controllers
                 {
                     _logger.FatalException("SendConnectionInfo: " + webinarId, ex);
                 }
-
-
             }
 
             if (orderId.HasValue)

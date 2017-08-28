@@ -10,8 +10,21 @@
     var nfi = new CultureInfo("en-US", false).NumberFormat;
     nfi.CurrencyDecimalDigits = 0;
 
+    if (Model.Affiliate == null)
+    {
+        <script language="javascript" type="text/javascript">
+            var idAffiliate = 19;
+        </script>
+    }
+    else
+    {
 
+        <script language="javascript" type="text/javascript">
+            var idAffiliate = Model.Affiliate.idUserAff;;
+        </script>
+    }
 }
+
 <style>
     table td {
         border: medium;
@@ -19,6 +32,43 @@
         text-align: left;
     }
 </style>
+<script type="text/javascript" language="javascript">
+    @*var idDiscount = @Model.Webinar.idWebinar;*@
+    $(function () {
+        $("td[id^=showDiscountDetails_]").click(
+            function () {
+                
+                
+                
+                var thisId = ($(this).data("thisid"));              
+                $("div[id^='discountDetails_']").hide();
+
+                $("div[id^=discountDetails_" + thisId + "]").show();
+
+                var payload = { idAffilate: idAffiliate, idDiscount: thisId };
+                
+                $.ajax({
+                    type: 'POST',
+
+                    cache: false,
+                    url: '/Admin/AuditDiscount',
+                    dataType: constants.JsonDataType,
+                    data: payload,
+                    beforeSend: function() {
+                        //$(self)
+                        //    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
+                    }
+                }).done(function(result) {
+
+                    if (result.Result === 'Success') {
+                        alert("Success");
+                    }
+                });
+
+            });
+    });
+
+</script>
 <div class="container">
     <!--begin main content-->
     <div class="row-fluid">
@@ -37,12 +87,17 @@
                                 users += user.email + ", ";
                             }
                             <tr>
-                                <td>@discount.DiscountCode (@discount.idDiscount)</td>
+                                <td id="showDiscountDetails_@discount.idDiscount" data-thisid="@discount.idDiscount">
+                                    @discount.DiscountCode (@discount.idDiscount)
+                                    <div id="discountDetails_@discount.idDiscount" class="initialHide">hidden?</div>
+                                </td>
                                 <td>@users.TrimEnd(' ').TrimEnd(',')</td>
                                 <td>
-                                    <div style="text-align: right">@discount.CreditsRemain</div></td>
+                                    <div style="text-align: right">@discount.CreditsRemain</div>
+                                </td>
                                 <td>
-                                    <div style="text-align: right">@discount.Status</div></td>
+                                    <div style="text-align: right">@discount.Status</div>
+                                </td>
 
                             </tr>
                         }

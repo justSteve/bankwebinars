@@ -613,13 +613,7 @@ namespace CUWebinars.Business.Services
             return finding.ToString();
 
         }
-
-        public string GetSpecialMsg(int webinarIdWebinar)
-        {
-            return _webinarRepository.GetSpecialMsg(webinarIdWebinar);
-        }
-
-
+        
         public string ParseForSpeakerName(string importWebinarDescriptionText)
         {
 

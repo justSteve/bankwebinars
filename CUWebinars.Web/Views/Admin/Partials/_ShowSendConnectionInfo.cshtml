@@ -16,14 +16,15 @@
 
     }
     <script type="text/javascript" language="javascript">
-        
+
                         var idWebinar = @Model.Webinar.idWebinar;
             $(function() { //$("#submitSendConnInfo").html("Audit Connection Checklist Results");
+
                 $("#SubmitConnectionInfoMessage").click(
                     function() {
 
 
-                        var msg = $("#SpecialMessageText").val();
+                        var msg = $("#DefaultMessageText").val();
                         console.log(msg);
                         var payload = { webinarId: idWebinar, msg };
 
@@ -155,9 +156,9 @@
     //\Scripts\app\admin\display-orders.js
     // AdminController/BuildConnInfoViewModel
     <div id="SenderSummary">
-        <div id="SpecialMessage">
-            <input type="text" id="SpecialMessageText" name="SpecialMessageText"/>
-            <input type="button" id="SubmitConnectionInfoMessage" value="Submit Message" />
+        <div id="OpeningMessage">
+            <textarea id="DefaultMessageText" value=""  style="width:400px; height: 100px;" name="DefaultMessageText"></textarea> 
+
         </div>
         Total Orders to be notified: @allUsers.<br />
         @{

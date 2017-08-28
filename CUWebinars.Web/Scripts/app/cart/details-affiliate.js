@@ -10,6 +10,7 @@ OCA.showSetAssignedAffiliate = $('#showSetAssignedAffiliate');
 OCA.okToLeave = true;
 OCA.ordersForConnInfoSender = [];
 OCA.counterForConnInfoSender = 0;
+OCA.defaultMsg = "";
 
 
 
@@ -47,7 +48,7 @@ OCA.initializeFunctions = function () {
 
     $('#fireConnInfoSender').on('click', function (eventArgs) {
 
-        var payload = { webinarId: currentWebinarId };
+        var payload = { webinarId: currentWebinarId, defaultMsg: $("#DefaultMessageText").val() };
         eventArgs.preventDefault();
         console.log(eventArgs);
         //var logStartOperation = toastLogger.getLogFn('SendConnectionInfo');
@@ -165,7 +166,9 @@ OCA.initializeFunctions = function () {
 
                     var stripBracket = result.ordersToSend.replace('[', '').replace(']', '');
                     OCA.ordersForConnInfoSender = stripBracket.split(",");
+                    OCA.defaultMsg = result.defaultMsg;
 
+                    $("#DefaultMessageText").val(result.defaultMsg);
                 } else if (result.Result === 'Fail') {
                     $('#InputFormFields').append(noOrderScreenMessage);
                 }

@@ -51,6 +51,6 @@ namespace CUWebinars.Business.Repository
         IEnumerable<Webinar> GetRelated(int? idWebinar);
         IEnumerable<Webinar> GetTopicsByWebinar(int? idWebinar);
 
-        string GetSpecialMsg(int webinarIdWebinar);
+
     }
 }

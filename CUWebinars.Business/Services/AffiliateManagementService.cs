@@ -762,7 +762,9 @@ namespace CUWebinars.Business.Services
             if (idUserAff != 19)
             {
                 var theseDiscounts = _context.Discounts
-                    .Where(d => (d.DiscountType == DiscountType.Subscription || d.DiscountType == DiscountType.ComplianceSeries) && d.idAffiliate == idUserAff).ToList();
+                    .Where(d => (d.DiscountType == DiscountType.Subscription 
+                    || d.DiscountType == DiscountType.ComplianceSeries) 
+                    && d.idAffiliate == idUserAff).ToList();
 
                 foreach (var discount in theseDiscounts)
                 {

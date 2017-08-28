@@ -15,6 +15,7 @@ namespace CUWebinars.Business.Models
         }
 
 
+        public string OpeningMessage { get; set; }
         public int idPresenter { get; set; }
         public int idWebinar { get; set; }
 

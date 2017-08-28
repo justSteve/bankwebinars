@@ -998,11 +998,23 @@ namespace CUWebinars.Web.Controllers
             {
                 claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
             }
-            DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
-            {
-                Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, true),
+            var optionsToDisplay = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, true);
 
-                //Options = _orderManagementService.GetOptionsAvailableToExistingOrder(orderRow.idWebinar, false, order),
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Affiliate))
+                {
+                    optionsToDisplay = _orderManagementService.GetOptionsAvailableToExistingOrder(orderRow.idWebinar, false,
+                        order);
+                }
+            }
+            //
+
+                DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
+            {
+                Options = optionsToDisplay,
                 OrderRowId = orderRow.idOrderRow,
                 OrderRowRegistrationType = orderRow.RegistrationType
             };

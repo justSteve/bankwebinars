@@ -67,21 +67,32 @@ function getResendInfoHtml() {
 function getOrderStatusHtml() {
     // this seems a little slower than I'd like...
     var html = "";
-    html = html + '<form class=\"form-compact compact-order-status-edit-form\" novalidate=\"novalidate\">';
-    html = html + '    <input type=\"hidden\" name=\"Id\" />';
-    html = html + '    <input type=\"hidden\" name=\"DisplayRowPriceViewModel.OrderStatus\" />';
-    html = html + '    <div class=\"dropdown\">';
-    html = html + '        <a class=\"dropdown-toggle btn btn-mini\" role=\"button\" href=\"#\" data-toggle=\"dropdown\">[ORDERSTATUS]&nbsp;<b class=\"caret\"></b></a>';
-    html = html + '        <ul class=\"dropdown-menu\" role=\"menu\">';
-    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Submitted\'); return false;\">Submitted</a></li>';
-    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Billed\'); return false;\">Billed</a></li>';
-    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Paid\'); return false;\">Paid</a></li>';
-    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Canceled\'); return false;\">Canceled</a></li>';
-    html = html + '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'AwaitingVerification\'); return false;\">AwaitingVerification</a></li>';
-    html = html + '        </ul>';
-    html = html + '    </div>';
-    html = html + '</form>';
-
+    console.log(DO.affiliateId);
+    if (showAffiliateColumn || DO.affiliateId === 62) {
+        html = html +
+            '<form id=\"order-status\" class=\"form-compact compact-order-status-edit-form\" novalidate=\"novalidate\">';
+        html = html + '    <input type=\"hidden\" name=\"Id\" />';
+        html = html + '    <input type=\"hidden\" name=\"DisplayRowPriceViewModel.OrderStatus\" />';
+        html = html + '    <div class=\"dropdown\">';
+        html = html +
+            '        <a class=\"dropdown-toggle btn btn-mini\" role=\"button\" href=\"#\" data-toggle=\"dropdown\">[ORDERSTATUS]&nbsp;<b class=\"caret\"></b></a>';
+        html = html + '        <ul class=\"dropdown-menu\" role=\"menu\">';
+        html = html +
+            '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Submitted\'); return false;\">Submitted</a></li>';
+        html = html +
+            '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Billed\'); return false;\">Billed</a></li>';
+        html = html +
+            '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Paid\'); return false;\">Paid</a></li>';
+        html = html +
+            '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'Canceled\'); return false;\">Canceled</a></li>';
+        html = html +
+            '                    <li role=\"presentation\"><a tabindex=\"-1\" role=\"menuitem\" href=\"#\" onclick=\"updateOrderStatus(this, [ORDERID], \'AwaitingVerification\'); return false;\">AwaitingVerification</a></li>';
+        html = html + '        </ul>';
+        html = html + '    </div>';
+        html = html + '</form>';
+    } else {
+        html = '<div>[ORDERSTATUS]</div>';
+    }
     return html;
 }
 

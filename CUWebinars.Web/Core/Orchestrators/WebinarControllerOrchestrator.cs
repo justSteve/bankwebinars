@@ -110,8 +110,17 @@ namespace CUWebinars.Web.Core.Orchestrators
                     sb.AppendLine("   CC: " + hasCc);
                 }
                 var body = BuildConnectionInfoMessage(order, null, reminder);
-                body = body.Replace("It’s time to get ready for the ", "This is a reminder that ");
-                body = body.Replace("webinar coming up on ", "will be starting later today at ");
+
+                if (body.Contains("DisplayUserTimeZone"))
+                {
+                    body = body.Replace("[DisplayUserTimeZone]", AppHelper.DisplayUserTimeZone(order));
+                }
+
+
+                if (body.Contains("DisplayUserDate"))
+                {
+                    body = body.Replace("[DisplayUserDate]", AppHelper.DisplayUserDate(order));
+                }
 
                 ConnInfoSendModel conSend = new ConnInfoSendModel();
 
@@ -189,6 +198,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                     {
                         var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
 
+                        if (body.Contains("DisplayUserTimeZone"))
+                        {
+                            body = body.Replace("[DisplayUserTimeZone]", AppHelper.DisplayUserTimeZone(order));
+                        }
+
+
+                        if (body.Contains("DisplayUserDate"))
+                        {
+                            body = body.Replace("[DisplayUserDate]", AppHelper.DisplayUserDate(order));
+                        }
+
+
                         _orderManagementService.FireMandrillNotificationEvent(
                             loc.Email,
                             "Connection Checklist for " + GetWebinar(idWebinar).Title, body);
@@ -196,8 +217,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                     else
                     {
                         var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
-                        body = body.Replace("It’s time to get ready for the ", "This is a reminder that ");
-                        body = body.Replace("webinar coming up on ", "will be starting later today at ");
+
+
+                        if (body.Contains("DisplayUserTimeZone"))
+                        {
+                            body = body.Replace("[DisplayUserTimeZone]", AppHelper.DisplayUserTimeZone(order));
+                        }
+
+
+                        if (body.Contains("DisplayUserDate"))
+                        {
+                            body = body.Replace("[DisplayUserDate]", AppHelper.DisplayUserDate(order));
+                        }
 
                         _orderManagementService.FireMandrillNotificationEvent(
                             loc.Email,
@@ -209,6 +240,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                     if (!reminder)
                     {
                         var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
+                        
+                        if (body.Contains("DisplayUserTimeZone"))
+                        {
+                            body = body.Replace("[DisplayUserTimeZone]", AppHelper.DisplayUserTimeZone(order));
+                        }
+                        
+                        if (body.Contains("DisplayUserDate"))
+                        {
+                            body = body.Replace("[DisplayUserDate]", AppHelper.DisplayUserDate(order));
+                        }
 
                         _orderManagementService.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"],
@@ -217,8 +258,17 @@ namespace CUWebinars.Web.Core.Orchestrators
                     else
                     {
                         var body = BuildConnectionInfoMessage(order, loc.Email, reminder);
-                        body = body.Replace("It’s time to get ready for the ", "This is a reminder that ");
-                        body = body.Replace("webinar coming up on ", "will be starting later today at ");
+
+                        if (body.Contains("DisplayUserTimeZone"))
+                        {
+                            body = body.Replace("[DisplayUserTimeZone]", AppHelper.DisplayUserTimeZone(order));
+                        }
+
+
+                        if (body.Contains("DisplayUserDate"))
+                        {
+                            body = body.Replace("[DisplayUserDate]", AppHelper.DisplayUserDate(order));
+                        }
 
                         _orderManagementService.FireMandrillNotificationEvent(
                             ConfigurationManager.AppSettings["TestEmailAddress"],
@@ -678,7 +728,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var subject = "[" + _globalConfig.Tenant + "] OnDemand recording posted for  " +
                                   order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                                       .Webinar.Title;
-                    
+
                     var body = BuildRecordingIsPostedMessage(order);
                     body = _appHelper.CleanHtmlCodesAndLogo(body, _globalConfig.TenantLogo, null, null);
 
@@ -758,7 +808,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 docToString = _appHelper.CleanHtmlCodesAndLogo(docToString
                 , _globalConfig.TenantLogo
                 , _orderManagementService.GetAdditionalLocationsPricing(order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToString("C0"),
-                _webinarManagementService.GetSpecialMsg(webinar.idWebinar));
+                webinar.OpeningMessage);
 
                 blob.UploadText(docToString);
                 return docToString;
