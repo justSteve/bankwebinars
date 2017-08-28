@@ -55,7 +55,7 @@ $(function () {
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
             if (desCheckout) {
-                $('#ConfirmRegistrationBillMe').hide();
+                //$('#ConfirmRegistrationBillMe').hide();
                 $('#ContinueShoppingButton').hide();
                 $('#linkIsOrderForCoworker').hide();
                 $('#revealAddLocsPanel').hide();
