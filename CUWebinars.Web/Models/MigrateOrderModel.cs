@@ -29,8 +29,7 @@ namespace CUWebinars.Web.Models
         public DateTime OrderDate { get; set; }
         public DateTime ShipmentDate { get; set; }
         public decimal Total { get; set; }
-
-
+        public string LoggerNotes { get; set; }
     }
 
 }

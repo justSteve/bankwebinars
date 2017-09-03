@@ -82,5 +82,6 @@ namespace CUWebinars.Web.Core.Orchestrators
         string CreateSeriesOrders(OrderRow model);
         string CreateCompliancePerspectivesSubscription(OrderRow row);
         string OrderHasCc(Order order);
+        String RemoveDiscountCode(string code, OrderRow row);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -78,7 +79,7 @@ namespace CUWebinars.Web.Core
                                 {
 
                                 }
-                                
+
                                 values[i] = value;
                                 names[i] = name;
                             }
@@ -99,6 +100,65 @@ namespace CUWebinars.Web.Core
                     return null;
                 }
             }
+            return null;
+
+        }
+
+        public static MigrateOrderModel ParseConfSem(string _doc, string orderDate)
+        {
+
+            var attendeeBlockStart = _doc.IndexOf("Ship to:") + "Ship to:".Length;
+            var attendeeBlockEnd = _doc.IndexOf("Bill to:");
+
+            string[] attendeeBlock = _doc.Substring(attendeeBlockStart, attendeeBlockEnd).Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+            var model = new MigrateOrderModel();
+
+            var dateSubmitted = orderDate;
+
+            HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+            doc.LoadHtml(_doc);
+
+            if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
+            {
+                // Handle any parse errors as required
+                model.LoggerNotes = "ParseConfSem Errors: ";
+                foreach (var error in doc.ParseErrors)
+                {
+                    model.LoggerNotes += error.Reason;
+                }
+                return model;
+            }
+            else
+            {
+                if (doc.DocumentNode != null)
+                {
+                    HtmlNode bodyNode = doc.DocumentNode.SelectSingleNode("//body");
+
+                    if (bodyNode != null)
+                    {
+                        try
+                        {
+                            var a = 21;
+                        }
+                        catch (Exception ex)
+                        {
+                            model.LoggerNotes += "ParseConfSem FatalExecption: " + ex.Message;
+                            _logger.FatalException("IncomingParseConfSem", ex);
+
+                        }
+                        return model;
+                    }
+                }
+                else
+                {
+                    model.LoggerNotes += "ParseConfSem Returned Null! ";
+                    _logger.Warn("IncomingConfSem is null");
+                    return null;
+                }
+            }
+
             return null;
 
         }

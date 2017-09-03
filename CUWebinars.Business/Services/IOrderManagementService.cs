@@ -169,5 +169,6 @@ namespace CUWebinars.Business.Services
         Order UserHasPrexistingOrder(Order existingOrder);
         string CreateCompliancePerspectivesSubscription(OrderRow row);
         IDictionary<RegType, bool> GetOptionsAvailableToExistingOrder(int id, bool b, Order modelOrder);
+        string RemoveDiscountCode(string code, OrderRow row);
     }
 }

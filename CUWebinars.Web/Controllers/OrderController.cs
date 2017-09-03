@@ -285,6 +285,50 @@ namespace CUWebinars.Web.Controllers
         /// <param name="migrateOrderModel"></param>
         /// <returns></returns>
         [HttpPost]
+        public JsonResult PullWSPInfo(string idAffiliate, string DiscountCode)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                var myError = ProcessModelStateErrors();
+                return Json(new {Result = WebUiConstants.Fail, Error = myError});
+            }
+
+            try
+            {
+                var discount = _orderManagementService.GetDiscountByCode(DiscountCode);
+                if (discount == null)
+                    return Json(new { Result = "Code Not Found" }, JsonRequestBehavior.AllowGet);
+
+                var rows = _orderManagementService.GetOrdersByDiscount(discount.idDiscount)
+                    .SelectMany(o => o.OrderRows);
+                var uses = 0m;
+
+                foreach (var row in rows)
+                {
+                    uses += row.RegistrationType.CreditCost;
+                }
+
+                return Json(new {affId = discount.idAffiliate, StartingCount = discount.TotalCount, Used = uses, Remain = discount.TotalCount - uses, Id = discount.idDiscount }, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception exception)
+            {
+                var errString = string.Format("PullWSPInfo failed on {0} - {1} with msg: {2}", DiscountCode, idAffiliate, exception.Message);
+                Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                _logger.ErrorException(errString, exception);
+
+                return Json(new { Error = errString }, JsonRequestBehavior.AllowGet);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Permits migration of legacy system.
+        /// </summary>
+        /// <param name="migrateOrderModel"></param>
+        /// <returns></returns>
+        [HttpPost]
         public JsonResult MigrateOrder(MigrateOrderModel migratedOrder)
         {
             int idOfLastOrder = default(int);

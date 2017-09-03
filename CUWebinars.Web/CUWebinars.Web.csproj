@@ -498,6 +498,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\Importers\ImportOrderForConfSemModel.cs" />
     <Compile Include="Models\AccountInfoModel.cs" />
     <Compile Include="Models\NotiResultsModel.cs" />
     <Compile Include="Models\ConnInfoSenderModel.cs" />

@@ -218,6 +218,97 @@ OCA.initializeFunctions = function () {
         };
 
 
+    OCA.hookUpRemoveDiscountLogic = function (btn, orderRowId) {
+
+        btn.on('click', function (e) {
+
+            e.preventDefault();
+
+            registerDuringCheckout.gatherPricingData();
+
+            if (registerDuringCheckout.totalPrice < 1) {
+                return;
+            }
+            var token = $(this).find('input[name=__RequestVerificationToken]').val();
+            var headers = {};
+            headers['__RequestVerificationToken'] = token;
+
+            var url = '/cart/RemoveDiscountCode';
+            var payload = { code: $('#CheckoutDiscountCode').val(), orderRowId: orderRowId };
+            var self = this;
+
+            $.ajax({
+                type: 'POST',
+
+                contentType: constants.JsonContentType,
+                cache: false,
+                url: url,
+                dataType: constants.JsonDataType,
+                data: JSON.stringify(payload),
+                headers: headers,
+                beforeSend: function () {
+                    $(self).prepend('<i id="discountSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                    $(self).attr('disabled', 'disabled');
+                }
+            }).done(function (data) {
+
+                if (data.Result == 0) {
+                    alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found or had an error that prevented usage. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
+                }
+                if (data.Tax > 0) {
+                    $('#showTax').removeClass("hidden");
+                } else {
+                    $('#showTax').addClass("hidden");
+                }
+                console.log(data);
+                var alertCaption = data.UpdateSuccessCaption;
+                $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+                $('#discountCaption').html(data.DiscountCaption);
+                $('#optionLabel').html(data.regTypeShort);
+
+                $('#baseCost').html('$' + data.BasePrice + '');
+                $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+                $('#taxAmt').html(data.Tax + '');
+                $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+
+                $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+                if (data.TotalPaid !== 0) {
+                    if (data.OutstandingBalance > 0) {
+                        $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
+
+                    } else {
+                        if (data.OrderStatusCaption !== "") {
+                            $('#orderStatusLabel').html(data.OrderStatusCaption);
+                            alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+                        }
+                        $("#ShowPayByCCModal").hide();
+                        $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="outstandingBalance">Due: $(' + data.OutstandingBalance + ')</span>');
+                    }
+                }
+
+                if (data.Total === 0 || data.Total < 0) {
+                    alertCaption += " The order is fully discounted.";
+
+                    $("#ConfirmRegistrationBillMe").text("Submit Order");
+                    $("#ShowPayByCCModal").hide();
+                }
+
+                alert(alertCaption);
+
+                //$('#discountedText').html('Discounted: <span id="totalDiscount">$' + registerDuringCheckout.totalDiscount + '</span>').removeClass('muted');
+                //$('#showTotalPrice').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+                //$('#totalPriceText').html('Total Cost: <span id="totalPrice">$' + newTotalPrice.toString() + '.00</span>');
+
+                $('#discountSpinner').remove();
+
+            }).fail(commonFuncs.failCallBack).always(function (e) {
+                $('#discountSpinner').remove();
+                $(self).removeAttr('disabled');
+            });
+        });
+    };
+
+
     OCA.hookUpApplyDiscountLogic = function (btn, orderRowId) {
 
         btn.on('click', function (e) {
@@ -685,6 +776,7 @@ OCA.initializeFunctions = function () {
     OCA.wireUpMainButtonsOn3rdTab = function () {
         // The Bill Me button on 3rd tab
         OCA.hookUpApplyDiscountLogic($('#SubmitDiscountCode'), OCA.cartStateManager.getOrderRowId());
+        OCA.hookUpRemoveDiscountLogic($('#RemoveDiscountCode'), OCA.cartStateManager.getOrderRowId());
 
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
 
@@ -1006,6 +1098,7 @@ OCA.wireUpHandlers = function () {
                                     OCA.setUpEditButtons();
                                     OCA.hookUpChangeTypeLogic($('#RegType'));
                                     OCA.hookUpApplyDiscountLogic($('#SubmitDiscountCode'), OCA.cartStateManager.getOrderRowId());
+                                    OCA.hookUpRemoveDiscountLogic($('#RemoveDiscountCode'), OCA.cartStateManager.getOrderRowId());
 
                                     $('#EmailOrderButton').on('click', OCA.emailOrderButtonHandler);
 
@@ -1052,6 +1145,7 @@ OCA.wireUpHandlers = function () {
 
                                         OCA.hookUpChangeTypeLogic($('#RegType'));
                                         OCA.hookUpApplyDiscountLogic($('#SubmitDiscountCode'), OCA.cartStateManager.getOrderRowId());
+                                        OCA.hookUpRemoveDiscountLogic($('#RemoveDiscountCode'), OCA.cartStateManager.getOrderRowId());
 
                                         $('#EmailOrderButton').on('click', OCA.emailOrderButtonHandler);
 
@@ -1277,6 +1371,7 @@ OCA.wireUpHandlers = function () {
 $(function () {
 
     $("#fireConnInfoSender").hide();
+
     OCA.initializeFunctions();
 
     OCA.initializeState();

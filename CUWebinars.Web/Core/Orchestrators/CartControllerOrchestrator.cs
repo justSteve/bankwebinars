@@ -1671,6 +1671,19 @@ namespace CUWebinars.Web.Core.Orchestrators
             _membershipService.UpdateUserDetails(webUser);
         }
 
+        public string RemoveDiscountCode(string code, OrderRow row)
+        {
+            var removeDiscount = _orderManagementService.RemoveDiscountCode(code, row);
+            var discount = _orderManagementService.GetDiscountByCode(code);
+
+
+            if (!ReferenceEquals(discount, null))
+            {
+                _orderManagementService.CalculateOrderCost(row.Order, _orderManagementService.GetAdditionalLocationsPricing(row.idWebinar));
+                _orderManagementService.SaveChanges();
+            }
+            return removeDiscount;
+        }
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
             var discount = _orderManagementService.ApplyDiscountCode(code, row);
@@ -1682,9 +1695,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                 _orderManagementService.SaveChanges();
             }
             return discount;
-
-
         }
+
+
+
         public Discount CheckDiscountCode(int idDiscount)
         {
             return _orderManagementService.GetDiscountById(idDiscount);

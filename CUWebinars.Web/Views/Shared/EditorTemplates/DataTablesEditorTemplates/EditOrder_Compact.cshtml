@@ -223,12 +223,13 @@
                                 @Model.EditFields.Discount.DiscountCode (@Model.EditFields.Discount.idDiscount)<br />
                                 @if (Model.EditFields.Discount.DateValidTo > Model.EditFields.Discount.DateValidFrom)
                                 {
-                                    <span id="DisplayRowPriceViewModel_PricesAndDiscounts_SubExpiry"> Subscription will expire @Model.EditFields.Discount.DateValidTo.ToShortDateString()</span>
+                                    <div id="DisplayRowPriceViewModel_PricesAndDiscounts_SubExpiry"> Subscription will expire @Model.EditFields.Discount.DateValidTo.ToShortDateString()</div>
                                 }
                                 else
                                 {
-                                    <span id="DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain"> Credits Remain: @Model.EditFields.Discount.CreditsRemain</span>
+                                    <div id="DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain"> Credits Remain: @Model.EditFields.Discount.CreditsRemain</div>
                                 }
+                                <div id="removeDiscountButton" data-discountcode="@Model.EditFields.Discount.DiscountCode" class="btn btn-mini btn-danger" >Remove Discount</div>
                             </div>
                         </div>
                         if (row.Discount == null)

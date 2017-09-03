@@ -10,12 +10,12 @@ $(document).ready(function () {
 
 });
 
-    var labelCheckRemove = function () {
-        if ($('#ScreenMessageSpan').length > 0) {
-            $('#ScreenMessageSpan').siblings('br').remove();
-            $('#ScreenMessageSpan').remove();
-        }
-    };
+var labelCheckRemove = function () {
+    if ($('#ScreenMessageSpan').length > 0) {
+        $('#ScreenMessageSpan').siblings('br').remove();
+        $('#ScreenMessageSpan').remove();
+    }
+};
 
 // self-invoking function adds methods to EDIT namespace
 // replace EDIT with parameter 'ns' as EDIT is passed in at bottom in the self-invoking parentheses.
@@ -149,8 +149,10 @@ $(document).ready(function () {
     };
     ns.wireUpHandlers = function () {
 
+
         $("#frmUpdateCPSubscription").on('submit', ns.updateCPSubscription);
         $('#applyDiscountButton').on('click', ns.hookUpApplyDiscountLogic);
+        $('#removeDiscountButton').on('click', ns.hookUpRemoveDiscountLogic);
 
         //        $('#applyDiscountButton').on('click', ns.showRenewCPSubscriptionModal);
         $('#editOrderSubmitButton').on('click', ns.submitForm);
@@ -275,6 +277,99 @@ $(document).ready(function () {
 
         var url = '/cart/ApplyDiscountCode';
         var payload = { code: $('#EditFields_Discount_DiscountCode').val(), orderRowId: idOrderRowFromDTEOC };
+        var self = this;
+
+        $.ajax({
+            type: 'POST',
+            contentType: constants.JsonContentType,
+            cache: false,
+            url: url,
+            //headers: headers,
+            dataType: constants.JsonDataType,
+            data: JSON.stringify(payload),
+            beforeSend: function () {
+                $(self).prepend('<span id="discountSpinner"><i class="icon-spinner icon-spin"></i>&nbsp;</span>');
+                $(self).attr('disabled', 'disabled');
+            },
+            success: function (data) {
+
+                if (data) {
+                    if (data.Result == 0) {
+
+                        alert("There was an error detected while attempting to locate discount code " + data.Code + ". " +
+                            " Try again or use our Help & Feedback button (lower right corner)  for assistance.");
+                    } else {
+
+                        // need to update the currently displaying regType and associated costs
+
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_UnitPrice").html("$" + data.BasePrice);
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalCostOfOptions").html("$" + data.OptionsPrice);
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalDiscount").html("$" + data.Discount);
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain").html("$" + data.CreditsRemain);
+
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").html("$" + data.Tax);
+                        if (data.Tax > 0)
+                            $("#DisplayRowPriceViewModel_PricesAndDiscounts_Tax").parents("tr").removeClass("hidden");
+
+                        $("#DisplayRowPriceViewModel_PricesAndDiscounts_TotalOrderPrice").html("$" + data.Total);
+
+                        // also need to update the originating cell in parent row
+                        var $parentCell = $("td.child-showing");
+
+                        var flatOff = data.FlatOff;
+                        var percentOff = data.PercentOff;
+
+                        var showDiscount = "";
+                        if (flatOff > 0) {
+                            showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: $" + flatOff + "</span>";
+                        }
+
+                        if (percentOff > 0) {
+                            showDiscount = "<br><span class=\"DisplayDiscount\">Discounted by: " + percentOff + "%</span>";
+                        }
+                        alert(data.msg);
+                        //  Reuse logic already in display-orders.js for when the datatables.net gets created...
+                        var parentHtml = DO.getBillingCellHtml(showDiscount, data.regTypeShort, data.Total, data.ShippedDateString);
+                        $parentCell.html(parentHtml);
+
+                        var $childRow = $item.closest("td.child-row");
+                        fireSuccessIndicator($childRow.add($parentCell)); // not auto-hiding the child row yet...  color both the child row and the originating parent
+                    }
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+
+        }).always(function (e) {
+            $('#discountSpinner').remove();
+            $(self).removeAttr('disabled');
+        });
+    };
+
+    ns.hookUpRemoveDiscountLogic = function (e) {
+
+        var $item = $(e);
+        var form = $item.parents("form");
+        var $form = $(form);
+        
+        console.log(this.dataset.discountcode);
+
+        e.preventDefault();
+
+        // initialization code currently commented out
+        ns.gatherPricingData();
+
+        if (ns.totalPriceSansDiscount < 1) {
+            return;
+        }
+
+        //var token = $(this).find('input[name=__RequestVerificationToken]').val();
+        //var headers = {};
+        //headers['__RequestVerificationToken'] = token;
+
+        var url = '/cart/RemoveDiscountCode';
+        var payload = { code: this.dataset.discountcode, orderRowId: idOrderRowFromDTEOC };
         var self = this;
 
         $.ajax({
@@ -889,6 +984,7 @@ $(document).ready(function () {
         ns.totalPrice = parseInt(ns.totalPriceInput.val());
         ns.totalPriceSansDiscount = (ns.allAddLocsPrice || 0) + ns.basePrice;
     };
+
     M.primeDomVariables();
     M.wireUpHandlers();
 

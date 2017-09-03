@@ -284,6 +284,7 @@ namespace CUWebinars.Business.Services
         }
 
 
+
         public IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached)
         {
             string cachKey = "options-" + id;
@@ -695,19 +696,27 @@ namespace CUWebinars.Business.Services
             decimal totalOptionsPrice = 0M;
             var row = order.OrderRows.SingleOrDefault(orderRow => orderRow.RowStatus == OrderRowStatus.Active);
 
-            Debug.Assert(row != null, "OrderRow object should always have a value here.");
+            Debug.Assert(row != null, "CalculateOrderCost OrderRow object should always have a value here.");
             if (row.RegistrationType != null)
             {
                 row.UnitPrice = (decimal)row.RegistrationType.Price;
             }
             else
             {
-                _logger.Warn("COC did not find row when processing " + order.idOrder);
+                _logger.Warn("CalculateOrderCost did not find row when processing " + order.idOrder );
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
                 row.UnitPrice = regTypePricing;
+
                 row.RegistrationType = GetRegTypeOfOrderRow(row.idRegType);
+                if (row.RegistrationType == null)
+                {
+                    _logger.FatalException("CalculateOrderCost could not determine regType!!",
+                        new Exception("CalculateOrderCost could not determine regType", null));
+                    throw new Exception("CalculateOrderCost could not determine regType");
+                }
+
             }
             //Calculate row price before discount
             if (row.AdditionalLocation != null)
@@ -741,7 +750,7 @@ namespace CUWebinars.Business.Services
 
                 if (row.Discount.DiscountType == DiscountType.Subscription)
                 {
-                    _logger.Info("COC begin discount create " + row.Discount.idDiscount + " on " + row.idOrder +
+                    _logger.Info("CalculateOrderCost begin discount create " + row.Discount.idDiscount + " on " + row.idOrder +
                                  " found "
                                  + creditsRemain + " against " + row.RegistrationType.CreditCost);
 
@@ -1157,7 +1166,7 @@ namespace CUWebinars.Business.Services
                 string regTypeShortened =
                     preSaveValues.Split(',')[4].Replace(" Package", "")
                         .Replace("Live Plus Six", "Live+6")
-                        
+
                         .Replace(" Recording Only", "")
                         .Replace(" Plus Five", "+5");
                 int idRegTypeOfOrg = Convert.ToInt32(preSaveValues.Split(',')[5]);
@@ -1866,6 +1875,23 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public string RemoveDiscountCode(string code, OrderRow row)
+        {
+            //Removes the discount from this order
+            try
+            {
+                row.Discount = null;
+                SaveOrderChanges(row.Order, null, null, orderGenesis:OrderGenesis.Resend);
+                return "Suceeded";
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("RemoveDiscountCode", ex);
+                return "Failed";
+            }
+
+        }
+
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
             var thisDiscount = GetDiscountByCode(code);
@@ -1924,53 +1950,7 @@ namespace CUWebinars.Business.Services
                 _logger.Info("SaveOrderChanges: {0}", currentOrder.idOrder);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
-                //////  REMOVES SEND CONFIRMATION LOOP TO PREVENT DUPED SENDS
-                //// If linkToVerifyAccount is true, then we know that the user was created during an importation. When that occurs, 
-                //// we don't want to send the normal register user email. We want to roll those details into this confirmation
-                //// notification (OrderSubmitted notification). 
-
-                ////So, if we have the confirmChangeEmailLink, we can include it in 
-                //// the notification confirming registration for this webinar.  
-                //bool linkToVerifyAccount = !string.IsNullOrWhiteSpace(confirmChangeEmailLink);
-
-
-                ////this is just a smoke test, right? currentOrder.Webuser should never be null at this point. 
-                //_logger.Info("currentOrder.WebUser ({1}) is{0}null", currentOrder.WebUser == null ? " " : " not ", currentOrder.WebUser.email);
-
-                //var orderSubmittedViewModel = new ConfirmOrderMessage
-                //{
-                //    ConfirmChangeEmailUrl =
-                //        linkToVerifyAccount
-                //            ? string.Concat(confirmChangeEmailLink.Replace(DomainConstants.Blank, string.Empty),
-                //                currentOrder.WebUser.LastName.ToLower())
-                //            : string.Empty,
-                //    idOrder = updatedOrder.idOrder,
-                //    Order = updatedOrder,
-                //    OrderGenesis = orderGenesis,
-                //    UserCreatedOnImport = linkToVerifyAccount
-                //};
-
-
-                ////  The following "if" statement suppresses the OrderSubmitted notification where anonymous user has
-                ////  clicked the SignUp button or the order was migrated. The notification is still sent, it is just that
-                ////  it will be sent when the user clicks the "Bill Me" button on the 3rd tab of the cart. Not now.
-                //if (!currentOrder.Origin.Equals("Migrator", StringComparison.OrdinalIgnoreCase) &&
-                //    !currentOrder.Origin.Equals(DomainConstants.Cart, StringComparison.OrdinalIgnoreCase) &&
-                //    !currentOrder.Origin.Equals(DomainConstants.OriginImportedACS, StringComparison.OrdinalIgnoreCase)
-                //    && orderGenesis != OrderGenesis.ImportedForACSExistingUser)
-                //    // orderGenesis == OrderGenesis.ImportedForACSExistingUser means no email confirmation sent.
-                //{
-                //    _logger.Info("Adding Event for Order {0}", currentOrder.idOrder);
-
-                //    AddEvent(new OrderSubmittedEvent<ConfirmOrderMessage>
-                //    {
-                //        EventObject = orderSubmittedViewModel,
-                //        RelativePath = string.Empty
-                //    });
-
-
-                //}
-
+                
                 Clear();
 
                 return updatedOrder;

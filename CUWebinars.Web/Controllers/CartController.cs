@@ -101,6 +101,81 @@ namespace CUWebinars.Web.Controllers
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         [AllowAnonymous]
+        public ActionResult RemoveDiscountCode(string code, int orderRowId)
+        {
+            try
+            {
+                var row = _cartControllerOrchestrator.GetOrderRowLoaded(orderRowId);
+                var myDiscount = _cartControllerOrchestrator.GetDiscountById(row.Discount.idDiscount);
+                var result = _cartControllerOrchestrator.RemoveDiscountCode(code, row);
+
+                if (result == "Succeeded")
+                {
+                    //_cartControllerOrchestrator.UpdateOrderPricing(row.Order);
+                    var newJson = new JProperty(
+                        "DiscountIsRemoved",
+                        new JObject(new JProperty("By", _appHelper.GetUserAuditInfo())));
+                    
+                    row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson,
+                        "DiscountIsRemoved");
+                    var discountCaption = "";
+                    
+                    var updateSuccessCaption = "Removed Discount";
+
+                    var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricingReadOnly(row.Order);
+                    if (pricesAndDiscounts.Discount == null)
+                    {
+                        pricesAndDiscounts.Discount = new Discount();
+                    }
+                    else
+                    {
+                        discountCaption = _cartControllerOrchestrator.GetDiscountCaption(
+                               row.Discount,
+                               row, null, 1);
+                    }
+                    return
+                        Json(
+                            new
+                            {
+                                msg = "Discount Removed",
+                                UpdateSuccessCaption = updateSuccessCaption,
+                                DiscountCaption = discountCaption,
+                                regTypeShort = row.RegistrationType.OptionLabelShort,
+                                BasePrice = pricesAndDiscounts.UnitPrice,
+                                Discount = pricesAndDiscounts.TotalDiscount,
+                                OptionsPrice = pricesAndDiscounts.TotalCostOfOptions,
+                                Tax = pricesAndDiscounts.TaxAmount,
+                                TotalPaid = row.Order.TotalPaid,
+                                OutstandingBalance = (pricesAndDiscounts.UnitPrice + pricesAndDiscounts.TotalCostOfOptions + pricesAndDiscounts.TaxAmount - pricesAndDiscounts.TotalDiscount) - row.Order.TotalPaid,
+                                Total = pricesAndDiscounts.TotalOrderPrice,
+                                FlatOff =
+                                (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.FlatOff : 0,
+                                PercentOff =
+                                (pricesAndDiscounts.Discount != null) ? pricesAndDiscounts.Discount.PercentOff : 0,
+                                CreditsRemain =
+                                _cartControllerOrchestrator.CalculateCreditsRemaining(myDiscount).ToString()
+                            });
+                }
+                else
+                {
+                    return Json(new { Result = 0, Code = "Failed to Remove: " + code, Order = orderRowId });
+                }
+
+            }
+            catch (Exception exception)
+            {
+                //ModelState.AddModelError(string.Empty, "Code Not Found.");
+                _logger.ErrorException("RemoveDiscountCode| failed " + code + " orderRowId: " + orderRowId, exception);
+                return Json(new { Result = 0, Code = "Failed to Remove: " + code, Order = orderRowId });
+            }
+        }
+
+
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        [AllowAnonymous]
         public ActionResult ApplyDiscountCode(string code, int orderRowId)
         {
             try
@@ -1031,6 +1106,43 @@ namespace CUWebinars.Web.Controllers
 
         [AllowAnonymous]
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public void Incoming_confSem()
+        {
+            var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
+
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                _logger.Info("Incoming_confSem Starts");
+                if (incoming != null)
+                {
+                    var msgHtml =
+                        JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
+                    _logger.Info("Incoming_confSem " + msgHtml);
+                    var parsedOrder = ParseMandrillMsg.ParseConfSem("<html><body>" + msgHtml.msg.html + "</body></html>",
+                        DateTime.Now.ToString());
+                    _logger.Info("Incoming_confSemFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
+
+                    if (
+                        _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
+                            Convert.ToInt32(parsedOrder.idWebinar), parsedOrder.Email) > 0)
+                    {
+                        _logger.Info("Incoming_confSem found dupe: " + parsedOrder.idWebinar + " : " + parsedOrder.Email);
+                    }
+                    else
+                    {
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn("Incoming_confSem: " + incoming + " exception: " + ex);
+
+            }
+        }
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public void Incoming()
         {
             var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
@@ -1042,6 +1154,8 @@ namespace CUWebinars.Web.Controllers
                 if (incoming != null)
                 {
                     var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
+
+                    //if ()
                     _logger.Info("Incoming " + msgHtml);
                     var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>",
                         DateTime.Now.ToString());
@@ -1382,7 +1496,7 @@ namespace CUWebinars.Web.Controllers
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(order);
                     _logger.Info("FixSeriesOrdersWithIncorrectRoyalty suceeded: " + idOrder);
-                    
+
                 }
                 catch (Exception exception)
                 {
