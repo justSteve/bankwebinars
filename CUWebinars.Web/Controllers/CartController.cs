@@ -1709,7 +1709,7 @@ namespace CUWebinars.Web.Controllers
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate) || claimsIdentityOfAuthenticatedUser.HasClaim(
                         (claim) => claim.Type == Business.Constants.ClaimTypes.Admin)))
                     {
-                        if (order.BillingEmail != User.Identity.Name)
+                        if (order.BillingEmail.ToLower() != User.Identity.Name.ToLower())
                         {
                             _logger.Warn("Resume idOrder: " + id + " was not by order's email: " + User.Identity.Name);
 

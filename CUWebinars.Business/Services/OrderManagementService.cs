@@ -703,7 +703,7 @@ namespace CUWebinars.Business.Services
             }
             else
             {
-                _logger.Warn("CalculateOrderCost did not find row when processing " + order.idOrder );
+                _logger.Warn("CalculateOrderCost did not find row when processing " + order.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
@@ -1881,7 +1881,7 @@ namespace CUWebinars.Business.Services
             try
             {
                 row.Discount = null;
-                SaveOrderChanges(row.Order, null, null, orderGenesis:OrderGenesis.Resend);
+                SaveOrderChanges(row.Order, null, null, orderGenesis: OrderGenesis.Resend);
                 return "Suceeded";
             }
             catch (Exception ex)
@@ -1950,7 +1950,7 @@ namespace CUWebinars.Business.Services
                 _logger.Info("SaveOrderChanges: {0}", currentOrder.idOrder);
 
                 var updatedOrder = _orderRepository.SaveOrderChanges(currentOrder, 0);
-                
+
                 Clear();
 
                 return updatedOrder;
@@ -2041,13 +2041,20 @@ namespace CUWebinars.Business.Services
 
 
             var forNotes = new StringBuilder();
-            var existingDiscount = discount;
-            var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
             decimal creditsRemain = CalculateCreditsRemain(discount);
-            decimal creditsUsed = CalculateCreditsUsed(discount);
-
+            //decimal creditsUsed = CalculateCreditsUsed(discount);
+            //var existingDiscount = discount;
+            //var regTypeLabel = GetRegTypeOfOrderRow(row.idRegType).OptionLabel;
 
             decimal thisUseCost = GetRegTypeOfOrderRow(row.idRegType).CreditCost;
+
+            decimal thisUseCostAddLocs = 0m;
+
+            if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 0)
+            {
+                thisUseCostAddLocs = (decimal)row.AdditionalLocation.Count * .25m;
+                thisUseCost += thisUseCostAddLocs;
+            }
 
             if (discount.DiscountType == DiscountType.Subscription)
             {
@@ -2072,7 +2079,7 @@ namespace CUWebinars.Business.Services
                         {
 
                             forNotes.AppendFormat(
-                                " If applied to this order, {0} {1} will be deducted <br>from your package with {2} remaining.",
+                                " If applied to this order, {0} {1} will be deducted from your package with {2} remaining.",
                                 thisUseCost.ToString().Replace(".00", ""),
                                 thisUseCost > 1 ? "credits" : "credit",
                                     remainsAfterThisUse.ToString().Replace(".00", ""));
@@ -2138,6 +2145,16 @@ namespace CUWebinars.Business.Services
                     creditsUsed +=
                         order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                             .RegistrationType.CreditCost;
+
+                    if (order.OrderDate > DateTime.Parse("09/05/2017"))
+                    {
+                        var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                        if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 0)
+                        {
+                            var thisUseCostAddLocs = (decimal)row.AdditionalLocation.Count * .25m;
+                            creditsUsed += thisUseCostAddLocs;
+                        }
+                    }
                 }
             return userDiscount.TotalCount - creditsUsed;
         }
@@ -2156,6 +2173,16 @@ namespace CUWebinars.Business.Services
                     credits +=
                         order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                             .RegistrationType.CreditCost;
+
+                    if (order.OrderDate > DateTime.Parse("09/05/2017"))
+                    {
+                        var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                        if (row.AdditionalLocation != null && row.AdditionalLocation.Count > 0)
+                        {
+                            var thisUseCostAddLocs = (decimal)row.AdditionalLocation.Count * .25m;
+                            credits += thisUseCostAddLocs;
+                        }
+                    }
                 }
 
             return credits;

@@ -200,8 +200,8 @@
 
             @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
             {
-                <div class="label label-danger @discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
-                     id="discountCaption">@Html.Raw(ViewBag.DiscountCaption.ToString())</div>
+                <div class="@discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
+                     id="discountCaption"><b>@Html.Raw(ViewBag.DiscountCaption.ToString())</b></div>
             }
             @*//following it for Multi-event checkout*@
             @if (!Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
