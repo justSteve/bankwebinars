@@ -1385,7 +1385,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 , lastName
                 , string.Empty
                 , email
-                , USTimeZone.Central
+                , model.RegisterFields.TimeZone
                 , UserType.Customer
                 , myInstitution.idInstitution
                 , addresses

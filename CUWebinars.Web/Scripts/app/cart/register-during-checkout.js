@@ -35,7 +35,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
     $('body').on('click', 'input:button', (function (e, data) {
 
-
+        console.log("onBody click" );
 
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
@@ -67,25 +67,31 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         switch (clickedButton) {
             case RegistrationInCart.Button.SignInButton:
+                console.log(SignInButton);
                 regUserStateManager.logIn();
                 break;
             case RegistrationInCart.Button.TheSubmit:
+                console.log(TheSubmit);
                 regUserStateManager.submit();
                 break;
             case RegistrationInCart.Button.nonUSAddressBtn:
+                console.log(nonUSAddressBtn);
                 regUserStateManager.nonUsAdddressInvoked();
                 break;
             case RegistrationInCart.Button.ResetPass:
+                console.log(ResetPass);
                 regUserStateManager.resetPassword(normalResetPasswordButton);
                 break;
             case RegistrationInCart.Button.YesUseAddress:
+                console.log(YesUseAddress);
                 regUserStateManager.useRegisteredAddress();
                 break;
             case RegistrationInCart.Button.EnterDiffAddress:
+                console.log(EnterDiffAddress);
                 regUserStateManager.enterDifferentAddress();
                 break;
             case RegistrationInCart.Button.NotInstitution:
-
+                console.log(NotInstitution);
                 regUserStateManager.notInstitutionAddress();
                 break;
             default:
@@ -406,7 +412,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
         delete (payload['undefined']); // this was the __RequestVerificationToken which we chucked in the headers. See immediately above.
         //Account/RegisterFromCart
         var url = createUserForm.attr('action');
-
+        console.log(payload);
         $.ajax({
             type: 'POST',
             contentType: constants.JsonContentType,
