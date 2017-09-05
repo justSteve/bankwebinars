@@ -1169,9 +1169,22 @@ namespace CUWebinars.Business.Services
 
                         .Replace(" Recording Only", "")
                         .Replace(" Plus Five", "+5");
+                decimal pTotal = Convert.ToDecimal(preSaveValues.Split(',')[6]);
                 int idRegTypeOfOrg = Convert.ToInt32(preSaveValues.Split(',')[5]);
 
                 pricesAndDiscounts = CalculateOrderCost(newOrder, additionalLocationsPricing);
+                
+                if (originalOrder.OrderStatus == OrderStatus.Paid && pTotal != newOrder.Total)
+                {
+                    if (originalOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount == null)
+                    {
+                        newOrder.OrderStatus = OrderStatus.OutstandingBalance;
+                    }
+                    if (originalOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount != null && originalOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount.DiscountType != DiscountType.Subscription)
+                    {
+                        newOrder.OrderStatus = OrderStatus.OutstandingBalance;
+                    }
+                }
 
                 if (newOrder.OrderRows != null)
                 {
