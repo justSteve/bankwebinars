@@ -21,7 +21,6 @@ namespace CUWebinars.Business.Notification
         public string TenantLogo()
         {
             return ConfigurationManager.AppSettings["TenantLogo"];
-
         }
 
         public string TenantEmail()

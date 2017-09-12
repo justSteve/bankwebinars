@@ -2510,6 +2510,22 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
         [HttpPost]
+        //[ValidateAntiForgeryToken(Order = 0)]
+        //[HandleAjaxException(Order = 1)]
+        public ActionResult AuditDiscount(int idAffiliate, int idDiscount)
+        {
+            var ordersByDiscount = _orderManagementService.GetOrdersByDiscount(idDiscount)
+                .Where(o => o.idAffiliate == idAffiliate)
+                .Select(o => new AuditDiscountModel {idOrder = o.idOrder, OrderDate = o.OrderDate.ToShortDateString(), OrderStatus = o.OrderStatus, Email = o.BillingEmail, Credits = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.CreditCost});
+
+            string orders = JsonConvert.SerializeObject(ordersByDiscount);
+
+            return Json(orders);
+
+        }
+
+
+        [HttpPost]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult ManualPasswordReset(ManualPasswordResetViewModel model)

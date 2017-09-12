@@ -37,5 +37,6 @@ namespace CUWebinars.Web.Helpers
         void ScheduleConnInfoSenderAudit(Webinar idWebinar);
         string ReplaceMergeCodes(string messageBodyHtml, Affiliate affiliateId);
         string ReplaceTimeString(Webinar webinar, USTimeZone timeZone);
+        object FuzzyMatch(string parsedOrderEventTitle, IEnumerable<string> @select);
     }
 }

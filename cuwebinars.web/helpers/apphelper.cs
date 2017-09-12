@@ -919,6 +919,11 @@ namespace CUWebinars.Web.Helpers
                       webinar.Date.AddHours((double)webinar.Duration), timeZone, true) + "<br /></i>";
         }
 
+        public object FuzzyMatch(string parsedOrderEventTitle, IEnumerable<string> @select)
+        {
+            throw new NotImplementedException();
+        }
+
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {
             if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");

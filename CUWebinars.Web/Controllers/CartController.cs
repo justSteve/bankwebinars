@@ -115,11 +115,11 @@ namespace CUWebinars.Web.Controllers
                     var newJson = new JProperty(
                         "DiscountIsRemoved",
                         new JObject(new JProperty("By", _appHelper.GetUserAuditInfo())));
-                    
+
                     row.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(row.Order.AdminComments, newJson,
                         "DiscountIsRemoved");
                     var discountCaption = "";
-                    
+
                     var updateSuccessCaption = "Removed Discount";
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricingReadOnly(row.Order);
@@ -1103,25 +1103,166 @@ namespace CUWebinars.Web.Controllers
             }
             return false;
         }
+        [AllowAnonymous]
+        public void Incoming_ratewatch(string incoming)
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                _logger.Info("Incoming_rateWatch Starts");
+
+                var msgHtml = "";//JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
+                //_logger.Info("Incoming_rateWatch " + msgHtml.msg);
+                //var parsedOrder = ParseMandrillMsg.ParseRateWatch("<html><body>" + msgHtml.msg.html + "</body></html>",
+                //    DateTime.Now.ToString());
+                var parsedOrder = ParseMandrillMsg.ParseRateWatch("---------- Forwarded message----------\nFrom: Stephen Hueners < steve@ttstrain.com >\nDate: Fri, Sep 8, 2017 at 9:12 AM\nSubject: FW: Webinar Registration\nTo: Steve Hueners<steve@juststeve.com>\n\n\n\n\n\n\n* From:*RateWatch[mailto: webmaster@rate - watch.com]\n* Sent:*Thursday, September 7, 2017 1:45 PM\n* To:*Info < info@ttstrain.com >; importer @ttsRegistrations.com\n* Subject:*Webinar Registration\n\n\n\n[image: RateWatch: Providing Financial Data For Over 20 Years |\n800.348.1831 | www.rate - watch.com] < http://www.rate-watch.com>\n\n\n\n\n\n*This form was submitted on:*   *Thursday, September 7, 2017, 1:45pm CDT*\n\n\n\n\n\n*REGISTRANT INFORMATION*\n\n\n\n\n\n*Name:*\n\nLindsay Weisensel\n\n\n\n\n\n*Email*\n\nlindsay.weisensel@rate-watch.com\n\n\n\n\n\n*Company Name:*\n\nRateWatch\n\n\n\n\n\n*Title*\n\nTesting\n\n\n\n\n\n*Address:*\n\n123 Main Street\nFort Atkinson, WI 53538\n\n\n\n\n\n*Phone Number:*\n\n9205681401 <(920)%20568-1401>\n\n\n\n\n\n*Account Number:*\n\nWI-99-90\n\n\n\n\n\n\n\n*WEBINAR INFORMATION*\n\n\n\n\n\n* Partner:*\n\nCUWebinars.com\n\n\n\n\n\n* Event Name: *\n\n* CU FOCUSED * -Advanced Underwriting for Consumer Loans\n\n\n\n\n\n * Date:*\n\nThursday, September 14, 2017\n\n\n\n\n\n * Time:*\n\n10:00am - 11:30am CDT\n\n\n\n\n\n * Event Type:*\n\n$195.00(Live Session with 7 Day OnDemand Weblink)\n\n\n\n\n\n * Total Price:*\n\n *$195.00 *\n\n\n\n\n\n\n\nRateWatch < http://www.rate-watch.com> | 201 N. Main Street, Suite 4 | Fort\nAtkinson, WI 53538 | Tel: 800.348.1831 <(800)%20348-1831>\n© 2017 RateWatch\n\n");
+
+
+                MigrateOrderModel migrateOrder = ParseMandrillMsg.ConvertToMigrator(parsedOrder);
+
+                migrateOrder.OrderDate = DateTime.Now;
+
+                var regTypeString = "Live Only";
+                //if (parsedOrder.RegTypeAsString.Contains("CD"))
+                //    regTypeString = "Premier Package";
+
+                var parseTime = parsedOrder.EventTime.Split('-')[0].Trim(' ') + "-5:00";
+                var webinar = _cartControllerOrchestrator.LoadWebinarForImporter(parsedOrder.EventTitle,
+                    parsedOrder.EventDate, parseTime, regTypeString);
+                if (ReferenceEquals(webinar ,null))
+                {
+                    _cartControllerOrchestrator.FireMandrillNotificationEvent("steve@ttstrain.com", "Webinar Not Found" + parsedOrder.EventTitle, JsonConvert.SerializeObject(parsedOrder) );
+                }
+                migrateOrder.idRegType =
+                    _cartControllerOrchestrator.GetRegTypeById(
+                        _cartControllerOrchestrator.LoadRegistrationForImporter(webinar, regTypeString)).idRegType;
+
+                migrateOrder.idWebinar = webinar.idWebinar;
+                migrateOrder.idAffiliate = 16132;
+
+                _logger.Info("Incoming_rateWatchFromMandrillParsed: "
+                    + JsonConvert.SerializeObject(migrateOrder));
+
+                if (
+                    _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
+                        Convert.ToInt32(parsedOrder.idWebinar), parsedOrder.Email) > 0)
+                {
+                    _logger.Info("Incoming_rateWatch found dupe: " + parsedOrder.idWebinar + " : " + parsedOrder.Email);
+                }
+                else
+                {
+                    var PostForm = "";
+
+                    PostForm = "idAffiliate=" +
+                               HttpUtility.UrlEncode(migrateOrder.idAffiliate.ToString()) + "&BillingAddress.AddressType=Billing";
+                    PostForm += "&BillingAddress.Name=" +
+                                HttpUtility.UrlEncode(migrateOrder.FirstName + " " + HttpUtility.UrlEncode(migrateOrder.LastName));
+                    PostForm += "&BillingAddress.Phone=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Phone);
+                    PostForm += "&BillingAddress.StreetAddress=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.StreetAddress);
+                    PostForm += "&BillingAddress.StreetAddress2=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.StreetAddress2);
+                    PostForm += "&BillingAddress.City=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.City);
+                    PostForm += "&BillingAddress.Zip=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Zip);
+                    PostForm += "&BillingAddress.State=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.State);
+                    PostForm += "&BillingAddress.Country=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Country);
+                    PostForm += "&ShippingAddress.AddressType=Shipping";
+                    PostForm += "&ShippingAddress.Name=" +
+                                HttpUtility.UrlEncode(migrateOrder.FirstName + " " + HttpUtility.UrlEncode(migrateOrder.LastName));
+                    PostForm += "&ShippingAddress.Phone=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Phone);
+                    PostForm += "&ShippingAddress.StreetAddress=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.StreetAddress);
+                    PostForm += "&ShippingAddress.StreetAddress2=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.StreetAddress2);
+                    PostForm += "&ShippingAddress.City=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.City);
+                    PostForm += "&ShippingAddress.Zip=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Zip);
+                    PostForm += "&ShippingAddress.State=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.State);
+                    PostForm += "&ShippingAddress.Country=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Country);
+                    PostForm += "&Email=" + HttpUtility.UrlEncode(migrateOrder.Email);
+                    PostForm += "&Title=" + HttpUtility.UrlEncode(migrateOrder.Title);
+                    PostForm += "&Institution=" + HttpUtility.UrlEncode(migrateOrder.Institution);
+                    PostForm += "&FirstName=" + HttpUtility.UrlEncode(migrateOrder.FirstName);
+                    PostForm += "&LastName=" + HttpUtility.UrlEncode(migrateOrder.LastName);
+                    PostForm += "&idRegType=" + HttpUtility.UrlEncode(migrateOrder.idRegType.ToString());
+                    PostForm += "&idWebinar=" + HttpUtility.UrlEncode(migrateOrder.idWebinar.ToString());
+                    PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(migrateOrder.AdditionalLocationsString);
+                    PostForm += "&idOrderLegacy=" + HttpUtility.UrlEncode("0");
+                    PostForm += "&OrderDate=" + HttpUtility.UrlEncode(migrateOrder.OrderDate.ToString());
+                    PostForm += "&ShippingDate=";
+                    PostForm += "&DiscountCode=" + HttpUtility.UrlEncode(migrateOrder.DiscountCode);
+                    PostForm += "&Status=7";
+                    PostForm += "&Total=0";
+
+                    WebRequest req = WebRequest.Create("http://localhost:3538/order/MigrateOrder");
+                    //WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
+
+                    byte[] send = Encoding.Default.GetBytes(PostForm);
+                    req.Method = "POST";
+                    req.ContentType = "application/x-www-form-urlencoded";
+                    req.ContentLength = send.Length;
+
+                    Stream sout = req.GetRequestStream();
+                    sout.Write(send, 0, send.Length);
+                    sout.Flush();
+                    sout.Close();
+
+                    WebResponse res = req.GetResponse();
+                    StreamReader sr = new StreamReader(res.GetResponseStream());
+                    string returnvalue1 = sr.ReadToEnd();
+                    var importResult = returnvalue1;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn("Incoming_rateWatch: " + incoming + " exception: " + ex);
+
+            }
+        }
 
         [AllowAnonymous]
-        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
-        public void Incoming_confSem()
+        public void Incoming_confSem(string incoming)
         {
-            var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
-
             try
             {
                 StringBuilder sb = new StringBuilder();
                 _logger.Info("Incoming_confSem Starts");
-                if (incoming != null)
+
+                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
+                _logger.Info("Incoming_confSem " + msgHtml.msg.text);
+                var parsedOrder = ParseMandrillMsg.ParseConfSem("<html><body>" + msgHtml.msg.html + "</body></html>",
+                    DateTime.Now.ToString());
+                //var parsedOrder = ParseMandrillMsg.ParseConfSem("<html><body><div dir=\"ltr\"><br><div class=\"gmail_quote\">---------- Forwarded message ----------<br>From: <b class=\"gmail_sendername\">Stephen Hueners</b> <span dir=\"ltr\">&lt;<a href=\"mailto:steve@ttstrain.com\">steve@ttstrain.com</a>&gt;</span><br>Date: Thu, Sep 7, 2017 at 5:39 AM<br>Subject: FW: Order #58576 from Conferences And Seminars<br>To: Steve Hueners &lt;<a href=\"mailto:steve@juststeve.com\">steve@juststeve.com</a>&gt;<br><br><br>\n\n\n\n\n\n\n<div link=\"blue\" vlink=\"purple\" lang=\"EN-US\">\n<div class=\"m_-5747255186291663161WordSection1\">\n<p class=\"MsoNormal\"><u></u> <u></u></p>\n<p class=\"MsoNormal\"><u></u> <u></u></p>\n<div>\n<div style=\"border:none;border-top:solid #e1e1e1 1.0pt;padding:3.0pt 0in 0in 0in\">\n<p class=\"MsoNormal\"><b>From:</b> Conferences And Seminars [mailto:<a href=\"mailto:sales@ConferencesAndSeminars.org\" target=\"_blank\">sales@<wbr>ConferencesAndSeminars.org</a>]\n<br>\n<b>Sent:</b> Wednesday, September 6, 2017 3:27 PM<br>\n<b>To:</b> Info &lt;<a href=\"mailto:info@ttstrain.com\" target=\"_blank\">info@ttstrain.com</a>&gt;; Kyle Bennett &lt;<a href=\"mailto:kyle@ttstrain.com\" target=\"_blank\">kyle@ttstrain.com</a>&gt;; Jared Cummings &lt;<a href=\"mailto:jared@ttstrain.com\" target=\"_blank\">jared@ttstrain.com</a>&gt;; importer &lt;<a href=\"mailto:importer@ttsregistrations.com\" target=\"_blank\">importer@ttsregistrations.com</a><wbr>&gt;<br>\n<b>Cc:</b> Conferences And Seminars &lt;sales@ConferencesAndSeminars.<wbr>org&gt;<br>\n<b>Subject:</b> Order #58576 from Conferences And Seminars<u></u><u></u></p>\n</div>\n</div>\n<p class=\"MsoNormal\"><u></u> <u></u></p>\n<table class=\"m_-5747255186291663161MsoNormalTable\" style=\"width:510.0pt\" width=\"680\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody>\n<tr style=\"height:.1in\">\n<td style=\"width:7.5pt;padding:0in 0in 0in 0in;height:.1in\" width=\"10\" valign=\"top\">\n</td>\n<td style=\"width:63.75pt;padding:0in 0in 0in 0in;height:.1in\" width=\"85\" valign=\"top\">\n</td>\n<td style=\"width:.75pt;padding:0in 0in 0in 0in;height:.1in\" width=\"1\" valign=\"top\">\n</td>\n<td style=\"width:296.25pt;padding:0in 0in 0in 0in;height:.1in\" width=\"395\" valign=\"top\">\n</td>\n<td rowspan=\"3\" style=\"width:259.5pt;padding:0in 0in 0in 0in;height:.1in\" width=\"346\" valign=\"top\">\n</td>\n</tr>\n<tr style=\"height:1.8pt\">\n<td colspan=\"2\" style=\"padding:0in 0in 0in 0in;height:1.8pt\" valign=\"top\"></td>\n<td colspan=\"2\" rowspan=\"5\" style=\"padding:0in 0in 0in 0in;height:1.8pt\" valign=\"top\">\n<div>\n<p class=\"MsoNormal\"><b>Conferences And Seminars </b><br>\n<b><i><a href=\"http://ConferencesAndSeminars.org\" target=\"_blank\">http://ConferencesAndSeminars.<wbr>org</a></i></b><br>\n<b><i><a href=\"mailto:sales@ConferencesAndSeminars.org\" target=\"_blank\">sales@ConferencesAndSeminars.<wbr>org</a></i></b><u></u><u></u></p>\n</div>\n</td>\n</tr>\n<tr style=\"height:1.2pt\">\n<td style=\"padding:0in 0in 0in 0in;height:1.2pt\" valign=\"top\"></td>\n<td rowspan=\"2\" style=\"padding:0in 0in 0in 0in;height:1.2pt\" valign=\"top\"></td>\n</tr>\n<tr style=\"height:10.2pt\">\n<td style=\"padding:0in 0in 0in 0in;height:10.2pt\" valign=\"top\"></td>\n<td rowspan=\"3\" style=\"padding:0in 0in 0in 0in;height:10.2pt\" valign=\"top\">\n<div align=\"right\">\n<table class=\"m_-5747255186291663161MsoNormalTable\" style=\"width:250.5pt\" width=\"334\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody>\n<tr>\n<td style=\"padding:0in 0in 0in 0in\">\n<p class=\"MsoNormal\"><b><span style=\"font-size:36.0pt;font-family:&quot;Arial&quot;,sans-serif;color:silver\">RECEIPT</span></b><u></u><u></u></p>\n</td>\n</tr>\n</tbody>\n</table>\n</div>\n</td>\n</tr>\n<tr style=\"height:11.4pt\">\n<td style=\"padding:0in 0in 0in 0in;height:11.4pt\" valign=\"top\"></td>\n<td style=\"padding:0in 0in 0in 0in;height:11.4pt\" valign=\"top\"></td>\n</tr>\n<tr style=\"height:22.8pt\">\n<td style=\"padding:0in 0in 0in 0in;height:22.8pt\" valign=\"top\"></td>\n<td style=\"padding:0in 0in 0in 0in;height:22.8pt\" valign=\"top\"></td>\n</tr>\n<tr style=\"height:45.6pt\">\n<td colspan=\"2\" style=\"padding:0in 0in 0in 0in;height:45.6pt\" valign=\"top\"></td>\n<td colspan=\"3\" style=\"padding:0in 0in 0in 0in;height:45.6pt\" valign=\"top\">\n<table class=\"m_-5747255186291663161MsoNormalTable\" style=\"width:550.5pt\" width=\"734\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody>\n<tr>\n<td style=\"width:410.25pt;padding:0in 0in 0in 0in\" width=\"547\" valign=\"top\">\n<p class=\"MsoNormal\" style=\"margin-bottom:12.0pt\">PO Box 3451<br>\nAnnapolis, MD 21403-0451<br>\n<a href=\"tel:(201)%20871-0474\" value=\"+12018710474\" target=\"_blank\">(201) 871-0474</a><br>\nFax <a href=\"tel:(508)%20405-0728\" value=\"+15084050728\" target=\"_blank\">(508) 405-0728</a><u></u><u></u></p>\n</td>\n<td style=\"width:140.25pt;padding:0in 0in 0in 0in\" width=\"187\" valign=\"top\">\n<p class=\"MsoNormal\"><b>INVOICE #58576</b><br>\n<b>DATE:</b>9/6/2017<u></u><u></u></p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n<tr style=\"height:.8in\">\n<td colspan=\"2\" style=\"padding:0in 0in 0in 0in;height:.8in\" valign=\"top\"></td>\n<td colspan=\"3\" style=\"padding:0in 0in 0in 0in;height:.8in\" id=\"m_-5747255186291663161ShipTo\" valign=\"top\">\n<table class=\"m_-5747255186291663161MsoNormalTable\" style=\"width:550.5pt\" width=\"734\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n<tbody>\n<tr style=\"height:.8in\">\n<td style=\"width:275.25pt;padding:0in 0in 0in 0in;height:.8in\" width=\"367\" valign=\"top\">\n<p class=\"MsoNormal\"><b>Mailing Address/Ship To:</b><br>\nMandy McClure<br>\nVP - Loan Review Officer<br>\nRepublic Bank &amp; Trust<br>\nPO Box 5369<br>\nNorman, OK 73070<br>\nUSA<br>\n<a href=\"tel:(405)%20366-2725\" value=\"+14053662725\" target=\"_blank\">405-366-2725</a><br>\n<a href=\"mailto:mmcclure@rbt.com\" target=\"_blank\">mmcclure@rbt.com</a><u></u><u></u></p>\n</td>\n<td style=\"width:275.25pt;padding:0in 0in 0in 0in;height:.8in\" id=\"m_-5747255186291663161BillTo\" width=\"367\" valign=\"top\">\n<p class=\"MsoNormal\"><b>Bill To:</b><br>\nConferences And Seminars<br>\nPO Box 3451<br>\nAnnapolis, MD 21403-0451<br>\n<br>\nCharged to: 44**********8868<br>\nApproval Code: 002440<u></u><u></u></p>\n</td>\n<td style=\"width:275.25pt;padding:0in 0in 0in 0in;height:.8in\" width=\"367\" valign=\"top\">\n<p>Conferences And Seminars Order<u></u><u></u></p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n<tr style=\"height:81.0pt\">\n<td colspan=\"2\" style=\"padding:0in 0in 0in 0in;height:81.0pt\" valign=\"top\"></td>\n<td colspan=\"3\" style=\"padding:0in 0in 0in 0in;height:81.0pt\" valign=\"top\">\n<table class=\"m_-5747255186291663161MsoNormalTable\" style=\"width:7.5in\" width=\"720\" cellspacing=\"0\" cellpadding=\"0\" border=\"1\">\n<tbody>\n<tr>\n<td style=\"width:393.75pt;padding:0in 0in 0in 0in\" width=\"525\" valign=\"top\">\n<p style=\"text-align:center\" align=\"center\"><b>DESCRIPTION</b><u></u><u></u></p>\n</td>\n<td style=\"width:30.0pt;padding:0in 0in 0in 0in\" width=\"40\" valign=\"top\">\n<p style=\"text-align:center\" align=\"center\"><b>QTY</b><u></u><u></u></p>\n</td>\n<td style=\"width:96.75pt;padding:0in 0in 0in 0in\" width=\"129\" valign=\"top\">\n<p style=\"text-align:center\" align=\"center\"><b>AMOUNT</b><u></u><u></u></p>\n</td>\n</tr>\n<tr>\n<td style=\"width:393.75pt;padding:0in 0in 0in 0in\" width=\"525\" valign=\"top\">\n<p>P0140541: Commercial Loan Agreements and Covenants: Live Teleconference, 1:30 PM CT; September 7, 2017. Sponsored by: BankWebinars.com: Registration - Teleconference plus CD<u></u><u></u></p>\n</td>\n<td style=\"width:30.0pt;padding:0in 0in 0in 0in\" width=\"40\" valign=\"top\">\n<p style=\"text-align:center\" align=\"center\">1<u></u><u></u></p>\n</td>\n<td style=\"width:96.75pt;padding:0in 0in 0in 0in\" width=\"129\" valign=\"top\">\n<p style=\"text-align:right\" align=\"right\">$395.00<u></u><u></u></p>\n</td>\n</tr>\n<tr>\n<td colspan=\"2\" style=\"padding:0in 0in 0in 0in\" valign=\"top\">\n<p style=\"text-align:right\" align=\"right\"><b>Shipping &amp; Handling *</b><u></u><u></u></p>\n</td>\n<td style=\"width:96.75pt;padding:0in 0in 0in 0in\" width=\"129\" valign=\"top\">\n<p style=\"text-align:right\" align=\"right\">$0.00<u></u><u></u></p>\n</td>\n</tr>\n<tr>\n<td colspan=\"2\" style=\"padding:0in 0in 0in 0in\" valign=\"top\">\n<p style=\"text-align:right\" align=\"right\"><b>TOTAL</b><u></u><u></u></p>\n</td>\n<td style=\"width:96.75pt;padding:0in 0in 0in 0in\" width=\"129\" valign=\"top\">\n<p style=\"text-align:right\" align=\"right\">$395.00<u></u><u></u></p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n<tr style=\"height:52.2pt\">\n<td colspan=\"3\" style=\"padding:0in 0in 0in 0in;height:52.2pt\" valign=\"top\"></td>\n<td colspan=\"2\" style=\"padding:0in 0in 0in 0in;height:52.2pt\" valign=\"top\">\n<table class=\"m_-5747255186291663161MsoNormalTable\" style=\"width:465.0pt\" width=\"620\" cellspacing=\"3\" cellpadding=\"0\" border=\"0\">\n<tbody>\n<tr>\n<td style=\"padding:.75pt .75pt .75pt .75pt\">\n<p>Please note: Credit card charges will be from <b>Conferences and Seminars</b><u></u><u></u></p>\n</td>\n</tr>\n<tr>\n<td style=\"padding:.75pt .75pt .75pt .75pt\">\n<p>* No shipping charges apply to conference registrations<u></u><u></u></p>\n<p class=\"MsoNormal\"><br>\nBankWebinars.com: For customer service, call <a href=\"tel:(800)%20831-0678\" value=\"+18008310678\" target=\"_blank\">(800) 831-0678</a><u></u><u></u></p>\n<p>If you have any questions concerning this order, contact us at the email or phone listed above.<u></u><u></u></p>\n<p style=\"text-align:center\" align=\"center\"><b>THANK YOU FOR YOUR BUSINESS!</b><u></u><u></u></p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n<p class=\"MsoNormal\"><u></u> <u></u></p>\n</div>\n</div>\n\n</div><br></div>\n\n</body></html>",
+                //    DateTime.Now.ToString());
+                try
                 {
-                    var msgHtml =
-                        JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
-                    _logger.Info("Incoming_confSem " + msgHtml);
-                    var parsedOrder = ParseMandrillMsg.ParseConfSem("<html><body>" + msgHtml.msg.html + "</body></html>",
-                        DateTime.Now.ToString());
-                    _logger.Info("Incoming_confSemFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
+
+
+                    MigrateOrderModel migrateOrder = ParseMandrillMsg.ConvertToMigrator(parsedOrder);
+
+                    migrateOrder.OrderDate = DateTime.Now;
+
+                    var regTypeString = "Live Only";
+                    if (parsedOrder.RegTypeAsString.Contains("CD"))
+                        regTypeString = "Premier Package";
+
+                    var webinar = _cartControllerOrchestrator.LoadWebinarForImporter(parsedOrder.EventTitle,
+                        parsedOrder.EventDate, parsedOrder.EventTime, regTypeString);
+
+                    if (webinar == null)
+                    {
+                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                            "Steve@ttstrain.com",
+                            "ERROR! Importer for confSem could not determine webinar: " + parsedOrder.Email,
+                            msgHtml.msg.text
+                        );
+                    }
+
+                    migrateOrder.idRegType =
+                        _cartControllerOrchestrator.GetRegTypeById(
+                            _cartControllerOrchestrator.LoadRegistrationForImporter(webinar, regTypeString)).idRegType;
+                    var orderTotal = _cartControllerOrchestrator.GetRegTypeById(migrateOrder.idRegType).Price;
+                    migrateOrder.idWebinar = webinar.idWebinar;
+                    migrateOrder.idAffiliate = 22805;
+
+                    _logger.Info("Incoming_confSemFromMandrillParsed: "
+                        + JsonConvert.SerializeObject(migrateOrder));
+
 
                     if (
                         _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
@@ -1131,7 +1272,67 @@ namespace CUWebinars.Web.Controllers
                     }
                     else
                     {
+                        var PostForm = "";
+
+                        PostForm = "idAffiliate=" +
+                                   HttpUtility.UrlEncode(migrateOrder.idAffiliate.ToString()) + "&BillingAddress.AddressType=Billing";
+                        PostForm += "&BillingAddress.Name=" +
+                                    HttpUtility.UrlEncode(migrateOrder.FirstName + " " + HttpUtility.UrlEncode(migrateOrder.LastName));
+                        PostForm += "&BillingAddress.Phone=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Phone);
+                        PostForm += "&BillingAddress.StreetAddress=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.StreetAddress);
+                        PostForm += "&BillingAddress.StreetAddress2=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.StreetAddress2);
+                        PostForm += "&BillingAddress.City=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.City);
+                        PostForm += "&BillingAddress.Zip=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Zip);
+                        PostForm += "&BillingAddress.State=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.State);
+                        PostForm += "&BillingAddress.Country=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Country);
+                        PostForm += "&ShippingAddress.AddressType=Shipping";
+                        PostForm += "&ShippingAddress.Name=" +
+                                    HttpUtility.UrlEncode(migrateOrder.FirstName + " " + HttpUtility.UrlEncode(migrateOrder.LastName));
+                        PostForm += "&ShippingAddress.Phone=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Phone);
+                        PostForm += "&ShippingAddress.StreetAddress=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.StreetAddress);
+                        PostForm += "&ShippingAddress.StreetAddress2=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.StreetAddress2);
+                        PostForm += "&ShippingAddress.City=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.City);
+                        PostForm += "&ShippingAddress.Zip=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Zip);
+                        PostForm += "&ShippingAddress.State=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.State);
+                        PostForm += "&ShippingAddress.Country=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Country);
+                        PostForm += "&Email=" + HttpUtility.UrlEncode(migrateOrder.Email);
+                        PostForm += "&Title=" + HttpUtility.UrlEncode(migrateOrder.Title);
+                        PostForm += "&Institution=" + HttpUtility.UrlEncode(migrateOrder.Institution);
+                        PostForm += "&FirstName=" + HttpUtility.UrlEncode(migrateOrder.FirstName);
+                        PostForm += "&LastName=" + HttpUtility.UrlEncode(migrateOrder.LastName);
+                        PostForm += "&idRegType=" + HttpUtility.UrlEncode(migrateOrder.idRegType.ToString());
+                        PostForm += "&idWebinar=" + HttpUtility.UrlEncode(migrateOrder.idWebinar.ToString());
+                        PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(migrateOrder.AdditionalLocationsString);
+                        PostForm += "&idOrderLegacy=" + HttpUtility.UrlEncode("0");
+                        PostForm += "&OrderDate=" + HttpUtility.UrlEncode(migrateOrder.OrderDate.ToString());
+                        PostForm += "&ShippingDate=";
+                        PostForm += "&DiscountCode=" + HttpUtility.UrlEncode(migrateOrder.DiscountCode);
+                        PostForm += "&Status=7";
+                        PostForm += "&Total=" + orderTotal;
+
+                        //WebRequest req = WebRequest.Create("http://localhost:3538/order/MigrateOrder");
+                        WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
+
+                        byte[] send = Encoding.Default.GetBytes(PostForm);
+                        req.Method = "POST";
+                        req.ContentType = "application/x-www-form-urlencoded";
+                        req.ContentLength = send.Length;
+
+                        Stream sout = req.GetRequestStream();
+                        sout.Write(send, 0, send.Length);
+                        sout.Flush();
+                        sout.Close();
+
+                        WebResponse res = req.GetResponse();
+                        StreamReader sr = new StreamReader(res.GetResponseStream());
+                        string returnvalue1 = sr.ReadToEnd();
+                        var importResult = returnvalue1;
                     }
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("IncomingConfSem", ex);
+                    throw;
                 }
             }
             catch (Exception ex)
@@ -1151,89 +1352,96 @@ namespace CUWebinars.Web.Controllers
             {
                 StringBuilder sb = new StringBuilder();
                 _logger.Info("Incoming Starts");
-                if (incoming != null)
+
+                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
+
+                //if ()
+                _logger.Info("Incoming " + msgHtml.msg.from_email);
+                if (msgHtml.msg.from_email.ToLower().Contains("conferencesandseminars.org"))
                 {
-                    var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
-
-                    //if ()
-                    _logger.Info("Incoming " + msgHtml);
-                    var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>",
-                        DateTime.Now.ToString());
-                    _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
-
-                    if (
-                        _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
-                            Convert.ToInt32(parsedOrder.BankWebID), parsedOrder.Email) > 0)
-                    {
-                        _logger.Info("Incoming found dupe: " + parsedOrder.BankWebID + " : " + parsedOrder.Email);
-                    }
-                    else
-                    {
-                        //var orderController = new OrderController();
-                        //var orderControllerContext = new ControllerContext(this.ControllerContext.RequestContext, OrderController);
-
-                        //RedirectToAction("Importorder4Acs", "Order", new {ImportOrderForAcsModel = parsedOrder});
-                        var PostForm = "AdditionalLocationsString=" +
-                                       HttpUtility.UrlEncode(parsedOrder.AdditionalLocationsString ?? "");
-
-
-                        PostForm += "&AffiliateComments=" + HttpUtility.UrlEncode("ACSImporter");
-                        PostForm += "&AffiliateID=" + HttpUtility.UrlEncode("62");
-                        PostForm += "&BankWebID=" + HttpUtility.UrlEncode(parsedOrder.BankWebID);
-                        PostForm += "&BillingContact=" +
-                                    HttpUtility.UrlEncode(parsedOrder.BillingContact ??
-                                                          "MissingBillingContact@ttstrain.com");
-                        PostForm += "&City=" + HttpUtility.UrlEncode(parsedOrder.City ?? "-ct");
-                        PostForm += "&Company=" + HttpUtility.UrlEncode(parsedOrder.Company ?? "_co");
-                        PostForm += "&CompanyBillingInformation=" +
-                                    HttpUtility.UrlEncode(parsedOrder.CompanyBillingInformation ?? "cbi");
-                        PostForm += "&Country=" + HttpUtility.UrlEncode(parsedOrder.Country ?? "");
-                        PostForm += "&CourseDeliveryType=" + HttpUtility.UrlEncode(parsedOrder.CourseDeliveryType ?? "");
-                        PostForm += "&CourseNumber=" + HttpUtility.UrlEncode(parsedOrder.CourseNumber ?? "");
-                        PostForm += "&CoursePrice=" + HttpUtility.UrlEncode(parsedOrder.CoursePrice ?? "");
-                        PostForm += "&CreditCard=" + HttpUtility.UrlEncode(parsedOrder.CreditCard ?? "");
-                        PostForm += "&DateSubmittedToACS=" + HttpUtility.UrlEncode(parsedOrder.DateSubmittedToACS);
-                        PostForm += "&DeliveryType=" + HttpUtility.UrlEncode(parsedOrder.DeliveryType);
-                        PostForm += "&Email=" + HttpUtility.UrlEncode(parsedOrder.Email);
-                        PostForm += "&EmailAddress=" +
-                                    HttpUtility.UrlEncode(parsedOrder.EmailAddress ?? "_emailAddress@assigned.com");
-                        PostForm += "&EmailAddressforCreditCardReceipt=" +
-                                    HttpUtility.UrlEncode(parsedOrder.EmailAddressforCreditCardReceipt ??
-                                                          "_emailAddress@forCreditCardReceipt");
-                        PostForm += "&Ext=" + HttpUtility.UrlEncode(parsedOrder.Ext ?? "");
-                        PostForm += "&FirstName=" + HttpUtility.UrlEncode(parsedOrder.FirstName);
-                        PostForm += "&LastName=" + HttpUtility.UrlEncode(parsedOrder.LastName);
-                        PostForm += "&PaymentMethod=" + HttpUtility.UrlEncode(parsedOrder.PaymentMethod ?? "");
-                        PostForm += "&Phone=" + HttpUtility.UrlEncode(parsedOrder.Phone);
-                        PostForm += "&State=" + HttpUtility.UrlEncode(parsedOrder.State ?? "");
-                        PostForm += "&State_Province_Region=" + HttpUtility.UrlEncode(parsedOrder.State_Province_Region);
-                        PostForm += "&StreetorP_O_Box=" + HttpUtility.UrlEncode(parsedOrder.StreetorP_O_Box);
-                        PostForm += "&Title=" + HttpUtility.UrlEncode(parsedOrder.Title);
-                        PostForm += "&WebinarDate=" + HttpUtility.UrlEncode(parsedOrder.WebinarDate);
-                        PostForm += "&WebinarTitle=" + HttpUtility.UrlEncode(parsedOrder.WebinarTitle);
-                        PostForm += "&ZeroValue=" + HttpUtility.UrlEncode(parsedOrder.ZeroValue);
-                        PostForm += "&Zip_PostalCode=" + HttpUtility.UrlEncode(parsedOrder.Zip_PostalCode);
-
-                        //WebRequest req = WebRequest.Create("http://localhost:3538/order/importorder4ACS");
-                        WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/importorder4ACS");
-
-                        byte[] send = Encoding.Default.GetBytes(PostForm);
-                        req.Method = "POST";
-                        req.ContentType = "application/x-www-form-urlencoded";
-                        req.ContentLength = send.Length;
-
-                        Stream sout = req.GetRequestStream();
-                        sout.Write(send, 0, send.Length);
-                        sout.Flush();
-                        sout.Close();
-
-                        WebResponse res = req.GetResponse();
-                        StreamReader sr = new StreamReader(res.GetResponseStream());
-                        string returnvalue1 = sr.ReadToEnd();
-                        var importResult = returnvalue1;
-                    }
+                    Incoming_confSem(incoming);
+                    return;
                 }
+                if (msgHtml.msg.from_email.Contains("rate-watch") || msgHtml.msg.from_email.Contains("steve"))
+                {
+                    Incoming_ratewatch(incoming);
+                    return;
+                }
+                var parsedOrder = ParseMandrillMsg.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>",
+                    DateTime.Now.ToString());
+                _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
 
+                if (
+                    _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
+                        Convert.ToInt32(parsedOrder.BankWebID), parsedOrder.Email) > 0)
+                {
+                    _logger.Info("Incoming found dupe: " + parsedOrder.BankWebID + " : " + parsedOrder.Email);
+                }
+                else
+                {
+                    //var orderController = new OrderController();
+                    //var orderControllerContext = new ControllerContext(this.ControllerContext.RequestContext, OrderController);
+
+                    //RedirectToAction("Importorder4Acs", "Order", new {ImportOrderForAcsModel = parsedOrder});
+                    var PostForm = "AdditionalLocationsString=" +
+                                   HttpUtility.UrlEncode(parsedOrder.AdditionalLocationsString ?? "");
+
+
+                    PostForm += "&AffiliateComments=" + HttpUtility.UrlEncode("ACSImporter");
+                    PostForm += "&AffiliateID=" + HttpUtility.UrlEncode("62");
+                    PostForm += "&BankWebID=" + HttpUtility.UrlEncode(parsedOrder.BankWebID);
+                    PostForm += "&BillingContact=" +
+                                HttpUtility.UrlEncode(parsedOrder.BillingContact ??
+                                                      "MissingBillingContact@ttstrain.com");
+                    PostForm += "&City=" + HttpUtility.UrlEncode(parsedOrder.City ?? "-ct");
+                    PostForm += "&Company=" + HttpUtility.UrlEncode(parsedOrder.Company ?? "_co");
+                    PostForm += "&CompanyBillingInformation=" +
+                                HttpUtility.UrlEncode(parsedOrder.CompanyBillingInformation ?? "cbi");
+                    PostForm += "&Country=" + HttpUtility.UrlEncode(parsedOrder.Country ?? "");
+                    PostForm += "&CourseDeliveryType=" + HttpUtility.UrlEncode(parsedOrder.CourseDeliveryType ?? "");
+                    PostForm += "&CourseNumber=" + HttpUtility.UrlEncode(parsedOrder.CourseNumber ?? "");
+                    PostForm += "&CoursePrice=" + HttpUtility.UrlEncode(parsedOrder.CoursePrice ?? "");
+                    PostForm += "&CreditCard=" + HttpUtility.UrlEncode(parsedOrder.CreditCard ?? "");
+                    PostForm += "&DateSubmittedToACS=" + HttpUtility.UrlEncode(parsedOrder.DateSubmittedToACS);
+                    PostForm += "&DeliveryType=" + HttpUtility.UrlEncode(parsedOrder.DeliveryType);
+                    PostForm += "&Email=" + HttpUtility.UrlEncode(parsedOrder.Email);
+                    PostForm += "&EmailAddress=" +
+                                HttpUtility.UrlEncode(parsedOrder.EmailAddress ?? "_emailAddress@assigned.com");
+                    PostForm += "&EmailAddressforCreditCardReceipt=" +
+                                HttpUtility.UrlEncode(parsedOrder.EmailAddressforCreditCardReceipt ??
+                                                      "_emailAddress@forCreditCardReceipt");
+                    PostForm += "&Ext=" + HttpUtility.UrlEncode(parsedOrder.Ext ?? "");
+                    PostForm += "&FirstName=" + HttpUtility.UrlEncode(parsedOrder.FirstName);
+                    PostForm += "&LastName=" + HttpUtility.UrlEncode(parsedOrder.LastName);
+                    PostForm += "&PaymentMethod=" + HttpUtility.UrlEncode(parsedOrder.PaymentMethod ?? "");
+                    PostForm += "&Phone=" + HttpUtility.UrlEncode(parsedOrder.Phone);
+                    PostForm += "&State=" + HttpUtility.UrlEncode(parsedOrder.State ?? "");
+                    PostForm += "&State_Province_Region=" + HttpUtility.UrlEncode(parsedOrder.State_Province_Region);
+                    PostForm += "&StreetorP_O_Box=" + HttpUtility.UrlEncode(parsedOrder.StreetorP_O_Box);
+                    PostForm += "&Title=" + HttpUtility.UrlEncode(parsedOrder.Title);
+                    PostForm += "&WebinarDate=" + HttpUtility.UrlEncode(parsedOrder.WebinarDate);
+                    PostForm += "&WebinarTitle=" + HttpUtility.UrlEncode(parsedOrder.WebinarTitle);
+                    PostForm += "&ZeroValue=" + HttpUtility.UrlEncode(parsedOrder.ZeroValue);
+                    PostForm += "&Zip_PostalCode=" + HttpUtility.UrlEncode(parsedOrder.Zip_PostalCode);
+
+                    //WebRequest req = WebRequest.Create("http://localhost:3538/order/importorder4ACS");
+                    WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/importorder4ACS");
+
+                    byte[] send = Encoding.Default.GetBytes(PostForm);
+                    req.Method = "POST";
+                    req.ContentType = "application/x-www-form-urlencoded";
+                    req.ContentLength = send.Length;
+
+                    Stream sout = req.GetRequestStream();
+                    sout.Write(send, 0, send.Length);
+                    sout.Flush();
+                    sout.Close();
+
+                    WebResponse res = req.GetResponse();
+                    StreamReader sr = new StreamReader(res.GetResponseStream());
+                    string returnvalue1 = sr.ReadToEnd();
+                    var importResult = returnvalue1;
+                }
             }
             catch (Exception ex)
             {

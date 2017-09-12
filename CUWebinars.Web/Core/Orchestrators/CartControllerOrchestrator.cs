@@ -528,7 +528,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                         //RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType,
                         SendHardcopy = orderRow.SendHardcopy != null && orderRow.SendHardcopy.Value,
-                        idOrder =  orderRow.idOrder
+                        idOrder = orderRow.idOrder
                     };
 
                     _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
@@ -1001,7 +1001,14 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public RegType GetRegTypeById(int idRegType)
         {
-            return _orderManagementService.GetRegTypeOption(idRegType).SingleOrDefault();
+            RegType regType = _orderManagementService.GetRegTypeOption(idRegType).SingleOrDefault();
+
+            if (regType != null)
+            {
+                return regType;
+            }
+            return null;
+
         }
 
 
@@ -1417,25 +1424,52 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     var _webinar = _webinarManagementService.GetWebinar(Convert.ToInt32(listOfChildWebinars[i]));
                     var row = CreateOrderRow(_webinar, rowIn.AdditionalLocation.ToList(), rowIn.idRegType);
-                    switch (listOfChildWebinars.Length)
+                    if (_globalConfig.Tenant == "BankWebinars")
                     {
-                        case 2:
-                            row.Discount = GetDiscountById(415);
-                            break;
-                        case 3:
-                            row.Discount = GetDiscountById(413);
-                            break;
-                        case 4:
-                            row.Discount = GetDiscountById(421);
-                            break;
-                        case 5:
-                            row.Discount = GetDiscountById(422);
-                            break;
+                        switch (listOfChildWebinars.Length)
+                        {
+                            case 2:
+                                row.Discount = GetDiscountById(415);
+                                break;
+                            case 3:
+                                row.Discount = GetDiscountById(413);
+                                break;
+                            case 4:
+                                row.Discount = GetDiscountById(421);
+                                break;
+                            case 5:
+                                row.Discount = GetDiscountById(422);
+                                break;
 
-                        default:
-                            throw new Exception("invalid discount");
-                            break;
+                            default:
+                                throw new Exception("invalid discount");
+                                break;
 
+                        }
+                    }
+
+                    if (_globalConfig.Tenant == "CUWebinars")
+                    {
+                        switch (listOfChildWebinars.Length)
+                        {
+                            case 2:
+                                row.Discount = GetDiscountById(35121);
+                                break;
+                            case 3:
+                                row.Discount = GetDiscountById(35122);
+                                break;
+                            case 4:
+                                row.Discount = GetDiscountById(35120);
+                                break;
+                            case 5:
+                                row.Discount = GetDiscountById(35123);
+                                break;
+
+                            default:
+                                throw new Exception("invalid discount");
+                                break;
+
+                        }
                     }
 
                     var order = CreateNewOrder(model.Order.Affiliate, _orderManagementService.GetWebUser(model.Order.idUser), _webinar, row);
@@ -1684,6 +1718,49 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             return removeDiscount;
         }
+
+        public Webinar LoadWebinarForImporter(string parsedOrderEventTitle, string parsedOrderEventDate, string parsedOrderEventTime, string parsedOrderRegTypeAsString)
+        {
+            try
+            {
+            var parsedWDate = DateTime.Parse(parsedOrderEventDate + " " + parsedOrderEventTime.Replace(" CT", "-05:00").Replace(" CDT", "-05:00").Replace(" CST", "-05:00"));
+            
+                var webinars = _webinarManagementService.GetAllActive()
+                    .Where(w => w.Date.Month == parsedWDate.Month
+                && w.Date.Day == parsedWDate.Day
+                && w.Date.Year == parsedWDate.Year
+                && w.Date.Hour == parsedWDate.Hour
+                ).ToList();
+
+                if (webinars.Count() == 1)
+                {
+                    return webinars.First();
+                }
+
+                webinars = webinars.Where(w => w.Title == parsedOrderEventTitle).ToList();
+
+                if (webinars.Count() == 1)
+                {
+                    return webinars.First();
+                }
+
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("LoadWebinarForImporter", ex);
+                return null;
+            }
+
+        }
+
+        public int LoadRegistrationForImporter(Webinar webinar, string parsedOrderRegTypeAsString)
+        {
+            
+           return _webinarManagementService.GetRegTypeByLableAndWebinar(parsedOrderRegTypeAsString, webinar.idWebinar);
+        }
+
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
             var discount = _orderManagementService.ApplyDiscountCode(code, row);

@@ -291,7 +291,7 @@ namespace CUWebinars.Web.Controllers
             if (!ModelState.IsValid)
             {
                 var myError = ProcessModelStateErrors();
-                return Json(new {Result = WebUiConstants.Fail, Error = myError});
+                return Json(new { Result = WebUiConstants.Fail, Error = myError });
             }
 
             try
@@ -309,7 +309,7 @@ namespace CUWebinars.Web.Controllers
                     uses += row.RegistrationType.CreditCost;
                 }
 
-                return Json(new {affId = discount.idAffiliate, StartingCount = discount.TotalCount, Used = uses, Remain = discount.TotalCount - uses, Id = discount.idDiscount }, JsonRequestBehavior.AllowGet);
+                return Json(new { affId = discount.idAffiliate, StartingCount = discount.TotalCount, Used = uses, Remain = discount.TotalCount - uses, Id = discount.idDiscount }, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception exception)
@@ -328,7 +328,10 @@ namespace CUWebinars.Web.Controllers
         /// </summary>
         /// <param name="migrateOrderModel"></param>
         /// <returns></returns>
+
+        [AllowAnonymous]
         [HttpPost]
+        [ValidateInput(false)]
         public JsonResult MigrateOrder(MigrateOrderModel migratedOrder)
         {
             int idOfLastOrder = default(int);
@@ -338,6 +341,14 @@ namespace CUWebinars.Web.Controllers
             if (!ModelState.IsValid)
             {
                 var myError = ProcessModelStateErrors();
+
+
+                _orderManagementService.FireMandrillNotificationEvent(
+                    //ConfigurationManager.AppSettings["TestEmailAddress"],
+                    "steve@ttstrain.com",
+                    "MODELSTATEERRORS from  MigrateOrder "
+                    , myError + "\n" + JsonConvert.SerializeObject(migratedOrder, Formatting.Indented));
+
                 return Json(new { Result = WebUiConstants.Fail, Error = myError });
             }
 
@@ -391,6 +402,12 @@ namespace CUWebinars.Web.Controllers
                 var errString = string.Format("Order creation failed on {0} - {1} with msg: {2}", migratedOrder.Email, migratedOrder.idWebinar, exception.Message);
                 Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                 _logger.ErrorException(errString, exception);
+
+                _orderManagementService.FireMandrillNotificationEvent(
+                    //ConfigurationManager.AppSettings["TestEmailAddress"],
+                    "Steve@ttstrain.com",
+                    "Order creation failed on: " + migratedOrder.Email
+                    , exception.ToString());
 
                 return Json(new { Result = errString }, JsonRequestBehavior.AllowGet);
             }
@@ -656,8 +673,8 @@ namespace CUWebinars.Web.Controllers
                     _logger.Fatal(msg);
                     _orderManagementService.FireMandrillNotificationEvent(
                         "steve@ttstrain.com", msg, msg);
-                        //order.BillingEmail,
-                        
+                    //order.BillingEmail,
+
                     return
                         Json(
                             new

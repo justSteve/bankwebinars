@@ -67,31 +67,31 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         switch (clickedButton) {
             case RegistrationInCart.Button.SignInButton:
-                console.log(SignInButton);
+                
                 regUserStateManager.logIn();
                 break;
             case RegistrationInCart.Button.TheSubmit:
-                console.log(TheSubmit);
+                
                 regUserStateManager.submit();
                 break;
             case RegistrationInCart.Button.nonUSAddressBtn:
-                console.log(nonUSAddressBtn);
+                
                 regUserStateManager.nonUsAdddressInvoked();
                 break;
             case RegistrationInCart.Button.ResetPass:
-                console.log(ResetPass);
+                
                 regUserStateManager.resetPassword(normalResetPasswordButton);
                 break;
             case RegistrationInCart.Button.YesUseAddress:
-                console.log(YesUseAddress);
+                
                 regUserStateManager.useRegisteredAddress();
                 break;
             case RegistrationInCart.Button.EnterDiffAddress:
-                console.log(EnterDiffAddress);
+                
                 regUserStateManager.enterDifferentAddress();
                 break;
             case RegistrationInCart.Button.NotInstitution:
-                console.log(NotInstitution);
+                
                 regUserStateManager.notInstitutionAddress();
                 break;
             default:

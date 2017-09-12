@@ -187,7 +187,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 , lastName
                 , model.RegisterFields.Password
                 , email
-                , USTimeZone.Central
+                , model.RegisterFields.TimeZone
                 , UserType.Customer
                 , myInstitution.idInstitution
                 , addresses

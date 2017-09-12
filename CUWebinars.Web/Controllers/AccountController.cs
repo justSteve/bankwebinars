@@ -132,6 +132,8 @@ namespace CUWebinars.Web.Controllers
                 var email = model.Email.Trim();
                 var firstName = model.FirstName.Trim();
                 var lastName = model.LastName.Trim();
+                var timeZone = model.TimeZone;
+
 
                 //first check if email exists
                 var checkIfUsed = _membershipService.GetUserByEmail(email);
@@ -184,7 +186,7 @@ namespace CUWebinars.Web.Controllers
                         , lastName
                         , model.Password
                         , email
-                        , USTimeZone.Central
+                        , model.TimeZone
                         , UserType.Customer
                         , myInstitution.idInstitution
                         , addresses
