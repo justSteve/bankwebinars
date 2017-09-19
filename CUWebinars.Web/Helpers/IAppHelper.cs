@@ -5,6 +5,7 @@ using System.Text;
 using System.Web.Mvc;
 using CUWebinars.Business.Models;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Models.Importers;
 using GemBox.Document;
 using Newtonsoft.Json.Linq;
 
@@ -38,5 +39,9 @@ namespace CUWebinars.Web.Helpers
         string ReplaceMergeCodes(string messageBodyHtml, Affiliate affiliateId);
         string ReplaceTimeString(Webinar webinar, USTimeZone timeZone);
         object FuzzyMatch(string parsedOrderEventTitle, IEnumerable<string> @select);
+        ParseOrderModel ParseConfSem(string s, string toString);
+        ParseOrderModel ParseRateWatch(string _doc);
+        MigrateOrderModel ConvertToMigrator(ParseOrderModel parsedOrder);
+        ImportOrderForAcsModel ParseAcs(string _doc, string toString);
     }
 }

@@ -649,6 +649,10 @@ namespace CUWebinars.Business.Services
             return regType;
         }
 
+        public int GetRegTypeByRateWatch(string registrationType, int idWebinar)
+        {
+            return _webinarRepository.GetRegTypeByRateWatch(registrationType, idWebinar);
+        }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)
         {

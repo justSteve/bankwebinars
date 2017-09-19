@@ -39,6 +39,7 @@ namespace CUWebinars.Business.Repository
         WebinarTopicXref GetWebinarTopicXref(int idTopic, int idWebinar);
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
         int SaveChanges();
+        int GetRegTypeByRateWatch(string registrationType, int idWebinar);
         int GetRegTypeByACS(string registrationType, int idWebinar);
         double[] GetCostOfUpgrades(int idWebinar);
         Webinar GetWebinarByJoinCode(string joinCode);

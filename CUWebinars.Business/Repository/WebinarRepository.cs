@@ -295,6 +295,14 @@ namespace CUWebinars.Business.Repository
             return db.SaveChanges();
         }
 
+        public int GetRegTypeByRateWatch(string registrationType, int idWebinar)
+        {
+            //first step is to convert ACS lables to TTS version
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+
+            var retVal = GetRegTypeByLableAndWebinar(dataOperations.FindRegTypeForRateWatch(registrationType), idWebinar);
+            return retVal;
+        }
 
         public int GetRegTypeByACS(string registrationType, int idWebinar)
         {

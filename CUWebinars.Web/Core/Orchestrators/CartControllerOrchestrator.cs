@@ -1190,7 +1190,6 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public WebUser GetWebUserByEmail(string email)
         {
-
             return _orderManagementService.GetWebUser(email);
         }
 
@@ -1719,7 +1718,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return removeDiscount;
         }
 
-        public Webinar LoadWebinarForImporter(string parsedOrderEventTitle, string parsedOrderEventDate, string parsedOrderEventTime, string parsedOrderRegTypeAsString)
+        public Webinar LoadWebinarForImporter(string parsedOrderEventTitle, string parsedOrderEventDate, string parsedOrderEventTime)
         {
             try
             {
@@ -1759,6 +1758,11 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             
            return _webinarManagementService.GetRegTypeByLableAndWebinar(parsedOrderRegTypeAsString, webinar.idWebinar);
+        }
+
+        public int GetRegTypeByRateWatch(string registrationType, int idWebinar)
+        {
+            return _webinarManagementService.GetRegTypeByRateWatch(registrationType, idWebinar);
         }
 
         public Discount ApplyDiscountCode(string code, OrderRow row)

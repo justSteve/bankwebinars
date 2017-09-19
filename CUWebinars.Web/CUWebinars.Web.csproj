@@ -458,6 +458,9 @@
       <HintPath>..\packages\Microsoft.AspNet.WebPages.WebData.3.0.0\lib\net45\WebMatrix.WebData.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="WinSCPnet, Version=1.4.0.7725, Culture=neutral, PublicKeyToken=2271ec4a3c56d0bf, processorArchitecture=MSIL">
+      <HintPath>..\packages\WinSCP.5.11.1\lib\WinSCPnet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.Identity.Core">
@@ -536,7 +539,6 @@
     <Compile Include="Core\CalendarRssDTOAssembler.cs" />
     <Compile Include="Core\DTResultSetAffiliates.cs" />
     <Compile Include="Core\DTResultSetDiscounts.cs" />
-    <Compile Include="Core\ParseMandrillMsg.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="FilterConfig.cs" />
     <Compile Include="Helpers\AzureStoreHelpers.cs" />

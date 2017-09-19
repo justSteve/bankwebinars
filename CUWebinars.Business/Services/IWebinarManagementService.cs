@@ -43,7 +43,9 @@ namespace CUWebinars.Business.Services
         Webinar GetCompliancePerspectives();
 
         int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar);
-        
+  
+        int GetRegTypeByRateWatch(string registrationType, int idWebinar);
+       
         int GetRegTypeByACS(string registrationType, int idWebinar);
         void DeleteWebinarTopicXref(Webinar webinar, int exisingTopicId);
         Quiz GetQuizByCode(string quizCode);

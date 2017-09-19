@@ -142,16 +142,12 @@ namespace CUWebinars.Business.Services
             }
             try
             {
-                var existingEmail = _orderRepository
-                    .FindOrdersByBillingEmail(webUser.email, 19)
-                    .Where(
-                        o =>
-                            o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
-                            webinar.idWebinar)
-                    .SingleOrDefault();
+                var existingEmail = _orderRepository.FindOrdersByBillingEmail(webUser.email, 19)
+                    .SingleOrDefault(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
+                            webinar.idWebinar);
                 if (existingEmail != null)
                 {
-                    _logger.Warn("CreateNewOrder found and returned existing by email: " + existingEmail.idOrder);
+                    _logger.Warn("CreateNewOrder2 found and returned existing by email: " + existingEmail.idOrder);
                     return existingEmail;
                 }
             }

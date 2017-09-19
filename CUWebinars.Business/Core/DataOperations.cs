@@ -36,6 +36,48 @@ namespace CUWebinars.Business.Core
         }
 
 
+        public string FindRegTypeForRateWatch(string regTypeLable)
+        {
+            var returnLable = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getLegacyWebinars = new SqlCommand())
+                {
+                    getLegacyWebinars.Connection = sqlConnection;
+                    getLegacyWebinars.CommandType = CommandType.Text;
+                    getLegacyWebinars.CommandText = "SELECT ttsLable from RateWatchImporter where rwLable = '" + regTypeLable +
+                                                  "'";
+
+                    try
+                    {
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                        {
+                            sqlUpdateConnection.Open();
+
+                            using (var reader = getLegacyWebinars.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    //reader.GetInt32(0), reader.GetDecimal(1)));
+                                    returnLable = reader.GetString(0);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("FindRegTypeForRateWatch", "Unknown Registration Type: " + getLegacyWebinars.CommandText +
+                                                      " Exception.Message: " + ex.Message);
+                    }
+                    return returnLable;
+
+                }
+            }
+        }
+
         public string FindRegTypeForACS(string regTypeLable)
         {
             var returnLable = "";
@@ -1400,7 +1442,7 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
-        
+
         public bool WebinarIsPast(int id)
         {
             bool webinarIsPast = false;
@@ -1446,7 +1488,7 @@ namespace CUWebinars.Business.Core
                     }
                 }
             }
-            
+
             return webinarIsPast;
         }
 

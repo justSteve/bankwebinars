@@ -45,7 +45,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         {
             if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
-            
+
             if (command.AdditionalLocations != null && command.AdditionalLocations.Any())
             {
                 var priceOfAdditionalLocationListItem = command.Webinar.AdditionalLocationPrice;
@@ -53,7 +53,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 decimal priceOfAdditionalLocation = 0M;
 
                 priceOfAdditionalLocation = priceOfAdditionalLocationListItem;
-                
+
                 foreach (var additionalLocationEmail in command.AdditionalLocations.Select(additionalLocation => additionalLocation.Email))
                 {
                     additionalLocations.Add(_orderManagementService.CreateAdditionalLocation(
@@ -85,22 +85,6 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             if (command == null) throw new ArgumentNullException("command");
             IList<AdditionalLocation> additionalLocations = new List<AdditionalLocation>();
 
-            //no more migrations from Legacy
-            //if (command.OrderDate > Convert.ToDateTime("01-01-2015") && command.RegistrationType < 200)
-            //{
-            //    try
-            //    {
-            //        int idRegType = Convert.ToInt32(command.RegistrationType);
-            //        var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
-            //        command.RegistrationType = dataOperations.getLegacyOptionID(idRegType);
-
-            //    }
-            //    catch (Exception)
-            //    {
-            //        throw new Exception();
-            //    }
-            //}
-
             if (!string.IsNullOrWhiteSpace(command.AdditionalLocationsString) && command.AdditionalLocationsString != "NULL")
             {
 
@@ -128,7 +112,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
             {
                 if (command.Discount != null)
                 {
-                    orderRow.Discount = _orderManagementService.GetDiscountById(Convert.ToInt32(command.Discount.Replace("CP_","")));
+                    orderRow.Discount = _orderManagementService.GetDiscountById(Convert.ToInt32(command.Discount.Replace("CP_", "")));
 
                 }
 
@@ -318,12 +302,12 @@ namespace CUWebinars.Business.CQS.CommandHandlers
                 importedOrder.ShippingFirstName = command.FirstName;
                 importedOrder.ShippingLastName = command.LastName;
 
-                
-                _orderManagementService.GetJoinUrl(command.OrderRow);;
 
-                _membershipService.AddClaimForPostEventMaterials(importedOrder.BillingEmail, command.OrderRow, 
+                _orderManagementService.GetJoinUrl(command.OrderRow); ;
+
+                _membershipService.AddClaimForPostEventMaterials(importedOrder.BillingEmail, command.OrderRow,
                 _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), command.Tenant);
-        
+
 
                 _orderManagementService.SaveOrderChanges(importedOrder, command.VerificationKey,
                     command.ConfirmChangeEmailUrl, command.OrderGenesis);
@@ -422,7 +406,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
             _membershipService.AddClaimForPostEventMaterials(importedOrder.BillingEmail, command.OrderRow,
             _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), command.Tenant);
-        
+
 
             _orderManagementService.SaveOrderChanges(importedOrder
                 , command.VerificationKey
@@ -448,95 +432,99 @@ namespace CUWebinars.Business.CQS.CommandHandlers
         public void Handle(MigrateOrderCommand command)
         {
             if (command == null) throw new ArgumentNullException("command");
-            var migratedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
-                command.Webinar, command.OrderRow, DomainConstants.OriginMigrated);
-
-
-            migratedOrder.Total = command.Total;
-
-
-            string buildMessage = "MigratedOn: " + DateTime.UtcNow + string.Format(" OrginalTotal: {0}", command.Total);
-
-
-            //following copies pattern found at WebinarController | Identify
-            JObject existingJObject = null;
-            JObject userJObject = null;
-
-            string comments = string.Empty;
-            string uComments = string.Empty;
-
-
-            if (!ReferenceEquals(null, migratedOrder.AdminComments))
+            try
             {
-                comments = migratedOrder.AdminComments.Trim();
-            }
+                var migratedOrder = _orderManagementService.CreateNewOrder(command.Affiliate, command.WebUser,
+                    command.Webinar, command.OrderRow, DomainConstants.OriginMigrated);
 
-            var newJson =
-                new JProperty(
-                    string.Concat("Migrated-", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                    new JObject(
-                        new JProperty("MigratedOrder", command.Affiliate.ttsDomain),
-                        new JProperty("Details", buildMessage)
+
+                migratedOrder.Total = command.Total;
+
+
+                string buildMessage = "MigratedOn: " + DateTime.UtcNow + string.Format(" OrginalTotal: {0}", command.Total);
+
+
+                //following copies pattern found at WebinarController | Identify
+                JObject existingJObject = null;
+                JObject userJObject = null;
+
+                string comments = string.Empty;
+                string uComments = string.Empty;
+
+
+                if (!ReferenceEquals(null, migratedOrder.AdminComments))
+                {
+                    comments = migratedOrder.AdminComments.Trim();
+                }
+
+                var newJson =
+                    new JProperty(
+                        string.Concat("Migrated-", DomainConstants.BuildUtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                        new JObject(
+                            new JProperty("MigratedOrder", command.Affiliate.ttsDomain),
+                            new JProperty("Details", buildMessage)
                         ));
-            userJObject = new JObject(newJson);
+                userJObject = new JObject(newJson);
 
-            if (string.IsNullOrWhiteSpace(comments))
-            {
-                existingJObject = new JObject(newJson);
+                if (string.IsNullOrWhiteSpace(comments))
+                {
+                    existingJObject = new JObject(newJson);
+                }
+                else
+                {
+                    existingJObject = JObject.Parse(comments);
+                    existingJObject.Add(newJson);
+                }
+
+                migratedOrder.AdminComments = existingJObject.ToString(Formatting.None);
+                migratedOrder.UserComments = userJObject.ToString(Formatting.None);
+                migratedOrder.AffiliateComments = userJObject.ToString(Formatting.None);
+
+                migratedOrder.OrderStatus = OrderStatus.Submitted;
+                migratedOrder.idOrderLegacy = command.idOrderLegacy;
+                migratedOrder.OrderDate = command.OrderDate;
+                migratedOrder.FirstName = command.FirstName;
+                migratedOrder.LastName = command.LastName;
+                migratedOrder.Institution = command.WebUser.Institution.InstitutionName;
+                migratedOrder.BillingEmail = command.Email;
+
+                migratedOrder.BillingAddress = command.BillingAddress.StreetAddress;
+                migratedOrder.BillingAddress2 = command.BillingAddress.StreetAddress2;
+                migratedOrder.BillingPhone = command.BillingAddress.Phone;
+                migratedOrder.BillingCity = command.BillingAddress.City;
+                migratedOrder.BillingState = command.BillingAddress.State;
+                migratedOrder.BillingZip = command.BillingAddress.Zip;
+
+                migratedOrder.ShippingAddress = command.ShippingAddress.StreetAddress;
+                migratedOrder.ShippingAddress2 = command.ShippingAddress.StreetAddress2;
+                migratedOrder.ShippingPhone = command.ShippingAddress.Phone;
+                migratedOrder.ShippingCity = command.ShippingAddress.City;
+                migratedOrder.ShippingState = command.ShippingAddress.State;
+                migratedOrder.ShippingZip = command.ShippingAddress.Zip;
+                migratedOrder.ShippingFirstName = command.FirstName;
+                migratedOrder.ShippingLastName = command.LastName;
+
+                _orderManagementService.GetJoinUrl(command.OrderRow);
+
+
+                _membershipService.AddClaimForPostEventMaterials(migratedOrder.BillingEmail, command.OrderRow,
+                    _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), "BankWebinars");
+
+
+                //_orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
+                _orderManagementService.SaveChanges();
+
+                _postCommitRegistrator.Committed += () =>
+                {
+                    command.OrderId = migratedOrder.idOrder;
+                };
+
             }
-            else
+            catch (Exception ex)
             {
-                existingJObject = JObject.Parse(comments);
-                existingJObject.Add(newJson);
+                Console.WriteLine(ex);
+                throw;
             }
-
-            migratedOrder.AdminComments = existingJObject.ToString(Formatting.None);
-            migratedOrder.UserComments = userJObject.ToString(Formatting.None);
-            migratedOrder.AffiliateComments = userJObject.ToString(Formatting.None);
-
-            migratedOrder.OrderStatus = OrderStatus.Submitted;
-            migratedOrder.idOrderLegacy = command.idOrderLegacy;
-            migratedOrder.OrderDate = command.OrderDate;
-            migratedOrder.FirstName = command.FirstName;
-            migratedOrder.LastName = command.LastName;
-            migratedOrder.Institution = command.WebUser.Institution.InstitutionName;
-            migratedOrder.BillingEmail = command.Email;
-
-            migratedOrder.BillingAddress = command.BillingAddress.StreetAddress;
-            migratedOrder.BillingAddress2 = command.BillingAddress.StreetAddress2;
-            migratedOrder.BillingPhone = command.BillingAddress.Phone;
-            migratedOrder.BillingCity = command.BillingAddress.City;
-            migratedOrder.BillingState = command.BillingAddress.State;
-            migratedOrder.BillingZip = command.BillingAddress.Zip;
-
-            migratedOrder.ShippingAddress = command.ShippingAddress.StreetAddress;
-            migratedOrder.ShippingAddress2 = command.ShippingAddress.StreetAddress2;
-            migratedOrder.ShippingPhone = command.ShippingAddress.Phone;
-            migratedOrder.ShippingCity = command.ShippingAddress.City;
-            migratedOrder.ShippingState = command.ShippingAddress.State;
-            migratedOrder.ShippingZip = command.ShippingAddress.Zip;
-            migratedOrder.ShippingFirstName = command.FirstName;
-            migratedOrder.ShippingLastName = command.LastName;
-
-            _orderManagementService.GetJoinUrl(command.OrderRow);
-
-
-            _membershipService.AddClaimForPostEventMaterials(migratedOrder.BillingEmail, command.OrderRow,
-            _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), "BankWebinars");
-        
-
-            //_orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);
-            _orderManagementService.SaveChanges();
-
-            _postCommitRegistrator.Committed += () =>
-            {
-                command.OrderId = migratedOrder.idOrder;
-            };
-            //if (migratedOrder.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active).FirstOrDefault().Discount != null
-            //    && migratedOrder.OrderDate > migratedOrder.OrderRows.FirstOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount.DateValidFrom)
-
-
-            //    //_orderManagementService.ApplyDiscountCode(migratedOrder.OrderRows.Where(o => o.RowStatus == OrderRowStatus.Active).FirstOrDefault().Discount.DiscountCode, migratedOrder.OrderRows.FirstOrDefault(o => o.RowStatus == OrderRowStatus.Active));
 
             _postCommitRegistrator.ExecuteActions();
             _postCommitRegistrator.Reset();

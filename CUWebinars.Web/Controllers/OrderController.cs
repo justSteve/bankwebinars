@@ -356,8 +356,6 @@ namespace CUWebinars.Web.Controllers
             {
                 var email = migratedOrder.Email.Trim();
 
-                _logger.Info("Begin migrate: " + email);
-
                 var migratorQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder
                     , email);
 
@@ -406,8 +404,8 @@ namespace CUWebinars.Web.Controllers
                 _orderManagementService.FireMandrillNotificationEvent(
                     //ConfigurationManager.AppSettings["TestEmailAddress"],
                     "Steve@ttstrain.com",
-                    "Order creation failed on: " + migratedOrder.Email
-                    , exception.ToString());
+                    "ERROR: Order creation failed on: " + migratedOrder.Email
+                    , JsonConvert.SerializeObject(migratedOrder, Formatting.Indented) + "\nEx Msg" + exception.ToString());
 
                 return Json(new { Result = errString }, JsonRequestBehavior.AllowGet);
             }
@@ -1069,34 +1067,37 @@ namespace CUWebinars.Web.Controllers
         {
             var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
 
-            string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", ""); //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
-            List<MandrillIncomingMsg.mandrill_events> mandrillEventList = JsonConvert.DeserializeObject<List<MandrillIncomingMsg.mandrill_events>>(validJson);
+            _logger.Info("ReplyToHandler" + incoming);
+            //string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", ""); //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
+            //List<MandrillIncomingMsg.mandrill_events> mandrillEventList = JsonConvert.DeserializeObject<List<MandrillIncomingMsg.mandrill_events>>(validJson);
+            var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
+
 
             try
             {
-                foreach (MandrillIncomingMsg.mandrill_events mandrillEvent in mandrillEventList)
+                //foreach (MandrillIncomingMsg.mandrill_events mandrillEvent in mandrillEventList)
+                //{
+                if (msgHtml.msg.email != null)
                 {
-                    if (mandrillEvent.msg.email != null)
-                    {
-                        _logger.Info("ReplyToHandler is hit");
-                        _orderManagementService.FireMandrillNotificationEvent(
-                            "e6a68209.ttstrain.com@amer.teams.ms",
-                            //order.BillingEmail,
-                            "A reply to a notification", mandrillEvent.msg.text);
+                    _logger.Info("ReplyToHandler is hit");
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        "e6a68209.ttstrain.com@amer.teams.ms",
+                        //order.BillingEmail,
+                        "A reply to a notification", msgHtml.msg.text);
 
-                        //string[] splitIncoming = Regex.Split(mandrillEvent.msg.text, "From:");
-                        //var userMsg = splitIncoming[0];
+                    //string[] splitIncoming = Regex.Split(mandrillEvent.msg.text, "From:");
+                    //var userMsg = splitIncoming[0];
 
-                        //var idOrder = Regex.Match(splitIncoming[1], @"(?<=\bOrder ID:\s+)\p{L}+").Groups[1].Value;
-                        //if (idOrder != "")
-                        //{
-                        //    _orderManagementService.FireMandrillNotificationEvent(
-                        //        "2afda898.ttstrain.com@amer.teams.ms",
-                        //        //order.BillingEmail,
-                        //        "A reply to a notification - orderId" + idOrder, mandrillEvent.msg.text);
-                        //}
-                    }
+                    //var idOrder = Regex.Match(splitIncoming[1], @"(?<=\bOrder ID:\s+)\p{L}+").Groups[1].Value;
+                    //if (idOrder != "")
+                    //{
+                    //    _orderManagementService.FireMandrillNotificationEvent(
+                    //        "2afda898.ttstrain.com@amer.teams.ms",
+                    //        //order.BillingEmail,
+                    //        "A reply to a notification - orderId" + idOrder, mandrillEvent.msg.text);
+                    //}
                 }
+                //}
 
             }
             catch (Exception ex)
