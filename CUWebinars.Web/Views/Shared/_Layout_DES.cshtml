@@ -18,7 +18,6 @@
     }
     else
     {
-        CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
         Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
     }
 

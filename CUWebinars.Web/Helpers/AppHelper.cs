@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,6 +29,7 @@ using NameParser;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
+using PhoneNumbers;
 using Trace = System.Diagnostics.Trace;
 
 namespace CUWebinars.Web.Helpers
@@ -799,7 +802,27 @@ namespace CUWebinars.Web.Helpers
             }
             fields.PaymentStatus = order.OrderStatus.ToString();
 
-            if (order.OrderStatus == OrderStatus.Paid)
+            if (order.OrderStatus == OrderStatus.Paid ||
+                order.idAffiliate != 62
+                || order.idAffiliate != 375
+                || order.idAffiliate != 376
+                || order.idAffiliate != 379
+                || order.idAffiliate != 380
+                || order.idAffiliate != 383
+                || order.idAffiliate != 384
+                || order.idAffiliate != 385
+                || order.idAffiliate != 386
+                || order.idAffiliate != 387
+                || order.idAffiliate != 394
+                || order.idAffiliate != 395
+                || order.idAffiliate != 396
+                || order.idAffiliate != 963
+                || order.idAffiliate != 2986
+                || order.idAffiliate != 11464
+                || order.idAffiliate != 12014
+                || order.idAffiliate != 16132
+                || order.idAffiliate != 22805
+                || order.idAffiliate != 31267)
             {
                 fields.PaymentCaption = "";
             }
@@ -956,14 +979,34 @@ namespace CUWebinars.Web.Helpers
                     try
                     {
                         var splitBlock = doc.DocumentNode.SelectNodes("//table")[3].InnerHtml.Replace("<br>", "\n").Split('\n');
+                        var sb = new StringBuilder();
 
                         var count = 0;
+                        var lineCount = 0;
+                        var phoneNum = "";
                         foreach (var line in splitBlock)
                         {
+                            lineCount++;
                             if (line.Contains("@"))
                             {
                                 count++;
                                 model.Email = line;
+                                break;
+                            }
+                            else
+                            {
+                                if (lineCount > 4)
+                                {
+                                    var phoneUtil = PhoneNumberUtil.IsViablePhoneNumber(line);
+                                    if (phoneUtil)
+                                    {
+                                        phoneNum = line;
+                                    }
+                                    else
+                                    {
+                                        sb.Append(line + " ");
+                                    }
+                                }
                             }
 
                         }
@@ -989,24 +1032,26 @@ namespace CUWebinars.Web.Helpers
                         model.BillingAddress = new Address();
                         model.ShippingAddress = new Address();
 
+                        var myAddress = GetMapzenAddress(sb.ToString());
+                        
                         model.BillingAddress.AddressType = "Billing";
                         model.BillingAddress.Name = name.FullName;
-                        model.BillingAddress.StreetAddress = splitBlock[4];
-                        model.BillingAddress.City = splitBlock[5].Split(',')[0];
-                        model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
-                        model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
-                        model.BillingAddress.Country = splitBlock[6];
-                        model.BillingAddress.Phone = splitBlock[7];
+                        model.BillingAddress.StreetAddress = myAddress.road.FirstOrDefault();
+                        model.BillingAddress.City = myAddress.city.FirstOrDefault();
+                        model.BillingAddress.State = myAddress.state.FirstOrDefault();
+                        model.BillingAddress.Zip = myAddress.postcode.FirstOrDefault();
+                        model.BillingAddress.Country = myAddress.country.FirstOrDefault();
+                        model.BillingAddress.Phone = phoneNum;
 
 
                         model.ShippingAddress.AddressType = "Shipping";
                         model.ShippingAddress.Name = name.FullName;
-                        model.ShippingAddress.StreetAddress = splitBlock[4];
-                        model.ShippingAddress.City = splitBlock[5].Split(',')[0];
-                        model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
-                        model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
-                        model.ShippingAddress.Country = splitBlock[6];
-                        model.ShippingAddress.Phone = splitBlock[7];
+                        model.ShippingAddress.StreetAddress = myAddress.road.FirstOrDefault();
+                        model.ShippingAddress.City = myAddress.city.FirstOrDefault();
+                        model.ShippingAddress.State = myAddress.state.FirstOrDefault();
+                        model.ShippingAddress.Zip = myAddress.postcode.FirstOrDefault();
+                        model.ShippingAddress.Country = myAddress.country.FirstOrDefault();
+                        model.ShippingAddress.Phone = phoneNum;
 
                         var regData = doc.DocumentNode.SelectNodes("//table")[4].InnerText;
 
@@ -1063,13 +1108,39 @@ namespace CUWebinars.Web.Helpers
 
         }
 
+        private MapZenAddress GetMapzenAddress(string addString)
+        {
+            try
+            {
+                var a = 1;
+                WebRequest req = WebRequest.Create("https://libpostal.mapzen.com/parse?address=" + HttpUtility.UrlEncode(addString) + "&format=keys&api_key=mapzen-iYcwH4a");
+
+                req.Method = "GET";
+
+
+                WebResponse res = req.GetResponse();
+                StreamReader sr = new StreamReader(res.GetResponseStream());
+
+                string returnvalue1 = sr.ReadToEnd();
+                MapZenAddress importResult = JsonConvert.DeserializeObject<MapZenAddress>(returnvalue1);
+                sr.Close();
+                res.Close();
+
+                return importResult;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            return null;
+        }
+
         public ParseOrderModel ParseRateWatch(string __doc)
         {
             var model = new ParseOrderModel();
             try
             {
-                __doc =
-                    "\n<html>\n<head>\n</head>\n<body topmargin=\"0\" bottommargin=\"0\" leftmargin=\"0\" marginheight=\"0\" margintop=\"0\" rightmargin=\"0\" marginright=\"0\" marginbottom=\"0\" marginleft=\"0\" marginwidth=\"0\"><img src=\"\" width=1 height=1  width=\"1\" height=\"1\" border=\"0\">\n\n<title></title>\n\n<style>\nimg {display:block;}\n</style>\n\n  <table width=\"600\" align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n   <tr>\n    <td>\n\t <table width=\"600\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n      <tr>\n\t   <td width=\"600\" align=\"center\"><a href=\"http://www.rate-watch.com\"><img style=\"display:block;\" src=\"http://www.rate-watch.com/images/emails/email_header.jpg?v=2\" alt=\"RateWatch: Providing Financial Data For Over 20 Years | 800.348.1831 | www.rate-watch.com\" width=\"600\" height=\"65\" border=\"0\"></a></td>\n      </tr>\n     </table>\n\t</td>\n   </tr>\n   <tr>\n    <td>\n\t <table width=\"600\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n      <tr>\n        <td width=\"600\"><img style=\"display:block;\" src=\"http://www.rate-watch.com/images/emails/email_topNavBg.jpg\" alt=\"\" width=\"600\" height=\"14\" border=\"0\"></a></td>\n      </tr>\n     </table>\n\t</td>\n   </tr>\n  </table>\n\n<!-- NOTE: For Internal Online Versions: Start copying right below this line-->\n <table style=\"border-left: 1px solid rgb(228, 228, 228); border-right: 1px solid rgb(228, 228, 228); border-bottom: 1px solid rgb(228, 228, 228);\" width=\"600\" align=\"center\" cellspacing=\"0\" cellpadding=\"0\">\n  <tr>\n   <td>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"20\"></td>\n     </tr>\n    </table>\n\n    <!-- Date Submitted Information-->\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"10\"></td>\n      <td width=\"580\" valign=\"top\" align=\"left\"><font face=\"Arial, Helvetica, sans-serif\" size=\"3\" color=\"#000000\" style=\"font-fa mily:Arial, Helvetica, sans-serif;font-size:14px;color:#000000;font-weight:bold;\"><strong>This form was submitted on:</strong></font><font face=\"Arial, Helvetica, sans-serif\" size=\"3\" color=\"#0062ad\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:14px;color:#0062ad;\">&nbsp;&nbsp; <i>Monday, September 18, 2017, 11:15am CDT</i></font></td>\n      <td width=\"10\"></td>\n     </tr>\n    </table>\n\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"20\"></td>\n     </tr>\n    </table>\n\n    <!-- Start of Registrant Information -->\n    <!-- Registrant Bar -->\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#0062ad\" width=\"3\"></td>\n      <td bgcolor=\"#0062ad\" width=\"591\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"3\" color=\"#ffffff\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:14px;color :#ffffff;font-weight:bold;\"><strong>REGISTRANT INFORMATION</strong></font></td>\n      <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n\t<!-- Name Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"10\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Name:</strong></font></td>\n      <td bgcolor=\"#e8e7e7\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\">Stephen Hueners</font></td>\n\t  <td width=\"3\"></td>\n      </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n\t<!-- Email Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"10\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Email</strong></font></td>\n      <td bgcolor=\"#f6f6f6\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\"><a style=\"text-decoration:underline; color:#1133AA;\" href=\"\">steve@ttstrain.com</a></font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"cen ter\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n\t<!-- Company Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"10\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Company Name:</strong></font></td>\n      <td bgcolor=\"#e8e7e7\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\">TTS Testing</font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td >\n     </tr>\n    </table>\n\n\t<!-- Company Title Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"10\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Title</strong></font></td>\n      <td bgcolor=\"#f6f6f6\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\"></font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n\t<!-- Address Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpaddin g=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"10\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Address:</strong></font></td>\n      <td bgcolor=\"#e8e7e7\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\">7136 Heram<br />Holmen, WI 54636</font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n\t<!-- Phone Number Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\" 10\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Phone Number:</strong></font></td>\n      <td bgcolor=\"#f6f6f6\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\">608-526-9784</font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n\t<!-- Account Number Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"10\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica,  sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Account Number:</strong></font></td>\n      <td bgcolor=\"#e8e7e7\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\"></font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"20\"></td>\n     </tr>\n    </table>\n\n\n    <!-- Start of Webinar Information-->\n\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#0062ad\" width=\"3\"></td>\n      <td bgcolor=\"# 0062ad\" width=\"591\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"3\" color=\"#ffffff\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:14px;color:#ffffff;font-weight:bold;\"><strong>WEBINAR INFORMATION</strong></font></td>\n      <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n\t<!-- Partner Name Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"10\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Partner:</strong></font></td>\n      <td bgcolor=\"#e8e7e7\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetic a, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\">BankWebinars.com</font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\n\t<!-- Webinar Name Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"10\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Event Name:</strong></font></td>\n      <td bgcolor=\"#f6f6f6\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-si ze:12px;color:#000000;\">Wire Transfer Basics</font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\t\t\t<!-- Date Bar -->\n\t\t\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n\t\t     <tr>\n\t\t      <td width=\"3\"></td>\n\t\t      <td bgcolor=\"#e8e7e7\" width=\"10\"></td>\n\t\t      <td bgcolor=\"#e8e7e7\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Date:</strong></font></td>\n\t\t      <td bgcolor=\"#e8e7e7\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\">Wednesday, September 20, 2017 </font></td>\n\t\t\t  <td widt h=\"3\"></td>\n\t\t     </tr>\n\t\t    </table>\n\t\t    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n\t\t     <tr>\n\t\t      <td width=\"600\" height=\"1\"></td>\n\t\t     </tr>\n\t\t    </table>\n\n\t\t    <!-- Time Bar -->\n\t\t\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n\t\t     <tr>\n\t\t      <td width=\"3\"></td>\n\t\t      <td bgcolor=\"#f6f6f6\" width=\"10\"></td>\n\t\t      <td bgcolor=\"#f6f6f6\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Time:</strong></font></td>\n\t\t      <td bgcolor=\"#f6f6f6\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\">10:00am  - 12:00pm CDT</font></td>\n\t\t\t  <td width=\"3\"></td>\n\t\t     </tr>\n\t\t    </table> \n\t\t    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n\t\t     <tr>\n\t\t      <td width=\"600\" height=\"1\"></td>\n\t\t     </tr>\n\t\t    </table>\n\t<!-- Event Type Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"10\"></td>\n      <td bgcolor=\"#e8e7e7\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Event Type:</strong></font></td>\n      <td bgcolor=\"#e8e7e7\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;\">$265.00 (Live Session with 7 Day OnDemand Weblink)</font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspac ing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n    </table>\n\t<!-- Price Bar -->\n\t<table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"3\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"10\"></td>\n      <td bgcolor=\"#f6f6f6\" width=\"150\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#000000\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#000000;font-weight:bold;\"><strong>Total Price:</strong></font></td>\n      <td bgcolor=\"#f6f6f6\" width=\"434\" height=\"25\"><font face=\"Arial, Helvetica, sans-serif\" size=\"2\" color=\"#0062ad\" style=\"font-family:Arial, Helvetica, sans-serif;font-size:12px;color:#0062ad;font-weight:bold;\">$265.00</font></td>\n\t  <td width=\"3\"></td>\n     </tr>\n    </table>\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"1\"></td>\n     </tr>\n     </table>\n\n    <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n     <tr>\n      <td width=\"600\" height=\"2\"></td>\n     </tr>\n    </table>\n\n\n    <!--Do not remove-->\n   </td>\n  </tr>\n </table>\n\n <!--Footer Content Block Name goes here-->\n <table align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n  <tr>\n   <td height=\"20\"></td>\n  </tr>\n  <tr>\n   <td align=\"center\" width=\"600\"><font face=\"Arial, Helvetica, sans-serif\" size=\"1\" color=\"#333333\" style=\"font-family:Arial, Helvetica, sans-serif; font-size:11px; color:#333333;\">\n   <a style=\"text-decoration:underline; color:#1133AA;\" href=\"http://www.rate-watch.com\">RateWatch</a> | 201 N. Main Street, Suite 4 | Fort Atkinson, WI 53538 | Tel: 800.348.1831\n   <br />&copy; 2017 RateWatch</font>\n   </td>\n  </tr>\n  <tr>\n   <td height=\"25\"></td>\n  </tr>\n </table>\n</body>\n</html>";
                 model.OrderDate = DateTime.Now;
 
                 HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -1395,5 +1466,16 @@ namespace CUWebinars.Web.Helpers
             return fixedArray;
         }
 
+    }
+
+    internal class MapZenAddress
+    {
+        public List<string> city { get; set; }
+        public List<string> country { get; set; }
+        public List<string> house_number { get; set; }
+        public List<string> postcode { get; set; }
+        public List<string> road { get; set; }
+        public List<string> state { get; set; }
+        public List<string> unit { get; set; }
     }
 }

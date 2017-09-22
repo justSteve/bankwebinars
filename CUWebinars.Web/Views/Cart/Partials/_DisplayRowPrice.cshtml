@@ -217,7 +217,12 @@
                             &nbsp;
                             &nbsp;
                             &nbsp;
-                            <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
+                            @if (!Model.RegistrationType.OptionLabel.StartsWith("1-Month")
+                         && !Model.RegistrationType.OptionLabel.StartsWith("6-Month") 
+                         && !Model.RegistrationType.OptionLabel.StartsWith("12-Month"))
+                            {
+                                <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
+                            }
                             &nbsp;
                             &nbsp;
                             &nbsp;
@@ -245,7 +250,7 @@
         var applySendHardcopy = function (e) {
             e.preventDefault();
             //var self = $(this);
-            
+
             //
 
             var url = "/cart/SendHardcopy";

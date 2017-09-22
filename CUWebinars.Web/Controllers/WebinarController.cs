@@ -431,7 +431,7 @@ namespace CUWebinars.Web.Controllers
             {
                 //_logger.Info("ConnectionInfo Send is started: " + webinarId.Value);
                 var webinar = _webinarManagementService.GetWebinar(webinarId.Value);
-                
+
                 if (webinar != null)
                     webinar.OpeningMessage = msg;
 
@@ -1828,7 +1828,7 @@ namespace CUWebinars.Web.Controllers
                         WebinarStatus = webinar.Status
                     };
                 }
-           }
+            }
         }
 
         /// <summary>
@@ -1887,7 +1887,6 @@ namespace CUWebinars.Web.Controllers
         {
             return View();
         }
-
         [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
         public ActionResult CalendarData()
         {
@@ -1897,16 +1896,21 @@ namespace CUWebinars.Web.Controllers
 
             var dtos = new CalendarDTOAssembler().Entities2DTOs(webinarsList);
 
-            TempData["ListUpcoming"] = webinarsList;
-            SyndicationFeed feed = new SyndicationFeed("Custom JSON feed", "A Syndication extensibility sample", null);
-            feed.LastUpdatedTime = DateTime.Now;
-            feed.Items = from s in new string[] { "hello", "world" }
-                         select new SyndicationItem()
-                         {
-                             Summary = SyndicationContent.CreatePlaintextContent(s)
-                         };
+            return Json(dtos, JsonRequestBehavior.AllowGet);
+        }
 
+        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult CalendarDataAff(int idAff)
+        {
 
+            //refactor according to: http://rickyrosario.com/blog/creating-an-rss-feed-in-asp-net-mvc/
+            IList<Webinar> webinarsList = _webinarManagementService.GetAllActive().Where(w => w.SeriesInfo != "DES").ToList();
+
+            var dtos = new CalendarDTOAssembler().Entities2DTOs(webinarsList);
+            foreach (var calendarDto in dtos)
+            {
+                calendarDto.url = "https://www.BankWebinars.com/" + calendarDto.url + "?idaff=" + idAff;
+            }
             return Json(dtos, JsonRequestBehavior.AllowGet);
         }
 

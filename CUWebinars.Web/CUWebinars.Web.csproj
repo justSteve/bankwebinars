@@ -330,6 +330,9 @@
       <HintPath>..\packages\NLog.4.3.5\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PhoneNumbers, Version=8.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\libphonenumber-csharp.8.8.1\lib\net40\PhoneNumbers.dll</HintPath>
+    </Reference>
     <Reference Include="RazorEngine, Version=3.6.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RazorEngine.3.6.3\lib\net45\RazorEngine.dll</HintPath>
@@ -682,6 +685,7 @@
     <Compile Include="ViewModel\WebinarFileViewModel.cs" />
     <Content Include="App_Data\mergeTemplates\ConfirmationOfAccount.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_PostEvent.docx" />
+    <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventSeries.docx" />
     <Content Include="App_Data\mergeTemplates\WebinarPromo.docx" />
     <Content Include="App_Data\mergeTemplates\WebinarPromoStandalone.docx" />
     <Content Include="Content\css\formCss.css" />
