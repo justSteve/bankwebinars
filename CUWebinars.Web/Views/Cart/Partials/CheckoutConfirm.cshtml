@@ -64,81 +64,82 @@
                 <div id="AdjustAddLoc" class="row initialHide">
                     <div class="offset2 span9 ">
                         <div id="additionalLocationsCaption">
-                            
+
                             <b>Additional Locations: </b><i>(@Model.AdditionalLocationsViewModel.OptionsCost.ToString("C0")) </i><button id="addAnotherAddLoc" class="btn btn-mini">add</button>
 
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
                                 <span>Need to support multiple branches? Each address entered here creates a new Connection Link billable at @Model.AdditionalLocationsViewModel.OptionsCost.ToString("C0").</span>
-                                <div id="additionalLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.AdditionalLocationsRenderer)</div>
+                                    <div id="additionalLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.AdditionalLocationsRenderer)</div>
                             }
                         </div>
                         <div id="cCLocationsCaption">
-                            
-                            <b>Share Connection Info: </b><i>(not billable)</i>  <button id="addCcLoc" class="btn btn-mini">add</button>
+
+                            <b>Share Connection Info: </b><i>(not billable)</i> <button id="addCcLoc" class="btn btn-mini">add</button>
                             @using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "AdjustCcLocsForm", @class = "form-horizontal" }))
                             {
                                 <span>In the event that a co-worker will be the one actually connecting to the webinar this form will share the connection information with the given address. </span>
-                                <input type="hidden" value="@Model.OrderExists" name="idOrder" />
-                                <div id="cCLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.CcLocationsRenderer)</div>
+                                    <input type="hidden" value="@Model.OrderExists" name="idOrder" />
+                                    <div id="cCLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.CcLocationsRenderer)</div>
                             }
                         </div>
                     </div>
 
                 </div>
 
-                <div id="AdjustOrder" class="row initialHide">
-                    <div class="offset2 span9 ">
-                        <div id="RegTypeChanger" class="clear pull-right">
-                            @{
-                                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="inProcCart" class="well text-center">
-                        <div id="showCartPrice">
-                            @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
-                        </div>
-                    </div>
-                </div>
+                    <div id="AdjustOrder" class="row initialHide">
+                        <div class="offset2 span9 ">
+                            <div id="RegTypeChanger" class="clear pull-right">
+                                @{
+                                    Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
                                 }
-                                else
-                                {
-                                    // end of test if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
-                                    if (Model.OrderStatus != OrderStatus.InProcess)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="inProcCart" class="well text-center">
+                            <div id="showCartPrice">
+                                @{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }
+                            </div>
+                        </div>
+                    </div>
+                                    }
+                                    else
                                     {
-                                        <div id="postCheckout" class="well pull-right">
-                                            <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
-                                        </div>
-                                                }
-                                                else
-                                                {
-                                                    if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson"))
+                                        // end of test if (Model.OrderStatus == OrderStatus.InProcess || Model.OrderStatus == OrderStatus.AwaitingVerification)
+                                        if (Model.OrderStatus != OrderStatus.InProcess)
+                                        {
+                                            <div id="postCheckout" class="well pull-right">
+                                                <div id="showCartPrice">@{ Html.RenderPartial("~/Views/Cart/Partials/_DisplayRowPrice.cshtml", Model.DisplayRowPriceViewModel); }</div>
+                                            </div>
+                                                    }
+                                                    else
                                                     {
-                                                        <div class="row">
-                                                            <div class="pull-right">
-                                                                <button class="btn btn-small cancel-edit-order">close panel</button>
+                                                        if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson"))
+                                                        {
+                                                            <div class="row">
+                                                                <div class="pull-right">
+                                                                    <button class="btn btn-small cancel-edit-order">close panel</button>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                }
 
-                                                Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
+                                                    Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
 
-                                                Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
-                                                if (ViewBag.Order != null)
-                                                {
-                                                    Html.RenderPartial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", (Order)ViewBag.Order);
+                                                    Html.RenderPartial("~/Views/Cart/Partials/_ContinueShopping.cshtml");
+                                                    if (ViewBag.Order != null)
+                                                    {
+                                                        Html.RenderPartial("~/Views/Cart/Partials/_PayByPayTrace.cshtml", (Order)ViewBag.Order);
 
-                                                    Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
-                                                }
-                                                Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
+                                                        Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
+                                                    }
+                                                    Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
 
 
-                                                <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
-                                                }
+                                                    <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>
+                                                    }
 }

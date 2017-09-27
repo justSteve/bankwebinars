@@ -1260,7 +1260,8 @@ namespace CUWebinars.Web.Controllers
                     throw;
                 }
             }
-            return this.ModelStateJson(ModelState);
+            return Json(new { Result = WebUiConstants.Fail, Msg = "Please ensure all required fields are filled." });
+            //return this.ModelStateJson(ModelState);
         }
 
         [System.Web.Mvc.HttpPost, System.Web.Mvc.AllowAnonymous]

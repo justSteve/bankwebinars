@@ -147,19 +147,32 @@
 
         if (Model.PricesAndDiscounts.Discount == null)
         {
-            rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> "
-                + GetDiscountedTextSpan() + "<br />");
+            if (!Model.RegistrationType.OptionLabel.Contains("Streaming")
+                && !Model.RegistrationType.OptionLabel.Contains("Module"))
+            {
+                rowAmount.Append("<button id='revealDiscountInput' class='btn btn-mini btn-default'> add discount?</button> "
+                                 + GetDiscountedTextSpan() + "<br />");
+            }
+            else
+            {
+                rowAmount.Append("<br />");
+
+            }
         }
         else
         {
-            rowAmount.Append(GetDiscountedTextSpan());
-            if (!rowAmount.ToString().Contains("Insufficient"))
+
+            if (!Model.RegistrationType.OptionLabel.Contains("Streaming")
+                && !Model.RegistrationType.OptionLabel.Contains("Module"))
             {
-                confirmButtonLabel = "Use My Credits!";
+                rowAmount.Append(GetDiscountedTextSpan());
+                if (!rowAmount.ToString().Contains("Insufficient"))
+                {
+                    confirmButtonLabel = "Use My Credits!";
+                }
+
             }
-
         }
-
         rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'>share or add location?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
 
         if (Model.PricesAndDiscounts.TaxAmount > 0)
@@ -199,13 +212,13 @@
             </div>
 
             @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
-            {
+                {
                 <div class="@discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
                      id="discountCaption"><b>@Html.Raw(ViewBag.DiscountCaption.ToString())</b></div>
             }
             @*//following it for Multi-event checkout*@
             @if (!Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
-            {
+                {
                 <div style="text-align: center; margin-top: 10px; ">
                     @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
                     {
@@ -218,8 +231,8 @@
                             &nbsp;
                             &nbsp;
                             @if (!Model.RegistrationType.OptionLabel.StartsWith("1-Month")
-                         && !Model.RegistrationType.OptionLabel.StartsWith("6-Month") 
-                         && !Model.RegistrationType.OptionLabel.StartsWith("12-Month"))
+                 && !Model.RegistrationType.OptionLabel.StartsWith("6-Month")
+                 && !Model.RegistrationType.OptionLabel.StartsWith("12-Month"))
                             {
                                 <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
                             }

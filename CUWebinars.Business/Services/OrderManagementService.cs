@@ -1169,7 +1169,7 @@ namespace CUWebinars.Business.Services
                 int idRegTypeOfOrg = Convert.ToInt32(preSaveValues.Split(',')[5]);
 
                 pricesAndDiscounts = CalculateOrderCost(newOrder, additionalLocationsPricing);
-                
+
                 if (originalOrder.OrderStatus == OrderStatus.Paid && pTotal != newOrder.Total)
                 {
                     if (originalOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active).Discount == null)
@@ -1903,16 +1903,27 @@ namespace CUWebinars.Business.Services
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
+            if (row.Webinar.Title == "Federal Compliance School OnDemand with Live Streaming"
+                || row.Webinar.Title == "Bank Secrecy Act Seminar OnDemand with Live Streaming")
+                return null;
             var thisDiscount = GetDiscountByCode(code);
             var hasRemaining = CalculateCreditsRemain(thisDiscount);
 
             if (!ReferenceEquals(null, thisDiscount))
             {
-
                 if (thisDiscount.DiscountType == DiscountType.Subscription)
                 {
                     if (hasRemaining >= row.RegistrationType.CreditCost)
                     {
+                        //correct mismatched affiliates for WSPs
+                        if (thisDiscount.idAffiliate != row.Order.Affiliate.idUserAff)
+                        {
+                            FireMandrillNotificationEvent(
+                                "all.of.us@ttstrain.com", "Mismatched WSP Affiliate attempt is corrected on idOrder: " + row.idOrder, "WSP's affiliate is: " + thisDiscount.idAffiliate + ". Order's affiliate was: " + row.Order.idAffiliate);
+                            row.Order.Affiliate = GetAffiliateById(thisDiscount.idAffiliate);
+                            row.Order.idAffiliate = thisDiscount.idAffiliate;
+                            _logger.Warn("ApplyDiscountCode: Mismatched WSP Affiliate attempt is corrected on idOrder: " + row.idOrder, "WSP's affiliate is: " + thisDiscount.idAffiliate + ". Order's affiliate was: " + row.Order.idAffiliate);
+                        }
                         thisDiscount = RedeemDiscount(thisDiscount, row);
                         thisDiscount.Notes += Environment.NewLine +
                             "Applied to: " + row.idOrder + " and used " + row.RegistrationType.CreditCost + " credits. " +
@@ -2151,6 +2162,7 @@ namespace CUWebinars.Business.Services
             if (ordersWithDiscount.Any())
                 foreach (var order in ordersWithDiscount)
                 {
+
                     creditsUsed +=
                         order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                             .RegistrationType.CreditCost;
@@ -2164,7 +2176,12 @@ namespace CUWebinars.Business.Services
                             creditsUsed += thisUseCostAddLocs;
                         }
                     }
+                    _logger.Info("CalculateCreditsRemain processes: " + order.idOrder + " and adds: " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                     .RegistrationType.CreditCost);
                 }
+            _logger.Info("CalculateCreditsRemain returns: " + userDiscount.TotalCount + " minus credits used: " +
+                         creditsUsed);
+
             return userDiscount.TotalCount - creditsUsed;
         }
 

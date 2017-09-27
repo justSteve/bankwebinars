@@ -342,7 +342,6 @@ namespace CUWebinars.Web.Controllers
             {
                 var myError = ProcessModelStateErrors();
 
-
                 _orderManagementService.FireMandrillNotificationEvent(
                     //ConfigurationManager.AppSettings["TestEmailAddress"],
                     "steve@ttstrain.com",
@@ -351,7 +350,7 @@ namespace CUWebinars.Web.Controllers
 
                 return Json(new { Result = WebUiConstants.Fail, Error = myError });
             }
-
+            
             try
             {
                 var email = migratedOrder.Email.Trim();
@@ -389,10 +388,12 @@ namespace CUWebinars.Web.Controllers
 
                 _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));
 
-                //Order resultOrder = _orderManagementService.GetOrderById(idOfLastOrder);
-                //var discount =
-                //    resultOrder.OrderRows.SingleOrDefault(o => o.RowStatus == OrderRowStatus.Active).Discount;
-                //_logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, discount.CreditsUsed, discount.CreditsRemain);
+                Order resultOrder = _orderManagementService.GetOrderById(idOfLastOrder);
+
+                _orderManagementService.SaveOrderChanges(resultOrder, null, null);
+
+                
+
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception exception)

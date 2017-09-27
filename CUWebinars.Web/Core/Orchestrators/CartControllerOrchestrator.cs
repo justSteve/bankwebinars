@@ -1241,13 +1241,39 @@ namespace CUWebinars.Web.Core.Orchestrators
                        @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventForOnDemandOnly.docx"));
 
             }
-            if (
-                webinar.Status == WebinarStatus.Recorded
-            )
+            if (webinar.Status == WebinarStatus.Recorded)
             {
                 document = DocumentModel.Load(
                         HttpContext.Current.Server.MapPath(
                             @"~/App_Data/mergeTemplates/OrderSubmitted_PostEvent.docx"));
+
+            }
+
+            if (webinar.SeriesInfo.Contains("Children"))
+            {
+                document = DocumentModel.Load(
+                        HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventSeries.docx"));
+            }
+            if (webinar.Title.StartsWith("Compliance Perspectives"))
+            {
+                document = DocumentModel.Load(
+                        HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmitted_CompPerspectives.docx"));
+            }
+
+            if (webinar.Title == "Bank Secrecy Act Seminar OnDemand with Live Streaming")
+            {
+                document = DocumentModel.Load(
+                        HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmitted_BSASchool.docx"));
+            }
+
+            if (webinar.Title == "Federal Compliance School OnDemand with Live Streaming")
+            {
+                document = DocumentModel.Load(
+                        HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmitted_FedCompSchool.docx"));
             }
 
             if (_globalConfig.Tenant == "DirectorSeries")
@@ -1722,8 +1748,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             try
             {
-            var parsedWDate = DateTime.Parse(parsedOrderEventDate + " " + parsedOrderEventTime.Replace(" CT", "-05:00").Replace(" CDT", "-05:00").Replace(" CST", "-05:00"));
-            
+                var parsedWDate = DateTime.Parse(parsedOrderEventDate + " " + parsedOrderEventTime.Replace(" CT", "-05:00").Replace(" CDT", "-05:00").Replace(" CST", "-05:00"));
+
                 var webinars = _webinarManagementService.GetAllActive()
                     .Where(w => w.Date.Month == parsedWDate.Month
                 && w.Date.Day == parsedWDate.Day
@@ -1756,8 +1782,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public int LoadRegistrationForImporter(Webinar webinar, string parsedOrderRegTypeAsString)
         {
-            
-           return _webinarManagementService.GetRegTypeByLableAndWebinar(parsedOrderRegTypeAsString, webinar.idWebinar);
+
+            return _webinarManagementService.GetRegTypeByLableAndWebinar(parsedOrderRegTypeAsString, webinar.idWebinar);
         }
 
         public int GetRegTypeByRateWatch(string registrationType, int idWebinar)

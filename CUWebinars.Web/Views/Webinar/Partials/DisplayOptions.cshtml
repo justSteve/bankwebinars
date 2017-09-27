@@ -52,7 +52,7 @@
 <div id="ExplainsRegType" class="modal hide fade">
 
     <div id="ExplainsRegTypeBody" class="modal-body">
-        
+
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal">Dismiss</button>
@@ -90,7 +90,7 @@
                                 &nbsp;&nbsp;<b>
                                     @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;
                                 </b>
-                                <a class="_toolTip"  data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>
+                                <a class="_toolTip" data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>
                             </dt>
                         }
                         else
@@ -112,7 +112,7 @@
                                         @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;- $
                                         @myOption.Key.Price
                                     </b>&nbsp;
-                                    &nbsp;<a class="_toolTip"  data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
+                                    &nbsp;<a class="_toolTip" data-toggle="tooltip" title="@Html.Raw(myOption.Key.OptionExplain) "><i class="icon-question-sign"></i></a>
                                     <br />
                                 </dt>
                             }
@@ -143,7 +143,8 @@
         if ((Model.WebinarStatus == WebinarStatus.Scheduled
             || Model.WebinarStatus == WebinarStatus.Active
             || Model.WebinarStatus == WebinarStatus.InProgress
-            ) && Model.idWebinar != 2248 && Model.idWebinar != 2109 && Model.idWebinar != 2484)
+            ) && !Model.EventTitle.Contains("Module") && !Model.EventTitle.Contains("Streaming")
+            )
         {
             <div class="clearfix" id="displayAddLoc">
                 @Html.Partial("~/Views/Webinar/Partials/AdditionalLocationsView.cshtml", Model.AdditionalLocationOfferViewModel)

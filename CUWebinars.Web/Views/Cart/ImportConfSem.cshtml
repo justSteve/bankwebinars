@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewBag.Title = "ImportConfSem";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<script type="text/javascript" language="javascript">
+
+    function SubmitOrder(e) {
+        e.preventDefault();
+
+        var url = "/cart/ImportConfSem";
+
+        var formData = "{'incoming':'" +
+            $("#ImportModel").val() +
+            "'}";
+        $.ajax({
+            type: 'POST',
+            contentType: "application/json",
+            cache: false,
+            url: url,
+            dataType: 'json',
+            data: formData,
+            beforeSend: function () {
+
+                //self.append('<span id="waitSpinner">&nbsp;<i class="icon-spinner icon-spin"></i></span>');
+            }
+        }).done(function (data) {
+            if (data) {
+                //alert(data.UpdateCaption);
+                console.log(data);
+                if (data.Order) {
+                    if (data.Order.Data.UpdateCaption) {
+                        $("#OrderModel").text(data.Order.Data.UpdateCaption);
+                    }
+                }
+
+                if (data.UpdateCaption) {
+                    $("#OrderModel").text(data.UpdateCaption);
+                }
+
+
+                $("#Confirm").show();
+                $("#Import").hide();
+            } else {
+                alert("Failed to update");
+            }
+            $('#waitSpinner').remove();
+        });
+    }
+
+    $(function () {
+
+        $('#PostImport').on('click', SubmitOrder);
+    });
+
+</script>
+
+<div class="container">
+    <h2>Import ConfSem Order from Outlook Message</h2>
+    <div id="Import">
+        <form method="post" action="/cart/ImportConfSem">
+            <textarea rows="10" cols="400" style="width: 800px;" id="ImportModel"></textarea>
+        </form>
+        <button id="PostImport">Submit</button>
+    </div>
+    <div style="display: none;" id="Confirm">
+        <div style="width: 800px;" id="OrderModel"></div>
+
+
+    </div>
+</div>

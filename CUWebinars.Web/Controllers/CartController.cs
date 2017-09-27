@@ -32,6 +32,7 @@ using CUWebinars.Web.Models.Importers;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
+using NameParser;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -1127,7 +1128,7 @@ namespace CUWebinars.Web.Controllers
 
                     _logger.Error("Incoming\n" + JToken.FromObject(parsedOrder).ToString());
                 }
-                
+
 
                 MigrateOrderModel migrateOrder = _appHelper.ConvertToMigrator(parsedOrder);
                 migrateOrder.idAffiliate = 16132;
@@ -1266,178 +1267,212 @@ namespace CUWebinars.Web.Controllers
         }
 
         [AllowAnonymous]
-        public void Incoming_confSem(string incoming)
+        [HttpGet]
+        public ActionResult ImportConfSem()
         {
-            try
+            return View();
+        }
+
+        [AllowAnonymous]
+        [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
+        public JsonResult ImportConfSem(string incoming, string mode)
+        {
+            if (mode == "Commit")
             {
-                StringBuilder sb = new StringBuilder();
-                _logger.Info("Incoming_confSem Starts");
-
-                var msgHtml = JsonConvert.DeserializeObject<MandrillIncomingMsg.mandrill_events>(incoming.ToString());
-                _logger.Info("Incoming_confSem " + msgHtml.msg.text);
-                var parsedOrder = _appHelper.ParseConfSem("<html><body>" + msgHtml.msg.html + "</body></html>",
-                    DateTime.Now.ToString());
-                parsedOrder.idAffiliate = 22805;
-                parsedOrder.Origin = "ImporterByConfSem";
-
                 try
                 {
-                    if (parsedOrder.LoggerNotes != null && parsedOrder.LoggerNotes.StartsWith("ERR"))
-                    {
+                    MigrateOrderModel migrateOrder = JsonConvert.DeserializeObject<MigrateOrderModel>(incoming);
+                    return CommitImport(migrateOrder);
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("Incoming_confSemCommit: " + incoming + " exception: ", ex);
+                    return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Error: " + ex.Message});
+                }
+            }
+            else
+            {
+                try
+                {
 
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                            "Steve@ttstrain.com",
-                            "ERROR! Parser Error from ConfSem: " + parsedOrder.Email,
-                            JToken.FromObject(parsedOrder).ToString()
-                            + "\n\nincoming:" + msgHtml.msg.text
-                        );
-
-                        _logger.Error(JToken.FromObject(parsedOrder).ToString());
-                    }
-                    else
-                    {
-                        parsedOrder.LoggerNotes = msgHtml.msg.text;
-                    }
-
-                    MigrateOrderModel migrateOrder = _appHelper.ConvertToMigrator(parsedOrder);
-
-                    var regTypeString = "Live Plus Five";
-                    if (parsedOrder.RegTypeAsString.Contains("CD"))
-                        regTypeString = "Premier Package";
-
-                    var webinar = _cartControllerOrchestrator.LoadWebinarForImporter(parsedOrder.EventTitle,
-                        parsedOrder.EventDate, parsedOrder.EventTime);
-
-                    if (webinar == null)
-                    {
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                            "Steve@ttstrain.com",
-                            "ERROR! Importer for confSem could not determine webinar: " + parsedOrder.Email,
-                            JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
-                            + "\n Model: \n" + msgHtml.msg.text
-                        );
-
-                    }
-                    migrateOrder.idWebinar = webinar.idWebinar;
+                    var parsedOrder = _appHelper.ParseConfSem(incoming, DateTime.Now.ToString());
+                    parsedOrder.idAffiliate = 22805;
+                    parsedOrder.Origin = "ImporterByConfSem";
 
                     try
                     {
-                        migrateOrder.idRegType =
-                            _cartControllerOrchestrator.GetRegTypeById(
-                                _cartControllerOrchestrator.LoadRegistrationForImporter(webinar, regTypeString)).idRegType;
+                        if (parsedOrder.LoggerNotes != null && parsedOrder.LoggerNotes.StartsWith("ERR"))
+                        {
+
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                "Steve@ttstrain.com",
+                                "ERROR! Parser Error from ConfSem: " + parsedOrder.Email,
+                                JToken.FromObject(parsedOrder).ToString()
+                                + "\n\nincoming:" + incoming
+                            );
+
+                            _logger.Error(JToken.FromObject(parsedOrder).ToString());
+                        }
+                        else
+                        {
+                            parsedOrder.LoggerNotes = incoming;
+                        }
+
+                        MigrateOrderModel migrateOrder = _appHelper.ConvertToMigrator(parsedOrder);
+
+                        var regTypeString = "Live Plus Five";
+                        if (parsedOrder.RegTypeAsString.Contains("CD"))
+                            regTypeString = "Premier Package";
+
+                        var webinar = _cartControllerOrchestrator.LoadWebinarForImporter(parsedOrder.EventTitle,
+                            parsedOrder.EventDate, parsedOrder.EventTime);
+
+                        if (webinar == null)
+                        {
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                "Steve@ttstrain.com",
+                                "ERROR! Importer for confSem could not determine webinar: " + parsedOrder.Email,
+                                JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
+                                + "\n Model: \n" + incoming
+                            );
+
+                        }
+                        migrateOrder.idWebinar = webinar.idWebinar;
+
+                        try
+                        {
+                            migrateOrder.idRegType =
+                                _cartControllerOrchestrator.GetRegTypeById(
+                                        _cartControllerOrchestrator.LoadRegistrationForImporter(webinar, regTypeString))
+                                    .idRegType;
+                        }
+                        catch (Exception ex)
+                        {
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                "Steve@ttstrain.com",
+                                "ERROR! Importer for confSem tossed getting RegType: " + parsedOrder.Email,
+                                JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
+                                + "\n Model: \n" + incoming
+                            );
+                            throw;
+                        }
+                        if (migrateOrder.idRegType < 1)
+                        {
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                "Steve@ttstrain.com",
+                                "ERROR! Importer for confSem could not determine RegType: " + parsedOrder.Email,
+                                incoming
+                                + "\n Model: \n" + JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
+                            );
+                        }
+                        var orderTotal = _cartControllerOrchestrator.GetRegTypeById(migrateOrder.idRegType).Price;
+
+                        _logger.Info("Incoming_confSemFromMandrillParsed: "
+                                     + JsonConvert.SerializeObject(migrateOrder, Formatting.Indented));
+
+
+                        if (
+                            _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
+                                Convert.ToInt32(migrateOrder.idWebinar), parsedOrder.Email) > 0)
+                        {
+                            _logger.Info("Incoming_confSem found dupe: " + parsedOrder.idWebinar + " : " +
+                                         parsedOrder.Email);
+                            return Json(new { Result = WebUiConstants.Success, UpdateCaption = "Order already exists for " + parsedOrder.Email });
+                        }
+                        else
+                        {
+                            var commitOrder = CommitImport(migrateOrder);
+                            //_SendOrderConfirmation2();
+                            return Json(new { Result = WebUiConstants.Success, Order = commitOrder});
+                        }
                     }
                     catch (Exception ex)
                     {
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                            "Steve@ttstrain.com",
-                            "ERROR! Importer for confSem tossed getting RegType: " + parsedOrder.Email,
-                            JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
-                            + "\n Model: \n" + msgHtml.msg.text
-                        );
+                        _logger.FatalException("IncomingConfSem", ex);
                         throw;
-                    }
-                    if (migrateOrder.idRegType < 1)
-                    {
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                            "Steve@ttstrain.com",
-                            "ERROR! Importer for confSem could not determine RegType: " + parsedOrder.Email,
-                            msgHtml.msg.text
-                             + "\n Model: \n" + JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
-                        );
-                    }
-                    var orderTotal = _cartControllerOrchestrator.GetRegTypeById(migrateOrder.idRegType).Price;
-
-                    _logger.Info("Incoming_confSemFromMandrillParsed: "
-                        + JsonConvert.SerializeObject(migrateOrder, Formatting.Indented));
-
-
-                    if (
-                        _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
-                            Convert.ToInt32(migrateOrder.idWebinar), parsedOrder.Email) > 0)
-                    {
-                        _logger.Info("Incoming_confSem found dupe: " + parsedOrder.idWebinar + " : " + parsedOrder.Email);
-                    }
-                    else
-                    {
-                        var PostForm = "";
-
-                        PostForm = "idAffiliate=" +
-                                   HttpUtility.UrlEncode(migrateOrder.idAffiliate.ToString()) + "&BillingAddress.AddressType=Billing";
-                        PostForm += "&BillingAddress.Name=" +
-                                    HttpUtility.UrlEncode(migrateOrder.FirstName + " " + HttpUtility.UrlEncode(migrateOrder.LastName));
-                        PostForm += "&BillingAddress.Phone=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Phone);
-                        PostForm += "&BillingAddress.StreetAddress=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.StreetAddress);
-                        PostForm += "&BillingAddress.StreetAddress2=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.StreetAddress2);
-                        PostForm += "&BillingAddress.City=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.City);
-                        PostForm += "&BillingAddress.Zip=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Zip);
-                        PostForm += "&BillingAddress.State=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.State);
-                        PostForm += "&BillingAddress.Country=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Country);
-                        PostForm += "&ShippingAddress.AddressType=Shipping";
-                        PostForm += "&ShippingAddress.Name=" +
-                                    HttpUtility.UrlEncode(migrateOrder.FirstName + " " + HttpUtility.UrlEncode(migrateOrder.LastName));
-                        PostForm += "&ShippingAddress.Phone=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Phone);
-                        PostForm += "&ShippingAddress.StreetAddress=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.StreetAddress);
-                        PostForm += "&ShippingAddress.StreetAddress2=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.StreetAddress2);
-                        PostForm += "&ShippingAddress.City=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.City);
-                        PostForm += "&ShippingAddress.Zip=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Zip);
-                        PostForm += "&ShippingAddress.State=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.State);
-                        PostForm += "&ShippingAddress.Country=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Country);
-                        PostForm += "&Email=" + HttpUtility.UrlEncode(migrateOrder.Email);
-                        PostForm += "&Title=" + HttpUtility.UrlEncode(migrateOrder.Title);
-                        PostForm += "&Institution=" + HttpUtility.UrlEncode(migrateOrder.Institution);
-                        PostForm += "&FirstName=" + HttpUtility.UrlEncode(migrateOrder.FirstName);
-                        PostForm += "&LastName=" + HttpUtility.UrlEncode(migrateOrder.LastName);
-                        PostForm += "&idRegType=" + HttpUtility.UrlEncode(migrateOrder.idRegType.ToString());
-                        PostForm += "&idWebinar=" + HttpUtility.UrlEncode(migrateOrder.idWebinar.ToString());
-                        PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(migrateOrder.AdditionalLocationsString);
-                        PostForm += "&idOrderLegacy=" + HttpUtility.UrlEncode("0");
-                        PostForm += "&OrderDate=" + HttpUtility.UrlEncode(migrateOrder.OrderDate.ToString());
-                        PostForm += "&ShippingDate=";
-                        PostForm += "&DiscountCode=" + HttpUtility.UrlEncode(migrateOrder.DiscountCode);
-                        PostForm += "&Status=" + (int)migrateOrder.Status;
-                        PostForm += "&Total=" + orderTotal;
-
-                        _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                            "Steve@ttstrain.com",
-                            "ERROR! ConfSem migrated: " + parsedOrder.Email,
-                            JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
-                            + "\n Model: \n" + msgHtml.msg.text
-                        );
-                        WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
-
-#if DEBUG
-                        {
-                            req = WebRequest.Create("http://localhost:3538/order/MigrateOrder");
-                        }
-#endif
-
-                        byte[] send = Encoding.Default.GetBytes(PostForm);
-                        req.Method = "POST";
-                        req.ContentType = "application/x-www-form-urlencoded";
-                        req.ContentLength = send.Length;
-
-                        Stream sout = req.GetRequestStream();
-                        sout.Write(send, 0, send.Length);
-                        sout.Flush();
-                        sout.Close();
-
-                        WebResponse res = req.GetResponse();
-                        StreamReader sr = new StreamReader(res.GetResponseStream());
-                        string returnvalue1 = sr.ReadToEnd();
-                        var importResult = returnvalue1;
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.FatalException("IncomingConfSem", ex);
-                    throw;
+
+                    _logger.Warn("Incoming_confSem: " + incoming + " exception: " + ex);
+
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.Warn("Incoming_confSem: " + incoming + " exception: " + ex);
+            return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Incomplete Import" });
+        }
 
+        protected JsonResult CommitImport(MigrateOrderModel migrateOrder)
+        {
+            string incoming;
+            double orderTotal;
+            ParseOrderModel parsedOrder;
+            var PostForm = "";
+
+            PostForm = "idAffiliate=" +
+                       HttpUtility.UrlEncode(migrateOrder.idAffiliate.ToString()) + "&BillingAddress.AddressType=Billing";
+            PostForm += "&BillingAddress.Name=" +
+                        HttpUtility.UrlEncode(migrateOrder.FirstName + " " + HttpUtility.UrlEncode(migrateOrder.LastName));
+            PostForm += "&BillingAddress.Phone=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Phone);
+            PostForm += "&BillingAddress.StreetAddress=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.StreetAddress);
+            PostForm += "&BillingAddress.StreetAddress2=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.StreetAddress2);
+            PostForm += "&BillingAddress.City=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.City);
+            PostForm += "&BillingAddress.Zip=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Zip);
+            PostForm += "&BillingAddress.State=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.State);
+            PostForm += "&BillingAddress.Country=" + HttpUtility.UrlEncode(migrateOrder.BillingAddress.Country);
+            PostForm += "&ShippingAddress.AddressType=Shipping";
+            PostForm += "&ShippingAddress.Name=" +
+                        HttpUtility.UrlEncode(migrateOrder.FirstName + " " + HttpUtility.UrlEncode(migrateOrder.LastName));
+            PostForm += "&ShippingAddress.Phone=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Phone);
+            PostForm += "&ShippingAddress.StreetAddress=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.StreetAddress);
+            PostForm += "&ShippingAddress.StreetAddress2=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.StreetAddress2);
+            PostForm += "&ShippingAddress.City=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.City);
+            PostForm += "&ShippingAddress.Zip=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Zip);
+            PostForm += "&ShippingAddress.State=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.State);
+            PostForm += "&ShippingAddress.Country=" + HttpUtility.UrlEncode(migrateOrder.ShippingAddress.Country);
+            PostForm += "&Email=" + HttpUtility.UrlEncode(migrateOrder.Email);
+            PostForm += "&Title=" + HttpUtility.UrlEncode(migrateOrder.Title);
+            PostForm += "&Institution=" + HttpUtility.UrlEncode(migrateOrder.Institution);
+            PostForm += "&FirstName=" + HttpUtility.UrlEncode(migrateOrder.FirstName);
+            PostForm += "&LastName=" + HttpUtility.UrlEncode(migrateOrder.LastName);
+            PostForm += "&idRegType=" + HttpUtility.UrlEncode(migrateOrder.idRegType.ToString());
+            PostForm += "&idWebinar=" + HttpUtility.UrlEncode(migrateOrder.idWebinar.ToString());
+            PostForm += "&AdditionalLocationsString=" + HttpUtility.UrlEncode(migrateOrder.AdditionalLocationsString);
+            PostForm += "&idOrderLegacy=" + HttpUtility.UrlEncode("0");
+            PostForm += "&OrderDate=" + HttpUtility.UrlEncode(migrateOrder.OrderDate.ToString());
+            PostForm += "&ShippingDate=";
+            PostForm += "&DiscountCode=" + HttpUtility.UrlEncode(migrateOrder.DiscountCode);
+            PostForm += "&Status=" + (int) migrateOrder.Status;
+            PostForm += "&Total=0";
+
+            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                "Steve@ttstrain.com",
+                "ERROR! ConfSem Committed: " + migrateOrder.Email,
+                JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
+                
+            );
+            WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
+
+#if DEBUG
+            {
+                req = WebRequest.Create("http://localhost:3538/order/MigrateOrder");
             }
+#endif
+
+            byte[] send = Encoding.Default.GetBytes(PostForm);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentLength = send.Length;
+
+            Stream sout = req.GetRequestStream();
+            sout.Write(send, 0, send.Length);
+            sout.Flush();
+            sout.Close();
+
+            WebResponse res = req.GetResponse();
+            StreamReader sr = new StreamReader(res.GetResponseStream());
+            string returnvalue1 = sr.ReadToEnd();
+            return Json(new {Result = WebUiConstants.Success, UpdateCaption = "Imported: " + returnvalue1});
         }
 
         [AllowAnonymous]
@@ -1455,11 +1490,11 @@ namespace CUWebinars.Web.Controllers
 
                 //if ()
                 _logger.Info("Incoming " + msgHtml.msg.from_email);
-                if (msgHtml.msg.from_email.ToLower().Contains("conferencesandseminars.org") || msgHtml.msg.from_email.ToLower().Contains("steve"))
-                {
-                    Incoming_confSem(incoming);
-                    return;
-                }
+                //if (msgHtml.msg.from_email.ToLower().Contains("conferencesandseminars.org") || msgHtml.msg.from_email.ToLower().Contains("steve"))
+                //{
+                //    //Incoming_confSem(incoming);
+                //    return;
+                //}
                 if (msgHtml.msg.from_email.Contains("rate-watch") || msgHtml.msg.from_email.Contains("steve"))
                 {
                     Incoming_ratewatch(incoming);

@@ -113,10 +113,13 @@ function AttachDataTableEditEvents() {
                 //console.log(data);
 
                 // need to update the currently displaying name (in case it changed)
-
-                var $cell = $("td.child-showing");
-                $cell.click(); // hide the child row
-                fireSuccessIndicator($cell);
+                if (data.Result == "Success") {
+                    var $cell = $("td.child-showing");
+                    $cell.click(); // hide the child row
+                    fireSuccessIndicator($cell);
+                } else {
+                    alert(data.Msg);
+                }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert("Update failed. Account Update User: " + textStatus);

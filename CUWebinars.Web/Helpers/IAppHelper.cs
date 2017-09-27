@@ -43,5 +43,7 @@ namespace CUWebinars.Web.Helpers
         ParseOrderModel ParseRateWatch(string _doc);
         MigrateOrderModel ConvertToMigrator(ParseOrderModel parsedOrder);
         ImportOrderForAcsModel ParseAcs(string _doc, string toString);
+        Address ParseAddress(string address);
+        string ParsePhone(string address);
     }
 }

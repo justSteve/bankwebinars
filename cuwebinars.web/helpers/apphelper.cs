@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -15,13 +19,18 @@ using CUWebinars.Business.Notification;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
 using CUWebinars.Web.Models;
+using CUWebinars.Web.Models.Importers;
 using CUWebinars.Web.Services;
 using GemBox.Document;
+using HtmlAgilityPack;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
+using NameParser;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Ninject.Extensions.Logging;
+using PhoneNumbers;
 using Trace = System.Diagnostics.Trace;
 
 namespace CUWebinars.Web.Helpers
@@ -29,7 +38,7 @@ namespace CUWebinars.Web.Helpers
     public class AppHelper : IAppHelper
     {
         private readonly IStateService _stateService;
-
+        private readonly ILogger _logger;
         private readonly HttpRequestBase _request;
         //public readonly TtsConfigHelper _globalConfig;
 
@@ -37,10 +46,11 @@ namespace CUWebinars.Web.Helpers
 
 
 
-        public AppHelper(HttpRequestBase request, IStateService stateService)
+        public AppHelper(HttpRequestBase request, IStateService stateService, ILogger logger)
         {
             _request = request;
             _stateService = stateService;
+            _logger = logger;
             //_globalConfig = new TtsConfigHelper();
         }
 
@@ -789,11 +799,31 @@ namespace CUWebinars.Web.Helpers
                     listOfCCs += cc;
                 }
                 fields.CCCaption =
-                    " Connection info is shared with " + listOfCCs.TrimEnd(',') + ".";
+                    " Connection info is shared with " + listOfCCs.TrimEnd(',') + ". ";
             }
             fields.PaymentStatus = order.OrderStatus.ToString();
 
-            if (order.OrderStatus == OrderStatus.Paid)
+            if (order.OrderStatus == OrderStatus.Paid ||
+                order.idAffiliate != 62
+                || order.idAffiliate != 375
+                || order.idAffiliate != 376
+                || order.idAffiliate != 379
+                || order.idAffiliate != 380
+                || order.idAffiliate != 383
+                || order.idAffiliate != 384
+                || order.idAffiliate != 385
+                || order.idAffiliate != 386
+                || order.idAffiliate != 387
+                || order.idAffiliate != 394
+                || order.idAffiliate != 395
+                || order.idAffiliate != 396
+                || order.idAffiliate != 963
+                || order.idAffiliate != 2986
+                || order.idAffiliate != 11464
+                || order.idAffiliate != 12014
+                || order.idAffiliate != 16132
+                || order.idAffiliate != 22805
+                || order.idAffiliate != 31267)
             {
                 fields.PaymentCaption = "";
             }
@@ -924,6 +954,662 @@ namespace CUWebinars.Web.Helpers
             throw new NotImplementedException();
         }
 
+        public ParseOrderModel ParseConfSem(string _doc, string toString)
+        {
+            //_doc = _doc.Replace("\t", "");
+            var startBlock = _doc.IndexOf("Mailing Address");
+            var endBlock = _doc.IndexOf("Bill To:");
+
+            var splitBlock = _doc.Substring(startBlock, endBlock - startBlock).Split('\n');
+
+            startBlock = _doc.IndexOf("AMOUNT") + 6;
+            endBlock = _doc.IndexOf("TOTAL");
+            var regDataBlock = _doc.Substring(startBlock, endBlock - startBlock)
+                .Replace(". Sponsored by: BankWebinars.com: Registration -", "|")
+                .Replace(": Live Teleconference, ", "|").Trim().Split('|');
+            var model = new ParseOrderModel();
+
+            model.OrderDate = DateTime.Now;
+
+            try
+            {
+                //var sb = new StringBuilder();
+
+                var count = 0;
+                var lineCount = 0;
+                var phoneNum = "";
+                foreach (var line in splitBlock)
+                {
+                    lineCount++;
+                    if (line.Contains("@"))
+                    {
+                        count++;
+                        model.Email = line;
+                        break;
+                    }
+                    if (lineCount > 4 && phoneNum != "")
+                    {
+                        phoneNum = ParsePhone(line);
+                    }
+                }
+                if (count == 0)
+                {
+                    model.LoggerNotes = "ERROR: no email address detected.";
+                    return model;
+                }
+
+                if (count > 1)
+                {
+                    model.LoggerNotes = "Multiple emails detected.";
+                }
+
+                var name = new HumanName(splitBlock[1]);
+
+                model.FirstName = name.First;
+                model.LastName = name.Last;
+
+                model.Title = splitBlock[2];
+                model.Institution = splitBlock[3];
+
+                model.BillingAddress = new Address();
+                model.ShippingAddress = new Address();
+
+
+                model.BillingAddress = new Address();
+                model.ShippingAddress = new Address();
+                model.BillingAddress.AddressType = "Billing";
+                model.BillingAddress.Name = name.FullName;
+                model.BillingAddress.StreetAddress = splitBlock[4];
+                model.BillingAddress.City = splitBlock[5].Split(',')[0];
+                model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
+                model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                model.BillingAddress.Country = splitBlock[6];
+                model.BillingAddress.Phone = splitBlock[7];
+
+
+                model.ShippingAddress.AddressType = "Shipping";
+                model.ShippingAddress.Name = name.FullName;
+                model.ShippingAddress.StreetAddress = splitBlock[4];
+                model.ShippingAddress.City = splitBlock[5].Split(',')[0];
+                model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
+                model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                model.ShippingAddress.Country = splitBlock[6];
+                model.ShippingAddress.Phone = splitBlock[7];
+
+                model.EventTitle = regDataBlock[0].Trim();
+                if (model.EventTitle.Contains(":"))
+                {
+                    var findPO = regDataBlock[0].Trim().Split(':')[0].Trim();
+                    if (findPO.Split(' ').Length == 1)
+                    {
+
+                        var getsTail = regDataBlock[0].Trim().Split(':').Skip(1);
+                        model.EventTitle = "";
+                        foreach (var line in getsTail)
+                        {
+                            model.EventTitle += line + ":";
+                        }
+                        model.EventTitle = model.EventTitle.TrimEnd(':').Trim();
+                    }
+                    else
+                    {
+                        model.EventTitle = regDataBlock[0].Trim().Split(':')[1].Trim();
+                    }
+                }
+                model.EventDate = regDataBlock[1].Split(';')[1].Trim();
+                model.EventTime = regDataBlock[1].Split(';')[0].Trim();
+                model.RegTypeAsString = regDataBlock[2].Trim();
+
+                return model;
+
+            }
+
+            catch (Exception e)
+            {
+                model.LoggerNotes = "ERROR: ParseConfSem tossed: " + e.Message;
+                _logger.FatalException("ParseConfSem", e);
+                throw;
+            }
+            return null;
+        }
+
+
+        //public ParseOrderModel ParseConfSem(string _doc, string toString)
+        //{ //html version of parser is depricated
+        //    var model = new ParseOrderModel();
+        //    try
+        //    {
+        //        model.OrderDate = DateTime.Now;
+
+        //        HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+        //        doc.LoadHtml(_doc);
+
+        //        if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
+        //        {
+        //            // Handle any parse errors as required
+        //            model.LoggerNotes = "ParseConfSem Errors: ";
+        //            foreach (var error in doc.ParseErrors)
+        //            {
+        //                model.LoggerNotes += error.Reason;
+        //            }
+        //            _logger.Warn("IncomingParseConfSem Errors: " + model.LoggerNotes);
+        //        }
+        //        if (doc.DocumentNode != null)
+        //        {
+        //            try
+        //            {
+        //                var splitBlock = doc.DocumentNode.SelectNodes("//table")[3].InnerHtml.Replace("<br>", "\n").Split('\n');
+        //                var sb = new StringBuilder();
+
+        //                var count = 0;
+        //                var lineCount = 0;
+        //                var phoneNum = "";
+        //                foreach (var line in splitBlock)
+        //                {
+        //                    lineCount++;
+        //                    if (line.Contains("@"))
+        //                    {
+        //                        count++;
+        //                        model.Email = line;
+        //                        break;
+        //                    }
+        //                    else
+        //                    {
+        //                        if (lineCount > 4)
+        //                        {
+        //                            var phoneUtil = PhoneNumberUtil.IsViablePhoneNumber(line);
+        //                            if (phoneUtil)
+        //                            {
+        //                                phoneNum = line;
+        //                            }
+        //                            else
+        //                            {
+        //                                sb.Append(line + " ");
+        //                            }
+        //                        }
+        //                    }
+
+        //                }
+        //                if (count == 0)
+        //                {
+        //                    model.LoggerNotes = "ERROR: no email address detected.";
+        //                    return model;
+        //                }
+
+        //                if (count > 1)
+        //                {
+        //                    model.LoggerNotes = "Multiple emails detected.";
+        //                }
+
+        //                var name = new HumanName(splitBlock[1]);
+
+        //                model.FirstName = name.First;
+        //                model.LastName = name.Last;
+
+        //                model.Title = splitBlock[2];
+        //                model.Institution = splitBlock[3];
+
+        //                model.BillingAddress = new Address();
+        //                model.ShippingAddress = new Address();
+
+        //                var myAddress = GetMapzenAddress(sb.ToString());
+
+        //                model.BillingAddress.AddressType = "Billing";
+        //                model.BillingAddress.Name = name.FullName;
+        //                model.BillingAddress.StreetAddress = myAddress.road.FirstOrDefault();
+        //                model.BillingAddress.City = myAddress.city.FirstOrDefault();
+        //                model.BillingAddress.State = myAddress.state.FirstOrDefault();
+        //                model.BillingAddress.Zip = myAddress.postcode.FirstOrDefault();
+        //                model.BillingAddress.Country = myAddress.country.FirstOrDefault();
+        //                model.BillingAddress.Phone = phoneNum;
+
+
+        //                model.ShippingAddress.AddressType = "Shipping";
+        //                model.ShippingAddress.Name = name.FullName;
+        //                model.ShippingAddress.StreetAddress = myAddress.road.FirstOrDefault();
+        //                model.ShippingAddress.City = myAddress.city.FirstOrDefault();
+        //                model.ShippingAddress.State = myAddress.state.FirstOrDefault();
+        //                model.ShippingAddress.Zip = myAddress.postcode.FirstOrDefault();
+        //                model.ShippingAddress.Country = myAddress.country.FirstOrDefault();
+        //                model.ShippingAddress.Phone = phoneNum;
+
+        //                var regData = doc.DocumentNode.SelectNodes("//table")[4].InnerText;
+
+        //                var regDataBlockStart = regData.IndexOf("AMOUNT", StringComparison.Ordinal) + "Amount".Length;
+        //                var regDataBlockEnd = regData.IndexOf("$", StringComparison.Ordinal);
+
+        //                var regDataBlock = regData.Substring(regDataBlockStart, regDataBlockEnd - regDataBlockStart)
+        //                    .Replace(". Sponsored by: BankWebinars.com: Registration -", "|")
+        //                    .Replace(": Live Teleconference, ", "|")
+        //                    .Replace("\n1\n", "").Trim();
+        //                if (doc.DocumentNode.SelectNodes("//table")[3].InnerText.ToLower().Contains("paid"))
+        //                {
+        //                    model.Status = OrderStatus.Paid;
+        //                    model.EventTitle = regDataBlock.Split('|')[0].Trim();
+        //                    model.EventDate = regDataBlock.Split('|')[1].Split(';')[1].Trim();
+        //                    model.EventTime = regDataBlock.Split('|')[1].Split(';')[0].Trim();
+        //                    model.RegTypeAsString = regDataBlock.Split('|')[2].Trim();
+
+        //                }
+        //                else
+        //                {
+        //                    var po = regDataBlock.Split(':')[0];
+
+        //                    model.Status = OrderStatus.Submitted;
+        //                    model.EventTitle = regDataBlock.Split('|')[0].Substring(po.Length + ": ".Length);
+        //                    model.EventDate = regDataBlock.Split('|')[1].Split(';')[1].Trim();
+        //                    model.EventTime = regDataBlock.Split('|')[1].Split(';')[0].Trim();
+        //                    model.RegTypeAsString = regDataBlock.Split('|')[2].Trim();
+        //                }
+        //                return model;
+
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                _logger.FatalException("IncomingParseConfSem", ex);
+        //                model.LoggerNotes = "ERROR: " + ex.Message;
+        //            }
+        //            return model;
+        //        }
+        //        else
+        //        {
+        //            model.LoggerNotes = "ERROR: ParseConfSem Returned Null! ";
+        //            _logger.Warn("IncomingConfSem is null");
+        //            return null;
+        //        }
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        model.LoggerNotes = "ERROR: ParseConfSem tossed: " + e.Message;
+        //        _logger.FatalException("ParseConfSem", e);
+        //        throw;
+        //    }
+
+        //}
+
+        private MapZenAddress GetMapzenAddress(string addString)
+        {
+            try
+            {
+                var a = 1;
+                WebRequest req = WebRequest.Create("https://libpostal.mapzen.com/parse?address=" + HttpUtility.UrlEncode(addString) + "&format=keys&api_key=mapzen-iYcwH4a");
+
+                req.Method = "GET";
+                string returnvalue1 = "";
+
+                WebResponse res = req.GetResponse();
+                using (WebResponse response = req.GetResponse())
+                {
+                    StreamReader reader = new StreamReader(res.GetResponseStream());
+                    //using (Stream stream = response.GetResponseStream())
+                    //{
+                    //    XmlTextReader reader = new XmlTextReader(stream);
+                    //    returnvalue1 = reader.Value;
+                    //}
+                    returnvalue1 = reader.ReadToEnd();
+                }
+                //
+                MapZenAddress importResult = JsonConvert.DeserializeObject<MapZenAddress>(returnvalue1);
+
+                res.Close();
+
+                return importResult;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            return null;
+        }
+
+        public ParseOrderModel ParseRateWatch(string __doc)
+        {
+            var model = new ParseOrderModel();
+            try
+            {
+                model.OrderDate = DateTime.Now;
+
+                HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+                doc.LoadHtml(__doc);
+                model.LoggerNotes = doc.DocumentNode.InnerText;
+
+                var streetAddress =
+                    doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Address Bar')]/following-sibling::table/tr[1]/td[4]").InnerHtml.ToString().Split('>')[1].Replace("<br", "");
+                var cityStateZip = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Address Bar')]/following-sibling::table/tr[1]/td[4]")
+                    .InnerHtml.ToString().Split('>')[2].Replace("</font", "");
+
+
+                var parsedName = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Name Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+                var parsedEmail = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Email Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+                var parsedCompanyName = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Company Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+                var parsedTitle = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Company Title Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+                //var parsedAddress = pageText.Substring(regDataBlockStart, regDataBlockEnd - regDataBlockStart).TrimStart('\n').TrimEnd('\n');
+                var parsedPhone = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Phone Number Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+
+                var parsedEventName = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Webinar Name Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+                var parsedEventDate = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Date Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+                var parsedEventTime = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Time Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+                var parsedEventType = doc.DocumentNode.SelectSingleNode("//comment()[contains(., 'Event Type Bar')]/following-sibling::table/tr[1]/td[4]").InnerText;
+
+                var name = new HumanName(parsedName);
+
+                model.Email = parsedEmail;
+                model.FirstName = name.First;
+                model.LastName = name.Last;
+
+                model.Title = parsedTitle;
+                model.Institution = parsedCompanyName;
+
+                model.BillingAddress = new Address();
+                model.ShippingAddress = new Address();
+
+                model.BillingAddress.AddressType = "Billing";
+                model.BillingAddress.Name = name.FullName;
+                model.BillingAddress.StreetAddress = streetAddress;
+                model.BillingAddress.City = cityStateZip.Split(',')[0];
+                model.BillingAddress.State = cityStateZip.Split(',')[1].Split(' ')[1];
+                model.BillingAddress.Zip = cityStateZip.Split(',')[1].Split(' ')[2];
+                model.BillingAddress.Country = "USA";
+                model.BillingAddress.Phone = parsedPhone.Split(' ')[0];
+
+                model.ShippingAddress.AddressType = "Shipping";
+                model.ShippingAddress.Name = name.FullName;
+                model.ShippingAddress.StreetAddress = streetAddress;
+                model.ShippingAddress.City = cityStateZip.Split(',')[0];
+                model.ShippingAddress.State = cityStateZip.Split(',')[1].Split(' ')[1];
+                model.ShippingAddress.Zip = cityStateZip.Split(',')[1].Split(' ')[2];
+                model.ShippingAddress.Country = "USA";
+                model.ShippingAddress.Phone = parsedPhone.Split(' ')[0];
+
+                model.EventTitle = parsedEventName.Trim();
+                model.EventDate = parsedEventDate.Trim();
+                model.EventTime = parsedEventTime.Trim();
+                model.RegTypeAsString = parsedEventType.Split('(')[1].TrimEnd(')').Trim();
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                model.LoggerNotes += "ParseRateWatch FatalExecption: " + ex.Message;
+                _logger.FatalException("IncomingParserateWatch", ex);
+            }
+            return model;
+        }
+
+        public MigrateOrderModel ConvertToMigrator(ParseOrderModel parsedOrder)
+        {
+            MigrateOrderModel model = new MigrateOrderModel();
+
+            model.BillingAddress = parsedOrder.BillingAddress;
+            model.ShippingAddress = parsedOrder.ShippingAddress;
+            model.BillingAddress.City = parsedOrder.BillingAddress.City;
+            model.BillingAddress.StreetAddress = parsedOrder.BillingAddress.StreetAddress;
+            model.BillingAddress.StreetAddress2 = parsedOrder.BillingAddress.StreetAddress2;
+            model.BillingAddress.Country = parsedOrder.BillingAddress.Country;
+            model.BillingAddress.Phone = parsedOrder.BillingAddress.Phone;
+            model.BillingAddress.State = parsedOrder.BillingAddress.State;
+            model.BillingAddress.Zip = parsedOrder.BillingAddress.Zip;
+            model.BillingAddress.Name = parsedOrder.BillingAddress.Name;
+            model.BillingAddress.AddressType = "Billing";
+            model.ShippingAddress.AddressType = "Shipping";
+
+            model.ShippingAddress.City = parsedOrder.ShippingAddress.City;
+            model.ShippingAddress.StreetAddress = parsedOrder.ShippingAddress.StreetAddress;
+            model.ShippingAddress.StreetAddress2 = parsedOrder.ShippingAddress.StreetAddress2;
+            model.ShippingAddress.Country = parsedOrder.ShippingAddress.Country;
+            model.ShippingAddress.Phone = parsedOrder.ShippingAddress.Phone;
+            model.ShippingAddress.State = parsedOrder.ShippingAddress.State;
+            model.ShippingAddress.Zip = parsedOrder.ShippingAddress.Zip;
+            model.ShippingAddress.Name = parsedOrder.ShippingAddress.Name;
+
+            model.Email = parsedOrder.Email;
+            model.Title = parsedOrder.Title;
+            model.AdditionalLocationsString = parsedOrder.AdditionalLocationsString;
+            model.AdminComments = parsedOrder.AdminComments;
+            model.DiscountCode = parsedOrder.DiscountCode;
+            model.FirstName = parsedOrder.FirstName;
+            model.LastName = parsedOrder.LastName;
+            model.Institution = parsedOrder.Institution;
+            model.LoggerNotes = parsedOrder.LoggerNotes;
+            model.idAffiliate = parsedOrder.idAffiliate;
+            model.Origin = parsedOrder.Origin;
+            model.Status = parsedOrder.Status;
+            model.OrderDate = parsedOrder.OrderDate;
+
+            return model;
+        }
+
+        public ImportOrderForAcsModel ParseAcs(string _doc, string orderDate)
+        {
+
+            ImportOrderForAcsModel model = new ImportOrderForAcsModel();
+            model.DateSubmittedToACS = orderDate;
+
+            HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+            doc.LoadHtml(_doc);
+
+            if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
+            {
+                // Handle any parse errors as required
+                model.LoggerNotes = "AcsImporter ParseErrors: ";
+                foreach (var error in doc.ParseErrors)
+                {
+                    model.LoggerNotes += error.Reason;
+                }
+                return model;
+            }
+            else
+            {
+                if (doc.DocumentNode != null)
+                {
+                    HtmlNode bodyNode = doc.DocumentNode.SelectSingleNode("//body");
+
+                    if (bodyNode != null)
+                    {
+                        try
+                        {
+                            var _values = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#FFFFFF']/td[2]");
+                            var _names = doc.DocumentNode.SelectNodes("//tr[@bgcolor='#EAF2FA']/td");
+
+
+                            string[] values = new string[_values.Count];
+                            string[] names = new string[_values.Count];
+
+                            var flag = "";
+
+                            for (var i = 0; i < _values.Count - 1; i++)
+                            {
+                                string value = _values[i].InnerText.TrimStart().TrimEnd();
+                                string name =
+                                    Regex.Replace(_names[i].InnerText, @"\s", string.Empty, RegexOptions.Multiline)
+                                        .TrimStart().TrimEnd();
+                                //docs the error
+                                if (value.Length == 0)
+                                {
+                                    value = name;
+                                    flag = "Value is 0 length:" + name + " email: ";
+                                }
+                                switch (name)
+                                {
+                                    case "AdditionalLocationsString":
+                                        model.AdditionalLocationsString = value;
+                                        break;
+                                    case "AffiliateID":
+                                        model.AffiliateID = value;
+                                        break;
+                                    case "BankWebID":
+                                        model.BankWebID = value;
+                                        break;
+
+                                    case "BillingContact":
+                                        model.BillingContact = value;
+                                        break;
+                                    case "City":
+                                        model.City = value;
+                                        break;
+                                    case "Company":
+                                        model.Company = value;
+                                        break;
+                                    case "CompanyBillingInformation":
+                                        model.CompanyBillingInformation = value;
+                                        break;
+                                    case "Country":
+                                        model.Country = value;
+                                        break;
+                                    case "CourseDeliveryType":
+                                        model.CourseDeliveryType = value;
+                                        break;
+                                    case "CourseNumber":
+                                        model.CourseNumber = value;
+                                        break;
+                                    case "CoursePrice":
+                                        model.CoursePrice = value;
+                                        break;
+                                    case "CreditCard":
+                                        model.CreditCard = value;
+                                        break;
+                                    case "DateSubmittedToACS":
+                                        model.DateSubmittedToACS = orderDate;
+                                        break;
+
+                                    case "DeliveryType":
+                                        model.DeliveryType = value;
+                                        break;
+                                    case "Email":
+                                        model.Email = value;
+                                        break;
+                                    case "EmailAddress":
+                                        model.EmailAddress = value;
+                                        break;
+                                    case "EmailAddressforCreditCardReceipt":
+                                        model.EmailAddressforCreditCardReceipt = value;
+                                        break;
+                                    case "Ext":
+                                        model.Ext = value;
+                                        break;
+                                    case "FirstName":
+                                        model.FirstName = value;
+                                        break;
+                                    case "LastName":
+                                        model.LastName = value;
+                                        break;
+                                    case "PaymentMethod":
+                                        model.PaymentMethod = value;
+                                        break;
+                                    case "Phone":
+                                        model.Phone = value;
+                                        break;
+                                    case "State":
+                                        model.State = value;
+                                        break;
+                                    case "State/Province/Region":
+                                        model.State_Province_Region = value;
+                                        break;
+                                    case "StreetorP.O.Box":
+                                        model.StreetorP_O_Box = value;
+                                        break;
+                                    case "Title":
+                                        model.Title = value;
+                                        break;
+                                    case "WebinarDate":
+                                        model.WebinarDate = value;
+                                        break;
+                                    case "WebinarTitle":
+                                        model.WebinarTitle = value;
+                                        break;
+                                    case "ZeroValue":
+                                        model.ZeroValue = value;
+                                        break;
+                                    case "Zip/PostalCode":
+                                        model.Zip_PostalCode = value;
+                                        break;
+                                    default:
+                                        if (name.EndsWith("LocationEmail"))
+                                        {
+                                            model.AdditionalLocationsString += value + ",";
+                                        }
+                                        else
+                                        {
+                                            model.LoggerNotes += ("Keyname not known: " + name + " value:" + value);
+                                        }
+                                        break;
+
+
+                                }
+
+                                //if (model.(name))
+                                //{
+                                //    ACSOrderDictionary[name] = value;
+                                //}
+                                //else
+                                //{
+
+                                //}
+                                values[i] = value;
+                                names[i] = name;
+                            }
+
+                            //_logger.Info(JsonConvert.SerializeObject(sb.ToString(), Formatting.None,
+                            //    new JsonSerializerSettings
+                            //    {
+                            //        MaxDepth = 1,
+                            //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            //    }
+                            //    ));
+                        }
+                        catch (Exception ex)
+                        {
+                            model.LoggerNotes += "ParseAcs FatalExecption: " + ex.Message;
+                            _logger.FatalException("IncomingParseACS", ex);
+
+                        }
+                        return model;
+                    }
+                }
+                else
+                {
+                    model.LoggerNotes += "ParseAcs Returned Null! ";
+                    _logger.Warn("Incoming | AcsModel is null");
+                    return null;
+                }
+            }
+            return null;
+
+        }
+
+        public Address ParseAddress(string address)
+        {
+
+            var myAddress = GetMapzenAddress(address);
+            var add = new Address();
+
+            //add.AddressType = "Billing";
+            add.StreetAddress = myAddress.road.FirstOrDefault();
+            add.City = myAddress.city.FirstOrDefault();
+            add.State = myAddress.state.FirstOrDefault();
+            add.Zip = myAddress.postcode.FirstOrDefault();
+            add.Country = myAddress.country.FirstOrDefault();
+
+            return add;
+        }
+
+        public string ParsePhone(string phoneTest)
+        {
+            var phoneNum = "";
+            var phoneUtil = PhoneNumberUtil.IsViablePhoneNumber(phoneTest);
+            if (phoneUtil)
+            {
+                phoneNum = phoneTest;
+            }
+
+            return phoneNum;
+        }
+
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {
             if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");
@@ -937,5 +1623,16 @@ namespace CUWebinars.Web.Helpers
             return fixedArray;
         }
 
+    }
+
+    internal class MapZenAddress
+    {
+        public List<string> city { get; set; }
+        public List<string> country { get; set; }
+        public List<string> house_number { get; set; }
+        public List<string> postcode { get; set; }
+        public List<string> road { get; set; }
+        public List<string> state { get; set; }
+        public List<string> unit { get; set; }
     }
 }
