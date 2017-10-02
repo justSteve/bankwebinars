@@ -313,53 +313,7 @@ namespace CUWebinars.Web.Controllers
             }
             return View();
         }
-
-        public ActionResult MyWebinars(int? idOrder)
-        {
-            if (User != null && User.Identity.IsAuthenticated)
-            {
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
-                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
-                {
-                    return RedirectToAction("Index", "Admin");
-                }
-                ViewBag.OnDemandClaim = "";
-
-                if (claimsIdentityOfAuthenticatedUser.HasClaim(
-                    (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
-                {
-                    var claimTTSDomain =
-                        claimsIdentityOfAuthenticatedUser.Claims
-                            .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
-                            .First().Value;
-                    _stateService.SetValue(WebUiConstants.CurrentAffiliate,
-                        _affiliateRepository.LoadByTTSDomain(claimTTSDomain));
-                    return RedirectToAction("Index", "Admin");
-
-                }
-                CompliancePerspectivesModel compPersectivesModel =
-                    _accountControllerOrchestrator.BuildCompPersectivesModel();
-                var discountModel = _accountControllerOrchestrator.BuildDiscountModelForUser();
-                var myWebinarsDTO = _accountControllerOrchestrator.BuildMyWebinarsDTO
-                    (discountModel, claimsIdentityOfAuthenticatedUser);
-                if (compPersectivesModel != null)
-                    myWebinarsDTO.CompliancePerspectives = compPersectivesModel;
-
-                ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
-                return View("MyWebinars", myWebinarsDTO);
-            }
-            else
-            {
-                if (idOrder.HasValue && idOrder.Value > 0)
-                {
-                    return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars?idOrder=" + idOrder.Value });
-                }
-            }
-
-            return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars" });
-        }
-
+        
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
@@ -1552,7 +1506,7 @@ namespace CUWebinars.Web.Controllers
                 }
             }
             ProcessModelStateErrors();
-            return RedirectToAction("MyWebinars", "Account");
+            return RedirectToAction("MyWebinars", "Cart");
         }
 
 
@@ -1568,7 +1522,7 @@ namespace CUWebinars.Web.Controllers
                 {
                     _logger.Warn("Authenticated user was served SignIn page. SessionInfo: " +
                                  _appHelper.GetSessionStartInfo());
-                    return RedirectToAction("MyWebinars");
+                    return RedirectToAction("MyWebinars", "Cart");
                 }
 
                 try
@@ -1857,7 +1811,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult PasswordResetConfirm(ChangePasswordFromResetKeyInputModel model, string returnUrl)
         {
-
+            _logger.Info("PasswordResetConfirm submits new password for: " + model.Email);
             if (ModelState.IsValid)
             {
                 if (string.IsNullOrWhiteSpace(model.Key))

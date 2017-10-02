@@ -169,9 +169,16 @@ namespace CUWebinars.Web.App_Start
             routes.MapRoute(
                 "MyWebinarsDefault",                                    // Route name
                 "{action}/{id}",                                        // URL with parameters
-                new { controller = "Account", action = string.Empty, id = string.Empty }, // Parameter defaults
+                new { controller = "Cart", action = string.Empty, id = string.Empty }, // Parameter defaults
                 new { action = "MyWebinars" }
             );
+
+            //routes.MapRoute(
+            //    "MyWebinarsDefault",                                    // Route name
+            //    "{action}/{id}",                                        // URL with parameters
+            //    new { controller = "Account", action = string.Empty, id = string.Empty }, // Parameter defaults
+            //    new { action = "MyWebinars" }
+            //);
 
             routes.MapRoute(
                 name: "Default",

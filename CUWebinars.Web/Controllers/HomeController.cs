@@ -55,7 +55,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult MyWebinars()
         {
-            return RedirectToAction("MyWebinars", "Account");
+            return RedirectToAction("MyWebinars", "Cart");
         }
 
         public ActionResult WhatIsAWebinar()

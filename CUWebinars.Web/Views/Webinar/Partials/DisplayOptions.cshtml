@@ -88,7 +88,7 @@
                                 <input type="radio" class="checkbox" id='regTypeID_@(myOption.Key.idRegType)' @defaultCheck name="RegistrationTypeId"
                                        value="@myOption.Key.idRegType" />
                                 &nbsp;&nbsp;<b>
-                                    @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - $@myOption.Key.Price &nbsp;&nbsp;
+                                    @Html.Raw(myOption.Key.OptionLabel.Replace("Five", "Five </b>(days)<b>").Replace("Six", "Six </b>(months)<b>")) - @myOption.Key.Price.ToString("C0") &nbsp;&nbsp;
                                 </b>
                                 <a class="_toolTip" data-html="true" rel="tooltip" href="#" data-toggle="tooltip" title='@Html.Raw(myOption.Key.OptionExplain).ToHtmlString().Replace("<i>", "").Replace("</i>", "")'><i class="icon-question-sign"></i></a>
                             </dt>

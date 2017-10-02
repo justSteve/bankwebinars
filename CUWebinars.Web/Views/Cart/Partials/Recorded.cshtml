@@ -79,9 +79,6 @@
                         }
                     }
                 }
-
-                //var expiresDate = row.Webinar.Date.AddMonths(6);
-
                 <div class="container-fluid">
                     <div class="row-fluid">
 
@@ -95,7 +92,7 @@
                         </div>
                         <div class="span3 offset1 " id="orderSum-@row.idWebinar">
                             
-                            @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", row.Order)
+                            @Html.Partial("~/Views/Shared/Partials/_OrderSumUser3.cshtml", recorded.Value)
                         </div>
                     </div>
 
@@ -140,19 +137,6 @@
 
                                             @Html.Raw(onDemandClaimUrl)
 
-                                            @*@if (currentUser.email.EndsWith("ttstrain.com") && !String.IsNullOrWhiteSpace(recorded.Key))
-                                            {
-                                                <p>
-                                                    @{
-                                                var urlSuffix = recorded.Value.idOrder + "-" + recorded.Key;
-                                                <text>A post-event assesment for this event is available. Pass this URL to any co-workers<br /> <tt>
-                                                        <strong>
-                                                            @globalConfig.TenantURL/quiz/index/@urlSuffix
-                                                        </strong>
-                                                    </tt></text>
-                                                    }
-                                                </p>
-                                            }*@
                                         </div>
                                     }
                                     else

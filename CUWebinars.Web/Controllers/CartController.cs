@@ -37,6 +37,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using RestSharp;
+using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -297,6 +298,30 @@ namespace CUWebinars.Web.Controllers
                 {
                     model.Order.OrderStatus = OrderStatus.Submitted;
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, row);
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "ConfirmOrder|ConfirmOrder failed.");
+                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed " + model.Order.idOrder, exception);
+                    ErrorSignal.FromCurrentContext().Raise(exception);
+                }
+                try
+                {
+
+                    if (model.Order.Total == 0)
+                    {
+                        model.Order.OrderStatus = OrderStatus.Paid;
+                        model.Order.TotalPaid = model.Order.Total;
+                    }
+
+                    if (model.Webinar.idWebinar == 2520)
+                    {
+                        //is a WSP order
+                        _cartControllerOrchestrator.CreateWspCode(model.Order);
+                    }
+                    _cartControllerOrchestrator.SaveOrder(model.Order);
+                    _SendOrderConfirmation2(model.Order.idOrder);
 
                     if (model.Webinar.SeriesInfo.Contains("Children"))
                         if (model.Order.OrderRows != null)
@@ -304,13 +329,14 @@ namespace CUWebinars.Web.Controllers
 
 
                     if (model.Webinar.Title.Contains("Compliance Perspectives")
-                    //test if CP code needs to be created by ensuring it's not a trial
-                    && row.RowPrice > 200)
+                        //test if CP code needs to be created by ensuring it's not a trial
+                        && row.RowPrice > 200)
                         if (model.Order.OrderRows != null)
                         {
                             _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(
                                 model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
                         }
+
                     if (_globalConfig.Tenant == "DirectorSeries")
                     {
                         Order order = model.Order;
@@ -335,25 +361,8 @@ namespace CUWebinars.Web.Controllers
                         };
                         row.Discount = desSub;
                     }
-                }
-                catch (Exception exception)
-                {
-                    ModelState.AddModelError(string.Empty,
-                        "ConfirmOrder|ConfirmOrder failed.");
-                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed " + model.Order.idOrder, exception);
-                    ErrorSignal.FromCurrentContext().Raise(exception);
-                }
-                try
-                {
-
-                    if (model.Order.Total == 0)
-                    {
-                        model.Order.OrderStatus = OrderStatus.Paid;
-                        model.Order.TotalPaid = model.Order.Total;
-                    }
-
                     _cartControllerOrchestrator.SaveOrder(model.Order);
-                    _SendOrderConfirmation2(model.Order.idOrder);
+
                     //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                 }
                 catch (Exception exception)
@@ -552,12 +561,17 @@ namespace CUWebinars.Web.Controllers
                         _stateService.SetValue<EditUserModel>("editUserModel", null);
                     }
 
+                    if (model.Webinar.idWebinar == 2520)
+                    {
+                        //is a WSP order
+                        _cartControllerOrchestrator.CreateWspCode(model.Order);
+                    }
                     model.Order.OrderStatus = OrderStatus.Submitted;
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email,
                         model.Order.OrderRows.FirstOrDefault());
 
                     model.Order.Origin = DomainConstants.CartByAffiliate;
-
+                    _cartControllerOrchestrator.SaveOrder(model.Order);
                     _SendOrderConfirmation2(model.Order.idOrder);
 
                     var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
@@ -1324,19 +1338,19 @@ namespace CUWebinars.Web.Controllers
                         if (parsedOrder.RegTypeAsString.Contains("CD"))
                             regTypeString = "Premier Package";
 
-                        var webinar = _cartControllerOrchestrator.LoadWebinarForImporter(parsedOrder.EventTitle,
-                            parsedOrder.EventDate, parsedOrder.EventTime);
+                        var webinar = _cartControllerOrchestrator.LoadWebinarForImporter(parsedOrder.EventTitle.Trim(),
+                            parsedOrder.EventDate.Trim(), parsedOrder.EventTime.Trim());
 
                         if (webinar == null)
                         {
+                            _logger.Info("Incoming - failed to find Webinar");
                             _cartControllerOrchestrator.FireMandrillNotificationEvent(
                                 "Steve@ttstrain.com",
                                 "ERROR! Importer for confSem could not determine webinar: " + parsedOrder.Email,
                                 JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
-                                + "\n Model: \n" + incoming
                             );
-
                         }
+
                         migrateOrder.idWebinar = webinar.idWebinar;
 
                         try
@@ -1454,7 +1468,9 @@ namespace CUWebinars.Web.Controllers
             WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
 
 #if DEBUG
+            
             {
+                _logger.Info("Incoming Running in debug mode");
                 req = WebRequest.Create("http://localhost:3538/order/MigrateOrder");
             }
 #endif
@@ -2496,15 +2512,7 @@ namespace CUWebinars.Web.Controllers
 
                     Debug.Assert(row != null, "row != null");
                     var createdSeriesOrders = "";
-                    if (row.Webinar.SeriesInfo.Contains("Children"))
-                        createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
-
-
-                    if (row.Webinar.Title.Contains("Compliance Perspectives")
-                    //test if CP code needs to be created by ensuring it's not a trial
-                        && row.RowPrice > 200)
-                        _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
-
+                    
                     if (!multi)
                     {
                         order.AdminComments = order.AdminComments.Replace("Single_OrderCheckout", "PaidByCC");
@@ -2520,6 +2528,16 @@ namespace CUWebinars.Web.Controllers
 
                         //M4Gen
                         _SendOrderConfirmation2(order.idOrder);
+
+                        if (row.Webinar.SeriesInfo.Contains("Children"))
+                            _cartControllerOrchestrator.CreateSeriesOrders(row);
+
+
+                        if (row.Webinar.Title.Contains("Compliance Perspectives")
+                            //test if CP code needs to be created by ensuring it's not a trial
+                            && row.RowPrice > 200)
+                            _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
+
                     }
                     else
                     {
@@ -2547,16 +2565,23 @@ namespace CUWebinars.Web.Controllers
 
                                 _SendOrderConfirmation2(order.idOrder);
                                 //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                                if (row.Webinar.SeriesInfo.Contains("Children"))
+                                    createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
+
+
+                                if (row.Webinar.Title.Contains("Compliance Perspectives")
+                                    //test if CP code needs to be created by ensuring it's not a trial
+                                    && row.RowPrice > 200)
+                                    _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
+
                             }
                             catch (Exception ex)
                             {
                                 _logger.FatalException("Paytrace: " + order.idOrder + "  Multi-OrderCheckout", ex);
                                 throw;
                             }
-
                         }
                     }
-
                 }
                 else
                 {
@@ -2698,6 +2723,56 @@ namespace CUWebinars.Web.Controllers
 
             return View(model);
         }
+
+
+        public ActionResult MyWebinars(int? idOrder)
+        {
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Admin))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+                ViewBag.OnDemandClaim = "";
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
+                {
+                    var claimTTSDomain =
+                        claimsIdentityOfAuthenticatedUser.Claims
+                            .Where(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
+                            .First().Value;
+                    _stateService.SetValue(WebUiConstants.CurrentAffiliate,
+                        _cartControllerOrchestrator.LoadByTTSDomain(claimTTSDomain));
+                    return RedirectToAction("Index", "Admin");
+
+                }
+
+                CompliancePerspectivesModel compPersectivesModel =
+                    _cartControllerOrchestrator.BuildCompPersectivesModel();
+                var discountModel = _cartControllerOrchestrator.BuildDiscountModelForUser();
+                var myWebinarsDTO = _cartControllerOrchestrator.BuildMyWebinarsDTO
+                    (discountModel, claimsIdentityOfAuthenticatedUser);
+                if (compPersectivesModel != null)
+                    myWebinarsDTO.CompliancePerspectives = compPersectivesModel;
+
+                ViewBag.idUser = myWebinarsDTO.WebUser.idUser;
+                return View("MyWebinars", myWebinarsDTO);
+            }
+            else
+            {
+                if (idOrder.HasValue && idOrder.Value > 0)
+                {
+                    return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars?idOrder=" + idOrder.Value });
+                }
+            }
+
+            return RedirectToAction("Login", "Account", new { ReturnURL = "MyWebinars" });
+        }
+
+
 
         private RegistrationSummaryMultiViewModel BuildRegistrationSummaryMultiViewModel(List<Order> orders)
         {

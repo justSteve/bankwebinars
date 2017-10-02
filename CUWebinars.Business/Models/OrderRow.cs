@@ -27,6 +27,7 @@ namespace CUWebinars.Business.Models
         public DateTime? ShipmentDate { get; set; }
         public string TtsJoinUrl { get; set; }
         public decimal UnitPrice { get; set; }
+        public decimal? Tax { get; set; }
 
         public virtual ICollection<AdditionalLocation> AdditionalLocation { get; set; }
         public virtual Order Order { get; set; }

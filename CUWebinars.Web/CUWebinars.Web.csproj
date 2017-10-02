@@ -1830,6 +1830,7 @@
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_BSASchool.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_CompPerspectives.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_FedCompSchool.docx" />
+    <Content Include="App_Data\mergeTemplates\OrderSubmitted_WSPSubscription.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
@@ -2143,6 +2144,11 @@
     <Content Include="Views\Account\LoginAdmin.cshtml" />
     <Content Include="Views\Admin\DESPromo.cshtml" />
     <Content Include="Views\Cart\ImportConfSem.cshtml" />
+    <Content Include="Views\Cart\MyWebinars.cshtml" />
+    <Content Include="Views\Cart\Partials\Upcoming.cshtml" />
+    <Content Include="Views\Cart\Partials\Recorded.cshtml" />
+    <Content Include="Views\Shared\Partials\_OrderSumUser3.cshtml" />
+    <Content Include="Views\Cart\Partials\OrderHasAdditionalLocations.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -2635,7 +2641,6 @@
     <Content Include="Views\Webinar\CompliancePerspectives.cshtml" />
     <Content Include="Views\Admin\Home\_adHocNotification.cshtml" />
     <Content Include="Views\Admin\Home\_resendConnectionInfo.cshtml" />
-    <Content Include="Views\Admin\Home\_resendOrderConfirmation.cshtml" />
     <Content Include="Views\Admin\Home\_SendConnectionInfo.cshtml" />
     <Content Include="Views\Admin\Home\_SendReminder.cshtml" />
     <Content Include="Views\Admin\Home\_SendShippedOrder.cshtml" />

@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
@@ -798,7 +799,7 @@ namespace CUWebinars.Web.Helpers
                     listOfCCs += cc;
                 }
                 fields.CCCaption =
-                    " Connection info is shared with " + listOfCCs.TrimEnd(',') + ".";
+                    " Connection info is shared with " + listOfCCs.TrimEnd(',') + ". ";
             }
             fields.PaymentStatus = order.OrderStatus.ToString();
 
@@ -850,6 +851,29 @@ namespace CUWebinars.Web.Helpers
                 }
             }
 
+            if (row.RegistrationType.SKU.ToLower().Contains("wsp"))
+            {
+                if (order.OrderStatus == OrderStatus.Paid)
+                {
+                    fields.PaymentCaption =
+                        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
+                        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
+                        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+                }
+                else
+                {
+                    fields.PaymentCaption =
+                        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
+                        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
+                        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+
+                    //"Your package will be activated upon payment. Very shortly we will be sending an invoice to " +
+                    //    order.BillingEmail + ". If you wish to make immediate payment by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    //    "'> click here.</a>";
+                }
+            }
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
@@ -955,158 +979,300 @@ namespace CUWebinars.Web.Helpers
 
         public ParseOrderModel ParseConfSem(string _doc, string toString)
         {
+            //_doc = _doc.Replace("\t", "");
+            var startBlock = _doc.IndexOf("Mailing Address");
+            var endBlock = _doc.IndexOf("Bill To:");
+
+            var splitBlock = _doc.Substring(startBlock, endBlock - startBlock).Split('\n');
+
+            startBlock = _doc.IndexOf("AMOUNT") + 6;
+            endBlock = _doc.IndexOf("TOTAL");
+            var regDataBlock = _doc.Substring(startBlock, endBlock - startBlock)
+                .Replace(". Sponsored by: BankWebinars.com: Registration -", "|")
+                .Replace(": Live Teleconference, ", "|").Trim().Split('|');
             var model = new ParseOrderModel();
+
+            model.OrderDate = DateTime.Now;
+
             try
             {
-                model.OrderDate = DateTime.Now;
+                //var sb = new StringBuilder();
 
-                HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-
-                doc.LoadHtml(_doc);
-
-                if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
+                var count = 0;
+                var lineCount = 0;
+                var phoneNum = "";
+                foreach (var line in splitBlock)
                 {
-                    // Handle any parse errors as required
-                    model.LoggerNotes = "ParseConfSem Errors: ";
-                    foreach (var error in doc.ParseErrors)
+                    lineCount++;
+                    if (line.Contains("@"))
                     {
-                        model.LoggerNotes += error.Reason;
+                        count++;
+                        model.Email = line;
+                        break;
                     }
-                    _logger.Warn("IncomingParseConfSem Errors: " + model.LoggerNotes);
+                    if (lineCount > 4 && phoneNum != "")
+                    {
+                        phoneNum = ParsePhone(line);
+                    }
                 }
-                if (doc.DocumentNode != null)
+                if (count == 0)
                 {
-                    try
-                    {
-                        var splitBlock = doc.DocumentNode.SelectNodes("//table")[3].InnerHtml.Replace("<br>", "\n").Split('\n');
-                        var sb = new StringBuilder();
-
-                        var count = 0;
-                        var lineCount = 0;
-                        var phoneNum = "";
-                        foreach (var line in splitBlock)
-                        {
-                            lineCount++;
-                            if (line.Contains("@"))
-                            {
-                                count++;
-                                model.Email = line;
-                                break;
-                            }
-                            else
-                            {
-                                if (lineCount > 4)
-                                {
-                                    var phoneUtil = PhoneNumberUtil.IsViablePhoneNumber(line);
-                                    if (phoneUtil)
-                                    {
-                                        phoneNum = line;
-                                    }
-                                    else
-                                    {
-                                        sb.Append(line + " ");
-                                    }
-                                }
-                            }
-
-                        }
-                        if (count == 0)
-                        {
-                            model.LoggerNotes = "ERROR: no email address detected.";
-                            return model;
-                        }
-
-                        if (count > 1)
-                        {
-                            model.LoggerNotes = "Multiple emails detected.";
-                        }
-
-                        var name = new HumanName(splitBlock[1]);
-
-                        model.FirstName = name.First;
-                        model.LastName = name.Last;
-
-                        model.Title = splitBlock[2];
-                        model.Institution = splitBlock[3];
-
-                        model.BillingAddress = new Address();
-                        model.ShippingAddress = new Address();
-
-                        var myAddress = GetMapzenAddress(sb.ToString());
-                        
-                        model.BillingAddress.AddressType = "Billing";
-                        model.BillingAddress.Name = name.FullName;
-                        model.BillingAddress.StreetAddress = myAddress.road.FirstOrDefault();
-                        model.BillingAddress.City = myAddress.city.FirstOrDefault();
-                        model.BillingAddress.State = myAddress.state.FirstOrDefault();
-                        model.BillingAddress.Zip = myAddress.postcode.FirstOrDefault();
-                        model.BillingAddress.Country = myAddress.country.FirstOrDefault();
-                        model.BillingAddress.Phone = phoneNum;
-
-
-                        model.ShippingAddress.AddressType = "Shipping";
-                        model.ShippingAddress.Name = name.FullName;
-                        model.ShippingAddress.StreetAddress = myAddress.road.FirstOrDefault();
-                        model.ShippingAddress.City = myAddress.city.FirstOrDefault();
-                        model.ShippingAddress.State = myAddress.state.FirstOrDefault();
-                        model.ShippingAddress.Zip = myAddress.postcode.FirstOrDefault();
-                        model.ShippingAddress.Country = myAddress.country.FirstOrDefault();
-                        model.ShippingAddress.Phone = phoneNum;
-
-                        var regData = doc.DocumentNode.SelectNodes("//table")[4].InnerText;
-
-                        var regDataBlockStart = regData.IndexOf("AMOUNT", StringComparison.Ordinal) + "Amount".Length;
-                        var regDataBlockEnd = regData.IndexOf("$", StringComparison.Ordinal);
-
-                        var regDataBlock = regData.Substring(regDataBlockStart, regDataBlockEnd - regDataBlockStart)
-                            .Replace(". Sponsored by: BankWebinars.com: Registration -", "|")
-                            .Replace(": Live Teleconference, ", "|")
-                            .Replace("\n1\n", "").Trim();
-                        if (doc.DocumentNode.SelectNodes("//table")[3].InnerText.ToLower().Contains("paid"))
-                        {
-                            model.Status = OrderStatus.Paid;
-                            model.EventTitle = regDataBlock.Split('|')[0].Trim();
-                            model.EventDate = regDataBlock.Split('|')[1].Split(';')[1].Trim();
-                            model.EventTime = regDataBlock.Split('|')[1].Split(';')[0].Trim();
-                            model.RegTypeAsString = regDataBlock.Split('|')[2].Trim();
-
-                        }
-                        else
-                        {
-                            var po = regDataBlock.Split(':')[0];
-
-                            model.Status = OrderStatus.Submitted;
-                            model.EventTitle = regDataBlock.Split('|')[0].Substring(po.Length + ": ".Length);
-                            model.EventDate = regDataBlock.Split('|')[1].Split(';')[1].Trim();
-                            model.EventTime = regDataBlock.Split('|')[1].Split(';')[0].Trim();
-                            model.RegTypeAsString = regDataBlock.Split('|')[2].Trim();
-                        }
-                        return model;
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.FatalException("IncomingParseConfSem", ex);
-                        model.LoggerNotes = "ERROR: " + ex.Message;
-                    }
+                    model.LoggerNotes = "ERROR: no email address detected.";
                     return model;
+                }
+
+                if (count > 1)
+                {
+                    model.LoggerNotes = "Multiple emails detected.";
+                }
+
+                var name = new HumanName(splitBlock[1]);
+
+                model.FirstName = name.First;
+                model.LastName = name.Last;
+
+                model.Title = splitBlock[2];
+                model.Institution = splitBlock[3];
+
+                model.BillingAddress = new Address();
+                model.ShippingAddress = new Address();
+
+
+                model.BillingAddress = new Address();
+                model.ShippingAddress = new Address();
+                model.BillingAddress.AddressType = "Billing";
+                model.BillingAddress.Name = name.FullName;
+                model.BillingAddress.StreetAddress = splitBlock[4];
+                //check if city/state/zip found in [5] or [6]
+                var has2AddressLines = splitBlock[5].Split(',');
+                if (has2AddressLines.Length > 1)
+                {
+                    model.BillingAddress.City = splitBlock[5].Split(',')[0];
+                    model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
+                    model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                    model.BillingAddress.Country = splitBlock[6];
+                    model.BillingAddress.Phone = splitBlock[7];
                 }
                 else
                 {
-                    model.LoggerNotes = "ERROR: ParseConfSem Returned Null! ";
-                    _logger.Warn("IncomingConfSem is null");
-                    return null;
+                    model.BillingAddress.City = splitBlock[6].Split(',')[0];
+                    model.BillingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                    model.BillingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    model.BillingAddress.Country = splitBlock[7];
+                    model.BillingAddress.Phone = splitBlock[8];
                 }
 
+                model.ShippingAddress.AddressType = "Shipping";
+                model.ShippingAddress.Name = name.FullName;
+                model.ShippingAddress.StreetAddress = splitBlock[4];
+                if (has2AddressLines.Length > 1)
+                {
+                    model.ShippingAddress.City = splitBlock[5].Split(',')[0];
+                    model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
+                    model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                    model.ShippingAddress.Country = splitBlock[6];
+                    model.ShippingAddress.Phone = splitBlock[7];
+                }
+                else
+                {
+                    model.ShippingAddress.City = splitBlock[6].Split(',')[0];
+                    model.ShippingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                    model.ShippingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    model.ShippingAddress.Country = splitBlock[7];
+                    model.ShippingAddress.Phone = splitBlock[8];
+                }
+                model.EventTitle = regDataBlock[0].Trim();
+                if (model.EventTitle.Contains(":"))
+                {
+                    var findPO = regDataBlock[0].Trim().Split(':')[0].Trim();
+                    if (findPO.Split(' ').Length == 1)
+                    {
+
+                        var getsTail = regDataBlock[0].Trim().Split(':').Skip(1);
+                        model.EventTitle = "";
+                        foreach (var line in getsTail)
+                        {
+                            model.EventTitle += line + ":";
+                        }
+                        model.EventTitle = model.EventTitle.TrimEnd(':').Trim();
+                    }
+                    else
+                    {
+                        model.EventTitle = regDataBlock[0].Trim().Split(':')[1].Trim();
+                    }
+                }
+                model.EventDate = regDataBlock[1].Split(';')[1].Trim();
+                model.EventTime = regDataBlock[1].Split(';')[0].Trim();
+                model.RegTypeAsString = regDataBlock[2].Trim();
+
+                return model;
+
             }
+
             catch (Exception e)
             {
                 model.LoggerNotes = "ERROR: ParseConfSem tossed: " + e.Message;
                 _logger.FatalException("ParseConfSem", e);
                 throw;
             }
-
+            return null;
         }
+
+
+        //public ParseOrderModel ParseConfSem(string _doc, string toString)
+        //{ //html version of parser is depricated
+        //    var model = new ParseOrderModel();
+        //    try
+        //    {
+        //        model.OrderDate = DateTime.Now;
+
+        //        HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+        //        doc.LoadHtml(_doc);
+
+        //        if (doc.ParseErrors != null && doc.ParseErrors.Count() > 0)
+        //        {
+        //            // Handle any parse errors as required
+        //            model.LoggerNotes = "ParseConfSem Errors: ";
+        //            foreach (var error in doc.ParseErrors)
+        //            {
+        //                model.LoggerNotes += error.Reason;
+        //            }
+        //            _logger.Warn("IncomingParseConfSem Errors: " + model.LoggerNotes);
+        //        }
+        //        if (doc.DocumentNode != null)
+        //        {
+        //            try
+        //            {
+        //                var splitBlock = doc.DocumentNode.SelectNodes("//table")[3].InnerHtml.Replace("<br>", "\n").Split('\n');
+        //                var sb = new StringBuilder();
+
+        //                var count = 0;
+        //                var lineCount = 0;
+        //                var phoneNum = "";
+        //                foreach (var line in splitBlock)
+        //                {
+        //                    lineCount++;
+        //                    if (line.Contains("@"))
+        //                    {
+        //                        count++;
+        //                        model.Email = line;
+        //                        break;
+        //                    }
+        //                    else
+        //                    {
+        //                        if (lineCount > 4)
+        //                        {
+        //                            var phoneUtil = PhoneNumberUtil.IsViablePhoneNumber(line);
+        //                            if (phoneUtil)
+        //                            {
+        //                                phoneNum = line;
+        //                            }
+        //                            else
+        //                            {
+        //                                sb.Append(line + " ");
+        //                            }
+        //                        }
+        //                    }
+
+        //                }
+        //                if (count == 0)
+        //                {
+        //                    model.LoggerNotes = "ERROR: no email address detected.";
+        //                    return model;
+        //                }
+
+        //                if (count > 1)
+        //                {
+        //                    model.LoggerNotes = "Multiple emails detected.";
+        //                }
+
+        //                var name = new HumanName(splitBlock[1]);
+
+        //                model.FirstName = name.First;
+        //                model.LastName = name.Last;
+
+        //                model.Title = splitBlock[2];
+        //                model.Institution = splitBlock[3];
+
+        //                model.BillingAddress = new Address();
+        //                model.ShippingAddress = new Address();
+
+        //                var myAddress = GetMapzenAddress(sb.ToString());
+
+        //                model.BillingAddress.AddressType = "Billing";
+        //                model.BillingAddress.Name = name.FullName;
+        //                model.BillingAddress.StreetAddress = myAddress.road.FirstOrDefault();
+        //                model.BillingAddress.City = myAddress.city.FirstOrDefault();
+        //                model.BillingAddress.State = myAddress.state.FirstOrDefault();
+        //                model.BillingAddress.Zip = myAddress.postcode.FirstOrDefault();
+        //                model.BillingAddress.Country = myAddress.country.FirstOrDefault();
+        //                model.BillingAddress.Phone = phoneNum;
+
+
+        //                model.ShippingAddress.AddressType = "Shipping";
+        //                model.ShippingAddress.Name = name.FullName;
+        //                model.ShippingAddress.StreetAddress = myAddress.road.FirstOrDefault();
+        //                model.ShippingAddress.City = myAddress.city.FirstOrDefault();
+        //                model.ShippingAddress.State = myAddress.state.FirstOrDefault();
+        //                model.ShippingAddress.Zip = myAddress.postcode.FirstOrDefault();
+        //                model.ShippingAddress.Country = myAddress.country.FirstOrDefault();
+        //                model.ShippingAddress.Phone = phoneNum;
+
+        //                var regData = doc.DocumentNode.SelectNodes("//table")[4].InnerText;
+
+        //                var regDataBlockStart = regData.IndexOf("AMOUNT", StringComparison.Ordinal) + "Amount".Length;
+        //                var regDataBlockEnd = regData.IndexOf("$", StringComparison.Ordinal);
+
+        //                var regDataBlock = regData.Substring(regDataBlockStart, regDataBlockEnd - regDataBlockStart)
+        //                    .Replace(". Sponsored by: BankWebinars.com: Registration -", "|")
+        //                    .Replace(": Live Teleconference, ", "|")
+        //                    .Replace("\n1\n", "").Trim();
+        //                if (doc.DocumentNode.SelectNodes("//table")[3].InnerText.ToLower().Contains("paid"))
+        //                {
+        //                    model.Status = OrderStatus.Paid;
+        //                    model.EventTitle = regDataBlock.Split('|')[0].Trim();
+        //                    model.EventDate = regDataBlock.Split('|')[1].Split(';')[1].Trim();
+        //                    model.EventTime = regDataBlock.Split('|')[1].Split(';')[0].Trim();
+        //                    model.RegTypeAsString = regDataBlock.Split('|')[2].Trim();
+
+        //                }
+        //                else
+        //                {
+        //                    var po = regDataBlock.Split(':')[0];
+
+        //                    model.Status = OrderStatus.Submitted;
+        //                    model.EventTitle = regDataBlock.Split('|')[0].Substring(po.Length + ": ".Length);
+        //                    model.EventDate = regDataBlock.Split('|')[1].Split(';')[1].Trim();
+        //                    model.EventTime = regDataBlock.Split('|')[1].Split(';')[0].Trim();
+        //                    model.RegTypeAsString = regDataBlock.Split('|')[2].Trim();
+        //                }
+        //                return model;
+
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                _logger.FatalException("IncomingParseConfSem", ex);
+        //                model.LoggerNotes = "ERROR: " + ex.Message;
+        //            }
+        //            return model;
+        //        }
+        //        else
+        //        {
+        //            model.LoggerNotes = "ERROR: ParseConfSem Returned Null! ";
+        //            _logger.Warn("IncomingConfSem is null");
+        //            return null;
+        //        }
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        model.LoggerNotes = "ERROR: ParseConfSem tossed: " + e.Message;
+        //        _logger.FatalException("ParseConfSem", e);
+        //        throw;
+        //    }
+
+        //}
 
         private MapZenAddress GetMapzenAddress(string addString)
         {
@@ -1116,14 +1282,22 @@ namespace CUWebinars.Web.Helpers
                 WebRequest req = WebRequest.Create("https://libpostal.mapzen.com/parse?address=" + HttpUtility.UrlEncode(addString) + "&format=keys&api_key=mapzen-iYcwH4a");
 
                 req.Method = "GET";
-
+                string returnvalue1 = "";
 
                 WebResponse res = req.GetResponse();
-                StreamReader sr = new StreamReader(res.GetResponseStream());
-
-                string returnvalue1 = sr.ReadToEnd();
+                using (WebResponse response = req.GetResponse())
+                {
+                    StreamReader reader = new StreamReader(res.GetResponseStream());
+                    //using (Stream stream = response.GetResponseStream())
+                    //{
+                    //    XmlTextReader reader = new XmlTextReader(stream);
+                    //    returnvalue1 = reader.Value;
+                    //}
+                    returnvalue1 = reader.ReadToEnd();
+                }
+                //
                 MapZenAddress importResult = JsonConvert.DeserializeObject<MapZenAddress>(returnvalue1);
-                sr.Close();
+
                 res.Close();
 
                 return importResult;
@@ -1451,6 +1625,34 @@ namespace CUWebinars.Web.Helpers
             }
             return null;
 
+        }
+
+        public Address ParseAddress(string address)
+        {
+
+            var myAddress = GetMapzenAddress(address);
+            var add = new Address();
+
+            //add.AddressType = "Billing";
+            add.StreetAddress = myAddress.road.FirstOrDefault();
+            add.City = myAddress.city.FirstOrDefault();
+            add.State = myAddress.state.FirstOrDefault();
+            add.Zip = myAddress.postcode.FirstOrDefault();
+            add.Country = myAddress.country.FirstOrDefault();
+
+            return add;
+        }
+
+        public string ParsePhone(string phoneTest)
+        {
+            var phoneNum = "";
+            var phoneUtil = PhoneNumberUtil.IsViablePhoneNumber(phoneTest);
+            if (phoneUtil)
+            {
+                phoneNum = phoneTest;
+            }
+
+            return phoneNum;
         }
 
         public static string[] AddNonvalidToArray(string[] zipCentricFields)

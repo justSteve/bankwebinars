@@ -746,7 +746,7 @@ namespace CUWebinars.Web.Controllers
         }
 
 
-        public ActionResult Details(int? id, int? idOrder, string joinCode)
+        public ActionResult Details(int? id, int? idOrder, string joinCode, string renew)
         {
             //WebMVCClient.Notify(new ArgumentException("Non-fatal"));
             //client.Notify(new ArgumentException("Non-fatal"));
@@ -757,6 +757,10 @@ namespace CUWebinars.Web.Controllers
                 return RedirectToAction("DetailsDes", new { id = id, idOrder = idOrder });
             }
 
+            if (!string.IsNullOrEmpty(renew))
+            {
+                
+            }
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
 
@@ -1327,7 +1331,7 @@ namespace CUWebinars.Web.Controllers
                     PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
                     _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);
 
-                    if (orderRow.Discount != null)
+                    if (orderRow.Discount != null && orderRow.idWebinar != 2520)
                     {
                         ViewBag.DiscountCaption =
                             _orderManagementService.CalculateDiscountRedemption(orderRow.Discount, orderRow).Notes;

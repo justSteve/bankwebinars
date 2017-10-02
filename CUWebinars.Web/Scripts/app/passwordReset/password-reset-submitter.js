@@ -33,11 +33,6 @@ $(function () {
         }).done(function (data) {
 
             if (data.Result === 'Success') {
-                //form.fadeOut(500, function () {
-
-
-
-                //});
                 alert("The reset was successful. You will now be logged in.");
 
                 $('#emailFR').val(data.email);

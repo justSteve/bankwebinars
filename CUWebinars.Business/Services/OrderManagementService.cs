@@ -740,7 +740,8 @@ namespace CUWebinars.Business.Services
             //Calculate discount. 
             decimal discountTotal = 0;
 
-            if (row.Discount != null && row.Discount.PercentOff != 0.0M)
+            if (row.Discount != null && row.Discount.PercentOff != 0.0M
+                && !row.Webinar.Title.Contains("Webinar Subscription"))
             {
                 var creditsRemain = CalculateCreditsRemain(row.Discount);
 
@@ -826,10 +827,11 @@ namespace CUWebinars.Business.Services
 
             if (order.BillingState == "WI"
                 && !row.RegistrationType.OptionLabel.StartsWith("Live Plus Five")
+                && !row.RegistrationType.SKU.Contains("WSP")
                 && row.RowPrice > 0
             )
             {
-
+                row.Tax = Math.Round(row.RowPrice * Convert.ToDecimal(.055), 2);
                 pricesAndDiscounts.TaxAmount = Math.Round(row.RowPrice * Convert.ToDecimal(.055), 2);
                 _logger.Info("COC found tax on: " + row.idOrder + " found " + pricesAndDiscounts.TaxAmount);
             }
@@ -1901,10 +1903,76 @@ namespace CUWebinars.Business.Services
 
         }
 
+        public Discount CreateWspCode(Order order)
+        {
+            
+            var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            var whichTier = "";
+            var totalCount = 0;
+
+            switch (row.RegistrationType.OptionLabel)
+            {
+                case "Bronze":
+                    whichTier = "BZ-";
+                    totalCount = 5;
+                    break;
+                case "Gold":
+                    whichTier = "GD-";
+                    totalCount = 20;
+                    break;
+                case "Silver":
+                    whichTier = "SL-";
+                    totalCount = 10;
+                    break;
+                case "Platinum":
+                    whichTier = "PL-";
+                    totalCount = 50;
+                    break;
+                case "Diamond":
+                    whichTier = "DM-";
+                    totalCount = 100;
+                    break;
+
+                default:
+                    whichTier = "unknownTier";
+                    break;
+                    
+            }
+            if (whichTier == "unknownTier")
+            {
+                return null;
+            }
+            Discount wspDiscount = new Discount
+            {
+                DiscountType = DiscountType.Subscription,
+                DateValidTo = order.OrderDate,
+                DateValidFrom = order.OrderDate,
+                Cost = row.RowPrice,
+                DateBilled = DateTime.UtcNow,
+                DateVerified = DateTime.UtcNow,
+                DiscountCode = whichTier + order.idOrder,
+                FlatOff = 0,
+                Notes = "V3 entry",
+                PercentOff = 100,
+                RenewalTerm = 0,
+                Status = "Active",
+                TotalCount = totalCount,
+                idAffiliate = order.idAffiliate,
+                idDiscount = order.idOrder,
+                
+
+            };
+            row.Discount = wspDiscount;
+            SaveOrderChanges(order, null, null);
+            return wspDiscount;
+        }
+
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
             if (row.Webinar.Title == "Federal Compliance School OnDemand with Live Streaming"
-                || row.Webinar.Title == "Bank Secrecy Act Seminar OnDemand with Live Streaming")
+                || row.Webinar.Title == "Bank Secrecy Act Seminar OnDemand with Live Streaming"
+                || row.Webinar.Title.Contains("Webinar Subscription Packages")
+                )
                 return null;
             var thisDiscount = GetDiscountByCode(code);
             var hasRemaining = CalculateCreditsRemain(thisDiscount);
@@ -2361,13 +2429,6 @@ namespace CUWebinars.Business.Services
             }
 
             return null;
-        }
-
-        public string CreateCompliancePerspectivesSubscription(OrderRow row)
-        {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-
-            return dataOperations.CreateCompliancePerspectivesSubscription(row);
         }
 
 

@@ -36,7 +36,11 @@ namespace CUWebinars.Business.Models
                 }
                 if (OptionLabel.StartsWith("6-"))
                 {
-                    return "OnDemand";
+                    return "6-Month";
+                }
+                if (OptionLabel.StartsWith("12-"))
+                {
+                    return "12-Month";
                 }
                 if (OptionLabel.StartsWith("CD"))
                 {

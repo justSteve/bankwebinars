@@ -1,0 +1,246 @@
+﻿@model MyWebinarsDTO
+@using System
+@using System.Collections.Generic
+@using System.Linq
+@using CUWebinars.Business.Services
+@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+
+@functions{
+
+    private Tuple<string, decimal> GetAdditionalLocationsPricing(IEnumerable<AdditionalLocation> additionalLocations, decimal additionalLocationPrice)
+    {
+        var addresses = new StringBuilder();
+        var i = 0;
+
+        decimal optionsCost = 0M;
+
+
+        // perf tweak - ensures enumerable will only be enumerated once
+        var additionalLocationsEnumerated = additionalLocations as AdditionalLocation[] ?? additionalLocations.ToArray();
+
+        var tagBuilder = new TagBuilder("<strong>"); // emails in bold text, or whatever suits
+                                                     //var tagBuilder = new TagBuilder(""); // above results in unclosed strong tags;
+                                                     //tagBuilder.AddCssClass("muted");
+
+        foreach (var additionalLocation in additionalLocationsEnumerated)
+        {
+            tagBuilder.InnerHtml = additionalLocation.Email;
+            var emailSpanElement = tagBuilder.ToString(TagRenderMode.Normal).Trim();
+            i++;
+
+            if (i == additionalLocationsEnumerated.Count())
+            {
+                addresses.Append(emailSpanElement);
+            }
+            if (i < additionalLocationsEnumerated.Count())
+            {
+                if (i == additionalLocationsEnumerated.Count() - 1)
+                {
+                    addresses.Append(emailSpanElement + " and ");
+                }
+                else
+                {
+                    addresses.Append(emailSpanElement + ", ");
+                }
+            }
+
+            optionsCost += additionalLocationPrice;
+        }
+
+        return new Tuple<string, decimal>(addresses.ToString(), optionsCost);
+    }
+}
+@{
+    WebUser currentUser = Model.WebUser;
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    USTimeZone timeZ = currentUser.timeZone;
+    string email = Model.WebUser.email;
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+
+    nfi.CurrencyDecimalDigits = 2;
+}
+<style type="text/css">
+    .audio {
+        font-size: smaller;
+        line-height: 98%;
+        padding: 10px;
+    }
+
+    .short_headline {
+        margin-bottom: 0px;
+    }
+
+    .widget {
+        margin-bottom: 0;
+    }
+</style>
+
+<div class="container">
+    <!--begin main content-->
+    <div class="row-fluid">
+        <!--begin row-fluid-->
+        <div class="span12">
+            @if (Model.Scheduled.Count > 0)
+            {
+                foreach (var scheduled in Model.Scheduled)
+                {
+                    var row = scheduled.OrderRow;
+                    //var showDuration = Convert.ToInt32(row.Webinar.Duration);
+                    //var upgradeCaption = "<a href=\"javascript:upgrade(" + row.Order.idOrder + "); \" id=\"upgrade\" class=\"btn btn-mini btn-success\">Upgrade?</a>";
+                    //var builtURL = globalConfig.TenantURL + "-j-" + row.TtsJoinUrl;
+
+                    TimeSpan calcDays = row.Webinar.Date - DateTime.UtcNow;
+                    var numDays = Convert.ToInt32(calcDays.TotalDays);
+                    string remainingDays;
+                    if (numDays == 0)
+                    {
+                        remainingDays = " today - <i> " + @Html.DisplayDate(row.Webinar.Date) + "</i>";
+                    }
+                    else
+                    {
+                        remainingDays = " in " + Convert.ToInt32(calcDays.TotalDays).ToString() + " days on <i>" + @Html.DisplayDate(row.Webinar.Date) + "</i>";
+                    }
+                    <div class=" container-fluid">
+                        <div class="row-fluid">
+                            <div style="border-top-color: black;border-top: 10px;">
+                                <div class="pull-right span4" id="orderSum-@row.idWebinar">
+                                    @*@{ Html.RenderPartial("DisplayTemplates/OrderSumUser", row.Order); }*@
+                                    @Html.Partial("~/Views/Shared/Partials/_OrderSumUser3.cshtml", scheduled)
+
+                                    <aside class="widget">
+                                        <h5 class="short_headline"><span>Share Connection Info</span></h5>
+                                        @{Html.RenderPartial("Partials/_ShareNotifications", row.Order);}
+                                    </aside>
+                                </div>
+                                <div class="span7">
+                                    <h4 id="upcoming-@row.idWebinar">@row.Webinar.Title</h4>
+
+                                    <b>@row.RegistrationType.OptionLabel</b> - will be presented by @row.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays) starting at @Html.DisplayTime(row.Webinar.Date, timeZ, true).
+                                    @{
+                                        var additionalLocationsPricing = GetAdditionalLocationsPricing(row.AdditionalLocation, row.Webinar.AdditionalLocationPrice);
+                                        if (additionalLocationsPricing == null)
+                                        {
+                                            throw new ArgumentNullException("additionalLocationsPricing");
+                                        }
+
+                                        var orderHasAdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                                        {
+                                            AdditionalLocations = row.AdditionalLocation,
+                                            Addresses = additionalLocationsPricing.Item1,
+                                            OptionsCost = additionalLocationsPricing.Item2
+                                        };
+                                    }
+
+                                    @{ Html.RenderPartial("Partials/OrderHasAdditionalLocations", orderHasAdditionalLocationsViewModel); }
+                                    @if (row.Webinar.SeriesInfo.Contains("Child"))
+                                    {
+                                        // contains 'child' means this is a Series Parent
+                                        <div>This is the Series order. Each episode has it's own order (non-billable) to display connection info, presenter materials, and recordings for that given presentation.  </div>
+                                    }
+                                    else
+                                    {
+                                        if (row.Webinar.Status == WebinarStatus.Active
+                                            || row.Webinar.Status == WebinarStatus.InProgress)
+                                        {
+                                            if (row.RegistrationType.ShowLiveNotifications == "Yes")
+                                            {
+
+                                                <div>
+                                                    <b>Connection Summary</b>
+                                                </div>
+
+                                                <table width="400px">
+                                                    <tr>
+                                                        <td valign="top">Click-To-Join:</td>
+                                                        @if (row.Webinar.Status == WebinarStatus.InProgress)
+                                                        {
+                                                            <td>
+                                                                <a href="@Url.Action("ClickToJoin", "Webinar", new {@joinCode = row.TtsJoinUrl})"> Link</a>
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>
+                                                                <a href="@Url.Action("ClickToJoin", "Webinar", new {@joinCode = row.TtsJoinUrl})"> Link</a>
+                                                                @*@Html.ActionLink("Link to page", "ClickToJoin", "Webinar", new { @joinCode = "2" })*@
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="audio" colspan="2">Audio is delivered directly to your workstation (sound-card and speakers required). Or use the information below to connect via your telephone.</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Teleconference:</td>
+                                                        <td>@row.Webinar.AccessPhone</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="align_right">Access Code:</td>
+                                                        <td>@row.Webinar.AccessCodeAttendee</td>
+                                                    </tr>
+                                                </table>
+
+                                                <br />
+                                                <div class="well well-small">
+
+                                                    <b>Event Materials</b>
+                                                    @{
+                                                        Html.RenderPartial("DisplayTemplates/HandoutsListing", row.Webinar);
+                                                    }
+                                                </div>
+
+
+                                                        }
+                                                        if (row.RegistrationType.ShowLiveNotifications != "Yes")
+                                                        {
+                                                            <div>
+                                                                The CD-ROM is typically shipped within 5-7 days following the event. Shipping
+                                                                status will be displayed here. Check back here for links to the OnDemand recording
+                                                                - typically posted within 24 hours following the event.
+                                                            </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            //inactive state
+                                                            if (row.RegistrationType.ShowLiveNotifications != "Yes")
+                                                            {
+                                                                if (row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                                                                {
+                                                                    <div>
+                                                                        Check back here for links to the OnDemand recording
+                                                                        - typically posted within 24 hours following the event. Your CD-ROM is typically shipped within 5-7 days following the event. Shipping
+                                                                        status will be displayed here.
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="span10">
+                                                                        Check back here for links to the OnDemand recording - typically posted within 24 hours following the event.
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="container-fluid">
+                                                                    <div class="span10">
+                                                                        The event's connection information will be generated 3-5 days before @row.Webinar.Date.ToShortDateString(). Watch your
+                                                                        email or check back here ('<b>My Webinars</b>') to review the current status of
+                                                                        this event. You may wish to review this general guide to connecting to our events
+                                                                        <a href="/Home/DetailedConnectionInstructions" target="_blank">@globalConfig.TenantDomain/Home/DetailedConnectionInstructions</a>.
+                                                                    </div>
+                                                                </div>
+                                                                }
+                                                            }
+                                                        }
+                                    <div class="well pull-right" id="Container4ResendConfirmation"><button id="ResendOrderConfirmationButton" data-idOrder="@row.idOrder" class="ResendOrderConfirmationButton btn btn-small">Re-send Order Confirmation</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                                            }
+                                                        }
+        </div>
+    </div>
+</div>

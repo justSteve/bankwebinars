@@ -16,7 +16,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         bool AddPasswordForCartCreatedUser(CreateUserConfirmedViewModel model);
         //AddQuizEditModel BuildAddQuizEditModel();
         EditBillingAddressModel BuildBillingAddressModel();
-        DiscountModel BuildDiscountModelForUser();
+        //DiscountModel BuildDiscountModelForUser();
 
         ManageModel BuildManageModel(ManageMessageId? message);
         EditShippingAddressModel BuildShippingAddressModel();
@@ -52,7 +52,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         void EditUser(EditUserViewModel model);
         void AddShippingAddressVerifiedClaim(int userId);
         // ReSharper disable once InconsistentNaming
-        MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser);
+        //MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser);
         int CreateUserForAdmin(EditUserModel editUserModel);
         Address BuildPlaceHolderAddressBilling(string email);
         Address BuildPlaceHolderAddressShipping(string email);

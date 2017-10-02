@@ -4,6 +4,7 @@ using CUWebinars.Business.Models;
 using CUWebinars.Business.Notification;
 using CUWebinars.Web.ViewModel;
 using System;
+using System.Security.Claims;
 using CUWebinars.Web.Models;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -86,5 +87,10 @@ namespace CUWebinars.Web.Core.Orchestrators
         Webinar LoadWebinarForImporter(string parsedOrderEventTitle, string parsedOrderEventDate, string parsedOrderEventTime);
         int LoadRegistrationForImporter(Webinar webinar, string parsedOrderRegTypeAsString);
         int GetRegTypeByRateWatch(string registrationType, int idWebinar);
+        Discount CreateWspCode(Order modelOrder);
+        Affiliate LoadByTTSDomain(string claimTtsDomain);
+        CompliancePerspectivesModel BuildCompPersectivesModel();
+        DiscountModel BuildDiscountModelForUser();
+        MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel, ClaimsIdentity claimsIdentityOfAuthenticatedUser);
     }
 }

@@ -1251,16 +1251,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
-
-        public PartialViewResult ResendOrderConfirmation()
-        {
-            var model = new ResendOrderInformationViewModel
-            {
-                OrderId = string.Empty
-            };
-
-            return PartialView("~/Views/Admin/Home/_resendOrderConfirmation.cshtml", model);
-        }
+        
         [AllowAnonymous]
         [HttpPost]
         public ActionResult ResendOrderConfirmation(int orderId, string source = "System")
@@ -3282,7 +3273,10 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         dtsource = _orderManagementService.GetOrdersAll(affiliateId, out totalNumberOrders).ToList();
                     }
-
+                    //foreach (var order in dtsource)
+                    //{
+                    //    _orderManagementService.SaveOrderChanges(order, null, null);
+                    //}
                     // use automapper to flatten out the order records, in this specific case the data 
                     //  model has circular references which cause problems with JSON serialization
                     List<OrderDTO> dtoSource = new List<OrderDTO>();

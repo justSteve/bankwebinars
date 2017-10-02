@@ -10,9 +10,9 @@ namespace CUWebinars.Web.Core
     {
 
         public AdditionalLocationsViewModel AdditionalLocationsViewModel { get; set; }
-        public IList<Order> Scheduled { get; set; }
-        public IDictionary<string, Order> Recorded { get; set; }
-        public IList<Order> Archived { get; set; }
+        public IList<RegistrationSummaryViewModel> Scheduled { get; set; }
+        public IDictionary<string, RegistrationSummaryViewModel> Recorded { get; set; }
+        public IList<RegistrationSummaryViewModel> Archived { get; set; }
         public IEnumerable MyClaims { get; set; }
         public DiscountModel Subscription { get; set; }
         public DiscountModel Package { get; set; }

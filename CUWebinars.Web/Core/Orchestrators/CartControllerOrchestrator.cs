@@ -35,6 +35,7 @@ using GemBox.Document;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using ClaimsExtensions = CUWebinars.Web.Helpers.ClaimsExtensions;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Core.Orchestrators
@@ -1262,6 +1263,13 @@ namespace CUWebinars.Web.Core.Orchestrators
                             @"~/App_Data/mergeTemplates/OrderSubmitted_CompPerspectives.docx"));
             }
 
+            if (webinar.Title.Contains("Webinar Subscription Packages"))
+            {
+                document = DocumentModel.Load(
+                        HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmitted_WSPSubscription.docx"));
+            }
+
             if (webinar.Title == "Bank Secrecy Act Seminar OnDemand with Live Streaming")
             {
                 document = DocumentModel.Load(
@@ -1533,22 +1541,43 @@ namespace CUWebinars.Web.Core.Orchestrators
         {
             try
             {
-                var makeCPSub = _orderManagementService.CreateCompliancePerspectivesSubscription(row);
-                if (makeCPSub != "failed")
-                {
-                    var _row = CreateOrderRow(_webinarManagementService.GetWebinar(842), row.AdditionalLocation.ToList(),
-                        row.idRegType);
-                    _row.Discount = GetDiscountById(row.idOrder);
 
-                    var _order = CreateNewOrder(row.Order.Affiliate, row.Order.WebUser,
-                        _webinarManagementService.GetWebinar(842), _row);
-                    _order.OrderStatus = row.Order.OrderStatus;
-                    SaveOrder(_order);
-                }
-                else
+                var _row = CreateOrderRow(_webinarManagementService.GetWebinar(842), row.AdditionalLocation.ToList(),
+                    row.idRegType);
+                _row.Discount = GetDiscountById(row.idOrder);
+
+                var _order = CreateNewOrder(row.Order.Affiliate, row.Order.WebUser,
+                    _webinarManagementService.GetWebinar(842), _row);
+                _order.OrderStatus = row.Order.OrderStatus;
+                var expires = 6;
+                if (row.RegistrationType.OptionLabel.Contains("12"))
+
+                    expires = 12;
+
+                Discount CPSub = new Discount
                 {
-                    return "failed";
-                }
+                    DiscountType = DiscountType.ComplianceSeries,
+                    DateValidTo = _order.OrderDate.AddMonths(expires),
+                    DateValidFrom = _order.OrderDate,
+                    Cost = row.RowPrice,
+                    DateBilled = DateTime.UtcNow,
+                    DateVerified = DateTime.Now,
+                    DiscountCode = "CP_" + _order.idOrder,
+                    FlatOff = 0,
+                    Notes = "V3 entry",
+                    PercentOff = 0,
+                    RenewalTerm = expires,
+                    Status = "Active",
+                    TotalCount = 0,
+                    idAffiliate = _order.idAffiliate,
+                    idDiscount = _order.idOrder
+                };
+
+                row.Discount = CPSub;
+
+                SaveOrder(_order);
+                SaveOrder(row.Order);
+
             }
             catch (Exception e)
             {
@@ -1744,30 +1773,405 @@ namespace CUWebinars.Web.Core.Orchestrators
             return removeDiscount;
         }
 
+        public WebUser GetWebUserFromIPrincipal()
+        {
+            var identity = ClaimsPrincipal.Current;
+
+            if (identity != null)
+            {
+                if (identity.Identity.IsAuthenticated)
+                {
+                    var userAccount = _membershipService.GetUserAccountByUserId(ClaimsExtensions.GetUserID(identity));
+
+                    var user = _membershipService.GetUserByEmail(userAccount.Email);
+                    return user;
+                }
+            }
+            return null;
+        }
+
+        public CompliancePerspectivesModel BuildCompPersectivesModel()
+        {
+            var cpSubscription = new CompliancePerspectivesModel();
+            var currentUser = GetWebUserFromIPrincipal();
+            var userorders = _orderManagementService.GetOrdersByUserId(currentUser.idUser);
+            if (userorders == null)
+                return null;
+            Discount discount = null;
+
+            foreach (var order in userorders)
+            {
+                discount = _orderManagementService.GetDiscountByOrderId(order.idOrder);
+                if (!ReferenceEquals(discount, null))
+                {
+                    if (discount.DiscountType == DiscountType.ComplianceSeries)
+                        break;
+                }
+
+            }
+            if (ReferenceEquals(discount, null))
+            {
+                return null;
+            }
+            if (discount.DiscountType != DiscountType.ComplianceSeries)
+                return null;
+            _universalMapper.Map(discount, cpSubscription);
+
+            cpSubscription.DateValidFrom = discount.DateValidFrom;
+            cpSubscription.DateValidTo = discount.DateValidTo;
+            cpSubscription.RenewalTerm = discount.RenewalTerm;
+            cpSubscription.Status = discount.Status;
+            cpSubscription.Notes = discount.Notes;
+
+            cpSubscription.CreditsRemain = _orderManagementService.CalculateCreditsRemain(discount);
+            cpSubscription.CreditsUsed = _orderManagementService.CalculateCreditsUsed(discount);
+            cpSubscription.Cost = discount.Cost;
+            cpSubscription.DateBilled = discount.DateBilled;
+            cpSubscription.FlatOff = discount.FlatOff;
+            cpSubscription.PercentOff = discount.PercentOff;
+
+            cpSubscription.DiscountCode = discount.DiscountCode;
+
+            return cpSubscription;
+        }
+
+        public DiscountModel BuildDiscountModelForUser()
+        {
+            var discountModel = new DiscountModel();
+            var currentUser = GetWebUserFromIPrincipal();
+            var userDiscount = _orderManagementService.GetDiscountByUser(currentUser);
+            if (ReferenceEquals(userDiscount, null))
+                return null;
+            _universalMapper.Map(userDiscount, discountModel);
+
+            discountModel.DateValidFrom = userDiscount.DateValidFrom;
+            discountModel.DateValidTo = userDiscount.DateValidTo;
+            discountModel.RenewalTerm = userDiscount.RenewalTerm;
+            discountModel.Status = userDiscount.Status;
+            discountModel.Notes = userDiscount.Notes;
+
+            discountModel.CreditsRemain = _orderManagementService.CalculateCreditsRemain(userDiscount);
+            discountModel.CreditsUsed = _orderManagementService.CalculateCreditsUsed(userDiscount);
+            discountModel.Cost = userDiscount.Cost;
+            discountModel.TotalCount = userDiscount.TotalCount;
+            discountModel.DateBilled = userDiscount.DateBilled;
+            discountModel.FlatOff = userDiscount.FlatOff;
+            discountModel.PercentOff = userDiscount.PercentOff;
+            discountModel.Status = userDiscount.Status;
+            discountModel.DiscountCode = userDiscount.DiscountCode;
+
+
+            return discountModel;
+        }
+
+        public MyWebinarsDTO BuildMyWebinarsDTO(DiscountModel discountModel,
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser)
+        {
+            var currentUser = GetWebUserFromIPrincipal();
+
+            var model = new MyWebinarsDTO
+            {
+                WebUser = currentUser,
+                AdditionalLocationsViewModel = new AdditionalLocationsViewModel()
+                {
+
+                }
+            };
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.PostEventMaterials)
+                || claimsIdentityOfAuthenticatedUser.HasClaim(ClaimTypes.PostEventMaterialsExtended))
+            {
+                model.MyClaims =
+                    claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type == ClaimTypes.PostEventMaterials
+                                                                        || c.Type == ClaimTypes.PostEventMaterialsExtended)
+                        .Select(c => c.Value);
+            }
+
+            if (!ReferenceEquals(discountModel, null) &&
+                (
+                    discountModel.TypeOfDiscount == DiscountType.ComplianceSeries
+                    || discountModel.TypeOfDiscount == DiscountType.Package
+                    || discountModel.TypeOfDiscount == DiscountType.Subscription))
+            {
+                model.Subscription = discountModel;
+            }
+
+            //if (discountModel.TypeOfDiscount == DiscountType.Package)
+            //{
+            //    model.Package = discountModel;
+            //}
+            var upcomingOrders = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
+            model.Scheduled = new List<RegistrationSummaryViewModel>();
+            model.Recorded = new Dictionary<string, RegistrationSummaryViewModel>();
+
+            foreach (Order order in upcomingOrders)
+            {
+                try
+                {
+
+                    OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                    if (orderRowForOrder == null)
+                        continue;
+                    var lstAddLoc = "";
+                    foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
+                    {
+                        lstAddLoc += additionalLocation.Email + ",";
+                    }
+                    RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
+                    {
+                        //AdditionalLocationsViewModel = _orderManagementService.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
+                        AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                        {
+                            AdditionalLocations = orderRowForOrder.AdditionalLocation,
+                            Addresses = lstAddLoc.TrimEnd(','), //additionalLocationsPricing.Item1,
+                            OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice,//additionalLocationsPricing.Item2
+                            EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
+                            {
+                                idUser = orderRowForOrder.Order.idUser,
+                                CostPerAdditionalLocation = orderRowForOrder.Webinar.AdditionalLocationPrice,
+                                NumberOfAdditionalLocations = 0,
+                                TotalCostOfOptions = 0,
+                                WebinarId = orderRowForOrder.Webinar.idWebinar,
+                                idOrder = orderRowForOrder.idOrder,
+                                idOrderRow = orderRowForOrder.idOrderRow
+                            }
+                        },
+                        OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
+                        RecordingLink =
+                            "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
+                            "' target=_blank /> Recording Playback</a>",
+                        WebinarStatus = orderRowForOrder.Webinar.Status
+                    };
+
+
+                    if (orderRowForOrder.Discount != null &&
+                        orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
+                    {
+                        registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
+                                                                       orderRowForOrder.RegistrationType.CreditCost
+                                                                           .ToString().Replace(".00", "");
+                    }
+
+                    model.Scheduled.Add(registrationSummaryViewModel);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    throw;
+                }
+
+            }
+            var ordersForRecordedWebinars = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
+
+            foreach (Order order in ordersForRecordedWebinars)
+            {
+                try
+                {
+
+                    OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                    if (orderRowForOrder == null)
+                        continue;
+                    var lstAddLoc = "";
+                    foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
+                    {
+                        lstAddLoc += additionalLocation.Email + ",";
+                    }
+                    RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
+                    {
+                        //AdditionalLocationsViewModel = _orderManagementService.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
+                        AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                        {
+                            AdditionalLocations = orderRowForOrder.AdditionalLocation,
+                            Addresses = lstAddLoc.TrimEnd(','), //additionalLocationsPricing.Item1,
+                            OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice,//additionalLocationsPricing.Item2
+                            EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
+                            {
+                                idUser = orderRowForOrder.Order.idUser,
+                                CostPerAdditionalLocation = orderRowForOrder.Webinar.AdditionalLocationPrice,
+                                NumberOfAdditionalLocations = 0,
+                                TotalCostOfOptions = 0,
+                                WebinarId = orderRowForOrder.Webinar.idWebinar,
+                                idOrder = orderRowForOrder.idOrder,
+                                idOrderRow = orderRowForOrder.idOrderRow
+                            }
+                        },
+                        OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
+                        RecordingLink =
+                            "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
+                            "' target=_blank /> Recording Playback</a>",
+                        WebinarStatus = orderRowForOrder.Webinar.Status
+                    };
+
+
+                    if (orderRowForOrder.Discount != null &&
+                        orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
+                    {
+                        registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
+                                                                       orderRowForOrder.RegistrationType.CreditCost
+                                                                           .ToString().Replace(".00", "");
+                    }
+
+                    model.Recorded.Add(ordersForRecordedWebinars.Count.ToString(), registrationSummaryViewModel);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    throw;
+                }
+
+            }
+
+            model.Recorded = new Dictionary<string, RegistrationSummaryViewModel>(ordersForRecordedWebinars.Count,
+                StringComparer.OrdinalIgnoreCase);
+
+            foreach (Order order in ordersForRecordedWebinars)
+            {
+                try
+                {
+
+                    OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
+                    if (orderRowForOrder == null)
+                        continue;
+                    var lstAddLoc = "";
+                    foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
+                    {
+                        lstAddLoc += additionalLocation.Email + ",";
+                    }
+                    RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
+                    {
+                        //AdditionalLocationsViewModel = _orderManagementService.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
+                        AdditionalLocationsViewModel = new AdditionalLocationsViewModel
+                        {
+                            AdditionalLocations = orderRowForOrder.AdditionalLocation,
+                            Addresses = lstAddLoc.TrimEnd(','), //additionalLocationsPricing.Item1,
+                            OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice,//additionalLocationsPricing.Item2
+                            EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
+                            {
+                                idUser = orderRowForOrder.Order.idUser,
+                                CostPerAdditionalLocation = orderRowForOrder.Webinar.AdditionalLocationPrice,
+                                NumberOfAdditionalLocations = 0,
+                                TotalCostOfOptions = 0,
+                                WebinarId = orderRowForOrder.Webinar.idWebinar,
+                                idOrder = orderRowForOrder.idOrder,
+                                idOrderRow = orderRowForOrder.idOrderRow
+                            }
+                        },
+                        OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
+                        RecordingLink =
+                            "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
+                            "' target=_blank /> Recording Playback</a>",
+                        WebinarStatus = orderRowForOrder.Webinar.Status
+                    };
+
+
+                    if (orderRowForOrder.Discount != null &&
+                        orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
+                    {
+                        registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
+                                                                       orderRowForOrder.RegistrationType.CreditCost
+                                                                           .ToString().Replace(".00", "");
+                    }
+
+                    model.Recorded.Add(ordersForRecordedWebinars.Count.ToString(), registrationSummaryViewModel);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    throw;
+                }
+
+            }
+
+            //model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
+            try
+            {
+                IEnumerable<object> myClaims = new List<object>();
+                if (!ReferenceEquals(model.MyClaims, null))
+                {
+                    myClaims = model.MyClaims as IList<object> ?? model.MyClaims.Cast<object>().ToList();
+                }
+                foreach (var selectOrdersWithRecordedWebinar in ordersForRecordedWebinars.OrderByDescending(o => o.OrderRows.SingleOrDefault().Webinar.Date))
+                {
+                    var myRow =
+                        selectOrdersWithRecordedWebinar.OrderRows.Single(o => o.RowStatus == OrderRowStatus.Active);
+                    var quiz =
+                        _webinarManagementService.GetQuizByWebinarId(myRow.idWebinar);
+                    var rowFoundClaim = false;
+                    foreach (var claim in myClaims)
+                    {
+
+                        //are you seeing intellisense errors on the next 2 lines?
+                        var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(claim.ToString());
+                        if (thisClaim.OnDemandCode == myRow.OnDemandCode)
+                        {
+                            rowFoundClaim = true;
+                        }
+
+                    }
+                    // if not found make sure user is re-signed in
+                    if (!rowFoundClaim)
+                    {
+                        var userAcct = _membershipService.GetUserAccountByEmail(_globals.Tenant, claimsIdentityOfAuthenticatedUser.Name);
+                        _membershipService.SignIn(userAcct, true);
+                        _membershipService.AddClaimForPostEventMaterials(myRow.Order.BillingEmail, myRow, _orderManagementService.CalculatePostEventMaterialsAccessExpiry(myRow), _globals.Tenant);
+                        model.PromptRefresh = "true";
+                    }
+
+
+                    //if (!ReferenceEquals(null, quiz))
+                    //{
+                    //    model.Recorded.Add(new KeyValuePair<string, Order>(quiz.QuizCode, selectOrdersWithRecordedWebinar));
+                    //}
+                    //else
+                    //{
+                    //    model.Recorded.Add(new KeyValuePair<string, Order>("na" + selectOrdersWithRecordedWebinar.idOrder, selectOrdersWithRecordedWebinar));
+                    //}
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("BuildMyWebinarsDTO: ", ex);
+
+            }
+
+            //foreach (var orderRow in model.Scheduled.Select(order => order.OrderRows
+            //        .Single(or => or.RowStatus == OrderRowStatus.Active))
+            //    .Where(row => row.Webinar.Status == WebinarStatus.Active))
+            //{
+            //    _orderManagementService.GetJoinUrl(orderRow);
+            //}
+
+            return model;
+        }
+
         public Webinar LoadWebinarForImporter(string parsedOrderEventTitle, string parsedOrderEventDate, string parsedOrderEventTime)
         {
             try
             {
                 var parsedWDate = DateTime.Parse(parsedOrderEventDate + " " + parsedOrderEventTime.Replace(" CT", "-05:00").Replace(" CDT", "-05:00").Replace(" CST", "-05:00"));
 
+                _logger.Info("LoadWebinarForImporter: " + parsedOrderEventTitle + " date: " + parsedOrderEventDate + " time: " + parsedOrderEventTime + " time: " + parsedWDate.ToString());
+
                 var webinars = _webinarManagementService.GetAllActive()
                     .Where(w => w.Date.Month == parsedWDate.Month
                 && w.Date.Day == parsedWDate.Day
                 && w.Date.Year == parsedWDate.Year
-                && w.Date.Hour == parsedWDate.Hour
+                //&& w.Date.ToUniversalTime().Hour == parsedWDate.ToUniversalTime().Hour
                 ).ToList();
 
+                _logger.Info("LoadWebinarForImporter parsedWDate.Hour: " + parsedWDate.Hour );
                 if (webinars.Count() == 1)
                 {
                     return webinars.First();
                 }
-
                 webinars = webinars.Where(w => w.Title == parsedOrderEventTitle).ToList();
 
                 if (webinars.Count() == 1)
                 {
                     return webinars.First();
                 }
+                _logger.Info("LoadWebinarForImporter found none. ");
 
                 return null;
 
@@ -1789,6 +2193,16 @@ namespace CUWebinars.Web.Core.Orchestrators
         public int GetRegTypeByRateWatch(string registrationType, int idWebinar)
         {
             return _webinarManagementService.GetRegTypeByRateWatch(registrationType, idWebinar);
+        }
+
+        public Discount CreateWspCode(Order modelOrder)
+        {
+            return _orderManagementService.CreateWspCode(modelOrder);
+        }
+
+        public Affiliate LoadByTTSDomain(string claimTtsDomain)
+        {
+            return _orderManagementService.GetAffiliateByDomain(claimTtsDomain);
         }
 
         public Discount ApplyDiscountCode(string code, OrderRow row)

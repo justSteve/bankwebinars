@@ -66,13 +66,13 @@ Model.TypeOfDiscount == DiscountType.Subscription
                 @if (Model.DateValidTo > Model.DateValidFrom)
                 {
                     <p style="font-size: larger">
-                        <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Click here to Renew!</a>
+                        <a class="btn btn-success pull-right" href="javascript:void( window.location='https://www.bankwebinars.com/webinar/details/2520?renew=@Model.DiscountCode', 'blank')">Order Today!</a>
                     </p>
                 }
                 else
                 {
                     <div style="margin-top: 6px;">
-                        <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51916745818971', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Click here to add more credits!</a>
+                        <a class="btn btn-success pull-right" href="javascript:void( window.location='https://www.bankwebinars.com/webinar/details/2520?renew=@Model.DiscountCode', 'blank')">Add More!</a>
                     </div>}
             </div>
             @*<div>@Html.RenderPartial("DisplayTemplates/ShowOrdersByDiscount", Model);</div>*@

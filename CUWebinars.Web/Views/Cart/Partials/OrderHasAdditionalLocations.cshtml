@@ -1,0 +1,28 @@
+﻿@using CUWebinars.Business.Constants
+@model  AdditionalLocationsViewModel
+
+@{
+    //var nfi = new CultureInfo(DomainConstants.UsLocale, false).NumberFormat;
+
+    NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
+
+    if (Model.AdditionalLocations != null)
+    {
+        var numberOfAdditionalLocations = Model.AdditionalLocations.Count();
+
+        if (numberOfAdditionalLocations > 0)
+        {
+            if (numberOfAdditionalLocations == 1)
+            {
+                <span id="addlocSpiel">The registration includes a single additional location for <span class="muted">@Model.AdditionalLocations.First().Email</span>. This address will be notified with an individualized <i>Click-To-Join</i> link. </span>
+            }
+            else
+            {
+                <span id="addlocSpiel">
+                    The registration includes @numberOfAdditionalLocations additional locations for @Html.Raw(@Model.Addresses)<text>.</text>
+                    Each address will be notified with an individualized <i>Click-To-Join</i> link.
+                </span>
+            }
+        }
+    }
+}

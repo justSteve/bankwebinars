@@ -975,7 +975,7 @@ namespace CUWebinars.Business.Core
                         {
                             errorLogger.CommandText =
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
                             errorLogger.CommandText += "'CheckIfEmailAlreadyRegisteredForWebinar' ,";
                             errorLogger.CommandText += "9 ,9 ,9 ,'CheckIfEmailAlreadyRegisteredForWebinar', 9 ,";
                             errorLogger.CommandText += "'error at CheckIfEmailAlreadyRegisteredForWebinar " +
@@ -983,7 +983,7 @@ namespace CUWebinars.Business.Core
 
                             errorLogger.ExecuteNonQuery();
                         }
-
+                        
                         throw;
                     }
                 }
@@ -1352,52 +1352,54 @@ namespace CUWebinars.Business.Core
 
         }
 
-        public string CreateCompliancePerspectivesSubscription(OrderRow row)
-        {
-            var result = "";
+        //public string CreateCompliancePerspectivesSubscription(OrderRow _row, OrderRow row)
+        //{
+        //    var result = "";
 
-            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
-            {
-                sqlConnection.Open();
-                using (
-                    var createCpCode = new SqlCommand("CreateCPCode", sqlConnection))
-                {
-                    try
-                    {
-                        createCpCode.Connection = sqlConnection;
-                        createCpCode.CommandType = CommandType.StoredProcedure;
+        //    using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+        //    {
+        //        sqlConnection.Open();
+        //        using (
+        //            var createCpCode = new SqlCommand("CreateCPCode", sqlConnection))
+        //        {
+        //            try
+        //            {
+        //                createCpCode.Connection = sqlConnection;
+        //                createCpCode.CommandType = CommandType.StoredProcedure;
 
-                        var idOrder = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrder", Value = row.idOrder };
-                        var StartDate = new SqlParameter { SqlDbType = SqlDbType.DateTime, ParameterName = "@StartDate", Value = row.Webinar.Date };
+        //                var idOrder = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrder", Value = row.idOrder };
+        //                var _idOrder = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@_idOrder", Value = _row.idOrder };
+        //                var StartDate = new SqlParameter { SqlDbType = SqlDbType.DateTime, ParameterName = "@StartDate", Value = row.Webinar.Date };
 
-                        createCpCode.Parameters.Add(idOrder);
-                        createCpCode.Parameters.Add(StartDate);
+        //                createCpCode.Parameters.Add(idOrder);
+        //                createCpCode.Parameters.Add(_idOrder);
+        //                createCpCode.Parameters.Add(StartDate);
 
-                        result = createCpCode.ExecuteScalar().ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
-                        {
+        //                result = createCpCode.ExecuteScalar().ToString();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                using (var errorLogger = new SqlCommand("logError", sqlConnection))
+        //                {
 
-                            errorLogger.CommandText =
-                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-                            errorLogger.CommandText += "'CreateCPCode' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'CreateCPCode', 9 ,";
-                            errorLogger.CommandText += "'error at CreateCPCode " +
-                                                       ex.Message.Replace("'", "|") + "')";
+        //                    errorLogger.CommandText =
+        //                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+        //                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+        //                    errorLogger.CommandText += "'CreateCPCode' ,";
+        //                    errorLogger.CommandText += "9 ,9 ,9 ,'CreateCPCode', 9 ,";
+        //                    errorLogger.CommandText += "'error at CreateCPCode " +
+        //                                               ex.Message.Replace("'", "|") + "')";
 
-                            errorLogger.ExecuteNonQuery();
-                        }
+        //                    errorLogger.ExecuteNonQuery();
+        //                }
 
-                        throw;
-                    }
-                }
-                return result.ToString();
+        //                throw;
+        //            }
+        //        }
+        //        return result.ToString();
 
-            }
-        }
+        //    }
+        //}
 
         public void insertRegTypeId(int webinarIdWebinar)
         {

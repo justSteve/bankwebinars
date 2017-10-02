@@ -270,7 +270,7 @@ $(function () {
                 if (data.returnUrl !== '/' && !(data.returnUrl.indexOf('OrderComplete') > 0)) {
                     utilities.goToUrl(data.returnUrl);
                 } else {
-                    utilities.goToUrl('/Account/MyWebinars');
+                    utilities.goToUrl('/Cart/MyWebinars');
                 }
 
             } else if (data.result === 'Confirmed') {
