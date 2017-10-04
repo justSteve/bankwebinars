@@ -163,7 +163,9 @@
         {
 
             if (!Model.RegistrationType.OptionLabel.Contains("Streaming")
-                && !Model.RegistrationType.OptionLabel.Contains("Module"))
+                && !Model.RegistrationType.OptionLabel.Contains("Module")
+                && !Model.RegistrationType.SKU.Contains("WSP")
+                )
             {
                 rowAmount.Append(GetDiscountedTextSpan());
                 if (!rowAmount.ToString().Contains("Insufficient"))

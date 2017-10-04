@@ -426,7 +426,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (checkoutOptionsViewModel.OrderExists)
                     {
-                        checkoutOptionsViewModel.OrderHasId = order.idOrder > 0;
+                        //checkoutOptionsViewModel.OrderHasId = order.idOrder > 0;
 
                         if (order.OrderRows != null)
                         {
@@ -724,7 +724,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (Request.IsAuthenticated)
             {
                 var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
-                if (user != null && user.Identity.Name != null)
+                if (user != null && user.Identity.Name != null && formModel.idWebinar != 2520)
                 {
                     existingOrder = _orderManagementService
                          .GetOrdersByEmail(user.Identity.Name, 19)
@@ -1902,8 +1902,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             //}
             var upcomingOrders = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
             model.Scheduled = new List<RegistrationSummaryViewModel>();
-            model.Recorded = new Dictionary<string, RegistrationSummaryViewModel>();
-
+            
             foreach (Order order in upcomingOrders)
             {
                 try
@@ -1962,7 +1961,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             }
             var ordersForRecordedWebinars = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-
+            var summariesForRecorded = new List<RegistrationSummaryViewModel>();
             foreach (Order order in ordersForRecordedWebinars)
             {
                 try
@@ -2011,7 +2010,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                                                                            .ToString().Replace(".00", "");
                     }
 
-                    model.Recorded.Add(ordersForRecordedWebinars.Count.ToString(), registrationSummaryViewModel);
+                    summariesForRecorded.Add(registrationSummaryViewModel);
                 }
                 catch (Exception ex)
                 {
@@ -2020,67 +2019,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
 
             }
-
-            model.Recorded = new Dictionary<string, RegistrationSummaryViewModel>(ordersForRecordedWebinars.Count,
-                StringComparer.OrdinalIgnoreCase);
-
-            foreach (Order order in ordersForRecordedWebinars)
-            {
-                try
-                {
-
-                    OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
-                    if (orderRowForOrder == null)
-                        continue;
-                    var lstAddLoc = "";
-                    foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
-                    {
-                        lstAddLoc += additionalLocation.Email + ",";
-                    }
-                    RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
-                    {
-                        //AdditionalLocationsViewModel = _orderManagementService.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
-                        AdditionalLocationsViewModel = new AdditionalLocationsViewModel
-                        {
-                            AdditionalLocations = orderRowForOrder.AdditionalLocation,
-                            Addresses = lstAddLoc.TrimEnd(','), //additionalLocationsPricing.Item1,
-                            OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice,//additionalLocationsPricing.Item2
-                            EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
-                            {
-                                idUser = orderRowForOrder.Order.idUser,
-                                CostPerAdditionalLocation = orderRowForOrder.Webinar.AdditionalLocationPrice,
-                                NumberOfAdditionalLocations = 0,
-                                TotalCostOfOptions = 0,
-                                WebinarId = orderRowForOrder.Webinar.idWebinar,
-                                idOrder = orderRowForOrder.idOrder,
-                                idOrderRow = orderRowForOrder.idOrderRow
-                            }
-                        },
-                        OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
-                        RecordingLink =
-                            "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
-                            "' target=_blank /> Recording Playback</a>",
-                        WebinarStatus = orderRowForOrder.Webinar.Status
-                    };
+            model.Recorded = summariesForRecorded;
 
 
-                    if (orderRowForOrder.Discount != null &&
-                        orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
-                    {
-                        registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
-                                                                       orderRowForOrder.RegistrationType.CreditCost
-                                                                           .ToString().Replace(".00", "");
-                    }
-
-                    model.Recorded.Add(ordersForRecordedWebinars.Count.ToString(), registrationSummaryViewModel);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    throw;
-                }
-
-            }
 
             //model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
             try

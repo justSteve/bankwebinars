@@ -937,7 +937,13 @@ namespace CUWebinars.Web.Controllers
                         model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
                     }
                 }
-
+                if (model.Order != null && model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == 2520)
+                {
+                    //model.Order = null;
+                    
+                    model.CheckoutOptionsViewModel.OrderExists = false;
+                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
+                }
                 return View(model);
             }
 
@@ -1610,7 +1616,7 @@ namespace CUWebinars.Web.Controllers
 
             if (!orderExists) return;
             model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
-            model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
+            //model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
             //var row = orderRowForOrder;
 
             model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
@@ -1759,7 +1765,7 @@ namespace CUWebinars.Web.Controllers
                 if (orderExists)
                 {
                     model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
-                    model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
+                    //model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
                     var row = orderRowForOrder;
 
                     model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;

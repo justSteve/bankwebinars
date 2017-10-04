@@ -1301,7 +1301,7 @@ namespace CUWebinars.Web.Controllers
                 catch (Exception ex)
                 {
                     _logger.FatalException("Incoming_confSemCommit: " + incoming + " exception: ", ex);
-                    return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Error: " + ex.Message});
+                    return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Error: " + ex.Message });
                 }
             }
             else
@@ -1397,23 +1397,24 @@ namespace CUWebinars.Web.Controllers
                         {
                             var commitOrder = CommitImport(migrateOrder);
                             //_SendOrderConfirmation2();
-                            return Json(new { Result = WebUiConstants.Success, Order = commitOrder});
+                            return Json(new { Result = WebUiConstants.Success, Order = commitOrder });
                         }
                     }
                     catch (Exception ex)
                     {
                         _logger.FatalException("IncomingConfSem", ex);
+                        return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Importer tossed " + ex.Message });
                         throw;
                     }
                 }
                 catch (Exception ex)
                 {
+                    return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Importer tossed " + ex.Message });
 
                     _logger.Warn("Incoming_confSem: " + incoming + " exception: " + ex);
 
                 }
             }
-            return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Incomplete Import" });
         }
 
         protected JsonResult CommitImport(MigrateOrderModel migrateOrder)
@@ -1456,39 +1457,54 @@ namespace CUWebinars.Web.Controllers
             PostForm += "&OrderDate=" + HttpUtility.UrlEncode(migrateOrder.OrderDate.ToString());
             PostForm += "&ShippingDate=";
             PostForm += "&DiscountCode=" + HttpUtility.UrlEncode(migrateOrder.DiscountCode);
-            PostForm += "&Status=" + (int) migrateOrder.Status;
+            PostForm += "&Status=" + (int)migrateOrder.Status;
             PostForm += "&Total=0";
+            try
+            {
 
-            _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                "Steve@ttstrain.com",
-                "ERROR! ConfSem Committed: " + migrateOrder.Email,
-                JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
-                
-            );
-            WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
+                WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
 
 #if DEBUG
-            
-            {
-                _logger.Info("Incoming Running in debug mode");
-                req = WebRequest.Create("http://localhost:3538/order/MigrateOrder");
-            }
+
+                {
+                    _logger.Info("Incoming Running in debug mode");
+                    req = WebRequest.Create("http://localhost:3538/order/MigrateOrder");
+                }
 #endif
 
-            byte[] send = Encoding.Default.GetBytes(PostForm);
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            req.ContentLength = send.Length;
+                byte[] send = Encoding.Default.GetBytes(PostForm);
+                req.Method = "POST";
+                req.ContentType = "application/x-www-form-urlencoded";
+                req.ContentLength = send.Length;
 
-            Stream sout = req.GetRequestStream();
-            sout.Write(send, 0, send.Length);
-            sout.Flush();
-            sout.Close();
+                Stream sout = req.GetRequestStream();
+                sout.Write(send, 0, send.Length);
+                sout.Flush();
+                sout.Close();
 
-            WebResponse res = req.GetResponse();
-            StreamReader sr = new StreamReader(res.GetResponseStream());
-            string returnvalue1 = sr.ReadToEnd();
-            return Json(new {Result = WebUiConstants.Success, UpdateCaption = "Imported: " + returnvalue1});
+                WebResponse res = req.GetResponse();
+                StreamReader sr = new StreamReader(res.GetResponseStream());
+                string returnvalue1 = sr.ReadToEnd();
+
+                _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                    "Steve@ttstrain.com",
+                    "ERROR! ConfSem Committed: " + migrateOrder.Email,
+                    JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
+
+                );
+                return Json(new { Result = WebUiConstants.Success, UpdateCaption = "Imported: " + returnvalue1 });
+            }
+            catch (Exception e)
+            {
+
+                _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                    "Steve@ttstrain.com",
+                    "ERROR! ConfSem Blew up!: " + migrateOrder.Email,
+                    JsonConvert.SerializeObject(migrateOrder, Formatting.Indented) + "\n" + e.Message
+
+                );
+                return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Error: " + e });
+            }
         }
 
         [AllowAnonymous]
@@ -1506,11 +1522,11 @@ namespace CUWebinars.Web.Controllers
 
                 //if ()
                 _logger.Info("Incoming " + msgHtml.msg.from_email);
-                //if (msgHtml.msg.from_email.ToLower().Contains("conferencesandseminars.org") || msgHtml.msg.from_email.ToLower().Contains("steve"))
-                //{
-                //    //Incoming_confSem(incoming);
-                //    return;
-                //}
+                if (msgHtml.msg.from_email.ToLower().Contains("conferencesandseminars.org") || msgHtml.msg.from_email.ToLower().Contains("steve"))
+                {
+                    //Incoming_confSem(incoming);
+                    return;
+                }
                 if (msgHtml.msg.from_email.Contains("rate-watch") || msgHtml.msg.from_email.Contains("steve"))
                 {
                     Incoming_ratewatch(incoming);
@@ -1518,7 +1534,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 ImportOrderForAcsModel parsedOrder = _appHelper.ParseAcs("<html><body>" + msgHtml.msg.html + "</body></html>",
                     DateTime.Now.ToString());
-                _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder));
+                _logger.Info("IncomingFromMandrillParsed: " + JsonConvert.SerializeObject(parsedOrder, Formatting.Indented));
 
                 if (
                     _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
@@ -2512,7 +2528,7 @@ namespace CUWebinars.Web.Controllers
 
                     Debug.Assert(row != null, "row != null");
                     var createdSeriesOrders = "";
-                    
+
                     if (!multi)
                     {
                         order.AdminComments = order.AdminComments.Replace("Single_OrderCheckout", "PaidByCC");

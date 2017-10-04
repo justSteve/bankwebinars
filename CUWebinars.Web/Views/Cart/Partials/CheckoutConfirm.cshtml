@@ -39,16 +39,16 @@
 
         var orderRowID = 0;
         var orderID = 0;
-        if (Model.OrderRowExists && Model.OrderRowHasId > 0)
+        //if (Model.OrderRowExists && Model.OrderRowHasId > 0)
+        //{
+        if (Model.OrderStatus != OrderStatus.Error)
         {
-            if (Model.OrderStatus != OrderStatus.Error)
-            {
 
-                <script type="text/javascript" language="javascript">
+            <script type="text/javascript" language="javascript">
 
                     var idUser = @Model.idUser;
 
-                </script>
+            </script>
 
                 <b>Please review this order summary and choose billing method.</b>
 
@@ -70,7 +70,7 @@
                             @using (Html.BeginForm("UpdateAdditionalLocations", "Cart", FormMethod.Post, new { id = "AdjustAddLocsForm" }))
                             {
                                 <span>Need to support multiple branches? Each address entered here creates a new Connection Link billable at @Model.AdditionalLocationsViewModel.OptionsCost.ToString("C0").</span>
-                                    <div id="additionalLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.AdditionalLocationsRenderer)</div>
+                                <div id="additionalLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.AdditionalLocationsRenderer)</div>
                             }
                         </div>
                         <div id="cCLocationsCaption">
@@ -79,7 +79,7 @@
                             @using (Html.BeginForm("ShareNotifications", "Account", FormMethod.Post, new { id = "AdjustCcLocsForm", @class = "form-horizontal" }))
                             {
                                 <span>In the event that a co-worker will be the one actually connecting to the webinar this form will share the connection information with the given address. </span>
-                                    <input type="hidden" value="@Model.OrderExists" name="idOrder" />
+                                <input type="hidden" value="@Model.OrderExists" name="idOrder" />
                                     <div id="cCLocationsList">@Html.Raw(Model.AdditionalLocationsViewModel.CcLocationsRenderer)</div>
                             }
                         </div>
@@ -87,15 +87,15 @@
 
                 </div>
 
-                    <div id="AdjustOrder" class="row initialHide">
-                        <div class="offset2 span9 ">
-                            <div id="RegTypeChanger" class="clear pull-right">
-                                @{
-                                    Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
-                                }
-                            </div>
+                <div id="AdjustOrder" class="row initialHide">
+                    <div class="offset2 span9 ">
+                        <div id="RegTypeChanger" class="clear pull-right">
+                            @{
+                                Html.RenderPartial("~/Views/Cart/Partials/_DisplayOptionsInDropDown.cshtml", Model.DisplayOptionsInDropDownViewModel);
+                            }
                         </div>
                     </div>
+                </div>
 
                     <div class="row">
                         <div id="inProcCart" class="well text-center">
@@ -123,10 +123,10 @@
                                                                     <button class="btn btn-small cancel-edit-order">close panel</button>
                                                                 </div>
                                                             </div>
-                                                                }
                                                             }
                                                         }
                                                     }
+                                                    //                                            }
 
                                                     Html.RenderPartial("~/Views/Cart/Partials/_ConfirmModal.cshtml");
 

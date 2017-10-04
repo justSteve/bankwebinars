@@ -851,6 +851,29 @@ namespace CUWebinars.Web.Helpers
                 }
             }
 
+            if (row.RegistrationType.SKU.ToLower().Contains("wsp"))
+            {
+                if (order.OrderStatus == OrderStatus.Paid)
+                {
+                    fields.PaymentCaption =
+                        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
+                        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
+                        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+                }
+                else
+                {
+                    fields.PaymentCaption =
+                        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
+                        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
+                        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+
+                    //"Your package will be activated upon payment. Very shortly we will be sending an invoice to " +
+                    //    order.BillingEmail + ". If you wish to make immediate payment by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
+                    //    "'> click here.</a>";
+                }
+            }
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
@@ -1020,22 +1043,44 @@ namespace CUWebinars.Web.Helpers
                 model.BillingAddress.AddressType = "Billing";
                 model.BillingAddress.Name = name.FullName;
                 model.BillingAddress.StreetAddress = splitBlock[4];
-                model.BillingAddress.City = splitBlock[5].Split(',')[0];
-                model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
-                model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
-                model.BillingAddress.Country = splitBlock[6];
-                model.BillingAddress.Phone = splitBlock[7];
-
+                //check if city/state/zip found in [5] or [6]
+                var has2AddressLines = splitBlock[5].Split(',');
+                if (has2AddressLines.Length > 1)
+                {
+                    model.BillingAddress.City = splitBlock[5].Split(',')[0];
+                    model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
+                    model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                    model.BillingAddress.Country = splitBlock[6];
+                    model.BillingAddress.Phone = splitBlock[7];
+                }
+                else
+                {
+                    model.BillingAddress.City = splitBlock[6].Split(',')[0];
+                    model.BillingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                    model.BillingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    model.BillingAddress.Country = splitBlock[7];
+                    model.BillingAddress.Phone = splitBlock[8];
+                }
 
                 model.ShippingAddress.AddressType = "Shipping";
                 model.ShippingAddress.Name = name.FullName;
                 model.ShippingAddress.StreetAddress = splitBlock[4];
-                model.ShippingAddress.City = splitBlock[5].Split(',')[0];
-                model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
-                model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
-                model.ShippingAddress.Country = splitBlock[6];
-                model.ShippingAddress.Phone = splitBlock[7];
-
+                if (has2AddressLines.Length > 1)
+                {
+                    model.ShippingAddress.City = splitBlock[5].Split(',')[0];
+                    model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
+                    model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                    model.ShippingAddress.Country = splitBlock[6];
+                    model.ShippingAddress.Phone = splitBlock[7];
+                }
+                else
+                {
+                    model.ShippingAddress.City = splitBlock[6].Split(',')[0];
+                    model.ShippingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                    model.ShippingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    model.ShippingAddress.Country = splitBlock[7];
+                    model.ShippingAddress.Phone = splitBlock[8];
+                }
                 model.EventTitle = regDataBlock[0].Trim();
                 if (model.EventTitle.Contains(":"))
                 {

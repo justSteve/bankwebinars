@@ -140,8 +140,10 @@
         <div class="row-fluid span3">
             <div id="regDetails">
                 <div id="resumeOrderStatus" class="hidden"></div>
-                @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
-
+                @if (Model.Webinar.idWebinar != 2520)
+                {
+                    @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
+                }
             </div>
             @if (Model.Webinar.idWebinar != 2520)
             {
