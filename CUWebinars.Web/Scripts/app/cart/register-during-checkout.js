@@ -1169,16 +1169,31 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
             } else {
                 $('#showTax').addClass("hidden");
             }
-
+            console.log(data);
+            var alertCaption = data.UpdateSuccessCaption;
             $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
             $('#discountCaption').html(data.DiscountCaption);
             $('#optionLabel').html(data.regTypeShort);
+
             $('#baseCost').html('$' + data.BasePrice + '');
             $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
             $('#taxAmt').html(data.Tax + '');
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+            //if (data.OrderStatusCaption !== "") {
+            $('#orderStatusLabel').html(data.OrderStatusCaption);
+            //    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+            //}
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+            if (data.TotalPaid !== 0) {
+                if (data.OutstandingBalance > 0) {
+                    $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
+
+                } else {
+                    $("#ShowPayByCCModal").hide();
+                }
+            }
         }
+        alert(alertCaption);
 
         dropDown.removeAttr('disabled');
         $('#discountSpinner').remove();
@@ -1295,7 +1310,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
             $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
             $('#taxAmt').html(data.Tax + '');
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
-
+            
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
             if (data.TotalPaid !== 0) {
                 if (data.OutstandingBalance > 0) {

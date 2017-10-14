@@ -463,6 +463,10 @@ namespace CUWebinars.Web.Controllers
                     affiliateAddresses
                     , "Order Placed For " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
 
+                _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                    "info@ttstrain.com"
+                    , "Catch All Orders " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
+
             }
             else
             {
@@ -485,6 +489,9 @@ namespace CUWebinars.Web.Controllers
                         , "Order Placed For " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
 
 
+                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                        "info@ttstrain.com"
+                        , "Catch All Orders " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
                 }
                 else
                 {
@@ -496,15 +503,21 @@ namespace CUWebinars.Web.Controllers
                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                         _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                        sendToAddresses//ConfigurationManager.AppSettings["TestEmailAddress"]
+                        sendToAddresses 
                         , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
 
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
                         affiliateAddresses
                         , "Order Placed For " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
 
+                    _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                        "info@ttstrain.com"
+                        , "Catch All Orders " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
+
                 }
+
             }
+
         }
 
         [HttpPost]
@@ -1347,8 +1360,8 @@ namespace CUWebinars.Web.Controllers
                             _cartControllerOrchestrator.FireMandrillNotificationEvent(
                                 "Steve@ttstrain.com",
                                 "ERROR! Importer for confSem could not determine webinar: " + parsedOrder.Email,
-                                JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
-                            );
+                                JsonConvert.SerializeObject(migrateOrder, Formatting.Indented, new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                            return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Unable to find Webinar " + parsedOrder.Email + " (Please confirm that the date matches our calendar and update the text as needed.) Please copy the intended webinar's title from our calendar and paste over the title used in the email. " });
                         }
 
                         migrateOrder.idWebinar = webinar.idWebinar;
@@ -1368,7 +1381,7 @@ namespace CUWebinars.Web.Controllers
                                 JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
                                 + "\n Model: \n" + incoming
                             );
-                            throw;
+                            return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Unable to determine RegType " + parsedOrder.Email });
                         }
                         if (migrateOrder.idRegType < 1)
                         {
@@ -1379,12 +1392,10 @@ namespace CUWebinars.Web.Controllers
                                 + "\n Model: \n" + JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
                             );
                         }
-                        var orderTotal = _cartControllerOrchestrator.GetRegTypeById(migrateOrder.idRegType).Price;
-
+                        
                         _logger.Info("Incoming_confSemFromMandrillParsed: "
                                      + JsonConvert.SerializeObject(migrateOrder, Formatting.Indented));
-
-
+                        
                         if (
                             _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
                                 Convert.ToInt32(migrateOrder.idWebinar), parsedOrder.Email) > 0)
@@ -1465,7 +1476,6 @@ namespace CUWebinars.Web.Controllers
                 WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
 
 #if DEBUG
-
                 {
                     _logger.Info("Incoming Running in debug mode");
                     req = WebRequest.Create("http://localhost:3538/order/MigrateOrder");
@@ -1490,18 +1500,17 @@ namespace CUWebinars.Web.Controllers
                     "Steve@ttstrain.com",
                     "ERROR! ConfSem Committed: " + migrateOrder.Email,
                     JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
-
                 );
+
+                _SendOrderConfirmation2(Convert.ToInt32(returnvalue1.Replace("{\"Result\":\"", "").Replace("\"}", "")));
                 return Json(new { Result = WebUiConstants.Success, UpdateCaption = "Imported: " + returnvalue1 });
             }
             catch (Exception e)
             {
-
                 _cartControllerOrchestrator.FireMandrillNotificationEvent(
                     "Steve@ttstrain.com",
                     "ERROR! ConfSem Blew up!: " + migrateOrder.Email,
                     JsonConvert.SerializeObject(migrateOrder, Formatting.Indented) + "\n" + e.Message
-
                 );
                 return Json(new { Result = WebUiConstants.Fail, UpdateCaption = "Error: " + e });
             }
@@ -1905,25 +1914,20 @@ namespace CUWebinars.Web.Controllers
                     orderIDTracker = model.Order.idOrder;
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricing(model.Order);
                     var orderStatusCaption = "";
-                    if (model.Order.OrderStatus == OrderStatus.Paid && model.Order.Total != model.Order.TotalPaid)
+                    if (model.Order.Total != model.Order.TotalPaid)
                     {
                         model.Order.OrderStatus = OrderStatus.OutstandingBalance;
-                        orderStatusCaption =
-                            "<span id=\"orderStatusLabel\" class=\"label-important label\">Outstanding Balance</span>";
-                        model.Order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(
-                            model.Order.AdminComments,
-                            new JProperty("OutstandingBalance",
-                                        new JObject(
-                                            new JProperty("OriginalCost",
-                                                orgTotal),
-                                             new JProperty("NewCost",
-                                                model.Order.Total),
-                                             new JProperty("Difference",
-                                                pricesAndDiscounts.TotalOrderPrice))
-                                        )
-                                                , "OutstandingBalance");
-                        _cartControllerOrchestrator.SaveOrder(model.Order);
+
                     }
+                    else
+                    {
+                        model.Order.OrderStatus = OrderStatus.Paid;
+
+                        model.Order.AdminComments = JsonHelpers.RemoveJObject(model.Order.AdminComments, "OutstandingBalance");
+                    }
+                    orderStatusCaption =
+                        "<span id=\"orderStatusLabel\" class=\"label-important label\">" + model.Order.OrderStatus + "</span>";
+
 
                     //just produces a caption - no impact on price
                     var discountCaption = "";
@@ -1938,13 +1942,7 @@ namespace CUWebinars.Web.Controllers
                             model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
                     }
 
-                    _logger.Info("UpdateOrderDetails: " + model.Order.idOrder + " changed from: " + oldRegType + " to: " + newRegType);
-
-                    if (!string.IsNullOrEmpty(model.Order.InvoiceDetail))
-                    {
-                        _cartControllerOrchestrator.InvoicedOrderIsUpdated(model.Order);
-                    }
-
+                    _logger.Info("UpdateOrderDetails: " + model.Order.idOrder + " changed from: " + oldRegType + " to: " + newRegType + " by: " + _appHelper.GetUserAuditInfo());
 
                     var UpdateSuccessCaption = "Order updated to: " + newRegType;
                     var ShippedDate =

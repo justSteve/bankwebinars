@@ -282,7 +282,7 @@ namespace CUWebinars.Web.Helpers
 
             //Trace.TraceInformation(jobject.ToString(Newtonsoft.Json.Formatting.None));
 
-            return jobject.ToString(Newtonsoft.Json.Formatting.None);
+            return jobject.ToString(Newtonsoft.Json.Formatting.Indented);
         }
 
 
@@ -990,9 +990,14 @@ namespace CUWebinars.Web.Helpers
             var regDataBlock = _doc.Substring(startBlock, endBlock - startBlock)
                 .Replace(". Sponsored by: BankWebinars.com: Registration -", "|")
                 .Replace(": Live Teleconference, ", "|").Trim().Split('|');
+
+            startBlock = _doc.IndexOf("DATE:") + 5;
+            endBlock = _doc.IndexOf("Mailing Address");
+            var orderDateBlock = _doc.Substring(startBlock, endBlock - startBlock)
+                .Trim();
             var model = new ParseOrderModel();
 
-            model.OrderDate = DateTime.Now;
+            model.OrderDate = Convert.ToDateTime(orderDateBlock);
 
             try
             {
@@ -1010,7 +1015,7 @@ namespace CUWebinars.Web.Helpers
                         model.Email = line;
                         break;
                     }
-                    if (lineCount > 4 && phoneNum != "")
+                    if (phoneNum == "")
                     {
                         phoneNum = ParsePhone(line);
                     }
@@ -1019,6 +1024,11 @@ namespace CUWebinars.Web.Helpers
                 {
                     model.LoggerNotes = "ERROR: no email address detected.";
                     return model;
+                }
+
+                if (phoneNum == "")
+                {
+                    phoneNum = "555-555-5555";
                 }
 
                 if (count > 1)
@@ -1041,6 +1051,7 @@ namespace CUWebinars.Web.Helpers
                 model.BillingAddress = new Address();
                 model.ShippingAddress = new Address();
                 model.BillingAddress.AddressType = "Billing";
+                model.BillingAddress.Phone = phoneNum;
                 model.BillingAddress.Name = name.FullName;
                 model.BillingAddress.StreetAddress = splitBlock[4];
                 //check if city/state/zip found in [5] or [6]
@@ -1050,36 +1061,49 @@ namespace CUWebinars.Web.Helpers
                     model.BillingAddress.City = splitBlock[5].Split(',')[0];
                     model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
                     model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
-                    model.BillingAddress.Country = splitBlock[6];
-                    model.BillingAddress.Phone = splitBlock[7];
                 }
                 else
                 {
-                    model.BillingAddress.City = splitBlock[6].Split(',')[0];
-                    model.BillingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
-                    model.BillingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
-                    model.BillingAddress.Country = splitBlock[7];
-                    model.BillingAddress.Phone = splitBlock[8];
+                    if (splitBlock[4].Contains(","))
+                    {
+                        model.BillingAddress.City = splitBlock[4].Split(',')[0];
+                        model.BillingAddress.State = splitBlock[4].Split(',')[1].Split(' ')[1];
+                        model.BillingAddress.Zip = splitBlock[4].Split(',')[1].Split(' ')[2];
+                    }
+                    else
+                    {
+                        model.BillingAddress.City = splitBlock[6].Split(',')[0];
+                        model.BillingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                        model.BillingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    }
                 }
 
                 model.ShippingAddress.AddressType = "Shipping";
                 model.ShippingAddress.Name = name.FullName;
+                model.ShippingAddress.Phone = phoneNum;
                 model.ShippingAddress.StreetAddress = splitBlock[4];
                 if (has2AddressLines.Length > 1)
                 {
                     model.ShippingAddress.City = splitBlock[5].Split(',')[0];
                     model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
                     model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
-                    model.ShippingAddress.Country = splitBlock[6];
-                    model.ShippingAddress.Phone = splitBlock[7];
                 }
                 else
                 {
-                    model.ShippingAddress.City = splitBlock[6].Split(',')[0];
-                    model.ShippingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
-                    model.ShippingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
-                    model.ShippingAddress.Country = splitBlock[7];
-                    model.ShippingAddress.Phone = splitBlock[8];
+                    if (splitBlock[4].Contains(","))
+                    {
+                        model.ShippingAddress.City = splitBlock[4].Split(',')[0];
+                        model.ShippingAddress.State = splitBlock[4].Split(',')[1].Split(' ')[1];
+                        model.ShippingAddress.Zip = splitBlock[4].Split(',')[1].Split(' ')[2];
+                    }
+                    else
+                    {
+
+                        model.ShippingAddress.City = splitBlock[6].Split(',')[0];
+                        model.ShippingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                        model.ShippingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    }
+
                 }
                 model.EventTitle = regDataBlock[0].Trim();
                 if (model.EventTitle.Contains(":"))
@@ -1095,10 +1119,6 @@ namespace CUWebinars.Web.Helpers
                             model.EventTitle += line + ":";
                         }
                         model.EventTitle = model.EventTitle.TrimEnd(':').Trim();
-                    }
-                    else
-                    {
-                        model.EventTitle = regDataBlock[0].Trim().Split(':')[1].Trim();
                     }
                 }
                 model.EventDate = regDataBlock[1].Split(';')[1].Trim();
@@ -1646,13 +1666,23 @@ namespace CUWebinars.Web.Helpers
         public string ParsePhone(string phoneTest)
         {
             var phoneNum = "";
-            var phoneUtil = PhoneNumberUtil.IsViablePhoneNumber(phoneTest);
-            if (phoneUtil)
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.GetInstance();
+            var extractPossible = phoneUtil.IsPossibleNumber(phoneTest, "US");
+            
+            if (extractPossible)
             {
                 phoneNum = phoneTest;
             }
 
             return phoneNum;
+        }
+
+        public string FindChangedRegTypes(Order order)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var auditChangedRegType = dataOperations.AuditChangedRegType(order);
+
+            return auditChangedRegType;
         }
 
         public static string[] AddNonvalidToArray(string[] zipCentricFields)

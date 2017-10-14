@@ -45,5 +45,6 @@ namespace CUWebinars.Web.Helpers
         ImportOrderForAcsModel ParseAcs(string _doc, string toString);
         Address ParseAddress(string address);
         string ParsePhone(string address);
+        string FindChangedRegTypes(Order order);
     }
 }

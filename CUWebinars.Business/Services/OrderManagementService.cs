@@ -297,7 +297,7 @@ namespace CUWebinars.Business.Services
             return (IDictionary<RegType, bool>)options;
         }
 
-        public IDictionary<RegType, bool> GetAllPossibleOptionsByWebinarId(int idWebinar, bool detached)
+        public IDictionary<RegType, bool> GetAllPossibleRegTypesByWebinarId(int idWebinar, bool detached)
         {
             string cachKey = "options-" + idWebinar;
             var options = _cachingService.Get(cachKey);
@@ -313,6 +313,12 @@ namespace CUWebinars.Business.Services
             return (IDictionary<RegType, bool>)options;
         }
 
+
+        public IList<RegType> GetAllPossibleRegTypesByWebinarId(int idWebinar)
+        {
+            IList<RegType> regTypes = GetAllPossibleRegTypesByWebinarId(idWebinar, false).Select(r => r.Key).ToList();
+            return regTypes;
+        }
 
         public IEnumerable<Order> GetOrdersByEmail(string email, int aff)
         {
@@ -1948,7 +1954,6 @@ namespace CUWebinars.Business.Services
                 if (discount.idAffiliate != order.idAffiliate)
                 {
                     FireMandrillNotificationEvent(
-                        //ConfigurationManager.AppSettings["TestEmailAddress"],
                         "info@ttstrain.com",
                         "affiliate did not match existing WSP " + order.idOrder
                         , "Order Affiliate was: " + order.idAffiliate + " but existing WSP had: " + discount.idAffiliate);
@@ -2002,6 +2007,14 @@ namespace CUWebinars.Business.Services
             SaveOrderChanges(order, null, null);
             return wspDiscount;
         }
+
+        //public IList<RegType> GetAllPossibleRegTypesByWebinarId(int idWebinar)
+        //{
+
+        //    IList<RegType> regTypes = GetAllPossibleRegTypesByWebinarId(idWebinar, false).Select(r => r.Key).ToList();
+        //    return regTypes;
+
+        //}
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
@@ -2319,7 +2332,7 @@ namespace CUWebinars.Business.Services
 
         public void CreateTestRegistration(Webinar webinar)
         {
-            var idRegType = GetAllPossibleOptionsByWebinarId(webinar.idWebinar, false);
+            var idRegType = GetAllPossibleRegTypesByWebinarId(webinar.idWebinar, false);
 
             var live_id = 0;
 
@@ -2474,13 +2487,6 @@ namespace CUWebinars.Business.Services
             }
 
         }
-
-
-        public string InvoicedOrderIsUpdated(Order order)
-        {
-            throw new NotImplementedException();
-        }
-
 
         public IList<WebUser> GetWebUsersOfDiscount(int idDiscount)
         {

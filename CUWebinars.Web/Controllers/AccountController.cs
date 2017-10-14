@@ -954,7 +954,7 @@ namespace CUWebinars.Web.Controllers
             {
                 claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
             }
-            var optionsToDisplay = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, true);
+            var optionsToDisplay = _orderManagementService.GetAllPossibleRegTypesByWebinarId(orderRow.idWebinar, true);
 
             if (User != null && User.Identity.IsAuthenticated)
             {
@@ -998,6 +998,8 @@ namespace CUWebinars.Web.Controllers
                 EditFields = new EditOrderModel
                 {
                     AuditInfo = GetFirstPageOrigin(order),
+                    AdminInfo = GetAdminComments(order),
+                    
                     AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
                     AdditionalLocationsRenderer =
                         ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
@@ -1062,10 +1064,8 @@ namespace CUWebinars.Web.Controllers
 
                         editModel.EditFields.PostEventClaim = onDemandClaim;
                     }
-
-
-
                 }
+
                 if (!odClaimIsFound)
                 {
 
@@ -1099,11 +1099,33 @@ namespace CUWebinars.Web.Controllers
             return editModel;
         }
 
+        private string GetAdminComments(Order order)
+        {
+
+            dynamic jsonObject = new JObject();
+            try
+            {
+            var isValid = JObject.Parse(order.AdminComments);
+                return (string) isValid;
+            }
+            catch (Exception e)
+            {
+                jsonObject.ChangedRegType = _appHelper.FindChangedRegTypes(order);
+                //_orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com"
+                //    , "Error at GetFirstPageOrigin: " + order.idOrder
+                //    , e.Message + Environment.NewLine + e.StackTrace);
+                return null;
+
+            }
+            
+        }
+
         private string GetFirstPageOrigin(Order order)
         {
             try
             {
-                AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo.Replace("{\"AuditInfo\":", "").Replace("}}", "}"));
+                AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo);
+                //AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo.Replace("{\"AuditInfo\":", "").Replace("}}", "}"));
                 dynamic jsonObject = new JObject();
                 jsonObject.FirstPage = parseOutAudit.FirstPage;
                 jsonObject.RemoteUser = parseOutAudit.RemoteUser;
@@ -1113,6 +1135,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
+                _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com", "Error at GetFirstPageOrigin: " + order.idOrder, ex.Message + Environment.NewLine + ex.StackTrace);
                 dynamic jsonObject = new JObject();
                 jsonObject.FirstPage = "not found: " + order.idOrder;
                 jsonObject.RemoteUser = "not found ex:" + ex.Message;

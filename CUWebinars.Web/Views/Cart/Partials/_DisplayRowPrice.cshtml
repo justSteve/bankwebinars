@@ -94,6 +94,11 @@
                 statusLabelSpan.SetInnerText(@OrderStatus.Canceled.ToString());
                 break;
 
+            case OrderStatus.Billed:
+                statusLabelSpan.AddCssClass("label-success");
+                statusLabelSpan.SetInnerText(@OrderStatus.Billed.ToString());
+                break;
+
             case OrderStatus.OutstandingBalance:
                 statusLabelSpan.AddCssClass("label-important");
                 statusLabelSpan.SetInnerText("Outstanding Balance");

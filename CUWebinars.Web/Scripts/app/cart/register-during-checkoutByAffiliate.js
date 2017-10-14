@@ -599,7 +599,7 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
         dataType: constants.JsonDataType,
         data: JSON.stringify(payLoad)
     }).done(function (data) {
-
+        
         if (data) {
             if (data.Tax > 0) {
                 $('#showTax').removeClass("hidden");
@@ -616,10 +616,10 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
             $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
             $('#taxAmt').html(data.Tax + '');
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
-            if (data.OrderStatusCaption !== "") {
-                $('#orderStatusLabel').html(data.OrderStatusCaption);
-                alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
-            }
+            //if (data.OrderStatusCaption !== "") {
+            $('#orderStatusLabel').html(data.OrderStatusCaption);
+            //    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+            //}
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
             if (data.TotalPaid !== 0) {
                 if (data.OutstandingBalance > 0) {
@@ -627,7 +627,6 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
 
                 } else {
                     $("#ShowPayByCCModal").hide();
-                    $('#showOutstandingBalance').html('<br><span style=\"color: green;\"  id="outstandingBalance">Due: $(' + data.OutstandingBalance + ')</span>');
                 }
             }
         }

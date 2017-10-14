@@ -251,7 +251,7 @@ OCA.initializeFunctions = function () {
                     $(self).attr('disabled', 'disabled');
                 }
             }).done(function (data) {
-
+                
                 if (data.Result == 0) {
                     alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found or had an error that prevented usage. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                 }
@@ -342,7 +342,7 @@ OCA.initializeFunctions = function () {
                     $(self).attr('disabled', 'disabled');
                 }
             }).done(function (data) {
-
+                
                 if (data.Result == 0) {
                     alert("The discount code " + $('#CheckoutDiscountCode').val() + " was not found or had an error that prevented usage. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
                 }
@@ -368,6 +368,7 @@ OCA.initializeFunctions = function () {
                         $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
 
                     } else {
+                        //alert("fired here!")
                         if (data.OrderStatusCaption !== "") {
                             $('#orderStatusLabel').html(data.OrderStatusCaption);
                             alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
@@ -744,10 +745,10 @@ OCA.initializeFunctions = function () {
                 $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
                 $('#taxAmt').html(data.Tax + '');
                 $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
-                if (data.OrderStatusCaption !== "") {
-                    $('#orderStatusLabel').html(data.OrderStatusCaption);
-                    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
-                }
+                //if (data.OrderStatusCaption !== "") {
+                //    $('#orderStatusLabel').html(data.OrderStatusCaption);
+                //    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+                //}
                 $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
                 if (data.TotalPaid !== 0) {
                     if (data.OutstandingBalance > 0) {

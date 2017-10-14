@@ -1293,14 +1293,14 @@ namespace CUWebinars.Web.Controllers
                     else
                     {
                         model.OptionsToDisplay =
-                            _orderManagementService.GetAllPossibleOptionsByWebinarId(model.Webinar.idWebinar, false);
+                            _orderManagementService.GetAllPossibleRegTypesByWebinarId(model.Webinar.idWebinar, false);
 
                     }
                 }
                 else
                 {
                     model.OptionsToDisplay =
-                        _orderManagementService.GetAllPossibleOptionsByWebinarId(model.Webinar.idWebinar, false);
+                        _orderManagementService.GetAllPossibleRegTypesByWebinarId(model.Webinar.idWebinar, false);
 
                 }
 
@@ -2592,6 +2592,8 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult ClickToJoin(string joinCode, int? idWebinar)
         {
+            if (joinCode == "0000") return null;
+
             var webinar = _orderManagementService.GetWebinarByJoinCode(joinCode);
 
             var order = _orderManagementService.GetOrderByJoinCode(joinCode);

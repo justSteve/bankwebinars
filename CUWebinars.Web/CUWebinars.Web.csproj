@@ -508,6 +508,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Helpers\StringSift2.cs" />
+    <Compile Include="Models\JsonModels\PaytraceResponse.cs" />
     <Compile Include="Models\ParseOrderModel.cs" />
     <Compile Include="Models\AuditDiscountModel.cs" />
     <Compile Include="Models\Importers\ImportOrderForConfSemModel.cs" />

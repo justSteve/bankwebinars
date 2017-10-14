@@ -593,7 +593,7 @@ namespace CUWebinars.Business.Services
             {
                 invoice.TotalOnPaid += row.RowPrice;
             }
-            if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed || order.OrderStatus == OrderStatus.OutstandingBalance)
+            if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed)
             {
                 invoice.TotalOnBilled += row.RowPrice;
                 //_logger.Info("TotalOnBilled =  " + invoice.TotalOnBilled);
@@ -1039,42 +1039,42 @@ namespace CUWebinars.Business.Services
             return "30%";
         }
 
-        private void CalculateAffiliateRoyalties(IList<AffiliateInvoiceDTO> reportData)
-        {
-            //Calculate total revenues
-            foreach (AffiliateInvoiceDTO registration in reportData)
-            {
-                foreach (var order in registration.Orders)
-                {
-                    var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
-                    if (registration.Affiliate.BillingModel == "TTS")
-                    {
-                        if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.OutstandingBalance || order.OrderStatus == OrderStatus.Billed)
-                        {
-                            registration.TotalOnBilled += row.RowPrice;
+        //private void CalculateAffiliateRoyalties(IList<AffiliateInvoiceDTO> reportData)
+        //{
+        //    //Calculate total revenues
+        //    foreach (AffiliateInvoiceDTO registration in reportData)
+        //    {
+        //        foreach (var order in registration.Orders)
+        //        {
+        //            var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+        //            if (registration.Affiliate.BillingModel == "TTS")
+        //            {
+        //                if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.OutstandingBalance || order.OrderStatus == OrderStatus.Billed)
+        //                {
+        //                    registration.TotalOnBilled += row.RowPrice;
 
-                        }
-                        if (order.OrderStatus == OrderStatus.Paid)
-                        {
-                            registration.TotalOnPaid += row.RowPrice;
-                        }
-                    }
+        //                }
+        //                if (order.OrderStatus == OrderStatus.Paid)
+        //                {
+        //                    registration.TotalOnPaid += row.RowPrice;
+        //                }
+        //            }
 
-                    if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed || order.OrderStatus == OrderStatus.OutstandingBalance ||
-                        order.OrderStatus == OrderStatus.Paid)
-                    {
-                        registration.TotalOnPaid += row.RowPrice;
-                    }
-                }
-            }
+        //            if (order.OrderStatus == OrderStatus.Submitted || order.OrderStatus == OrderStatus.Billed || order.OrderStatus == OrderStatus.OutstandingBalance ||
+        //                order.OrderStatus == OrderStatus.Paid)
+        //            {
+        //                registration.TotalOnPaid += row.RowPrice;
+        //            }
+        //        }
+        //    }
 
-            //Calculate total commissions
-            //foreach (AffiliateInvoiceDTO registration in reportData)
-            //{
-            //    var order = _orderRepository.GetOrderById(registration.id);
+        //    //Calculate total commissions
+        //    //foreach (AffiliateInvoiceDTO registration in reportData)
+        //    //{
+        //    //    var order = _orderRepository.GetOrderById(registration.id);
 
-            //}
-        }
+        //    //}
+        //}
 
 
 

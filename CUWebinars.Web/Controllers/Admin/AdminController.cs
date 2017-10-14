@@ -531,22 +531,32 @@ namespace CUWebinars.Web.Controllers.Admin
 
         private void FireOrderSubmittedEvent(Order order, bool b, bool b1)
         {
+            try
+            {
+                string parameter_list = "orderId=" + order.idOrder;
 
-            string parameter_list = "orderId=" + order.idOrder;
+                ASCIIEncoding encoding = new ASCIIEncoding();
+                byte[] bytes = encoding.GetBytes(parameter_list);
 
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            byte[] bytes = encoding.GetBytes(parameter_list);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_globalConfig.TenantURL + "/Cart/SendOrderConfirmation2");
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = bytes.Length;
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_globalConfig.TenantURL + "/Cart/SendOrderConfirmation2");
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = bytes.Length;
+                // send validation request
+                Stream str = request.GetRequestStream();
+                str.Write(bytes, 0, bytes.Length);
+                str.Flush();
+                str.Close();
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("FireOrderSubmittedEvent", ex);
 
-            // send validation request
-            Stream str = request.GetRequestStream();
-            str.Write(bytes, 0, bytes.Length);
-            str.Flush();
-            str.Close();
+                _orderManagementService.FireMandrillNotificationEvent(
+                    "steve@ttstrain.com"
+                    , "ERROR! FireOrderSubmittedEvent" + ex.Message, "exception.stack: " + ex.StackTrace);
+            }
 
         }
 
@@ -1251,7 +1261,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
-        
+
         [AllowAnonymous]
         [HttpPost]
         public ActionResult ResendOrderConfirmation(int orderId, string source = "System")
@@ -2244,18 +2254,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 //https://github.com/brandonseydel/MailChimp.Net/issues/157
                 // or find a way to nav to URL
 
-                var affiliatePromoSenderEmail = "";
-                var affiliatePromoSenderName = "";
-#if DEBUG
-
-                affiliatePromoSenderEmail = "steve@ttstrain.com";
-                affiliatePromoSenderName = "steve";
-
-#else
-
-                affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
-                affiliatePromoSenderName = affiliate.PromoSenderName;
-#endif
+                var affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
+                var affiliatePromoSenderName = affiliate.PromoSenderName;
 
                 var newCamp = new Campaign
                 {
@@ -2314,7 +2314,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
                 sendToEmails.Add("all.of.us@ttstrain.com");
-                
+
 #endif
                 sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
 
@@ -2507,7 +2507,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var ordersByDiscount = _orderManagementService.GetOrdersByDiscount(idDiscount)
                 .Where(o => o.idAffiliate == idAffiliate)
-                .Select(o => new AuditDiscountModel {idOrder = o.idOrder, OrderDate = o.OrderDate.ToShortDateString(), OrderStatus = o.OrderStatus, Email = o.BillingEmail, Credits = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.CreditCost});
+                .Select(o => new AuditDiscountModel { idOrder = o.idOrder, OrderDate = o.OrderDate.ToShortDateString(), OrderStatus = o.OrderStatus, Email = o.BillingEmail, Credits = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.CreditCost });
 
             string orders = JsonConvert.SerializeObject(ordersByDiscount);
 
@@ -3598,7 +3598,12 @@ namespace CUWebinars.Web.Controllers.Admin
                                             order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
                                         string _price = row.RowPrice.ToString("C").Replace(".00", "");
+                                        string _priceOutstanding = "";
 
+                                        if (order.OrderStatus == OrderStatus.OutstandingBalance)
+                                        {
+                                            _priceOutstanding = (order.Total - order.TotalPaid).ToString("C").Replace(".00", "");
+                                        }
 
                                         string _percent =
                                             (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
@@ -3658,6 +3663,25 @@ namespace CUWebinars.Web.Controllers.Admin
                                             , order.idOrder
                                             , webinar.idWebinar
                                         );
+
+                                        if (order.OrderStatus == OrderStatus.OutstandingBalance)
+                                        {
+                                            ordersPerAff.Rows.Add(
+                                                rowNumber
+                                                , "  The prior row included a partial payment. " + Environment.NewLine
+                                                + "Total Cost: " + _price + Environment.NewLine + "Minus amount paid: " + order.TotalPaid.ToString("C") + Environment.NewLine
+
+                                                , order.BillingEmail
+                                                ,
+                                                "  Unpaid portion: "
+                                                , _priceOutstanding
+                                                , 0//_percent
+                                                , 0// row.Royalty.ToString("C").Replace(".00", "")
+                                                , "Remains to be billed: " + _priceOutstanding //abbrevRegType(row.idRegType) + Environment.NewLine + order.OrderStatus
+                                                , order.idOrder
+                                                , webinar.idWebinar
+                                            );
+                                        }
                                     }
                                     catch (Exception ex)
                                     {

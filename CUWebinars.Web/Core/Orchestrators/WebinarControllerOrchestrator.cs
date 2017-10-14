@@ -687,6 +687,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _logger.Info(string.Format("Recordings posted for {0} is saved to {1} with expiry date of: {2}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl, webinar.LivePlusFiveValue.ToShortDateString()));
                 SendRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
+
+                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+                //updates regType Groups
+                dataOperations.WebinarIsSetToRecorded();
+
                 return true;
             }
             catch (Exception exception)

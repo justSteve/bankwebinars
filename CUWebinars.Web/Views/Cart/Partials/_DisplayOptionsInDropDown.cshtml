@@ -1,7 +1,10 @@
 ﻿@model DisplayOptionsInDropDownViewModel
-           
+
 <input type="hidden" name="ID" value="@Model.OrderRowId" />
 <select name="RegType" id="RegType" style="vertical-align: top;">
+    <option id="PleaseChoose" class="radio" selected='selected' value="10" data-price="0">
+        Please Choose Option
+    </option>
     @{
         var idx = 0;
         foreach (var option in Model.Options)
@@ -9,13 +12,14 @@
             var optionType = option.Key.GetType();
             if (optionType.Name == "RegType")
             {
-                string isSelected = (int)Model.OrderRowRegistrationType.idRegType == option.Key.idRegType ? "selected='selected'" : "";
-
-                <option id="@string.Concat("regTypeID_", idx++)" class="radio" @isSelected value="@option.Key.idRegType" data-price="@option.Key.Price">
-                    @option.Key.OptionLabel
-                </option>
+                //string isSelected = (int) Model.OrderRowRegistrationType.idRegType == option.Key.idRegType ? "selected='selected'" : "";
+                <text>
+                    <option id="@string.Concat("regTypeID_", idx++)" class="radio" value="@option.Key.idRegType" data-price="@option.Key.Price">
+                        @option.Key.OptionLabel
+                    </option>
+                </text>
             }
         }
-
     }
+
 </select>

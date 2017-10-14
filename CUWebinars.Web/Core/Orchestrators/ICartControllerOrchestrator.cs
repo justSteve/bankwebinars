@@ -76,7 +76,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
         bool UserHasMultipleEvents(int? id);
         string BuildOrderSubmitted2Notification(Order modelOrder);
-        string InvoicedOrderIsUpdated(Order modelOrder);
+        
         void FireMandrillNotificationEvent(string steveTtstrainCom, string s, string orderConfirmString);
         void SaveOrder(Order order);
         string GetAddLocPrice(Webinar modelWebinar);

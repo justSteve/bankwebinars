@@ -31,5 +31,6 @@ namespace CUWebinars.Web.Models.DataTablesModels
         public ClaimsViewModel ClaimsViewModel { get; set; }
         public PostEventClaim PostEventClaim { get; set; }
         public String AuditInfo { get; set; }
+        public string AdminInfo { get; set; }
     }
 }

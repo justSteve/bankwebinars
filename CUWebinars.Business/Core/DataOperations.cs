@@ -1554,5 +1554,97 @@ namespace CUWebinars.Business.Core
             }
             return reply;
         }
+
+        public void WebinarIsSetToRecorded()
+        {
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getLegacyWebinars = new SqlCommand())
+                {
+
+                    getLegacyWebinars.Connection = sqlConnection;
+                    getLegacyWebinars.CommandType = CommandType.StoredProcedure;
+                    getLegacyWebinars.CommandText = "updateRegGroups";
+
+                    try
+                    {
+                        int idWebinar;
+                        DateTime date;
+                        using (var sqlUpdateConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+                        {
+                            sqlUpdateConnection.Open();
+
+                            using (var reader = getLegacyWebinars.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    //reader.GetInt32(0), reader.GetDecimal(1)));
+                                    idWebinar = reader.GetInt32(0);
+                                    date = reader.GetDateTime(1);
+                                    var timeToStartWebinar = date.AddMinutes(-30) - DateTime.Now;
+                                    //AddMessage(idWebinar.ToString(), timeToStartWebinar);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
+        public string AuditChangedRegType(Order order)
+        {
+            var reply = "";
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (var myConn = new SqlCommand("AuditChangedRegType", sqlConnection))
+                {
+                    try
+                    {
+                        myConn.Connection = sqlConnection;
+                        myConn.CommandType = CommandType.StoredProcedure;
+                        var idOrderParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@idOrder",
+                            Value = order.idOrder
+                        };
+                        myConn.Parameters.Add(idOrderParam);
+                        
+                        using (var reader = myConn.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                reply = reader[0].ToString();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'AuditChangedRegType' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'AuditChangedRegType', 9 ,";
+                            errorLogger.CommandText += "'error at AuditChangedRegType " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+            return reply;
+        }
     }
 }

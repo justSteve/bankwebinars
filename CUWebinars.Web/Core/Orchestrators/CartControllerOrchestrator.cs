@@ -139,7 +139,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var displayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                     {
                         //Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
-                        Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
+                        Options = _orderManagementService.GetAllPossibleRegTypesByWebinarId(orderRow.idWebinar, false),
                         OrderRowId = idOrderRow.Value,
                         OrderRowRegistrationType = orderRow.RegistrationType
                     };
@@ -1222,7 +1222,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
 
-            if (_globalConfig.Tenant != "DirectorSeries" && !account.HasClaim(ClaimTypes.FullName) && _globalConfig.Tenant != "DirectorSeries")
+            if (_globalConfig.Tenant != "DirectorSeries" 
+                && !account.HasClaim(ClaimTypes.FullName) 
+                )
             {
                 SendAccountCreatedConfirmation(order);
             }
@@ -1420,12 +1422,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
 
-
-
-        public string InvoicedOrderIsUpdated(Order order)
-        {
-            return _orderManagementService.InvoicedOrderIsUpdated(order);
-        }
 
         public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)
         {
@@ -2127,8 +2123,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public int LoadRegistrationForImporter(Webinar webinar, string parsedOrderRegTypeAsString)
         {
-
-            return _webinarManagementService.GetRegTypeByLableAndWebinar(parsedOrderRegTypeAsString, webinar.idWebinar);
+            return _orderManagementService.GetAllPossibleRegTypesByWebinarId(webinar.idWebinar).Where(r => r.OptionLabel == parsedOrderRegTypeAsString).SingleOrDefault().idRegType;
+            
         }
 
         public int GetRegTypeByRateWatch(string registrationType, int idWebinar)

@@ -42,7 +42,9 @@
                 $(this).tab('show');
             });
 
-        $( "#browserAdmin" ).jsonbrowser(strAdminComments.replace(/&quot;/g, '"'));
+        console.log(strAdminComments.replace(/&quot;/g, '"'));
+
+        $("#browserAdmin").jsonbrowser(strAdminComments.replace(/&quot;/g, '"'));
         $( "#browserAff" ).jsonbrowser(strAffComments.replace(/&quot;/g, '"'));
         $( "#browserAudit" ).jsonbrowser(strAudit.replace(/&quot;/g, '"'));
         $( "#browserInvoice" ).jsonbrowser(strInvoice.replace(/&quot;/g, '"'));
@@ -157,36 +159,36 @@
                 <div id="addLocsPanel" style="text-align: center; border-style: solid; border-color: darkgrey">
                     @using (Html.BeginForm("UpdateAdditionalLocations", "Admin", FormMethod.Post, new { id = "editOrderCompactAddLoc" }))
                 {
-                        @Html.AntiForgeryToken()
-                        <div>
-                            @Html.HiddenFor(m => m.EditFields.CostPerAdditionalLocation)
-                            @Html.HiddenFor(m => m.EditFields.idOrderRow)
-                            @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
-                            @Html.HiddenFor(m => m.EditFields.WebinarId)
-                            @Html.HiddenFor(m => m.EditFields.NumberOfAdditionalLocations)
-                            @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.NumberOfAdditionalLocations)*@
-                            @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)*@
-                            @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)*@
-                            @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions)
-                            @* Required for POST. TextBoxFor won't ModelBind *@&nbsp;
-                        </div>
-                        <div class="control-group">
-                            <div class="controls">
+                    @Html.AntiForgeryToken()
+                    <div>
+                        @Html.HiddenFor(m => m.EditFields.CostPerAdditionalLocation)
+                        @Html.HiddenFor(m => m.EditFields.idOrderRow)
+                        @Html.HiddenFor(m => m.EditFields.WebUser.idUser)
+                        @Html.HiddenFor(m => m.EditFields.WebinarId)
+                        @Html.HiddenFor(m => m.EditFields.NumberOfAdditionalLocations)
+                        @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.NumberOfAdditionalLocations)*@
+                        @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.Price)*@
+                        @*@Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.RowPrice)*@
+                        @Html.HiddenFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions)
+                        @* Required for POST. TextBoxFor won't ModelBind *@&nbsp;
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
 
-                                <button id="addLocationsButton" class="btn btn-default btn-mini">Add?</button>
-                                @if (@Model.EditFields.NumberOfAdditionalLocations == 1)
+                            <button id="addLocationsButton" class="btn btn-default btn-mini">Add?</button>
+                            @if (@Model.EditFields.NumberOfAdditionalLocations == 1)
                                 {
                                     var a = 1;
                                 }
-                                Additional Locations: <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span>
+                            Additional Locations: <span id="nrAddLocs">@Model.EditFields.NumberOfAdditionalLocations</span>
 
-                            </div>
-                            @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
                         </div>
-                        <div id="UpdateAddLocsButtonWrapper" class="control-group">
-                            @*@Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" })*@
-                            <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
-                        </div>
+                        @Html.Raw(Model.EditFields.AdditionalLocationsRenderer.ToString())
+                    </div>
+                    <div id="UpdateAddLocsButtonWrapper" class="control-group">
+                        @*@Html.TextBoxFor(m => m.EditFields.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions, new { id = "TotalCostOfOptionsText", disabled = "disabled" })*@
+                        <button id="UpdateAddLocsButton" class="btn btn-primary btn-mini">Submit</button>
+                    </div>
 
                     }
                 </div>
@@ -229,7 +231,7 @@
                                 {
                                     <div id="DisplayRowPriceViewModel_PricesAndDiscounts_CreditsRemain"> Credits Remain: @Model.EditFields.Discount.CreditsRemain</div>
                                 }
-                                <div id="removeDiscountButton" data-discountcode="@Model.EditFields.Discount.DiscountCode" class="btn btn-mini btn-danger" >Remove Discount</div>
+                                <div id="removeDiscountButton" data-discountcode="@Model.EditFields.Discount.DiscountCode" class="btn btn-mini btn-danger">Remove Discount</div>
                             </div>
                         </div>
                         if (row.Discount == null)
@@ -253,10 +255,10 @@
                         </div>
                     }
                     if (
-                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.TwoPart || 
-                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.ThreePart || 
-                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.FourPart || 
-                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.FivePart 
+                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.TwoPart ||
+                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.ThreePart ||
+                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.FourPart ||
+                        Model.EditFields.Discount.TypeOfDiscount == DiscountType.FivePart
                         )
                     {
                         <div class="control-group">

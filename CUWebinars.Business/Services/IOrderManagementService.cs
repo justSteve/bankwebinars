@@ -60,7 +60,8 @@ namespace CUWebinars.Business.Services
         Affiliate GetAffiliateById(int id);
         Affiliate GetAffiliateByIdLoaded(int id, params Expression<Func<Affiliate, object>>[] includeProperties);
         IDictionary<RegType, bool> GetOptionsByWebinarId(int id, bool detached);
-        IDictionary<RegType, bool> GetAllPossibleOptionsByWebinarId(int idWebinar, bool detached);
+        IDictionary<RegType, bool> GetAllPossibleRegTypesByWebinarId(int idWebinar, bool detached);
+        IList<RegType> GetAllPossibleRegTypesByWebinarId(int idWebinar);
         IEnumerable<Order> GetOrdersByEmail(string email, int aff);
         Order FindExpressCheckoutOrder(string email, int idWebinar);
         IEnumerable<Order> GetOrdersByLastName(string lastName, int aff);
@@ -106,14 +107,14 @@ namespace CUWebinars.Business.Services
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
 
         Discount GetDiscountById(int discount);
-        
+
         IList<Order> GetV3OrdersByWebinar(int idWebinar);
         DateTime CalculatePostEventMaterialsAccessExpiry(OrderRow row);
         //void SendOrderToLegacy(Order newOrder);
         WebUser GetWebUserWithAddressAndInstitution(int idUser);
         IEnumerable<int> GetUserIdsByPartialId(int value);
         object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search);
-        
+
         bool VerifyWebUserExists(int idUser);
         Webinar GetWebinarByJoinCode(string joinCode);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
@@ -126,7 +127,7 @@ namespace CUWebinars.Business.Services
         Order FindExpressCheckoutOrderByOrderId(int q11Orderid);
         IEnumerable<Order> GetV3OrdersByWebinarForPostEventClaims(int idWebinar);
         void UpdateOrderByAdmin(Order newOrder);
-        
+
         PostEventClaim FindPostEventClaimByOnDemandCode(Order order);
         IList<Order> GetV3OrdersByOnDemandClaim();
         IList<PostEventClaim> FindAllPostEventClaims();
@@ -138,7 +139,7 @@ namespace CUWebinars.Business.Services
         void UpdateDiscountDetails(Discount discount);
         void UpdateShippingAddressDetails(Address shippingAddress, int idUser);
         //string InsertOnDemandClaim(int orderId);
-        
+
         RegType GetRegTypeByLabel(string regType, int idWebinar);
         bool OnDemandCodeIsUnique(string onDemandCode);
         IList<int> GetV3OrdersIdsByWebinar(int idWebinar);
@@ -149,7 +150,7 @@ namespace CUWebinars.Business.Services
         void RemoveFromDiscount(int newOrderRowId);
         IList<Order> GetOrdersByDiscount(int idDiscount);
         Discount CalculateDiscountRedemption(Discount userHasDiscount, OrderRow row);
-        
+
         IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
         string CheckOrderComments();
         decimal CalculateCreditsRemain(Discount userDiscount);
@@ -160,14 +161,14 @@ namespace CUWebinars.Business.Services
         bool UserHasMultipleEvents(int idUser);
         Order GetOrderByJoinCode(string joinCode);
         List<Registrant> GetCitrixRegistrantsByWebinar(int webinarId);
-       IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
+        IList<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
 
         //string SetOnDemandClaimById(int myRowIdOrder);
 
-        string InvoicedOrderIsUpdated(Order order);
+        
         string OrderHasCc(Order order);
         Order UserHasPrexistingOrder(Order existingOrder);
-        
+
         IDictionary<RegType, bool> GetOptionsAvailableToExistingOrder(int id, bool b, Order modelOrder);
         string RemoveDiscountCode(string code, OrderRow row);
         //string CreateCompliancePerspectivesSubscription(OrderRow row, OrderRow row);
