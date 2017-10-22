@@ -9,13 +9,7 @@ namespace CUWebinars.Web.Models
 {
     public class PayTraceResponse
     {
-//         123456
-// 62279788
-// TAS456
-// ++NO++MATCH++++++%2D+Approved+and+completed
-// No+Match
-// Match
-// test%40test%2Ecom
+
         public string Orderid { get; set; }
         public string Transactionid { get; set; }
         public string Appcode { get; set; }

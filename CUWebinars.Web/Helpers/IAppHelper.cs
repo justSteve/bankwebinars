@@ -46,5 +46,6 @@ namespace CUWebinars.Web.Helpers
         Address ParseAddress(string address);
         string ParsePhone(string address);
         string FindChangedRegTypes(Order order);
+        string FindChangedOrderStatus(Order order);
     }
 }

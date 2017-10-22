@@ -503,7 +503,7 @@ namespace CUWebinars.Web.Controllers
                     orderConfirmString = _appHelper.CleanHtmlCodesAndLogo(orderConfirmString,
                         _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
-                        sendToAddresses 
+                        sendToAddresses
                         , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
 
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
@@ -1392,10 +1392,10 @@ namespace CUWebinars.Web.Controllers
                                 + "\n Model: \n" + JsonConvert.SerializeObject(migrateOrder, Formatting.Indented)
                             );
                         }
-                        
+
                         _logger.Info("Incoming_confSemFromMandrillParsed: "
                                      + JsonConvert.SerializeObject(migrateOrder, Formatting.Indented));
-                        
+
                         if (
                             _cartControllerOrchestrator.CheckIfEmailAlreadyRegisteredForWebinar(
                                 Convert.ToInt32(migrateOrder.idWebinar), parsedOrder.Email) > 0)
@@ -1894,7 +1894,7 @@ namespace CUWebinars.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateOrderDetails(int? idOrderRow = null, int? idRegType = null)
+        public ActionResult UpdateOrderDetails(int? idOrderRow = null, int? idRegType = null, string note = null)
         {
             int orderIDTracker = 0;
             if (idOrderRow.HasValue && idRegType.HasValue)
@@ -1942,7 +1942,9 @@ namespace CUWebinars.Web.Controllers
                             model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
                     }
 
-                    _logger.Info("UpdateOrderDetails: " + model.Order.idOrder + " changed from: " + oldRegType + " to: " + newRegType + " by: " + _appHelper.GetUserAuditInfo());
+                    _logger.Info("UpdateOrderDetails: " + model.Order.idOrder + 
+                        " changed from: " + oldRegType + " to: " + newRegType + 
+                        " note: " + note + " by: " + _appHelper.GetUserAuditInfo());
 
                     var UpdateSuccessCaption = "Order updated to: " + newRegType;
                     var ShippedDate =
@@ -2977,7 +2979,8 @@ namespace CUWebinars.Web.Controllers
             _cartControllerOrchestrator.SetOrderStatus(idOrder, User.Identity.Name, orderStatus); // validates that the user owns this orderid
 
             List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
-                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList(); // used a couple of places, may want to make a function that just returns these...
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList(); 
+            // used a couple of places, may want to make a function that just returns these...
 
             string discountCaptionMultiMsg = "";
             string grandTotalCaptionMultiMsg = "";

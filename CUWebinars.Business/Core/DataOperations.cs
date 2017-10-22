@@ -16,6 +16,7 @@ using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Claims;
 using System.Text;
+using System.Web.Helpers;
 using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core.Extensions;
 using CUWebinars.Business.Services;
@@ -983,7 +984,7 @@ namespace CUWebinars.Business.Core
 
                             errorLogger.ExecuteNonQuery();
                         }
-                        
+
                         throw;
                     }
                 }
@@ -1597,14 +1598,15 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
-        public string AuditChangedRegType(Order order)
-        {
-            var reply = "";
 
+        public string GetAuditNotes(Order order, string auditType)
+        {
+            List<AuditChangedRegTypeModel> result = new List<AuditChangedRegTypeModel>();
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
+
                 sqlConnection.Open();
-                using (var myConn = new SqlCommand("AuditChangedRegType", sqlConnection))
+                using (var myConn = new SqlCommand("GetAuditNotes", sqlConnection))
                 {
                     try
                     {
@@ -1616,13 +1618,57 @@ namespace CUWebinars.Business.Core
                             ParameterName = "@idOrder",
                             Value = order.idOrder
                         };
+
+              
+                        var auditTypeParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@auditType",
+                            Value = auditType
+                        };
                         myConn.Parameters.Add(idOrderParam);
-                        
+                        myConn.Parameters.Add(auditTypeParam);
+
                         using (var reader = myConn.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                reply = reader[0].ToString();
+                                if (reader[0] != null)
+                                {
+                                    var _reply = new AuditChangedRegTypeModel();
+                                    _reply.DateOfChange = reader[0].ToString();
+                                    //\"RemoteUser\": \"AdminJared@ttstrain.com\",\r\n  \"UserAgent\": \"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/61.0.3163.100 Safari\/537.36\",\r\n  \"Cookie\": \"FedAuth=77u\/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U2VjdXJpdHlDb250ZXh0VG9rZW4gcDE6SWQ9Il9mZTBlMzgxMS00YzFmLTQ5MDktYWFiMy0wMzYyOTkyZDU0OTctNkU3MzkyMjczOTM0RTdGMDc3NjBCOUQ1OUE1QzI1QTAiIHhtbG5zOnAxPSJodHRwOi8vZG9jcy5vYXNpcy1vcGVuLm9yZy93c3MvMjAwNC8wMS9vYXNpcy0yMDA0MDEtd3NzLXdzc2VjdXJpdHktdXRpbGl0eS0xLjAueHNkIiB4bWxucz0iaHR0cDovL2RvY3Mub2FzaXMtb3Blbi5vcmcvd3Mtc3gvd3Mtc2VjdXJlY29udmVyc2F0aW9uLzIwMDUxMiI+PElkZW50aWZpZXI+dXJuOnV1aWQ6MWU1NTU5ZGYtNzg0Yy00OTA3LTg5MWMtMDUwZDM1YTQ3NTY3PC9JZGVudGlmaWVyPjxDb29raWUgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwNi8wNS9zZWN1cml0eSI+TGtDeTBycHF3M3hvb1NkRlIvR2JFcGozczFPSlE4OUpNNDE1VVZXUEtWYnFwZjBraWU2czlHV0w3cUNxN0EwcjkwNnRMdFZKMEkvS3lKbEt6YmhHcWpVR3ZKUXprd2xZWVlydi9BZTJreGJkVVRJMEJ0dllVdXZYa2kzUzdPWUdGZ1BRVEc5MzAvS0x3VDdET1QrNDFRaGhEWmorZ2VQSTBuUmRPd0lqUHpsVkVZeW9pSk9hV1FuY0RFMDJ0eDFsRG5kMXF3TWY5bTBYYnJHSFF5L3ZDZU40WVVWZnpyMWdWTWpNNEFnbXZaNzk3V3hFZ1hBZk9DNmhyQ29PY0lyNEwyZ3FHU0dXdkJRQzlrRzlEc0hrMmhjU2k4K3VIaGZIMVd3NTJSSnlXS1JPYkkwV2RxN24vTGYyaVlHbnhEYW9OeFhhNWFxMkVHcVNYN1RWRnIvWk0xNWpYTUhrUEN4Q285KzlJYUZaNXQyZ0xqVjJJbWhlMXNmU21zUUJDVDArZFpjMHpuUnlQK0hlelJ0Z2FCWHlOdXgxYWNoRTltSFVEeDRKVkFpdWI0S3pqbGk5ZVVkUlNqaFd2WXp0TWYvZFlxNXRQclZkNSt4alFtMTBVRkhhMXI5SHFvZGxoQmFuRCtma05PUDkvaEZ0RjFvZFZJWG5MeFJOeHJnOUVsSGovSnpVczZnTUEwRlc1UXprd0dLZ0FyVHdqM1VvNTRvWVEwemdRWTlqNS9EcnZacEdNdVp6dlVyT1ZQcVJNUi82S3BONXRjRmVRMXhIazMwQTdhcmdPV216aEVwZFE4VGpnYU5zQUszVEUvUkVVUERKVE1uaUE4cTRHTEJOVElzNlNnSGRnVkc2TjJySC9GUUdOY2FTejF6YkdnVDdWcS9uRWxGT2poNzI3WEU5OURNQU4wQjBEc1p3NVBDeERLcmVaZkJYdVpqOU5Mci8wSnZWVVlFbEdOV2dGM0tHNlJyUDdoOFFOcWh4WVJuREF1RStPWEtrSnM0bVpSR0dCV3BoRnFQRCtRMWUrWnJ3cjlZS0xDT3phUjl6NjNCYVB3aUxBcVhmUHlKREJyditkc0JWNHVRVVBvdzJVWFQ5djdZWEJOTVdyVFZrNzJSNStoWXB5QTYwYW1RUGVDMTNXdUFwRU9WWWFpWjBoUWhLamlxdVltNEJ3YVYvZXlQWHBVdy9PbHNpUm1YeU9lL2RReVdqNXkza0pGL25HNE56eW41OUhRZHUvdCtuUUk1R0JyVHBzd3pXNkxKSjU1by9jL3dkNkFvTnhMaFZVRGtGaHZQWEJSSDJCS1VvZUZzQjArRzdnSlpudXRSRDBsUU9kUjZZeGFiK0UwQnRvY0NFN20zUldSa1ZFc29uKzhyNFo1cXh4V01NVE5rS3MvZWVkZjdjd0lI; FedAuth1=NkhxaFVzelFGOVh2UjZ5UERMeDFIbzZSc0FXTTNHdDZVMitGeGYycmRVWXhyaTN6YmYwVXNYK0ZYNlYyY3NmMEtmVlU0alo2YzZFcEZ0ZmpuZVg0SW1sMnlBR0NUZkdNY1NVVzRLR1RBQTIvbzBHeXNNRTFHOXRpQjFjbkcrbUgyU0RSYnRReGxrNFdteXJSUXR5OGQzMHpKamU3czBIdHRIOGhKWVZMU2ZNaHYzZG9zUlE9PTwvQ29va2llPjwvU2VjdXJpdHlDb250ZXh0VG9rZW4+; ASP.NET_SessionId=mieupncrwg5upe2rso1wbgwz; __RequestVerificationToken=tcZB-S-H5_O_txZXgGPGLRTW6NSRldeC8z99iz01Y9BvH8GAPUw1T38fl5Ojp9FnV4Z754q6t9Xjwbh93GpQHpFYOJPlgmXQVPFF1Y7niY81; timezoneoffset=-5; __zlcmid=ixgoaZQGxMHnmW\",\r\n  \"Elmah\": null,\r\n  \"SessionRoot\": null,\r\n  \"SessionID\": \"mieupncrwg5upe2rso1wbgwz\",\r\n  \"AffiliateSessionSource\": \"default|19\",\r\n  \"SessionStart\": \"{\\\"RemoteAddress\\\":\\\"73.75.24.204\\\",\\\"RemoteHost\\\":\\\"73.75.24.204\\\",\\\"RemoteUser\\\":\\\"AdminJared@ttstrain.com\\\",\\\"UserAgent\\\":\\\"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/61.0.3163.100 Safari\/537.36\\\",\\\"UserCookie\\\":\\\"FedAuth=77u\/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U2VjdXJpdHlDb250ZXh0VG9rZW4gcDE6SWQ9Il9mZTBlMzgxMS00YzFmLTQ5MDktYWFiMy0wMzYyOTkyZDU0OTctNkU3MzkyMjczOTM0RTdGMDc3NjBCOUQ1OUE1QzI1QTAiIHhtbG5zOnAxPSJodHRwOi8vZG9jcy5vYXNpcy1vcGVuLm9yZy93c3MvMjAwNC8wMS9vYXNpcy0yMDA0MDEtd3NzLXdzc2VjdXJpdHktdXRpbGl0eS0xLjAueHNkIiB4bWxucz0iaHR0cDovL2RvY3Mub2FzaXMtb3Blbi5vcmcvd3Mtc3gvd3Mtc2VjdXJlY29udmVyc2F0aW9uLzIwMDUxMiI+PElkZW50aWZpZXI+dXJuOnV1aWQ6MWU1NTU5ZGYtNzg0Yy00OTA3LTg5MWMtMDUwZDM1YTQ3NTY3PC9JZGVudGlmaWVyPjxDb29raWUgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwNi8wNS9zZWN1cml0eSI+TGtDeTBycHF3M3hvb1NkRlIvR2JFcGozczFPSlE4OUpNNDE1VVZXUEtWYnFwZjBraW"},{"Date":"2017-10-13T17:14:39.373","change":" changed from: OnDemand Recording to: Live Plus Five by: {\r\n  \"FirstPage\": \"https:\/\/www.bankwebinars.com\/\",\r\n  \"RemoteAddress\": \"73.75.24.204\",\r\n  \"RemoteHost\": \"73.75.24.204\",\r\n  \"RemoteUser\": \"AdminJared@ttstrain.com\",\r\n  \"UserAgent\": \"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/61.0.3163.100 Safari\/537.36\",\r\n  \"Cookie\": \"FedAuth=77u\/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U2VjdXJpdHlDb250ZXh0VG9rZW4gcDE6SWQ9Il9mZTBlMzgxMS00YzFmLTQ5MDktYWFiMy0wMzYyOTkyZDU0OTctNkU3MzkyMjczOTM0RTdGMDc3NjBCOUQ1OUE1QzI1QTAiIHhtbG5zOnAxPSJodHRwOi8vZG9jcy5vYXNpcy1vcGVuLm9yZy93c3MvMjAwNC8wMS9vYXNpcy0yMDA0MDEtd3NzLXdzc2VjdXJpdHktdXRpbGl0eS0xLjAueHNkIiB4bWxucz0iaHR0cDovL2RvY3Mub2FzaXMtb3Blbi5vcmcvd3Mtc3gvd3Mtc2VjdXJlY29udmVyc2F0aW9uLzIwMDUxMiI+PElkZW50aWZpZXI+dXJuOnV1aWQ6MWU1NTU5ZGYtNzg0Yy00OTA3LTg5MWMtMDUwZDM1YTQ3NTY3PC9JZGVudGlmaWVyPjxDb29raWUgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwNi8wNS9zZWN1cml0eSI+TGtDeTBycHF3M3hvb1NkRlIvR2JFcGozczFPSlE4OUpNNDE1VVZXUEtWYnFwZjBraWU2czlHV0w3cUNxN0EwcjkwNnRMdFZKMEkvS3lKbEt6YmhHcWpVR3ZKUXprd2xZWVlydi9BZTJreGJkVVRJMEJ0dllVdXZYa2kzUzdPWUdGZ1BRVEc5MzAvS0x3VDdET1QrNDFRaGhEWmorZ2VQSTBuUmRPd0lqUHpsVkVZeW9pSk9hV1FuY0RFMDJ0eDFsRG5kMXF3TWY5bTBYYnJHSFF5L3ZDZU40WVVWZnpyMWdWTWpNNEFnbXZaNzk3V3hFZ1hBZk9DNmhyQ29PY0lyNEwyZ3FHU0dXdkJRQzlrRzlEc0hrMmhjU2k4K3VIaGZIMVd3NTJSSnlXS1JPYkkwV2RxN24vTGYyaVlHbnhEYW9OeFhhNWFxMkVHcVNYN1RWRnIvWk0xNWpYTUhrUEN4Q285KzlJYUZaNXQyZ0xqVjJJbWhlMXNmU21zUUJDVDArZFpjMHpuUnlQK0hlelJ0Z2FCWHlOdXgxYWNoRTltSFVEeDRKVkFpdWI0S3pqbGk5ZVVkUlNqaFd2WXp0TWYvZFlxNXRQclZkNSt4alFtMTBVRkhhMXI5SHFvZGxoQmFuRCtma05PUDkvaEZ0RjFvZFZJWG5MeFJOeHJnOUVsSGovSnpVczZnTUEwRlc1UXprd0dLZ0FyVHdqM1VvNTRvWVEwemdRWTlqNS9EcnZacEdNdVp6dlVyT1ZQcVJNUi82S3BONXRjRmVRMXhIazMwQTdhcmdPV216aEVwZFE4VGpnYU5zQUszVEUvUkVVUERKVE1uaUE4cTRHTEJOVElzNlNnSGRnVkc2TjJySC9GUUdOY2FTejF6YkdnVDdWcS9uRWxGT2poNzI3WEU5OURNQU4wQjBEc1p3NVBDeERLcmVaZkJYdVpqOU5Mci8wSnZWVVlFbEdOV2dGM0tHNlJyUDdoOFFOcWh4WVJuREF1RStPWEtrSnM0bVpSR0dCV3BoRnFQRCtRMWUrWnJ3cjlZS0xDT3phUjl6NjNCYVB3aUxBcVhmUHlKREJyditkc0JWNHVRVVBvdzJVWFQ5djdZWEJOTVdyVFZrNzJSNStoWXB5QTYwYW1RUGVDMTNXdUFwRU9WWWFpWjBoUWhLamlxdVltNEJ3YVYvZXlQWHBVdy9PbHNpUm1YeU9lL2RReVdqNXkza0pGL25HNE56eW41OUhRZHUvdCtuUUk1R0JyVHBzd3pXNkxKSjU1by9jL3dkNkFvTnhMaFZVRGtGaHZQWEJSSDJCS1VvZUZzQjArRzdnSlpudXRSRDBsUU9kUjZZeGFiK0UwQnRvY0NFN20zUldSa1ZFc29uKzhyNFo1cXh4V01NVE5rS3MvZWVkZjdjd0lI; FedAuth1=NkhxaFVzelFGOVh2UjZ5UERMeDFIbzZSc0FXTTNHdDZVMitGeGYycmRVWXhyaTN6YmYwVXNYK0ZYNlYyY3NmMEtmVlU0alo2YzZFcEZ0ZmpuZVg0SW1sMnlBR0NUZkdNY1NVVzRLR1RBQTIvbzBHeXNNRTFHOXRpQjFjbkcrbUgyU0RSYnRReGxrNFdteXJSUXR5OGQzMHpKamU3czBIdHRIOGhKWVZMU2ZNaHYzZG9zUlE9PTwvQ29va2llPjwvU2VjdXJpdHlDb250ZXh0VG9rZW4+; ASP.NET_SessionId=mieupncrwg5upe2rso1wbgwz; __RequestVerificationToken=tcZB-S-H5_O_txZXgGPGLRTW6NSRldeC8z99iz01Y9BvH8GAPUw1T38fl5Ojp9FnV4Z754q6t9Xjwbh93GpQHpFYOJPlgmXQVPFF1Y7niY81; timezoneoffset=-5; __zlcmid=ixgoaZQGxMHnmW\",\r\n  \"Elmah\": null,\r\n  \"SessionRoot\": null,\r\n  \"SessionID\": \"mieupncrwg5upe2rso1wbgwz\",\r\n  \"AffiliateSessionSource\": \"default|19\",\r\n  \"SessionStart\": \"{\\\"RemoteAddress\\\":\\\"73.75.24.204\\\",\\\"RemoteHost\\\":\\\"73.75.24.204\\\",\\\"RemoteUser\\\":\\\"AdminJared@ttstrain.com\\\",\\\"
+                                    var startBlock = reader[1].ToString().IndexOf("from: ") + 6;
+                                    var endBlock = reader[1].ToString().IndexOf("to: ");
+
+                                    _reply.From = reader[1].ToString().Substring(startBlock, endBlock - startBlock);
+
+                                    if (reader[1].ToString().Contains("note"))
+                                    {
+
+                                        startBlock = reader[1].ToString().IndexOf("to: ") + 4;
+                                        endBlock = reader[1].ToString().IndexOf("note:");
+                                        _reply.To = reader[1].ToString().Substring(startBlock, endBlock - startBlock);
+
+                                        startBlock = reader[1].ToString().IndexOf("note: ") + 6;
+                                        endBlock = reader[1].ToString().IndexOf("by: ");
+                                        _reply.Note = reader[1].ToString().Substring(startBlock, endBlock - startBlock);
+                                    }
+                                    else
+                                    {
+                                        startBlock = reader[1].ToString().IndexOf("to: ") + 4;
+                                        endBlock = reader[1].ToString().IndexOf("by:");
+                                        _reply.To = reader[1].ToString().Substring(startBlock, endBlock - startBlock);
+                                        _reply.Note = "";
+                                    }
+                                    startBlock = reader[1].ToString().IndexOf("\"RemoteUser\": ") + 14;
+                                    endBlock = reader[1].ToString().IndexOf("\"UserAgent\":");
+                                    _reply.By = reader[1].ToString().Substring(startBlock, endBlock - startBlock)
+                                        .Replace("\",\r\n  ", "")
+                                        .Replace("\"", "");
+
+                                    result.Add(_reply);
+                                }
                             }
                         }
                     }
@@ -1633,18 +1679,29 @@ namespace CUWebinars.Business.Core
                             errorLogger.CommandText =
                                 "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
                             errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
-                            errorLogger.CommandText += "'AuditChangedRegType' ,";
-                            errorLogger.CommandText += "9 ,9 ,9 ,'AuditChangedRegType', 9 ,";
-                            errorLogger.CommandText += "'error at AuditChangedRegType " +
+                            errorLogger.CommandText += "'GetAuditNotes' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'GetAuditNotes', 9 ,";
+                            errorLogger.CommandText += "'error at GetAuditNotes " +
                                                        ex.Message.Replace("'", "|") + "')";
 
                             errorLogger.ExecuteNonQuery();
 
                         }
+                        return null;
                     }
                 }
             }
-            return reply;
+            var returnResult = JsonConvert.SerializeObject(result);
+            return returnResult;
         }
+    }
+
+    public class AuditChangedRegTypeModel
+    {
+        public string DateOfChange { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+        public string By { get; set; }
+        public string Note { get; set; }
     }
 }

@@ -341,7 +341,7 @@ function editBillingCell(cell, $td, rowData) {
 
             var e = '<div id="browser" class="jsonbrowser"></div>';
             $('#notesPanel').append(e);
-            
+
             //console.log(cell);
             //console.log($td);
             //console.log(rowData);
@@ -427,9 +427,15 @@ function updateOrderStatus(item, orderId, newOrderStatus) {
     var $item = $(item);
     var form = $item.parents("form");
     var $form = $(form);
+    console.log(form);
+    var getNote = prompt("Reason for change (optional)");
+    if (getNote === null) {
+        return false;
+    }
 
     $("input[name='Id']", $form).val(orderId);
     $("input[name='DisplayRowPriceViewModel.OrderStatus']", $form).val(newOrderStatus);
+    $("input[name='note']", $form).val(getNote);
 
     var data = $form.serialize();
 
@@ -541,11 +547,16 @@ function updateRegType(item, orderId, newRegTypeId) {
     var form = $item.parents("form");
     var $form = $(form);
 
-
+    var getNote = prompt("Reason for change (optional)");
+    if (getNote === null) {
+        return false;
+    }
     var payLoad = {
         idOrderRow: orderId,
-        idRegType: newRegTypeId
+        idRegType: newRegTypeId,
+        note: getNote
     };
+
 
     $.ajax({
         //async: false,
@@ -555,6 +566,7 @@ function updateRegType(item, orderId, newRegTypeId) {
         url: "/cart/updateorderdetails",
         dataType: constants.JsonDataType,
         data: JSON.stringify(payLoad),
+
         success: function (data) {
             if (data) {
                 if (data.updateRegTypeOnLegacy == "Order Not Found") {

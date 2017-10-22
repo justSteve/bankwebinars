@@ -1680,9 +1680,17 @@ namespace CUWebinars.Web.Helpers
         public string FindChangedRegTypes(Order order)
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
-            var auditChangedRegType = dataOperations.AuditChangedRegType(order);
-
+            var auditChangedRegType = dataOperations.GetAuditNotes(order, "RegTypeChanges");
+            
             return auditChangedRegType;
+        }
+
+        public string FindChangedOrderStatus(Order order)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var changedOrderStatus = dataOperations.GetAuditNotes(order, "OrderStatusChanges");
+            
+            return changedOrderStatus;
         }
 
         public static string[] AddNonvalidToArray(string[] zipCentricFields)

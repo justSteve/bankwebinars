@@ -73,6 +73,7 @@ function getOrderStatusHtml() {
             '<form id=\"order-status\" class=\"form-compact compact-order-status-edit-form\" novalidate=\"novalidate\">';
         html = html + '    <input type=\"hidden\" name=\"Id\" />';
         html = html + '    <input type=\"hidden\" name=\"DisplayRowPriceViewModel.OrderStatus\" />';
+        html = html + '    <input type=\"hidden\" name=\"note\" />';
         html = html + '    <div class=\"dropdown\">';
         html = html +
             '        <a class=\"dropdown-toggle btn btn-mini\" role=\"button\" href=\"#\" data-toggle=\"dropdown\">[ORDERSTATUS]&nbsp;<b class=\"caret\"></b></a>';

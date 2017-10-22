@@ -443,7 +443,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         //[ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException]
-        public ActionResult UpdateOrderStatus(ManageOrderEditModel model, int? discountId)
+        public ActionResult UpdateOrderStatus(ManageOrderEditModel model, int? discountId, string note)
         {
             var _discountId = 0;
             if (discountId.HasValue)
@@ -453,23 +453,23 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
-
                     var order = _orderManagementService.GetOrderById(model.Id);
-                    _logger.Info("Updating OrderStatus " + order.idOrder + " from: " + order.OrderStatus + " to: " +
-                                 model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
-
+                    _logger.Info("Updating OrderStatus " + order.idOrder
+                        + " from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus +
+                        "note: " + note + " by: " + _appHelper.GetUserAuditInfo());
+                    
                     if ((model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Billed ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Submitted)
 
-                        && (order.OrderStatus == OrderStatus.AwaitingVerification || order.OrderStatus == OrderStatus.InProcess)
+                        && (order.OrderStatus == OrderStatus.AwaitingVerification
+                        || order.OrderStatus == OrderStatus.InProcess)
                         )
                     {
 
                         var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
 
-
-                        order.OrderDate = DateTime.Now;
+                        //order.OrderDate = DateTime.Now;
 
                         if (order.idAffiliate == 62)
                         {
