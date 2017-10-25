@@ -85,7 +85,7 @@
                     }
                     else
                     {
-                        
+
                         <aside class="widget">
                             <h5 class="short_headline">
                                 <span>Topics</span>
@@ -115,12 +115,16 @@
                         </span>
                     </h2>
                     @Html.Raw(Model.Webinar.LearnBody)
-                    <h2 class="short_headline">
-                        <span>
-                            Who Should Attend?
-                        </span>
-                    </h2>
-                    @Html.Raw(Model.Webinar.WhoAttend)
+                    @if (Model.Webinar.idWebinar != 2520)
+                    {
+                        <h2 class="short_headline">
+                            <span>
+                                Who Should Attend?
+                            </span>
+                        </h2>
+                        @Html.Raw(Model.Webinar.WhoAttend)
+
+                    }
                     <hr />
                 </div>
             }

@@ -170,6 +170,7 @@
             if (!Model.RegistrationType.OptionLabel.Contains("Streaming")
                 && !Model.RegistrationType.OptionLabel.Contains("Module")
                 && !Model.RegistrationType.SKU.Contains("WSP")
+                && Model.RegistrationType.CreditCost > 0
                 )
             {
                 rowAmount.Append(GetDiscountedTextSpan());

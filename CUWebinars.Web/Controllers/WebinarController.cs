@@ -1331,8 +1331,7 @@ namespace CUWebinars.Web.Controllers
 
                     //populate viewbag for expresscheckout viewmodel
                     ViewBag.Order = order;
-
-                    order.OrderDate = DateTime.Now;
+                    //order.OrderDate = DateTime.Now;
 
                     PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
                     _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);

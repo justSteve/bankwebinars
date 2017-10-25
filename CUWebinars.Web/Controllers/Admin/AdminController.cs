@@ -454,10 +454,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 try
                 {
                     var order = _orderManagementService.GetOrderById(model.Id);
-                    _logger.Info("Updating OrderStatus " + order.idOrder
-                        + " from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus +
-                        "note: " + note + " by: " + _appHelper.GetUserAuditInfo());
-                    
+
+
                     if ((model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Billed ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Submitted)
@@ -469,7 +467,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
 
-                        //order.OrderDate = DateTime.Now;
+                        if (order.OrderStatus == OrderStatus.InProcess)
+                            order.OrderDate = DateTime.Now;
 
                         if (order.idAffiliate == 62)
                         {
@@ -477,13 +476,21 @@ namespace CUWebinars.Web.Controllers.Admin
                             FireOrderSubmittedEvent(order, false, false);
                             JProperty pendingAcsOrderIsApproved = new JProperty(JsonPropertyKeys.PendingACSOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
                             order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
+                            order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
+
                         }
                         else
                         {
                             JProperty incompleteOrderIsApproved = new JProperty(JsonPropertyKeys.IncompleteOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
                             order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, incompleteOrderIsApproved, "IncompleteOrderIsApproved");
+                            order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, incompleteOrderIsApproved, "IncompleteOrderIsApproved");
                         }
                     }
+
+                    _logger.Info("Updating OrderStatus " + order.idOrder
+                                 + " from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus +
+                                 "note: " + note + " by: " + _appHelper.GetUserAuditInfo());
+
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
                     if (model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid)
                     {
