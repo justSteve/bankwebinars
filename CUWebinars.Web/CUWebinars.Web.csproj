@@ -690,6 +690,7 @@
     <Content Include="App_Data\mergeTemplates\WebinarPromoStandalone.docx" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
+    <Content Include="Content\images\AddDiscountCap.jpg" />
     <Content Include="Content\images\compass.png" />
     <Content Include="Content\images\presenters\nesbitt.jpg" />
     <Content Include="Content\mobile\Documentation\assets\css\documenter_style.css" />
@@ -1831,6 +1832,7 @@
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_CompPerspectives.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_FedCompSchool.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_WSPSubscription.docx" />
+    <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventForCD.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
@@ -2142,7 +2144,7 @@
     <Content Include="Views\Webinar\Partials\DisplayOptionsDESWizard.cshtml" />
     <Content Include="Views\Home\LearnMore.cshtml" />
     <Content Include="Views\Account\LoginAdmin.cshtml" />
-    <Content Include="Views\Admin\DESPromo.cshtml" />
+    <Content Include="Views\Admin\PromoForDES.cshtml" />
     <Content Include="Views\Cart\ImportConfSem.cshtml" />
     <Content Include="Views\Cart\MyWebinars.cshtml" />
     <Content Include="Views\Cart\Partials\Upcoming.cshtml" />

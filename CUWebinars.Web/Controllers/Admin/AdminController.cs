@@ -2088,7 +2088,7 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<ActionResult> DESPromo(int id)
+        public async Task<ActionResult> PromoForDES(int id)
         {
 
             var webinarsForUpcoming = _webinarManagementService.GetDesWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date).Take(8);
@@ -2218,7 +2218,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
 
-                List list = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
+                //List list = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
 
                 var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
 
@@ -2228,15 +2228,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (_segment != null)
                 {
 
-                    //var segmentMembers =
-                    //    await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
-                    //        _segment.Id.ToString(), new QueryableBaseRequest
-                    //        {
-
-                    //        }).ConfigureAwait(false);
-
-                    //if (segmentMembers.Any())
-                    //    _logger.Info("Segment found: " + _segment.Id.ToString());
                     recp = new Recipient
                     {
                         ListId = _globalConfig.TenantMailChimpList,
@@ -2280,6 +2271,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         AutoFooter = true,
                         AutoTweet = false,
                         ToName = "*|FNAME|* *|LNAME|* ",
+                        //FromName = "steve@ttstrain.com",
+                        //ReplyTo = "steve@ttstrain.com",
                         FromName = affiliatePromoSenderName,
                         ReplyTo = affiliatePromoSenderEmail,
                         UseConversation = true,
@@ -2311,18 +2304,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
                 List<string> sendToEmails = new List<string>();
-#if DEBUG
 
-
-                sendToEmails.Add("steve@ttstrain.com");
-
-#else
-
-
-
+                //sendToEmails.Add("steve@ttstrain.com");
                 sendToEmails.Add("all.of.us@ttstrain.com");
-
-#endif
                 sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
 
                 CampaignTestRequest emails = new CampaignTestRequest

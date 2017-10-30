@@ -823,7 +823,8 @@ namespace CUWebinars.Web.Helpers
                 || order.idAffiliate != 12014
                 || order.idAffiliate != 16132
                 || order.idAffiliate != 22805
-                || order.idAffiliate != 31267)
+                || order.idAffiliate != 31267
+                )
             {
                 fields.PaymentCaption = "";
             }
@@ -853,26 +854,25 @@ namespace CUWebinars.Web.Helpers
 
             if (row.RegistrationType.SKU.ToLower().Contains("wsp"))
             {
-                if (order.OrderStatus == OrderStatus.Paid)
-                {
-                    fields.PaymentCaption =
-                        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
-                        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
-                        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
-                        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
-                }
-                else
-                {
-                    fields.PaymentCaption =
-                        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
-                        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
-                        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
-                        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+                // uncomment if we decide to without the code until after payment
 
-                    //"Your package will be activated upon payment. Very shortly we will be sending an invoice to " +
-                    //    order.BillingEmail + ". If you wish to make immediate payment by credit card <a href='" + TenantURL + "/Resume/" + order.idOrder +
-                    //    "'> click here.</a>";
-                }
+                //if (order.OrderStatus == OrderStatus.Paid)
+                //{
+                //    fields.PaymentCaption =
+                //        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                //        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
+                //        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
+                //        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+                //}
+                //else
+                //{
+                fields.PaymentCaption =
+                    "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                    order.BillingEmail + " will have your WSP credits automatically applied. And feel free to share the code " + row.Discount.DiscountCode + " above with others in your organization. " +
+                    " It can be applied during checkout - look for the button labeled <i>Add Discount?</i>. Clicking that will prompt for your code [<b>" + row.Discount.DiscountCode + "</b>]." +
+                    " If you would like additional addresses to have the same 'auto-apply' rights as " +
+                    order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+                //}
             }
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
@@ -881,7 +881,8 @@ namespace CUWebinars.Web.Helpers
                     TenantURL + "/Resume/" + order.idOrder +
                     "'>" + " We'll be happy to adjust your registration.</a> ";
             }
-            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
+            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no" && 
+                !row.Webinar.Title.Contains("Compliance Perspectives") )
             {
                 fields.RegDesc =
                     "Your registration includes access to the recording and handouts for six (6) months. <a href='" +
@@ -1668,7 +1669,7 @@ namespace CUWebinars.Web.Helpers
             var phoneNum = "";
             PhoneNumberUtil phoneUtil = PhoneNumberUtil.GetInstance();
             var extractPossible = phoneUtil.IsPossibleNumber(phoneTest, "US");
-            
+
             if (extractPossible)
             {
                 phoneNum = phoneTest;
@@ -1681,7 +1682,7 @@ namespace CUWebinars.Web.Helpers
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             var auditChangedRegType = dataOperations.GetAuditNotes(order, "RegTypeChanges");
-            
+
             return auditChangedRegType;
         }
 
@@ -1689,7 +1690,7 @@ namespace CUWebinars.Web.Helpers
         {
             var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
             var changedOrderStatus = dataOperations.GetAuditNotes(order, "OrderStatusChanges");
-            
+
             return changedOrderStatus;
         }
 

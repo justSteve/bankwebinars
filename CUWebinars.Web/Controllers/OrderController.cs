@@ -1067,7 +1067,7 @@ namespace CUWebinars.Web.Controllers
         public void ReplyToHandler()
         {
             var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
-            _logger.Info("ReplyToHandler" + incoming);
+            _logger.Info("ReplyToHandler: " + incoming);
             string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", ""); //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
             List<MandrillIncomingMsg.mandrill_events> mandrillEventList = JsonConvert.DeserializeObject<List<MandrillIncomingMsg.mandrill_events>>(validJson);
             

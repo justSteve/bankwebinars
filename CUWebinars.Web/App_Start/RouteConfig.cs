@@ -18,7 +18,7 @@ namespace CUWebinars.Web.App_Start
             );
             //replicates legacy's generic connection info endpoint
             routes.MapRoute(
-                    "WebinarDetails",
+                    "WebinarDetails1",
                     "{id}",
                     new { controller = "Webinar", action = "details", id = "" },  // Parameter defaults
                     new { id = @"\d+" }

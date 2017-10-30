@@ -1222,8 +1222,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
 
-            if (_globalConfig.Tenant != "DirectorSeries" 
-                && !account.HasClaim(ClaimTypes.FullName) 
+            if (_globalConfig.Tenant != "DirectorSeries"
+                && !account.HasClaim(ClaimTypes.FullName)
                 )
             {
                 SendAccountCreatedConfirmation(order);
@@ -1242,14 +1242,22 @@ namespace CUWebinars.Web.Core.Orchestrators
                DocumentModel.Load(
                    HttpContext.Current.Server.MapPath(
                        @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventForOnDemandOnly.docx"));
-
+            }
+            if (
+                row.RegistrationType.ShowShippedNotifications.ToLower() == "yes" &&
+                row.RegistrationType.ShowLiveNotifications.ToLower() == "no" 
+                )
+            {
+                document =
+               DocumentModel.Load(
+                   HttpContext.Current.Server.MapPath(
+                       @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventForCD.docx"));
             }
             if (webinar.Status == WebinarStatus.Recorded)
             {
                 document = DocumentModel.Load(
                         HttpContext.Current.Server.MapPath(
                             @"~/App_Data/mergeTemplates/OrderSubmitted_PostEvent.docx"));
-
             }
 
             if (webinar.SeriesInfo.Contains("Children"))
@@ -1898,7 +1906,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             //}
             var upcomingOrders = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
             model.Scheduled = new List<RegistrationSummaryViewModel>();
-            
+
             foreach (Order order in upcomingOrders)
             {
                 try
@@ -2097,7 +2105,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //&& w.Date.ToUniversalTime().Hour == parsedWDate.ToUniversalTime().Hour
                 ).ToList();
 
-                _logger.Info("LoadWebinarForImporter parsedWDate.Hour: " + parsedWDate.Hour );
+                _logger.Info("LoadWebinarForImporter parsedWDate.Hour: " + parsedWDate.Hour);
                 if (webinars.Count() == 1)
                 {
                     return webinars.First();
@@ -2124,7 +2132,7 @@ namespace CUWebinars.Web.Core.Orchestrators
         public int LoadRegistrationForImporter(Webinar webinar, string parsedOrderRegTypeAsString)
         {
             return _orderManagementService.GetAllPossibleRegTypesByWebinarId(webinar.idWebinar).Where(r => r.OptionLabel == parsedOrderRegTypeAsString).SingleOrDefault().idRegType;
-            
+
         }
 
         public int GetRegTypeByRateWatch(string registrationType, int idWebinar)

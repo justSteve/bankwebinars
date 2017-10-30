@@ -495,6 +495,11 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
+                    var subject = "Confirmation of Registration for " + row.Webinar.Title;
+
+                    if (_globalConfig.Tenant == "Director Series")
+                        subject = "Confirmation of Director Series Subscription";
+
                     _logger.Info("ConfirmOrder of New User: " + order.idOrder);
 
                     //M4Gen
@@ -504,7 +509,7 @@ namespace CUWebinars.Web.Controllers
                         _globalConfig.TenantLogo, _cartControllerOrchestrator.GetAddLocPrice(row.Webinar), null);
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
                         sendToAddresses
-                        , "Confirmation of Registration for " + row.Webinar.Title, orderConfirmString);
+                        , subject, orderConfirmString);
 
                     _cartControllerOrchestrator.FireMandrillNotificationEvent(
                         affiliateAddresses
