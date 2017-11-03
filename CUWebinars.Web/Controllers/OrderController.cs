@@ -350,11 +350,11 @@ namespace CUWebinars.Web.Controllers
 
                 return Json(new { Result = WebUiConstants.Fail, Error = myError });
             }
-            
+
             try
             {
                 var email = migratedOrder.Email.Trim();
-                
+
                 var migratorQueryResult = _orderControllerOrchestrator.GetPreparatoryDataForMigrator(migratedOrder
                     , email);
 
@@ -392,7 +392,7 @@ namespace CUWebinars.Web.Controllers
 
                 _orderManagementService.SaveOrderChanges(resultOrder, null, null);
 
-                
+
 
                 return Json(new { Result = idOfLastOrder.ToString() }, JsonRequestBehavior.AllowGet);
             }
@@ -1070,38 +1070,36 @@ namespace CUWebinars.Web.Controllers
             _logger.Info("ReplyToHandler: " + incoming);
             string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", ""); //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
             List<MandrillIncomingMsg.mandrill_events> mandrillEventList = JsonConvert.DeserializeObject<List<MandrillIncomingMsg.mandrill_events>>(validJson);
-            
+
             try
             {
                 foreach (MandrillIncomingMsg.mandrill_events mandrillEvent in mandrillEventList)
                 {
-                    if (mandrillEvent.msg.email != null)
+                    if (mandrillEvent.msg.email != null && !mandrillEvent.msg.text.ToLower().Contains("out of office"))
                     {
-                        _logger.Info("ReplyToHandler is hit");
+                        //nFrom: \"Kimberly Tarasiak\" <Kimberly.Tarasiak@milfordfederal.com>\nSender:
+                        var startBlock = mandrillEvent.msg.text.IndexOf("From: ");
+                        var endBlock = mandrillEvent.msg.text.IndexOf("Sender:");
+                        var senderAdd = "";
+                        try
+                        {
+                            senderAdd = mandrillEvent.msg.text.Substring(startBlock, endBlock - startBlock);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            //throw;
+                        }
+
                         _orderManagementService.FireMandrillNotificationEvent(
                             "e6a68209.ttstrain.com@amer.teams.ms",
-                            //order.BillingEmail,
-                            "A reply to a notification", mandrillEvent.msg.text);
-
-                        //string[] splitIncoming = Regex.Split(mandrillEvent.msg.text, "From:");
-                        //var userMsg = splitIncoming[0];
-
-                        //var idOrder = Regex.Match(splitIncoming[1], @"(?<=\bOrder ID:\s+)\p{L}+").Groups[1].Value;
-                        //if (idOrder != "")
-                        //{
-                        //    _orderManagementService.FireMandrillNotificationEvent(
-                        //        "2afda898.ttstrain.com@amer.teams.ms",
-                        //        //order.BillingEmail,
-                        //        "A reply to a notification - orderId" + idOrder, mandrillEvent.msg.text);
-                        //}
+                            "Reply to a notification", "From: " + senderAdd + "<br>" + mandrillEvent.msg.text);
                     }
                 }
-
             }
             catch (Exception ex)
             {
                 _logger.Warn("ReplyToHandler: " + incoming + " exception: " + ex);
-
             }
             //return null;
         }

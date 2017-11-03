@@ -189,7 +189,68 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
+        //
+        // GET: /Admin/
+        //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
+        public ActionResult ShowWSP(int idaff)
+        {
+            var affiliate = _affiliateManagementService.FindById(19);
 
+            string searchTerm = Request["searchTerm"];
+
+            ViewBag.Title = "Search Results";
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+            {
+            }
+
+            var model = new WpsViewModel
+            {
+                Discounts =
+                    _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                        .Where(d => d.DiscountType == DiscountType.Subscription)
+                        .ToList(),
+                Affiliate = affiliate
+            };
+
+            return View("~/Views/Shared/Admin/ShowWSP.cshtml", model);
+            //CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+            //{
+            //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+            //}
+        }
+
+        // GET: /Admin/
+        //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
+        public ActionResult ShowCP(int idaff)
+        {
+            var affiliate = _affiliateManagementService.FindById(19);
+
+            string searchTerm = Request["searchTerm"];
+
+            ViewBag.Title = "Search Results";
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+            {
+            }
+            var model = new CompPersSubscriptionsModel
+            {
+                Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+            };
+
+
+            return View("~/Views/Shared/Admin/ShowCP.cshtml", model);
+            //CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+            //{
+            //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+            //}
+        }
         //
         // GET: /Admin/
         //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
@@ -224,8 +285,23 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         Affiliate = affiliate,
                         WebUser = user
-                    }
+                    },
+
+                    //WpsViewModel = new WpsViewModel
+                    //{
+                    //    Discounts =
+                    //        _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                    //            .Where(d => d.DiscountType == DiscountType.Subscription)
+                    //            .ToList(),
+                    //    Affiliate = affiliate
+                    //},
+
+                    //CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+                    //{
+                    //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                    //}
                 };
+
                 return View("~/Views/Admin/Home/Index.cshtml", model);
             }
             if (claimsIdentityOfAuthenticatedUser.HasClaim(
@@ -3219,10 +3295,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                         _orderManagementService.GetOrdersByDomain(searchTerm, affiliateId,
                                                 out totalNumberOrders)
                                             .ToList();
-                                    //_dataTablesService.GetOrdersByDomain(searchTerm, affiliateId,
-                                    //        out totalNumberOrders)
-                                    //    .ToList();
-
                                 }
                                 else
                                 {
@@ -3251,6 +3323,21 @@ namespace CUWebinars.Web.Controllers.Admin
                             {
                                 dtsource =
                                     _dataTablesService.GetOrdersByInProcess(affiliateId, out totalNumberOrders).ToList();
+                            }
+                            else if (searchTerm.StartsWith("wsp"))
+                            {
+                                try
+                                {
+                                    var idDiscount = Convert.ToInt32(searchTerm.Split(' ')[1]);
+                                    dtsource =
+                                        _dataTablesService.GetOrdersByWSP(idDiscount, affiliateId, out totalNumberOrders).ToList();
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    throw;
+                                }
+
                             }
                         }
                         else

@@ -232,6 +232,49 @@ namespace CUWebinars.Business.Services
             return theseOrders;
         }
 
+        public IEnumerable<Order> GetOrdersByWSP(int idDiscount, int idAffliate, out int totalNumberOrders)
+        {
+            IList<Order> theseOrders;
+
+            if (idAffliate != 19)
+            {
+                theseOrders = _context.Orders
+
+                    .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Institution)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
+                    .Where(
+                    o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                        .Discount.idDiscount == idDiscount && o.idOrder != idDiscount
+                            && o.idAffiliate == idAffliate)
+                    .ToList();
+            }
+            else
+            {
+                theseOrders = _context.Orders
+                    .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Institution)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => o.OrderRows.Select(or => or.Discount))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar))
+                    .Where(
+                        o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                 .Discount.idDiscount == idDiscount && o.idOrder != idDiscount)
+
+                    .ToList();
+            }
+
+            totalNumberOrders = theseOrders.Count;
+
+            return theseOrders;
+        }
+
         public IEnumerable<WebUser> GetWebUsers(int idAffliate, out int totalNumberUsers)
         {
             IList<WebUser> theseUsers;

@@ -263,9 +263,12 @@ namespace CUWebinars.Web.Controllers
                         }
 
                         //searchDomainOnly (select * where email like '%@ttstrain.com')
-                        if (searchTerm.StartsWith("@") || searchTerm.StartsWith("aa") || searchTerm.StartsWith("l ") ||
-                            searchTerm.StartsWith("inprocess") || searchTerm.Contains("@") ||
-                            searchTerm.StartsWith("inprocess"))
+                        if (searchTerm.StartsWith("@") || searchTerm.StartsWith("aa") 
+                            || searchTerm.StartsWith("l ") 
+                            || searchTerm.StartsWith("inprocess") 
+                            || searchTerm.Contains("@") 
+                            || searchTerm.StartsWith("wsp")
+                            )
                         {
 
                             if (currentAffiliate.idUserAff != 19)

@@ -52,7 +52,7 @@ namespace CUWebinars.Business.Repository
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         
         IList<int> FindUserIdsByPartialId(int value);
-        object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
+        //object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
         Order FindExpressCheckoutOrder(string trim, int idWebinar);
         

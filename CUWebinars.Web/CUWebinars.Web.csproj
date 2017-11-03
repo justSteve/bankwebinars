@@ -2099,7 +2099,6 @@
     <Content Include="Views\Admin\Partials\SearchResultsGrid2Admin.cshtml" />
     <Content Include="Views\Admin\Partials\_ConnectionDetails.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ShowCompPerspectivesSubscription.cshtml" />
-    <Content Include="Views\Shared\Admin\_Subscriptions.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowSubscriptions.cshtml" />
     <Content Include="Views\Shared\Partials\_Cancel_PauseOrder.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowRevenueReportAdmin.cshtml" />
@@ -2120,7 +2119,7 @@
     <Content Include="Views\Cart\PayTraceDeclined.cshtml" />
     <Content Include="Views\Cart\PayTraceApproved.cshtml" />
     <Content Include="Views\Cart\PayTraceCanceled.cshtml" />
-    <Content Include="Views\Shared\Admin\_SubscriptionsCP.cshtml" />
+    <Content Include="Views\Shared\Admin\ShowCP.cshtml" />
     <Content Include="Views\Home\DESModules.cshtml" />
     <Content Include="Views\Webinar\AllActiveDes.cshtml" />
     <Content Include="Views\Webinar\DetailsDes.cshtml" />
@@ -2151,6 +2150,7 @@
     <Content Include="Views\Cart\Partials\Recorded.cshtml" />
     <Content Include="Views\Shared\Partials\_OrderSumUser3.cshtml" />
     <Content Include="Views\Cart\Partials\OrderHasAdditionalLocations.cshtml" />
+    <Content Include="Views\Shared\Admin\ShowWSP.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

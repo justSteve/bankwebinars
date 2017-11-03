@@ -189,10 +189,12 @@
 
         </div>
         <div class="tab-pane" id="subscriptions">
-            @{ Html.RenderPartial("Admin/_Subscriptions", Model.WpsViewModel); }
+            <a href="/Admin/ShowWSP?idAff=@Model.AffiliateSettingsViewModel.Affiliate.idUserAff">Webinar Subscription Packages  </a>
+            @*@{ Html.RenderPartial("Admin/_Subscriptions", Model.WpsViewModel); }*@
         </div>
         <div class="tab-pane" id="CompliancePerspectives">
-            @{ Html.RenderPartial("Admin/_SubscriptionsCP", Model.CompPersSubscriptionsModel); }
+            <a href="/Admin/ShowCP?idAff=@Model.AffiliateSettingsViewModel.Affiliate.idUserAff">Compliance Perspectives Subscriptions</a>
+            @*@{ Html.RenderPartial("Admin/_SubscriptionsCP", Model.CompPersSubscriptionsModel); }*@
 
         </div>
     </div>
