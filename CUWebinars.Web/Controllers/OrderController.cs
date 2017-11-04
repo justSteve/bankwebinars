@@ -1075,25 +1075,16 @@ namespace CUWebinars.Web.Controllers
             {
                 foreach (MandrillIncomingMsg.mandrill_events mandrillEvent in mandrillEventList)
                 {
-                    if (mandrillEvent.msg.email != null && !mandrillEvent.msg.text.ToLower().Contains("out of office"))
+                    if (mandrillEvent.msg.email != null && (
+                        !mandrillEvent.msg.text.ToLower().Contains("out of office")
+                        && !mandrillEvent.msg.text.ToLower().Contains("out of the office")
+                        //&& !mandrillEvent.msg.text.ToLower().StartsWith("I will be unavailable")
+                        ))
                     {
-                        //nFrom: \"Kimberly Tarasiak\" <Kimberly.Tarasiak@milfordfederal.com>\nSender:
-                        var startBlock = mandrillEvent.msg.text.IndexOf("From: ");
-                        var endBlock = mandrillEvent.msg.text.IndexOf("Sender:");
-                        var senderAdd = "";
-                        try
-                        {
-                            senderAdd = mandrillEvent.msg.text.Substring(startBlock, endBlock - startBlock);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                            //throw;
-                        }
 
                         _orderManagementService.FireMandrillNotificationEvent(
                             "e6a68209.ttstrain.com@amer.teams.ms",
-                            "Reply to a notification", "From: " + senderAdd + "<br>" + mandrillEvent.msg.text);
+                            "Reply to a notification", "From: " + mandrillEvent.msg.from_email + " (" + mandrillEvent.msg.from_name + ")<br>" + mandrillEvent.msg.text);
                     }
                 }
             }
