@@ -40,8 +40,10 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Bugsnag.Clients;
-using Citrix.GoToWebinar.Api;
-using Citrix.GoToWebinar.Api.Model;
+
+using LogMeIn.GoToWebinar.Api;
+using LogMeIn.GoToWebinar.Api.Model;
+
 using CUWebinars.Business.Notification.ViewModel;
 using MailChimp.Net;
 using MailChimp.Net.Core;

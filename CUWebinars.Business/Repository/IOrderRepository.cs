@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Citrix.GoToWebinar.Api.Model;
+using LogMeIn.GoToWebinar.Api.Model;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using Webinar = CUWebinars.Business.Models.Webinar;

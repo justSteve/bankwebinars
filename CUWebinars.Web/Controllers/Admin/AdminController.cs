@@ -2000,7 +2000,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 "<p style=\"color: #f5f5f5\">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. </p>";
             bodyRight += "<p style=\"color: #f5f5f5\" align=\"center\"><b>Webinar Subscription Packages</b></p>";
             bodyRight +=
-                "<p style=\"color: #f5f5f5\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; </p>";
+                "<p style=\"color: #f5f5f5\" align=\"center\"><b>Webinar Subscription Packages</b></p><p style=\"color: #f5f5f5\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; <a href=\"https://bankwebinars.com/webinar/details/2520?idaff={aff_idUserAff}\" style=\"color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;\">Click here to learn more about this cost-saving option.</a></p>";
 
             model.BodyRight = bodyRight;
 
@@ -2275,7 +2275,9 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             if (flag)
             {
-                theTime = (int)affiliate.WebUser.timeZone + 1;
+                //adjust for Daylight Savings
+                //theTime = (int)affiliate.WebUser.timeZone + 1;
+                theTime = (int)affiliate.WebUser.timeZone;
             }
             if (sendDate.Contains("-"))
             {

@@ -4,7 +4,7 @@ using CUWebinars.Business.Models;
 using System;
 using System.Collections.Generic;
 using BrockAllen.MembershipReboot;
-using Citrix.GoToWebinar.Api.Model;
+using LogMeIn.GoToWebinar.Api.Model;
 using CUWebinars.Business.Notification.Email;
 using CUWebinars.Business.Notification.ViewModel;
 using Webinar = CUWebinars.Business.Models.Webinar;

@@ -285,6 +285,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                
 
                 if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
                 {
@@ -296,6 +297,11 @@ namespace CUWebinars.Web.Controllers
                 var createdSeriesOrders = "";
                 try
                 {
+                if (model.Order.OrderStatus == OrderStatus.InProcess 
+                    || model.Order.OrderStatus == OrderStatus.Canceled
+                    || model.Order.OrderStatus == OrderStatus.AwaitingVerification
+                    )
+                    model.Order.OrderDate = DateTime.Now;
                     model.Order.OrderStatus = OrderStatus.Submitted;
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, row);
                 }
@@ -466,7 +472,7 @@ namespace CUWebinars.Web.Controllers
                 _cartControllerOrchestrator.FireMandrillNotificationEvent(
                     "info@ttstrain.com"
                     , "Catch All Orders " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
-
+                
             }
             else
             {
@@ -794,6 +800,10 @@ namespace CUWebinars.Web.Controllers
 
             //ensures that the price passed to PayTrace reflects order price with discount applied.
             var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+            //if the discount is a wsp null it out.
+            if (order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount != null && order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount.DiscountType == DiscountType.Subscription
+                && order.Total == 0)
+                order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).Discount = null;
             var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
 
             ptLogger.Price = (decimal)order.Total;
@@ -1947,8 +1957,8 @@ namespace CUWebinars.Web.Controllers
                             model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active), null, 1);
                     }
 
-                    _logger.Info("UpdateOrderDetails: " + model.Order.idOrder + 
-                        " changed from: " + oldRegType + " to: " + newRegType + 
+                    _logger.Info("UpdateOrderDetails: " + model.Order.idOrder +
+                        " changed from: " + oldRegType + " to: " + newRegType +
                         " note: " + note + " by: " + _appHelper.GetUserAuditInfo());
 
                     var UpdateSuccessCaption = "Order updated to: " + newRegType;
@@ -2984,7 +2994,7 @@ namespace CUWebinars.Web.Controllers
             _cartControllerOrchestrator.SetOrderStatus(idOrder, User.Identity.Name, orderStatus); // validates that the user owns this orderid
 
             List<Order> orders = _cartControllerOrchestrator.GetOrdersByUser(User.Identity.Name)
-                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList(); 
+                .Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
             // used a couple of places, may want to make a function that just returns these...
 
             string discountCaptionMultiMsg = "";
@@ -3024,7 +3034,7 @@ namespace CUWebinars.Web.Controllers
                 sbHeaderSummary.Append("  " + registrationSummaryViewModel.OrderRow.idOrder + ",");
             }
 
-            // send email via azure / mailchimp
+            // send email via azure / 
             string subject = _globalConfig.OrderSubmittedMultiEmailSubject; // could do it in handler, could add dynamic content
 
             // take the summery and merge it into our HTML email template.  doing this early since we are reusing the generic-ish AzureCuwWebJobSmtpMessageDelivery code
@@ -3033,7 +3043,7 @@ namespace CUWebinars.Web.Controllers
                 Subject = subject,
                 OrderSummaryHtml = sbOrdersSummary.ToString(),
                 DiscountCaption = model.DiscountCaptionMulti,
-                GrandTotalCaption = model.GrandTotalCaptionMulti,
+                //GrandTotalCaption = model.GrandTotalCaptionMulti,
                 HeaderSummaryCaption = sbHeaderSummary.ToString().TrimEnd(',')
             };
 
@@ -3072,7 +3082,7 @@ namespace CUWebinars.Web.Controllers
                 sbHeaderSummary.Append("  " + registrationSummaryViewModel.OrderRow.idOrder + ",");
             }
 
-            // send email via azure / mailchimp
+            // send email via azure / mandrill
             string subject = _globalConfig.OrderSubmittedMultiEmailSubject; // could do it in handler, could add dynamic content
 
             // take the summery and merge it into our HTML email template.  doing this early since we are reusing the generic-ish AzureCuwWebJobSmtpMessageDelivery code

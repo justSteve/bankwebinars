@@ -172,6 +172,12 @@
     <Reference Include="log4net.Appender.Azure">
       <HintPath>..\packages\log4net.Appender.Azure.1.1.1.0\lib\net45\log4net.Appender.Azure.dll</HintPath>
     </Reference>
+    <Reference Include="LogMeIn.GoToCoreLib.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogMeIn.GoToCoreLib.NET.1.0.0.0\lib\net40\LogMeIn.GoToCoreLib.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="LogMeIn.GoToWebinar.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogMeIn.GoToWebinar.NET.1.0.0.0\lib\net40\LogMeIn.GoToWebinar.NET.dll</HintPath>
+    </Reference>
     <Reference Include="MailChimp.Net.V3, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37d26d538413c581, processorArchitecture=MSIL">
       <HintPath>..\packages\MailChimp.Net.V3.2.0.0.0\lib\net45\MailChimp.Net.V3.dll</HintPath>
     </Reference>
@@ -742,10 +748,10 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="ApplicationInsights.config">
+    <None Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <None Include="App_Data\JsonSchemaStore\PostEventMaterialsWereAccessed.json" />
     <Content Include="Content\claims-mment.css" />
     <Content Include="Content\common.css" />

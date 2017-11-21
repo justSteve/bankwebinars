@@ -1,4 +1,4 @@
-﻿using Citrix.GoToWebinar.Api;
+﻿
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Citrix.GoToWebinar.Api.Model;
+
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 
@@ -517,11 +517,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (userIdentity.IsAuthenticated && !ReferenceEquals(null, orderRow.CitrixJoinUrl)) // CitrixJoinUrl will be null for impromtu user
                     {
-                        webinarUrl = orderRow.CitrixJoinUrl; // fully qualified authorative webinar-access link from Citrix.
+                        webinarUrl = orderRow.CitrixJoinUrl; // fully qualified authorative webinar-access link from Citrix
                     }
                     else
                     {
-                        // non-individualized version of webinar-access link from Citrix.
+                        // non-individualized version of webinar-access link from Citrix
                         webinarUrl = webinar.CitrixRegisterUrl;
                     }
                 }

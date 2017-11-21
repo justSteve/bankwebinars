@@ -334,6 +334,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateInput(false)]
         public JsonResult MigrateOrder(MigrateOrderModel migratedOrder)
         {
+            
             int idOfLastOrder = default(int);
             string verificationKey = string.Empty;
             string confirmChangeEmailUrl = string.Empty;
@@ -389,7 +390,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info(string.Format("MigrateOrder|CreateNewOrder: {0}", idOfLastOrder));
 
                 Order resultOrder = _orderManagementService.GetOrderById(idOfLastOrder);
-
+                resultOrder.OrderDate = migratedOrder.OrderDate;
                 _orderManagementService.SaveOrderChanges(resultOrder, null, null);
 
 
@@ -1068,7 +1069,9 @@ namespace CUWebinars.Web.Controllers
         {
             var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
             _logger.Info("ReplyToHandler: " + incoming);
-            string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", ""); //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
+            string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", ""); 
+            //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. 
+            //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
             List<MandrillIncomingMsg.mandrill_events> mandrillEventList = JsonConvert.DeserializeObject<List<MandrillIncomingMsg.mandrill_events>>(validJson);
 
             try
@@ -1078,7 +1081,7 @@ namespace CUWebinars.Web.Controllers
                     if (mandrillEvent.msg.email != null && (
                         !mandrillEvent.msg.text.ToLower().Contains("out of office")
                         && !mandrillEvent.msg.text.ToLower().Contains("out of the office")
-                        //&& !mandrillEvent.msg.text.ToLower().StartsWith("I will be unavailable")
+                        && !mandrillEvent.msg.subject.ToLower().StartsWith("auto")
                         ))
                     {
 

@@ -439,8 +439,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
 
                 migratedOrder.Total = command.Total;
-
-
+                
                 string buildMessage = "MigratedOn: " + DateTime.UtcNow + string.Format(" OrginalTotal: {0}", command.Total);
 
 

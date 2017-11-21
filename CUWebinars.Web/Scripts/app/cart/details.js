@@ -223,6 +223,7 @@ $(function () {
 
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
+            //submits to 
             confirmOrderForm.submit();
         });
 
