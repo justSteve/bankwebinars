@@ -28,6 +28,7 @@ namespace CUWebinars.Business.Repository
         void SetUserStatusToUnChanged(WebUser user);
         WebUser BuildPlaceHolderUser(string orderEmail);
         WebUser GetWebUserByEmailDomain(string orderEmail);
+        WebUser SetWebUserWSP(int idDiscount, int idUser);
 
         IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
         Affiliate FindAffiliateOfLastOrder(string identity);

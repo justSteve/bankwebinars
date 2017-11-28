@@ -1948,64 +1948,96 @@ namespace CUWebinars.Business.Services
             {
                 return null;
             }
+
             if (order.WebUser.idSubscriptionDiscount != null)
             {
-                var discount = GetDiscountById(order.WebUser.idSubscriptionDiscount.Value);
-                if (discount.idAffiliate != order.idAffiliate)
+                try
                 {
-                    FireMandrillNotificationEvent(
-                        "info@ttstrain.com",
-                        "affiliate did not match existing WSP " + order.idOrder
-                        , "Order Affiliate was: " + order.idAffiliate + " but existing WSP had: " + discount.idAffiliate);
+                    var discount = GetDiscountById(order.WebUser.idSubscriptionDiscount.Value);
+                    if (discount.idAffiliate != order.idAffiliate)
+                    {
+                        FireMandrillNotificationEvent(
+                            "info@ttstrain.com",
+                            "affiliate did not match existing WSP " + order.idOrder
+                            , "Order Affiliate was: " + order.idAffiliate + " but existing WSP had: " + discount.idAffiliate);
 
-                    var aff = GetAffiliateByIdLoaded(discount.idAffiliate);
-                    order.Affiliate = aff;
-                    order.idAffiliate = discount.idAffiliate;
+                        var aff = GetAffiliateByIdLoaded(discount.idAffiliate);
+                        order.Affiliate = aff;
+                        order.idAffiliate = discount.idAffiliate;
+                    }
+
+                    if (discount.DiscountType == DiscountType.Subscription)
+                    {
+                        discount.DateValidTo = order.OrderDate;
+                        discount.DateValidFrom = order.OrderDate;
+                        discount.Cost = row.RowPrice;
+                        discount.DateBilled = DateTime.UtcNow;
+                        discount.DateVerified = DateTime.UtcNow;
+                        discount.FlatOff = 0;
+                        discount.Notes = "V3 entry";
+                        discount.PercentOff = 100;
+                        discount.RenewalTerm = 0;
+                        discount.Status = "Active";
+                        discount.TotalCount += totalCount;
+                        discount.idAffiliate = order.idAffiliate;
+                        discount.Notes += "Renewed with " + totalCount;
+
+                    }
+
+                    row.Discount = discount;
+                    SaveOrderChanges(order, null, null);
+
+                    FireMandrillNotificationEvent("2afda898.ttstrain.com@amer.teams.ms"
+                        , "existing WSP was renewed: " + order.idOrder
+                        , "Renewal for : " + discount.DiscountCode  );
+
+                    return discount;
                 }
-
-                if (discount.DiscountType == DiscountType.Subscription)
+                catch (Exception e)
                 {
-                    discount.DateValidTo = order.OrderDate;
-                    discount.DateValidFrom = order.OrderDate;
-                    discount.Cost = row.RowPrice;
-                    discount.DateBilled = DateTime.UtcNow;
-                    discount.DateVerified = DateTime.UtcNow;
-                    discount.FlatOff = 0;
-                    discount.Notes = "V3 entry";
-                    discount.PercentOff = 100;
-                    discount.RenewalTerm = 0;
-                    discount.Status = "Active";
-                    discount.TotalCount += totalCount;
-                    discount.idAffiliate = order.idAffiliate;
-                    discount.Notes += "Renewed with " + totalCount;
-
+                    _logger.FatalException("CreateWsp_renewal: ", e);
+                    throw;
                 }
-
-                row.Discount = discount;
-                SaveOrderChanges(order, null, null);
-                return discount;
             }
-            Discount wspDiscount = new Discount
+
+            try
             {
-                DiscountType = DiscountType.Subscription,
-                DateValidTo = order.OrderDate,
-                DateValidFrom = order.OrderDate,
-                Cost = row.RowPrice,
-                DateBilled = DateTime.UtcNow,
-                DateVerified = DateTime.UtcNow,
-                DiscountCode = whichTier + order.idOrder,
-                FlatOff = 0,
-                Notes = "V3 entry",
-                PercentOff = 100,
-                RenewalTerm = 0,
-                Status = "Active",
-                TotalCount = totalCount,
-                idAffiliate = order.idAffiliate,
-                idDiscount = order.idOrder
-            };
-            row.Discount = wspDiscount;
-            SaveOrderChanges(order, null, null);
-            return wspDiscount;
+
+                Discount wspDiscount = new Discount
+                {
+                    DiscountType = DiscountType.Subscription,
+                    DateValidTo = order.OrderDate,
+                    DateValidFrom = order.OrderDate,
+                    Cost = row.RowPrice,
+                    DateBilled = DateTime.UtcNow,
+                    DateVerified = DateTime.UtcNow,
+                    DiscountCode = whichTier + order.idOrder,
+                    FlatOff = 0,
+                    Notes = "V3 entry",
+                    PercentOff = 100,
+                    RenewalTerm = 0,
+                    Status = "Active",
+                    TotalCount = totalCount,
+                    idAffiliate = order.idAffiliate,
+                    idDiscount = order.idOrder
+                };
+                row.Discount = wspDiscount;
+                SaveOrderChanges(order, null, null);
+
+                _webUserRepository.SetWebUserWSP(row.Discount.idDiscount, order.idUser);
+
+                FireMandrillNotificationEvent("2afda898.ttstrain.com@amer.teams.ms"
+                    , "New WSP: " + order.idOrder
+                    , "New WSP created for: " + wspDiscount.DiscountCode );
+
+                return wspDiscount;
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("CreateWsp_fromNew: ", e);
+                throw;
+            }
+
         }
 
         //public IList<RegType> GetAllPossibleRegTypesByWebinarId(int idWebinar)
