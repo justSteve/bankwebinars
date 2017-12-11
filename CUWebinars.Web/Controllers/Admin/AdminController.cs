@@ -1864,7 +1864,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 model.EventBody =
                     HttpUtility.HtmlDecode(
-                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body);
+                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster2.cshtml").Body);
                 // get Template with new method
 
                 return Json(new { masterText = model.EventBody });
@@ -1936,7 +1936,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 model.EventBody =
                     HttpUtility.HtmlDecode(
-                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerWeekPromoMaster.cshtml").Body);
+                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerWeekPromoMaster2.cshtml").Body);
 
                 return Json(new { masterText = model.EventBody });
             }
@@ -2393,7 +2393,10 @@ namespace CUWebinars.Web.Controllers.Admin
                     Emails = sendToEmails.ToArray()
                 };
 
-                await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+                //await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+                _orderManagementService.FireMandrillNotificationEvent(
+                    sendToEmails
+                    , "[Testing] " + subject, messageBodyHtml);
 
                 _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
                 await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest

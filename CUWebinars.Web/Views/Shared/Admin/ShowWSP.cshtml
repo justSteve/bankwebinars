@@ -32,47 +32,6 @@
         text-align: left;
     }
 </style>
-@*<script type="text/javascript" language="javascript">
-
-            var MakeTable = function (result1, thisId) {
-                var buildTable = "<table>";
-                var json = $.parseJSON(result1);
-                for (var i = 0, len = json.length; i < len; i++) {
-                    console.log(json[i]);
-                    buildTable = buildTable + "<tr><td>"+i+".</td><td>" + json[i].idOrder + "</td><td>"+ json[i].OrderDate + "</td><td>" + json[i].Email + "</td><td>" + json[i].Credits +
-                        "</td></tr>";
-                }
-                buildTable = buildTable + "</table>";
-                $("div[id^=discountDetails_" + thisId + "]").html(buildTable);
-
-            };
-            $(function () {
-                $("td[id^=showDiscountDetails_]").click(
-                    function () {
-                        var thisId = ($(this).data("thisid"));
-                        $("div[id^='discountDetails_']").hide();
-
-                        $("div[id^=discountDetails_" + thisId + "]").show();
-
-                        var payload = { idAffiliate: idAffiliate, idDiscount: thisId };
-                        console.log(payload);
-                        $.ajax({
-                            type: 'POST',
-
-                            cache: false,
-                            url: '/Admin/AuditDiscount',
-                            dataType: constants.JsonDataType,
-                            data: payload,
-                            beforeSend: function () {
-                                //$(self)
-                                //    .after('<span id="spinnerLabel" class="label label-info" style="margin-left:5px"><span>&nbsp;<i class="icon-spinner icon-spin"></i>&nbsp;Sending...</span></span>');
-                            }
-                        }).done(function (result) {
-                            MakeTable(result, thisId);
-                        });
-                    });
-            });
-</script>*@
 <div class="container">
     <!--begin main content-->
     <div class="row-fluid">
@@ -88,7 +47,7 @@
                         {
                             rowCount++;
                             var users = "";
-                            foreach (var user in discount.WpsUsers)
+                            foreach (var user in discount.WpsUsers.OrderBy(d => d.AcctStatus))
                             {
                                 users += user.email + ", ";
                             }

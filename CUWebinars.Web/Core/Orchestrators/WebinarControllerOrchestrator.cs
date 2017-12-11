@@ -712,6 +712,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                 try
                 {
                     var order = _orderManagementService.GetOrderById(orderId);
+
+                    if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType
+                            .ShowShippedNotifications.ToLower() == "yes")
+                    {
+                        var dataOperations =
+                            new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+                        dataOperations.BuildStampsLabels(order.idOrder);
+                    }
+
                     var expiryDate =
                         _orderManagementService.CalculatePostEventMaterialsAccessExpiry(
                             order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));

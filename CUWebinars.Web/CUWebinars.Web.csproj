@@ -1839,6 +1839,8 @@
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_FedCompSchool.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_WSPSubscription.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventForCD.docx" />
+    <Content Include="Notification\Templates\SendPerDayPromoMaster2.cshtml" />
+    <Content Include="Notification\Templates\SendPerWeekPromoMaster2.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />

@@ -58,7 +58,8 @@ $(document).ready(function () {
 
                 if (!affiliateId || affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
                     return;
-
+                console.log("affs is: ");
+                console.log(affs);
                 var localCopy = "";
                 var affObj = arrayLookup(affs, "idUserAff", affiliateId);
                 if (affObj != null) {
@@ -390,16 +391,19 @@ function SetEditorTabForAffiliate(affiliateId, affiliateCopy) {
         var affObj = arrayLookup(affs, "idUserAff", affiliateId);
 
         if (affObj != null) {
-            console.log(affObj);
+            console.log("SetEditorTabForAffiliate: " + affObj);
             localCopy = replaceMasterTokensForAffiliate(affObj);
         }
     }
 
     $("#editor_" + affiliateId).val(localCopy);
-    // do this right away even though it's not really needed, makes it easier to think about when debugging
+    // do this right away even though it's not really needed, 
+    // makes it easier to think about when debugging
 
     if (localCopy == "")
-        localCopy = "<!--WIJ-NULL-->"; // WIJEDITOR seems to choke on erasing / going to blank ("") and leaves the prior text, use a special comment that we have to program around to overcome that
+        localCopy = "<!--WIJ-NULL-->"; // WIJEDITOR seems to choke on erasing 
+    // going to blank ("") and leaves the prior text, 
+    //use a special comment that we have to program around to overcome that
 
     var $editorTA = $("#editorTA");
     $editorTA.wijeditor("setText", localCopy);
@@ -806,11 +810,12 @@ function replaceMasterTokensForAffiliate(aff) {
         }
     });
     var copy = $("#editor_0").val(); // 0 is master
-
+    console.log(aff);
     copy = copy.replace(/\{aff_EmailBanner\}/gi, aff.EmailBanner);
     copy = copy.replace(/\{aff_EmailFooter\}/gi, aff.EmailFooter);
     copy = copy.replace(/\{aff_ttsdomain\}/gi, aff.ttsDomain);
     copy = copy.replace(/\{aff_idUserAff\}/gi, aff.idUserAff);
+    copy = copy.replace(/\{aff_Logo\}/gi, aff.Logo);
     //copy = copy.replace(/\{aff_timeZone\}/gi, aff.timeZone);
     copy = copy.replace(/\{aff_ContactPerson\}/gi, aff.ContactPerson);
     copy = copy.replace(/\{aff_NotiPromos\}/gi, aff.NotiPromos);
