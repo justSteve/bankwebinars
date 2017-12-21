@@ -1513,6 +1513,8 @@ namespace CUWebinars.Web.Controllers
         {
             if (_globalConfig.Tenant == "DirectorSeries")
                 return Redirect("http://my.directorseries.com/users/sign_in");
+            if (_globalConfig.Tenant == "CCS")
+                return Redirect("http://my.ttscompliancesuite.com/users/sign_in");
 
             try
             {

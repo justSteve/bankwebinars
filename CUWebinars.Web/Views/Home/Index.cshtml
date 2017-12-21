@@ -15,6 +15,10 @@
     {
         Layout = "~/Views/Shared/_Layout_DES.cshtml";
     }
+    if (_globalConfig.Tenant == "CCS")
+    {
+        Layout = "~/Views/Shared/_Layout_Ccs.cshtml";
+    }
 }
 
 

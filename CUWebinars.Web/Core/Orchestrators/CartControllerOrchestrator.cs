@@ -152,15 +152,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
-
             }
-
             return null;
         }
 
         public CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrder)
         {
-
             if (idOrder.HasValue && idOrder.Value > 0)
             {
                 var order = _orderManagementService.GetOrderById(idOrder.Value);
@@ -1222,7 +1219,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
 
-            if (_globalConfig.Tenant != "DirectorSeries"
+            if (_globalConfig.Tenant != "DirectorSeries" && _globalConfig.Tenant != "CCS"
                 && !account.HasClaim(ClaimTypes.FullName)
                 )
             {
@@ -1245,7 +1242,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
             if (
                 row.RegistrationType.ShowShippedNotifications.ToLower() == "yes" &&
-                row.RegistrationType.ShowLiveNotifications.ToLower() == "no" 
+                row.RegistrationType.ShowLiveNotifications.ToLower() == "no"
                 )
             {
                 document =
@@ -1294,6 +1291,29 @@ namespace CUWebinars.Web.Core.Orchestrators
                             @"~/App_Data/mergeTemplates/OrderSubmitted_FedCompSchool.docx"));
             }
 
+            if (_globalConfig.Tenant == "CCS")
+            {
+                document =
+                    DocumentModel.Load(
+                        System.Web.HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmittedCCS.docx"));
+
+                fields = new NotificationMessageFields
+                {
+                    AttendType = row.RegistrationType.OptionLabelShort,
+                    RegDesc = order.FirstName + " " + order.LastName + "<br>" + order.Institution + "<br>" + order.BillingAddress + "<br>" + order.BillingCity + ", " + order.BillingState + "<br>Subscription Tier: " + row.RegistrationType.OptionLabelShort,
+                    TenantSignature = "The " + _globalConfig.Tenant + " Staff",
+                    OrderID = row.idOrder,
+                    BillingEmail = order.BillingEmail,
+                    TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
+                    OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
+                    LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
+                    TenantName = _globalConfig.Tenant,
+                    WebinarTitle = webinar.Title,
+                    FirstName = order.FirstName
+
+                };
+            }
             if (_globalConfig.Tenant == "DirectorSeries")
             {
                 document =
@@ -1346,7 +1366,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     container.CreateIfNotExists();
 
                     CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
-                    if (_globalConfig.Tenant == "DirectorSeries")
+                    if (_globalConfig.Tenant == "DirectorSeries" || _globalConfig.Tenant == "CCS" )
                         blob = container.GetBlockBlobReference(order.idOrder + ".htm");
                     using (MemoryStream output = new MemoryStream())
                     {

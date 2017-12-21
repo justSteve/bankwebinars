@@ -955,7 +955,7 @@ namespace CUWebinars.Web.Helpers
             copy = copy.Replace("{aff_EmailFooter}", aff.EmailFooter);
             copy = copy.Replace("{aff_ttsdomain}", aff.ttsDomain);
             copy = copy.Replace("{aff_idUserAff}", aff.idUserAff.ToString());
-            //copy = copy.Replace("{aff_timeZone}", aff.timeZone);
+            copy = copy.Replace("{aff_Logo}", aff.Logo);
             copy = copy.Replace("{aff_ContactPerson}", aff.ContactPerson);
             copy = copy.Replace("{aff_NotiPromos}", aff.NotiPromos);
             copy = copy.Replace("{aff_ContactPhone}", aff.ContactPhone);

@@ -48,6 +48,7 @@ namespace CUWebinars.Business.Constants
         public const string VerifyEmailLink = "VerifyEmailLink";
         public const string BankWebinars = "BankWebinars";
         public const string DirectorSeries = "DirectorSeries";
+        public const string CCS = "CCS";
         // ReSharper disable once InconsistentNaming
         public const string CUWebinars = "CUWebinars";
         public const string ClaimDateFormatText = "yyyy-MM-dd";

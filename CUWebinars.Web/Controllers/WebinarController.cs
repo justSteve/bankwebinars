@@ -265,10 +265,10 @@ namespace CUWebinars.Web.Controllers
                         }
 
                         //searchDomainOnly (select * where email like '%@ttstrain.com')
-                        if (searchTerm.StartsWith("@") || searchTerm.StartsWith("aa") 
-                            || searchTerm.StartsWith("l ") 
-                            || searchTerm.StartsWith("inprocess") 
-                            || searchTerm.Contains("@") 
+                        if (searchTerm.StartsWith("@") || searchTerm.StartsWith("aa")
+                            || searchTerm.StartsWith("l ")
+                            || searchTerm.StartsWith("inprocess")
+                            || searchTerm.Contains("@")
                             || searchTerm.StartsWith("wsp")
                             )
                         {
@@ -336,6 +336,12 @@ namespace CUWebinars.Web.Controllers
                 ViewBag.Title = "All Director Education Series Courses";
                 return View("~/Views/Webinar/AllActiveDes.cshtml", webinars);
             }
+            if (eventsToShow == "ccs")
+            {
+                webinars = _webinarManagementService.GetDesWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date);
+                ViewBag.Title = "All Director Education Series Courses";
+                return View("~/Views/Webinar/AllActiveCcs.cshtml", webinars);
+            }
 
             return View(webinars);
         }
@@ -358,8 +364,16 @@ namespace CUWebinars.Web.Controllers
             var orgKey = _globalConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
             var cWebinarKey = _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey);
             var api = new RegistrantsApi();
-
-            var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
+            List<Registrant> apiResponse = new List<Registrant>();
+            try
+            {
+                apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("SendConnectionInfoPrep | LogMeIn api fails: ", e);
+                throw;
+            }
 
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinar.idWebinar);
 
@@ -761,10 +775,16 @@ namespace CUWebinars.Web.Controllers
 
                 return RedirectToAction("DetailsDes", new { id = id, idOrder = idOrder });
             }
+            if (_globalConfig.Tenant == "CCS")
+            {
+                _stateService.SetValue(WebUiConstants.CcsSession, "true");
+
+                return RedirectToAction("DetailsCcs", new { id = id, idOrder = idOrder });
+            }
 
             if (!string.IsNullOrEmpty(renew))
             {
-                
+
             }
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
@@ -945,7 +965,7 @@ namespace CUWebinars.Web.Controllers
                 if (model.Order != null && model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == 2520)
                 {
                     //model.Order = null;
-                    
+
                     model.CheckoutOptionsViewModel.OrderExists = false;
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
                 }
@@ -1038,6 +1058,194 @@ namespace CUWebinars.Web.Controllers
         private string MakeTitleSafe(string webinarTitle)
         {
             return webinarTitle;
+        }
+
+        public ActionResult DetailsCcs(int? id, int? idOrder, string joinCode)
+        {
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+            var currentUser = User.Identity.Name ?? "anon";
+
+            int incomingOrder = 0;
+            if (idOrder.HasValue)
+            {
+                incomingOrder = idOrder.Value;
+            }
+
+            if (id.HasValue)
+            {
+
+                Webinar webinar = null;
+                WebinarDetailsViewModel model = null;
+
+                InitializeDetailsWebinar(id.Value, out webinar);
+
+                if (webinar == null) return HttpNotFound();
+
+                InitializeDetailsModel(webinar, out model, incomingOrder);
+
+                if (incomingOrder == 0 || joinCode != null)
+                {
+                    InitializeDetailsState(webinar, model, id.Value, joinCode);
+                    // form state, incl. stuff that will be posted back. 
+                }
+                else
+                {
+                    try
+                    {
+                        InitializeDetailsStateFromExpChcSubmit(webinar, model, id.Value, incomingOrder);
+
+                        //  logger chokes if Discount is present in Order
+                        //var logModelState = JsonConvert.SerializeObject(model.Order, Formatting.None,
+                        //    new JsonSerializerSettings()
+                        //    {
+
+                        //        MaxDepth = 1,
+                        //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        //    });
+
+                        //_logger.Info("Details | returning checkout session by" + currentUser + " on: " + incomingOrder +
+                        //             " {" + logModelState + "}, Audit: {" + _appHelper.GetUserAuditInfo() + "}");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("Details | returning checkout session - ", ex);
+                        throw;
+                    }
+                }
+                InitializeViewCentricProperties(model);
+                // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
+                if (model.Webinar == null)
+                {
+                    return HttpNotFound();
+                }
+
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                {
+                    var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+
+                    ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
+                    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
+                    // find a better check for admin
+                    if (model.CheckoutInProcess)
+                    {
+                        CheckoutResumeByAdmin(id, model);
+                    }
+
+                    //if (webinar.Status == WebinarStatus.Active || webinar.Status == WebinarStatus.InProgress)
+                    //{
+                    //    _webinarControllerOrchestrator.GetCitrixRegsPerWebinar(webinar);
+                    //}
+
+                    model.ShowOrdersViewModel = new ShowOrdersViewModel
+                    {
+                        Affiliate = aff,
+                        Orders = _orderManagementService.GetOrdersByWebinar(id.Value),
+                        UserIsAdmin = true,
+                        Webinar = model.Webinar
+                    };
+
+                    BuildConfirmOrderView(model);
+
+                    return PartialView("DetailsAdmin", model);
+                }
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+                {
+                    var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+
+                    ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
+
+                    // Get the claims values
+                    var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims
+                        .Where(c => c.Type == ClaimTypes.Affiliate)
+                        .Select(c => c.Value)
+                        .SingleOrDefault();
+
+                    var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
+
+                    if (model.CheckoutInProcess)
+                    {
+                        CheckoutResumeByAdmin(id, model);
+                    }
+
+                    model.DNP = true;
+                    if (aff.DoNotPromoteList != null)
+                        foreach (var w in aff.DoNotPromoteList)
+                        {
+                            if (webinar.idWebinar == w)
+                            {
+                                model.DNP = false;
+                            }
+                        }
+                    model.ShowOrdersViewModel = new ShowOrdersViewModel
+                    {
+                        Affiliate = aff,
+                        Orders =
+                            _orderManagementService.GetOrdersByWebinar(id.Value)
+                                .Where(o => o.idAffiliate == aff.idUserAff)
+                                .ToList(),
+                        UserIsAdmin = false,
+                        Webinar = model.Webinar
+                    };
+                    model.PromoLinks = new PromoLinks
+                    {
+                        Affiliate = aff,
+                        Links =
+                            _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, aff.idUserAff,
+                                webinar.idWebinar)
+                    };
+                    BuildConfirmOrderView(model);
+                    return PartialView("DetailsAffiliate", model);
+                }
+                //removing test for existing orders because we are now attempting 
+                // to trap those at order's creation
+                //InitializeInProcessProperties(id.Value, model, webinar);
+                if (_stateService.HasValue(DomainConstants.OriginExpress))
+                    if (model.Order != null)
+                        model.Order.Origin = DomainConstants.OriginExpress;
+                BuildConfirmOrderView(model);
+
+                if (!string.IsNullOrWhiteSpace(joinCode) && joinCode == model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl)
+                {
+                    ViewBag.byJoinCode = joinCode;
+                    var clickToJoinViewModel = new ClickToJoinViewModel
+                    {
+                        JoinCode = joinCode,
+                        RedirectLinkText = _globalConfig.TenantURL + "/" + joinCode,
+                        Webinar = webinar,
+                        Order = model.Order
+                    };
+                    model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
+                }
+                else
+                {
+                    if (model.Order != null && !string.IsNullOrWhiteSpace(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
+                    {
+                        Debug.Assert(model.Order.OrderRows != null, "model.Order.OrderRows != null");
+                        var clickToJoinViewModel = new ClickToJoinViewModel
+                        {
+                            JoinCode = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl,
+                            RedirectLinkText = _globalConfig.TenantURL + "/" + model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl,
+                            Webinar = webinar,
+                            Order = model.Order
+                        };
+                        model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
+                    }
+                }
+
+                return View(model);
+            }
+
+            _logger.Error("Details Action invoked with null 'id' parameter");
+
+            return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
 
         public ActionResult DetailsDes(int? id, int? idOrder, string joinCode)

@@ -1,0 +1,61 @@
+﻿@using System.Linq
+@using CUWebinars.Web.Core
+
+
+
+@model IEnumerable<Webinar>
+
+@{
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    var webinars = Model;
+
+    Layout = "~/Views/Shared/_Layout_Ccs.cshtml";
+}
+<div class="hero-unit">
+    <div class="container">
+        <h1>@ViewBag.Title</h1>
+    </div>
+    <!--close container-->
+</div>
+
+<div class="container ">
+    @{
+        foreach (var webinar in webinars)
+        {
+            var numDaysLeft = (webinar.Date.AddMonths(6) - DateTime.Now).Days;
+            var showDateValue = DateTimeHelper.FormatDate(webinar.Date) + " - " +
+                                DateTimeHelper.FormatTime(webinar.Date) + " Central Time Zone";
+            if (webinar.Status == WebinarStatus.Recorded)
+            {
+                showDateValue = "This event was published on <i>" + DateTimeHelper.FormatDate(webinar.Date) + "</i>.";
+                //showDateValue = "This OnDemand Webinar has " + numDaysLeft + " days of access remaining.";
+                //if (numDaysLeft > 45)
+                //{
+                //    showDateValue = "About " + Convert.ToInt32(numDaysLeft / (365.25 / 12)) + " months of access remain.";
+                //}
+            }
+            var allTopics = webinar.WebinarTopicXrefs
+        .Select(webinarTopic => webinarTopic.Topic.topicDesc)
+        .Aggregate((s1, s2) => s1 + ", " + s2);
+
+            string title = "<a href='/Webinar/DetailsCcs/" +
+                                     webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>";
+            var desc = webinar.Description.Length > 200
+                ? webinar.Description.Substring(0, 200) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/DetailsCcs/" + webinar.idWebinar + "'>More →</a></p>"
+                : webinar.Description;
+
+            var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";
+            <div class="wTitle clearfix">
+                <h3>@Html.Raw(title)</h3>
+                <div id="eventBody" style="width: 90%; margin-left: auto; margin-right: auto;">
+                    <p>
+                        Presented by <img class="alignleft" src="@webinar.Presenter.PhotoThumb" alt="Photo of @webinar.Presenter.WebUser.FullName" /> @webinar.Presenter.WebUser.FullName <br />
+                        <i>@Html.Raw(showDateValue)</i>
+                    </p>
+                    <span style="margin-right: 20%;">@Html.Raw(desc)</span>
+                    <p>@Html.Raw(relatedTopics)</p>
+                </div>
+            </div>
+        }
+    }
+</div>

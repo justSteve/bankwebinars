@@ -1846,12 +1846,14 @@
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
+    <None Include="Properties\PublishProfiles\CoreComplianceSuite - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
     <None Include="Properties\PublishProfiles\DES33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\devtts - Web Deploy.pubxml" />
     <Content Include="Scripts\DataTables\pdfmake.min.js.map" />
+    <None Include="Properties\PublishProfiles\ttsCCS - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
@@ -2159,6 +2161,15 @@
     <Content Include="Views\Shared\Partials\_OrderSumUser3.cshtml" />
     <Content Include="Views\Cart\Partials\OrderHasAdditionalLocations.cshtml" />
     <Content Include="Views\Shared\Admin\ShowWSP.cshtml" />
+    <Content Include="Views\Home\IndexCcs.cshtml" />
+    <Content Include="Views\Shared\Partials\IndexDEL.cshtml" />
+    <Content Include="Views\Shared\_Layout_CCS.cshtml" />
+    <Content Include="Views\Shared\_LoginPartialCCS.cshtml" />
+    <Content Include="Views\Webinar\DetailsCcs.cshtml" />
+    <Content Include="Views\Webinar\Partials\_ShoppingCartCcs.cshtml" />
+    <Content Include="Views\Cart\Partials\CheckoutOptionsCcs.cshtml" />
+    <Content Include="Views\Webinar\Partials\PayTraceApproved.cshtml" />
+    <Content Include="Views\Webinar\Partials\DisplayOptionsCcs.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

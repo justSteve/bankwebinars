@@ -1,0 +1,124 @@
+﻿@using System.Configuration
+@using CUWebinars.Business.Models
+@using CUWebinars.Web.Core
+@model List<Webinar>
+@{
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (!(ViewBag.Msg == null || ViewBag.Msg == string.Empty))
+    {
+        <script type="text/javascript" language="javascript">
+            alert(@ViewBag.Msg);
+        </script>
+    }
+
+    Layout = "~/Views/Shared/_Layout_CCS.cshtml";
+}
+
+<script language="javascript" type="text/javascript">
+    function GoToSignup() {
+        window.location = '/webinar/DetailsDes/2485';
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+    function GoToSignupId(affId) {
+
+        window.location = '/webinar/DetailsDes/2485?idAff='+affId;
+    }
+
+</script>
+<style>
+    table {
+        margin-left: 100px;
+        border-width: 1px;
+        border-spacing: 2px;
+        border-style: solid;
+        border-color: black;
+    }
+
+
+    tr {
+        border-width: 1px;
+        border-spacing: 1px;
+        border-style: solid;
+        border-color: black;
+    }
+</style>
+
+<div id="page">
+    <div class="container visible-phone">
+        <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
+    </div>
+    <div class="hero-unit">
+        <div class="container">
+            <h1>The TTS Core Compliance Suite!</h1>
+        </div>
+        <!--close container-->
+    </div>
+    <!--close hero-unit-->
+
+    <div class="container clearfix" id="main-content">
+        <!--begin main content-->
+
+        <div class="row-fluid sidebar-right">
+            <!--begin row-fluid-->
+
+            <div class="span4 ">
+                <img src="https://ttsimages.blob.core.windows.net:443/dirseries/CompassHand240x158.png" />
+            </div>
+            <div class="span5 primary-column large">
+                <div id="opener">
+                    <p>
+                        One annual subscription provides your entire financial institution access to our entire module library with a new module published each month. Features of the The Directors Education Series™ include:
+                    </p>
+                    <ul>
+                        <li>20-25 minutes in length (Perfect for Board Meetings)</li>
+                        <li>Audio, Video &amp; PowerPoint</li>
+                        <li>Handouts and Discussion Questions</li>
+                        <li>Course Tracking</li>
+                        <li>Accessible on a variety of devices (Tablets, Mobile Devices, Laptops, etc.)</li>
+                        <li>Printable Certificates of Completion</li>
+
+                    </ul>
+                    <div align="center">
+                        <button id="SignUp" onclick="javascript:GoToSignup();" role="button" class="btn btn-success">Learn More</button>
+                    </div>
+                </div>
+            </div>
+            <!-- close span9 primary-column-->
+
+                <section class="span3 sidebar secondary-column" id="secondary-nav">
+                    <aside class="widget">
+                        <div class="rotating-testimonials">
+                            <!--"rotating-testimonials" is a required class-->
+                            <h5 class="short_headline"><span>Testimonials</span></h5>
+                            <div class="panels">
+
+                                <div id="t1">
+                                    <blockquote>
+                                        <p>We are loving the program for our Directors. Training has now become a more regular event and the format and timing of the training is just right for the BOD. They have found the information very helpful in understanding their roles as directors.</p>
+                                        <footer>Maureen Daehn, Maple Bank</footer>
+                                    </blockquote>
+                                </div>
+                                <!--close #t5 -->
+                            </div>
+                            <!--close panels-->
+                        </div>
+
+                        <!--close rotating-testimonials-->
+                    </aside>
+                    <aside class="widget">
+                        <h5 class="short_headline"><span>Stay Updated</span></h5>
+                        @{Html.RenderPartial("Partials/_AddToMailingBox");}
+
+                    </aside>
+                    <!--close aside widget-->
+                </section>
+                <!--close aside .widget-->
+                <!--close section sidebar span3-->
+            </div>
+        <!--close row-fluid-->
+    </div>
+</div>
+

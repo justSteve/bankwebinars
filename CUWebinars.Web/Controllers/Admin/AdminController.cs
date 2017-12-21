@@ -2394,9 +2394,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 };
 
                 //await manager.Campaigns.TestAsync(mkCamp.Id, emails);
-                _orderManagementService.FireMandrillNotificationEvent(
-                    sendToEmails
-                    , "[Testing] " + subject, messageBodyHtml);
+                foreach (var sendToEmail in sendToEmails)
+                {
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        sendToEmail
+                        , "[Testing] " + subject, messageBodyHtml);
+                }
 
                 _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
                 await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest

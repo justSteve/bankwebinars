@@ -285,7 +285,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
                 var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
                 var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-                
+
 
                 if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
                 {
@@ -297,11 +297,11 @@ namespace CUWebinars.Web.Controllers
                 var createdSeriesOrders = "";
                 try
                 {
-                if (model.Order.OrderStatus == OrderStatus.InProcess 
-                    || model.Order.OrderStatus == OrderStatus.Canceled
-                    || model.Order.OrderStatus == OrderStatus.AwaitingVerification
-                    )
-                    model.Order.OrderDate = DateTime.Now;
+                    if (model.Order.OrderStatus == OrderStatus.InProcess
+                        || model.Order.OrderStatus == OrderStatus.Canceled
+                        || model.Order.OrderStatus == OrderStatus.AwaitingVerification
+                        )
+                        model.Order.OrderDate = DateTime.Now;
                     model.Order.OrderStatus = OrderStatus.Submitted;
                     _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, row);
                 }
@@ -348,7 +348,7 @@ namespace CUWebinars.Web.Controllers
                         Order order = model.Order;
                         Discount desSub = new Discount
                         {
-                            DiscountType = DiscountType.DirectorSeries,
+                            DiscountType = DiscountType.ComplianceSeries,
                             DateValidTo = order.OrderDate.AddYears(1),
                             DateValidFrom = order.OrderDate,
                             Cost = row.RowPrice,
@@ -366,6 +366,30 @@ namespace CUWebinars.Web.Controllers
 
                         };
                         row.Discount = desSub;
+                    }
+                    if (_globalConfig.Tenant == "CCS")
+                    {
+                        Order order = model.Order;
+                        Discount ccsSub = new Discount
+                        {
+                            DiscountType = DiscountType.DirectorSeries,
+                            DateValidTo = order.OrderDate.AddYears(1),
+                            DateValidFrom = order.OrderDate,
+                            Cost = row.RowPrice,
+                            DateBilled = DateTime.UtcNow,
+                            DateVerified = DateTime.Now,
+                            DiscountCode = "CCS" + order.idOrder,
+                            FlatOff = 0,
+                            Notes = "V3 entry",
+                            PercentOff = 0,
+                            RenewalTerm = 1,
+                            Status = "Active",
+                            TotalCount = 1,
+                            idAffiliate = order.idAffiliate,
+                            idDiscount = order.idOrder
+
+                        };
+                        row.Discount = ccsSub;
                     }
                     _cartControllerOrchestrator.SaveOrder(model.Order);
 
@@ -472,7 +496,7 @@ namespace CUWebinars.Web.Controllers
                 _cartControllerOrchestrator.FireMandrillNotificationEvent(
                     "info@ttstrain.com"
                     , "Catch All Orders " + order.BillingEmail + " - " + row.Webinar.Title, orderConfirmString);
-                
+
             }
             else
             {
@@ -889,6 +913,8 @@ namespace CUWebinars.Web.Controllers
                     }
                     if (_globalConfig.Tenant == "DirectorSeries")
                         ProdDescText = "Directors Education Series Subscription";
+                    if (_globalConfig.Tenant == "CCS")
+                        ProdDescText = "Core Compliance Suite Subscription";
                     _logger.Info("Paytrace: " + idOrder + "MultiPreValidate ProdDesc ends. ");
                 }
             }
@@ -923,6 +949,8 @@ namespace CUWebinars.Web.Controllers
 
                 if (_globalConfig.Tenant == "DirectorSeries")
                     ProdDescText = "Directors Education Series Subscription";
+                if (_globalConfig.Tenant == "CCS")
+                    ProdDescText = "Core Compliance Suite Subscription";
             }
 
             //format parameters for request 
