@@ -490,6 +490,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                 } else {
 
                                     $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                        
                                         completeOrder(userId, orderRowId, webinarId, orderId);
                                         L.clientLogger.info("BigGreenBillMe from register-user-in-cart", { orderid: orderId });
                                     });
@@ -639,6 +640,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                             $('#confirmationTab a').tab('show');
                                         } else {
                                             $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                                
                                                 e.preventDefault();
                                                 callback();
                                                 $('#confirmOrder').submit();

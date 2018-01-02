@@ -48,7 +48,7 @@ $(function () {
 
     // This function gets invoked when the 3rd tab is loaded and an existing user is using the cart
     checkoutConfirm.initialize = function (userId) {
-
+        
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
@@ -220,7 +220,7 @@ $(function () {
 
         //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
-
+            
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
             //submits to 
@@ -347,6 +347,7 @@ $(function () {
 
                                 // The Bill Me button on 3rd tab
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                    
                                     e.preventDefault();
                                     var confirmOrderForm = $('#confirmOrder');
                                     confirmOrderForm.submit();

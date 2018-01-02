@@ -850,9 +850,9 @@ namespace CUWebinars.Business.Services
 
             if (tenant == "BankWebinars") urlBase = "https://storeforbw.blob.core.windows.net/invoicesprivate/";
 
-            var firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/2/2017");
-
-            if (DateTime.Now.Year == 2017)
+            var firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/1/2018");
+            
+            if (DateTime.Now.Year == 2018)
             {
                 for (var _week = 55; _week >= 0; _week--)
                 {
@@ -893,43 +893,87 @@ namespace CUWebinars.Business.Services
                 }
             }
 
-            firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/4/2016");
-            for (var _week = 55; _week >= 0; _week--)
+            if (DateTime.Now.Year == 2017)
             {
-                //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
-                DateTime theMonday;
-                if (_week == 0)
-                {
-                    theMonday = firstMonday.Value;
-                }
-                else
-                {
-                    theMonday = firstMonday.Value.AddDays(_week * 7);
-                }
-                var weekNumber = cal.GetWeekOfYear(theMonday, dfi.CalendarWeekRule,
-                                     dfi.FirstDayOfWeek) + "-2016";
+                 firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/2/2017");
 
-                //Console.WriteLine("The current date and time: {0:MM/dd/yy H:mm:ss zzz}",thisDate2);
-                string theFileName = theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" +
-                                     idAffiliate + ".pdf";
-                string theURL = urlBase + theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" + idAffiliate + ".pdf";
-
-                Uri blob = null;
-                try
+                for (var _week = 55; _week >= 0; _week--)
                 {
-                    var blobTest = BlobHelper.GetBlob("invoicesprivate/", theMonday.ToString("M/d/yyyy").Replace("/", "-"), weekNumber + "-" + idAffiliate + ".pdf");
-                    if (blobTest != null)
+                    //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
+                    DateTime theMonday;
+                    if (_week == 0)
                     {
-                        blob = Core.Helpers.BlobHelper.GetInvoiceForPage(theFileName);
+                        theMonday = firstMonday.Value;
                     }
+                    else
+                    {
+                        theMonday = firstMonday.Value.AddDays(_week * 7);
+                    }
+                    var weekNumber = cal.GetWeekOfYear(theMonday, dfi.CalendarWeekRule,
+                                         dfi.FirstDayOfWeek) + "-" + cal.GetYear(DateTime.Now);
+
+                    //Console.WriteLine("The current date and time: {0:MM/dd/yy H:mm:ss zzz}",thisDate2);
+                    string theFileName = theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" +
+                                         idAffiliate + ".pdf";
+                    string theURL = urlBase + theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" + idAffiliate + ".pdf";
+
+                    Uri blob = null;
+
+                    try
+                    {
+                        var blobTest = BlobHelper.GetBlob("invoicesprivate/", theMonday.ToString("M/d/yyyy").Replace("/", "-"), weekNumber + "-" + idAffiliate + ".pdf");
+                        if (blobTest != null)
+                        {
+                            blob = Core.Helpers.BlobHelper.GetInvoiceForPage(theFileName);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("CheckForExistingInvoice: ", ex);
+                    }
+                    if (blob != null)
+                        links.Add(blob);
                 }
-                catch (Exception ex)
-                {
-                    _logger.FatalException("CheckForExistingInvoice: ", ex);
-                }
-                if (blob != null)
-                    links.Add(blob);
             }
+
+            //for (var _week = 55; _week >= 0; _week--)
+            //{
+            //    firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/4/2016");
+
+            //    //https://storeforbw.blob.core.windows.net/affiliateinvoices/10-17-2016/43-2016-11464.pdf
+            //    DateTime theMonday;
+            //    if (_week == 0)
+            //    {
+            //        theMonday = firstMonday.Value;
+            //    }
+            //    else
+            //    {
+            //        theMonday = firstMonday.Value.AddDays(_week * 7);
+            //    }
+            //    var weekNumber = cal.GetWeekOfYear(theMonday, dfi.CalendarWeekRule,
+            //                         dfi.FirstDayOfWeek) + "-2016";
+
+            //    //Console.WriteLine("The current date and time: {0:MM/dd/yy H:mm:ss zzz}",thisDate2);
+            //    string theFileName = theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" +
+            //                         idAffiliate + ".pdf";
+            //    string theURL = urlBase + theMonday.ToString("M/d/yyyy").Replace("/", "-") + "/" + weekNumber + "-" + idAffiliate + ".pdf";
+
+            //    Uri blob = null;
+            //    try
+            //    {
+            //        var blobTest = BlobHelper.GetBlob("invoicesprivate/", theMonday.ToString("M/d/yyyy").Replace("/", "-"), weekNumber + "-" + idAffiliate + ".pdf");
+            //        if (blobTest != null)
+            //        {
+            //            blob = Core.Helpers.BlobHelper.GetInvoiceForPage(theFileName);
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _logger.FatalException("CheckForExistingInvoice: ", ex);
+            //    }
+            //    if (blob != null)
+            //        links.Add(blob);
+            //}
 
 
             return links;
