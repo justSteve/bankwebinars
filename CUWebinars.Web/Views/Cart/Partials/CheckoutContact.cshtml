@@ -266,17 +266,30 @@
 <div id="modalShowExpressCheckout" class="modal hide">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Express Checkout</h3>
+        <h3>Checkout</h3>
     </div>
     <div id="UserHasAccount" class="modal-body">
-        <p>
-            Use our <i>Express Me!</i> button for guest checkout. Or get instant access to your account
-            with the <i>'Continue to Login'</i> button.
-        </p>
-        <div id="ECBtns">
+        @if (TempData["IsWSP"] != null)
+        {
+            <text>
+                <p>Login Required</p>
+            </text>
+        }
+        else
+        {
+            <p>Please choose <i>'Continue to Login'</i> or use our <i>Express Me!</i> button for guest checkout.</p>
+        }
+        <div id="ECBtns1">
             <p>
-                <input type="button" onclick="javascript: openECWindow();" class=" btn btn-primary" name="ExpressMe" id="ExpressMe" value="Yes, Express Me!" />
-                <input type="button" data-dismiss="modal" class="btn btn-success" name="ResetMe" id="ResetMe" value="Continue to Login" />
+                @if (TempData["IsWSP"] != null)
+                {
+                    <input type="button" data-dismiss="modal" class="btn btn-success" name="ResetMe" id="ResetMe" value="Continue to Login" />
+                }
+                else
+                {
+                    <input type="button" data-dismiss="modal" class="btn btn-success" name="ResetMe" id="ResetMe" value="Continue to Login" />
+                    <input type="button" onclick="javascript: openECWindow();" class=" btn btn-primary" name="ExpressMe" id="ExpressMe" value="Yes, Express Me!"/>
+                }
             </p>
         </div>
     </div>

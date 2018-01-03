@@ -147,10 +147,8 @@
         <div class="row-fluid span3">
             <div id="regDetails">
                 <div id="resumeOrderStatus" class="hidden"></div>
-                @if (Model.Webinar.idWebinar != 2520)
-                {
-                    @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
-                }
+
+                @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
             </div>
             @if (Model.Webinar.idWebinar != 2520)
             {
@@ -205,18 +203,18 @@
                     @{ Html.RenderPartial("Partials/_AddToMailingBox"); }
                 </aside>
                 <!--close aside .widget -->
-                        @*<aside class="widget">
-                                <h5 class="short_headline"><span>Search</span></h5>
-                                <form class="searchform" method="get">
-                                    <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
-                                </form>
-                            </aside>*@
+                @*<aside class="widget">
+                        <h5 class="short_headline"><span>Search</span></h5>
+                        <form class="searchform" method="get">
+                            <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                        </form>
+                    </aside>*@
                 <!--close aside widget-->
-                        }
-                        else
-                        {
-                            <button role="button" class="btn btn-success btn-large" tabindex="-1" onclick="ForwardToWSP();" href="#">Learn More</button>
-                        }
+            }
+            else
+            {
+                <button role="button" class="btn btn-success btn-large" tabindex="-1" onclick="ForwardToWSP();" href="#">Learn More</button>
+            }
         </div>
         <!--close section tertiary-column sidebar span3-->
     </div>

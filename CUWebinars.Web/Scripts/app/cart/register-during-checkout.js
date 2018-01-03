@@ -759,7 +759,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
     var confirmOrderForm = cartStateManager.getConfirmOrderForm();
 
     confirmOrderForm.on('submit', function (e) {
-
+        console.log("confirmOrderForm");
         e.preventDefault();
 
         var self = $(this);

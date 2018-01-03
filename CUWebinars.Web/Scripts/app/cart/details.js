@@ -48,7 +48,7 @@ $(function () {
 
     // This function gets invoked when the 3rd tab is loaded and an existing user is using the cart
     checkoutConfirm.initialize = function (userId) {
-        
+        console.log("checkoutConfirm");
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 

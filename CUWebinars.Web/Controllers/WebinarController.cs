@@ -962,16 +962,16 @@ namespace CUWebinars.Web.Controllers
                         model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
                     }
                 }
-                if (model.Order != null && model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == 2520)
-                {
-                    //model.Order = null;
+                //model.Order = null;
 
-                    model.CheckoutOptionsViewModel.OrderExists = false;
-                    model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
+                model.CheckoutOptionsViewModel.OrderExists = false;
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
+                if (model.Webinar.idWebinar == 2520)
+                {
+                    TempData["IsWSP"] = "true";
                 }
                 return View(model);
             }
-
             _logger.Error("Details Action invoked with null 'id' parameter");
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
