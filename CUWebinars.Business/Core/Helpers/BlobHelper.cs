@@ -41,16 +41,29 @@ namespace CUWebinars.Business.Core.Helpers
         }
 
         // Get recursive list of files
-        public static IEnumerable<BlobFileInfo> ListFolderBlobs(string containerName, string directoryName)
+        public static IEnumerable<BlobFileInfo> ListFolderBlobs(string containerName)
         {
-            var blobContainer = GetBlobContainer(containerName);
-            var blobDirectory = blobContainer.GetDirectoryReference(directoryName);
             var blobInfos = new List<BlobFileInfo>();
-            var blobs = blobDirectory.ListBlobs().ToList();
-            foreach (var blob in blobs)
+            //var blobs = blobDirectory.ListBlobs().ToList();
+
+            TtsConfigHelper _ttsConfig = new TtsConfigHelper();
+
+            var storageCredentials = new StorageCredentials(_ttsConfig.GetStorageAccountName(),
+                _ttsConfig.GetStorageAccessKey());
+
+            var storageAccount = new CloudStorageAccount(storageCredentials, false);
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+
+            //// Retrieve reference to a previously created container.
+            CloudBlobContainer container = blobClient.GetContainerReference("invoicesprivate");
+            var blobs = container.ListBlobs(null, false).ToList();
+            // Loop over items within the container and output the length and URI.
+            foreach (IListBlobItem item in container.ListBlobs(null, false))
             {
-                if (blob is CloudBlockBlob)
+                if (item.GetType() == typeof(CloudBlockBlob))
                 {
+                    CloudBlockBlob blob = (CloudBlockBlob)item;
+
                     var blobFileName = blob.Uri.Segments.Last().Replace("%20", " ");
                     var blobFilePath = blob.Uri.AbsolutePath.Replace(blob.Container.Uri.AbsolutePath + "/", "").Replace("%20", " ");
                     var blobUri = blob.StorageUri.PrimaryUri.ToString();
@@ -63,15 +76,23 @@ namespace CUWebinars.Business.Core.Helpers
                         BlobFilePath = blobFilePath,
                         Blob = blob
                     });
+
+                    Console.WriteLine("Block blob of length {0}: {1}", blob.Properties.Length, blob.Uri);
                 }
-                if (blob is CloudBlobDirectory)
+                else if (item.GetType() == typeof(CloudPageBlob))
                 {
-                    var blobDir = blob.Uri.OriginalString.Replace(blob.Container.Uri.OriginalString + "/", "");
-                    blobDir = blobDir.Remove(blobDir.Length - 1);
-                    var subBlobs = ListFolderBlobs(containerName, blobDir);
-                    blobInfos.AddRange(subBlobs);
+                    CloudPageBlob pageBlob = (CloudPageBlob)item;
+                    Console.WriteLine("Page blob of length {0}: {1}", pageBlob.Properties.Length, pageBlob.Uri);
+                }
+                else if (item.GetType() == typeof(CloudBlobDirectory))
+                {
+                    CloudBlobDirectory directory = (CloudBlobDirectory)item;
+                    CloudBlobContainer container2ndLevel = blobClient.GetContainerReference(item.Uri.ToString().Replace(blobClient.BaseUri.ToString(), "").TrimEnd('/'));
+                    ListFolderBlobs(container2ndLevel.ToString());
+                    Console.WriteLine("Directory: {0}", directory.Uri);
                 }
             }
+
             return blobInfos;
         }
 
@@ -172,6 +193,15 @@ namespace CUWebinars.Business.Core.Helpers
                 Blob = blob
             });
             return thisBlob;
+        }
+
+        internal static List<BlobFileInfo> GetAffiliateBlobs(string containerName, int idAffiliate)
+        {
+            var returnList = new List<BlobFileInfo>();
+            var topFolders = ListFolderBlobs(containerName);
+
+
+            return null;
         }
     }
 }

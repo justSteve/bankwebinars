@@ -192,6 +192,33 @@ namespace CUWebinars.Web.Controllers.Admin
         //
         // GET: /Admin/
         //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
+        public ActionResult ShowInvoices(int idaff, string year)
+        {
+            var affiliate = _affiliateManagementService.FindById(19);
+
+            var InvoicesModel =
+                new InvoicesModel
+                {
+                    Affiliate = affiliate,
+                    Links =
+                        _affiliateManagementService.GetInvoicesByAffiliate(_globalConfig.Tenant,
+                            affiliate.idUserAff, year)
+                };
+            var htmlString = new StringBuilder();
+            htmlString.Append("<ul id=\"limheight\">");
+            foreach (var link in InvoicesModel.Links)
+            {
+                var weekNumber = link.AbsoluteUri.Split('/')[4];
+                htmlString.Append("<li><a href=" + link.AbsoluteUri + ">" + weekNumber + "</a></li>");
+            }
+
+            htmlString.Append("</ul>");
+            return Content(htmlString.ToString());
+        }
+
+        //
+        // GET: /Admin/
+        //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
         public ActionResult ShowWSP(int idaff)
         {
             var affiliate = _affiliateManagementService.FindById(19);
@@ -331,7 +358,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             Affiliate = affiliate,
                             Links =
                                 _affiliateManagementService.GetInvoicesByAffiliate(_globalConfig.Tenant,
-                                    affiliate.idUserAff)
+                                    affiliate.idUserAff, "2018")
                         },
 
                     WpsViewModel = new WpsViewModel

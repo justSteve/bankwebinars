@@ -29,7 +29,7 @@ namespace CUWebinars.Business.Services
         AffiliateInvoiceDTO BuildAffiliateInvoiceForAdjustedOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders, int thisAffiliate);
         //AffiliateInvoiceDTO GetAffiliateInvoice(int value, string aff);
         IList<DiscountDTO> GetSubscriptionsByAffiliate(int idUserAff);
-        List<Uri> GetInvoicesByAffiliate(string globalConfigTenant, int affiliateIdUserAff);
+        List<Uri> GetInvoicesByAffiliate(string globalConfigTenant, int affiliateIdUserAff, string year);
         IList<Uri> GetPromosByAffiliate(string globalConfigTenant, int idUserAff, int idWebinar);
         int SaveChanges(Affiliate affiliate);
         Affiliate UpdateAffiliate(Affiliate affiliate);

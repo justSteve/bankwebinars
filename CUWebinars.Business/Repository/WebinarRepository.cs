@@ -520,8 +520,7 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
 
                 ;
-
-            //why is registration type not hydrated from here
+            
         }
 
         public IEnumerable<Order> GetOrdersByWebinarForPostEventClaims(int idWebinar)

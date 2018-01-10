@@ -1710,7 +1710,16 @@ namespace CUWebinars.Business.Services
 
         public List<Order> GetOrdersByWebinar(int idWebinar)
         {
+
+            var orderIds = _webinarRepository.GetV3OrdersIdsByWebinar(idWebinar);
             return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
+            //List<Order> orders = new List<Order>();
+            //foreach (var orderId in orderIds)
+            //{
+            //    orders.Add(_orderRepository.GetOrderById(orderId));
+            //}
+            //return orders;
+
         }
 
         public List<Order> GetOrdersByWebinarForInvoice(int idWebinar)
@@ -1989,7 +1998,7 @@ namespace CUWebinars.Business.Services
 
                     FireMandrillNotificationEvent("2afda898.ttstrain.com@amer.teams.ms"
                         , "existing WSP was renewed: " + order.idOrder
-                        , "Renewal for : " + discount.DiscountCode  );
+                        , "Renewal for : " + discount.DiscountCode);
 
                     return discount;
                 }
@@ -2028,7 +2037,7 @@ namespace CUWebinars.Business.Services
 
                 FireMandrillNotificationEvent("2afda898.ttstrain.com@amer.teams.ms"
                     , "New WSP: " + order.idOrder
-                    , "New WSP created for: " + wspDiscount.DiscountCode );
+                    , "New WSP created for: " + wspDiscount.DiscountCode);
 
                 return wspDiscount;
             }
