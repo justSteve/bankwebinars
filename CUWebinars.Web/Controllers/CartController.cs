@@ -2591,6 +2591,11 @@ namespace CUWebinars.Web.Controllers
                         if (row.Webinar.SeriesInfo.Contains("Children"))
                             _cartControllerOrchestrator.CreateSeriesOrders(row);
 
+                        if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == 2520)
+                        {
+                            //is a WSP order
+                            _cartControllerOrchestrator.CreateWspCode(order);
+                        }
 
                         if (row.Webinar.Title.Contains("Compliance Perspectives")
                             //test if CP code needs to be created by ensuring it's not a trial
@@ -2626,6 +2631,12 @@ namespace CUWebinars.Web.Controllers
                                 //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                                 if (row.Webinar.SeriesInfo.Contains("Children"))
                                     createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
+
+                                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == 2520)
+                                {
+                                    //is a WSP order
+                                    _cartControllerOrchestrator.CreateWspCode(order);
+                                }
 
 
                                 if (row.Webinar.Title.Contains("Compliance Perspectives")

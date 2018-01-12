@@ -592,7 +592,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     _logger.Info("Updating OrderStatus " + order.idOrder
                                  + " from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus +
-                                 "note: " + note + " by: " + _appHelper.GetUserAuditInfo());
+                                 " note: " + note + " by: " + _appHelper.GetUserAuditInfo());
 
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
                     if (model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid)
