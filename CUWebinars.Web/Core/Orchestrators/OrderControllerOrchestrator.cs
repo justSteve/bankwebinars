@@ -74,7 +74,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 idOrderLegacy = migrateOrderModel.idOrderLegacy,
                 Webinar = migratorQueryResult.Webinar,
                 WebUser = migratorQueryResult.WebUser,
-                AdditionalLocationsString = migrateOrderModel.AdditionalLocationsString
+                AdditionalLocationsString = migrateOrderModel.AdditionalLocationsString,
+                Tenant = globalConfig.Tenant
+
             };
 
 

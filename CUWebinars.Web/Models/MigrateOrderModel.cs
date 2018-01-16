@@ -30,6 +30,7 @@ namespace CUWebinars.Web.Models
         public DateTime ShipmentDate { get; set; }
         public decimal Total { get; set; }
         public string LoggerNotes { get; set; }
+        public string Tenant { get; set; }
     }
 
 }

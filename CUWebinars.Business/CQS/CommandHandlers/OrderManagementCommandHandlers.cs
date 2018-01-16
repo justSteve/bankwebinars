@@ -507,7 +507,7 @@ namespace CUWebinars.Business.CQS.CommandHandlers
 
 
                 _membershipService.AddClaimForPostEventMaterials(migratedOrder.BillingEmail, command.OrderRow,
-                    _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), "BankWebinars");
+                    _orderManagementService.CalculatePostEventMaterialsAccessExpiry(command.OrderRow), command.Tenant);
 
 
                 //_orderManagementService.SaveOrderChanges(migratedOrder, command.VerificationKey, command.ConfirmChangeEmailUrl);

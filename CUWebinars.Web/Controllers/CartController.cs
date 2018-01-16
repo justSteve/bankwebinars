@@ -1351,7 +1351,9 @@ namespace CUWebinars.Web.Controllers
             {
                 try
                 {
+                    var tenant = _globalConfig.Tenant;
                     MigrateOrderModel migrateOrder = JsonConvert.DeserializeObject<MigrateOrderModel>(incoming);
+                    migrateOrder.Tenant = tenant;
                     return CommitImport(migrateOrder);
                 }
                 catch (Exception ex)
@@ -1512,11 +1514,11 @@ namespace CUWebinars.Web.Controllers
             PostForm += "&ShippingDate=";
             PostForm += "&DiscountCode=" + HttpUtility.UrlEncode(migrateOrder.DiscountCode);
             PostForm += "&Status=" + (int)migrateOrder.Status;
-            PostForm += "&Total=0";
+            PostForm += "&Total=0&Tenant=" + HttpUtility.UrlEncode(migrateOrder.Tenant);
             try
             {
 
-                WebRequest req = WebRequest.Create("https://www.bankwebinars.com/order/MigrateOrder");
+                WebRequest req = WebRequest.Create(_globalConfig.TenantURL + "/order/MigrateOrder");
 
 #if DEBUG
                 {

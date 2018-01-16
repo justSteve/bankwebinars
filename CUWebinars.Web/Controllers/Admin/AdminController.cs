@@ -194,7 +194,7 @@ namespace CUWebinars.Web.Controllers.Admin
         //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
         public ActionResult ShowInvoices(int idaff, string year)
         {
-            var affiliate = _affiliateManagementService.FindById(19);
+            var affiliate = _affiliateManagementService.FindById(idaff);
 
             var InvoicesModel =
                 new InvoicesModel
