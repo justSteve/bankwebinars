@@ -219,7 +219,7 @@
                 @Html.Raw(GetStatusLabel(Model.OrderStatus))
             </div>
 
-            @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
+            @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption && ViewBag.DiscountCaption))
                 {
                 <div class="@discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
                      id="discountCaption"><b>@Html.Raw(ViewBag.DiscountCaption.ToString())</b></div>

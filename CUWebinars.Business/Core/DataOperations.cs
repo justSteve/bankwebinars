@@ -1,24 +1,13 @@
 ﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
-using Ninject.Extensions.Logging;
 using System;
-using System.Collections;
-using System.Web;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Claims;
 using System.Text;
-using System.Web.Helpers;
 using CUWebinars.Business.Constants;
-using CUWebinars.Business.Core.Extensions;
 using CUWebinars.Business.Services;
 using Newtonsoft.Json;
 
@@ -36,6 +25,57 @@ namespace CUWebinars.Business.Core
             _connectionString = connectionString;
         }
 
+
+        public string CheckForUnique(string code, string field)
+        {
+            var returnVal = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var CheckForUnique = new SqlCommand())
+                {
+                    var codeParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.VarChar,
+                        ParameterName = "@code",
+                        Value = code
+                    };
+                    var fieldParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.VarChar,
+                        ParameterName = "@field",
+                        Value = field
+                    };
+
+                    CheckForUnique.Parameters.Add(codeParameter);
+                    CheckForUnique.Parameters.Add(fieldParameter);
+
+                    CheckForUnique.Connection = sqlConnection;
+                    CheckForUnique.CommandType = CommandType.StoredProcedure;
+                    CheckForUnique.CommandText = "CheckForUnique";
+
+                    try
+                    {
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                        {
+                            sqlUpdateConnection.Open();
+
+                            returnVal = CheckForUnique.ExecuteScalar().ToString();
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("CheckForUnique", "CheckForUnique: " + CheckForUnique.CommandText +
+                                                      " Exception.Message: " + ex.Message);
+                    }
+                    return returnVal;
+
+                }
+            }
+        }
 
         public string FindRegTypeForRateWatch(string regTypeLable)
         {
