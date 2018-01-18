@@ -1,0 +1,9 @@
+Install-Package log4net -Version 2.0.3 -Source nuget.org
+Install-Package WindowsAzure.Storage -Version 4.3.0 -Source nuget.org
+Install-Package Microsoft.Azure.WebJobs -Version 1.0.1 -Source nuget.org
+Install-Package Microsoft.Azure.WebJobs.Core -Version 1.0.1 -Source nuget.org
+Install-Package Microsoft.WindowsAzure.ConfigurationManager -Version 3.1.0 -Source nuget.org
+Install-Package Newtonsoft.Json -Version 6.0.8 -Source nuget.org
+Install-Package Ninject -Version 3.2.2.0 -Source nuget.org
+Install-Package Ninject.Extensions.Logging -Version 3.2.2.0 -Source nuget.org
+Install-Package Ninject.Extensions.Logging.Log4net -Version 3.2.2.0 -Source nuget.org
