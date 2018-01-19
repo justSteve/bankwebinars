@@ -17,20 +17,20 @@ using Newtonsoft.Json;
 namespace TTS.WebJobs
 {
 
-    public class CuwDequeueHandlers
+    public class TtsDequeueHandlers
     {
         public static ILog _logger = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static string tenant = ConfigurationManager.AppSettings["Tenant"];
         public static string tenantURL = ConfigurationManager.AppSettings["TenantURL"];
 
-        public static void DequeueOrderConfirmMultiMessages(
+        public static void DequeueSendMessages(
             [QueueTrigger("%NotificationsQueue%")] NotificationMessage notificationMessage, // ** QueueTrigger is NotificationsQueue key/value in App.Config
             [Blob("tts-orderconfmultimsg/{PersistedName}")] out string messageContent, // magically persists whatever is placed in the messageContent variable to blob @ that location
             int dequeueCount,
             TextWriter log)
         {
 
-            ILog _logger = LogManager.GetLogger(typeof(CuwDequeueHandlers));
+            ILog _logger = LogManager.GetLogger(typeof(TtsDequeueHandlers));
 
             messageContent = notificationMessage.Body; // output param which magically persists messageContent text to blob location specified above
 
@@ -101,9 +101,10 @@ namespace TTS.WebJobs
                 }
                 var api = new MandrillApi("h36RBLZIZGmKilVQj1xY-g"); // move to config (and encrypt?)
                 var result = api.Messages.SendAsync(mailMessage);
+                //
+                // the update results in loss of access the .Send and forced me to 
+                //   .SendAsync which blows up the following
 
-                // not sure if we need to do this, they will show up in the Mandrill control panel as well
-                // process results, r.Status should be Sent, ...
                 //if (notificationMessage.Body.Contains("Checklist"))
                 //{
                 //    foreach (MandrillSendMessageResponse r in result)
@@ -120,7 +121,7 @@ namespace TTS.WebJobs
             }
             catch (Exception exception)
             {
-                _logger.Error("DequeueOrderConfirmMultiMessages", exception);
+                _logger.Error("DequeueSendMessages", exception);
                 var mailMessage = new MandrillMessage();
                 mailMessage.To = new List<MandrillMailAddress>{new MandrillMailAddress {
                     Email = "2afda898.ttstrain.com@amer.teams.ms"
@@ -128,14 +129,15 @@ namespace TTS.WebJobs
                     , Type = MandrillMailAddressType.To}};
                 mailMessage.FromEmail = "errors@ttsregistrations.com";
                 mailMessage.Subject = "Exception Occurred from Noti Webjob" ;
-                // now log to Azure log in the blob container "azure-webjobs-hosts/output-logs"
+                // now log to Azure log in the blob container:
+                //"azure-webjobs-hosts/output-logs"
                 var errorDetails = new StringBuilder("Operation Failed");
                 errorDetails.AppendFormat(
                     "Message subject: {0} {1}{2}",
                     notificationMessage.Subject, Environment.NewLine, notificationMessage.Body
                     );
                 errorDetails.AppendFormat(
-                    "A top-level exception occurred in DequeueOrderConfirmMultiMessages {0}",
+                    "A top-level exception occurred in DequeueSendMessages {0}",
                     Environment.NewLine
                     );
 

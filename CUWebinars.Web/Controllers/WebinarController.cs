@@ -877,59 +877,8 @@ namespace CUWebinars.Web.Controllers
                     return PartialView("DetailsAdmin", model);
                 }
 
-                if (claimsIdentityOfAuthenticatedUser.HasClaim(
-                    (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
-                {
-                    var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
-
-                    ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
-
-
-                    // Get the claims values
-                    var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims
-                        .Where(c => c.Type == ClaimTypes.Affiliate)
-                        .Select(c => c.Value)
-                        .SingleOrDefault();
-
-                    var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
-
-                    if (model.CheckoutInProcess)
-                    {
-                        CheckoutResumeByAdmin(id, model);
-                    }
-
-                    model.DNP = true;
-                    if (aff.DoNotPromoteList != null)
-                        foreach (var w in aff.DoNotPromoteList)
-                        {
-                            if (webinar.idWebinar == w)
-                            {
-                                model.DNP = false;
-                            }
-                        }
-                    model.ShowOrdersViewModel = new ShowOrdersViewModel
-                    {
-                        Affiliate = aff,
-                        Orders =
-                            _orderManagementService.GetOrdersByWebinar(id.Value)
-                                .Where(o => o.idAffiliate == aff.idUserAff)
-                                .ToList(),
-                        UserIsAdmin = false,
-                        Webinar = model.Webinar
-                    };
-                    model.PromoLinks = new PromoLinks
-                    {
-                        Affiliate = aff,
-                        Links =
-                            _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, aff.idUserAff,
-                                webinar.idWebinar)
-                    };
-                    BuildConfirmOrderView(model);
-                    return PartialView("DetailsAffiliate", model);
-                }
-                //removing test for existing orders because we are now attempting 
-                // to trap those at order's creation
-                //InitializeInProcessProperties(id.Value, model, webinar);
+                ActionResult partialView;
+                if (BuildVMForAffiliate(id, claimsIdentityOfAuthenticatedUser, model, webinar, out partialView)) return partialView;
                 if (_stateService.HasValue(DomainConstants.OriginExpress))
                     if (model.Order != null)
                         model.Order.Origin = DomainConstants.OriginExpress;
@@ -975,6 +924,69 @@ namespace CUWebinars.Web.Controllers
             _logger.Error("Details Action invoked with null 'id' parameter");
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
+        }
+
+        private bool BuildVMForAffiliate(int? id, ClaimsIdentity claimsIdentityOfAuthenticatedUser,
+            WebinarDetailsViewModel model, Webinar webinar, out ActionResult partialView)
+        {
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+            {
+                var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+
+                ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
+
+                // Get the claims values
+                var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims
+                    .Where(c => c.Type == ClaimTypes.Affiliate)
+                    .Select(c => c.Value)
+                    .SingleOrDefault();
+
+                var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
+
+                if (model.CheckoutInProcess)
+                {
+                    CheckoutResumeByAdmin(id, model);
+                }
+
+                model.DNP = true;
+                if (aff.DoNotPromoteList != null)
+                    foreach (var w in aff.DoNotPromoteList)
+                    {
+                        if (webinar.idWebinar == w)
+                        {
+                            model.DNP = false;
+                        }
+                    }
+                model.ShowOrdersViewModel = new ShowOrdersViewModel
+                {
+                    Affiliate = aff,
+                    Orders =
+                        _orderManagementService.GetOrdersByWebinar(id.Value)
+                            .Where(o => o.idAffiliate == aff.idUserAff)
+                            .ToList(),
+                    UserIsAdmin = false,
+                    Webinar = model.Webinar
+                };
+                model.PromoLinks = new PromoLinks
+                {
+                    Affiliate = aff,
+                    Links =
+                        _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, aff.idUserAff,
+                            webinar.idWebinar)
+                };
+                BuildConfirmOrderView(model);
+                {
+                    partialView = PartialView("DetailsAffiliate", model);
+                    return true;
+                }
+            }
+            //removing test for existing orders because we are 
+            // now attempting // to trap those at order's creation
+            InitializeInProcessProperties(id.Value, model, webinar);
+            partialView = null;
+            return false;
         }
 
 

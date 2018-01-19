@@ -1,9 +1,5 @@
 ﻿{
   "$schema": "http://schemastore.org/schemas/json/webjob-publish-settings.json",
-  "webJobName": "TTS-OrderConfMultiMsg-Processor",
-  "startTime": null,
-  "endTime": null,
-  "jobRecurrenceFrequency": null,
-  "interval": null,
+  "webJobName": "TTS-WebJobs",
   "runMode": "Continuous"
 }

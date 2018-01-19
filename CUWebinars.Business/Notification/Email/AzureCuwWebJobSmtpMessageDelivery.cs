@@ -36,11 +36,17 @@ namespace CUWebinars.Business.Notification.Email
             CloudQueue cloudQueue = _queueClient.GetQueueReference(_targetQueueName);  // passed in during construction, usually from web.config
             cloudQueue.CreateIfNotExists();
 
+            CloudQueue cloudQueue1 = _queueClient.GetQueueReference(_targetQueueName + "1");  
+            cloudQueue.CreateIfNotExists();
+
             EnsureMessage(notificationMessage);
 
             var cloudQueueMessage = new CloudQueueMessage(JsonConvert.SerializeObject(notificationMessage));
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
+
+            cloudQueue1.EncodeMessage = true;
+            cloudQueue1.AddMessage(cloudQueueMessage);
 
             _logger.Info(string.Format("WebJobSmtpMsg to: {0}, filename is: {1} ", notificationMessage.To, notificationMessage.PersistedName));
         }
