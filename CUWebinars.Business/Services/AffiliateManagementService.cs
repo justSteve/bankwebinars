@@ -555,9 +555,12 @@ namespace CUWebinars.Business.Services
         {
             try
             {
+                //stores pre-invoice state of order
                 var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
                 if (!ReferenceEquals(row, null))
                 {
+                    _logger.Info("GenerateWeeklyInvoicesEvent : UPDATE dbo.[Order] SET InvoiceDetail = '" + order.InvoiceDetail + "' where idOrder =" + order.idOrder);
                     var newJson = new JProperty("OrderIsInvoiced",
 
                         new JObject(
@@ -572,7 +575,7 @@ namespace CUWebinars.Business.Services
 
                     order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(order.InvoiceDetail, newJson, "OrderIsInvoiced");
                     _logger.Info("GenerateWeeklyInvoicesEvent | StoreInvoiceDetail on idOrder: " + order.idOrder);
-                    _logger.Info("GenerateWeeklyInvoicesEvent : UPDATE dbo.[Order] SET InvoiceDetail = '" + order.InvoiceDetail + "' where idOrder =" + order.idOrder);
+                    
 
                 }
             }
