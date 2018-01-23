@@ -370,8 +370,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
             discountModel.TotalCount = userDiscount.TotalCount;
-            if (discountModel.TypeOfDiscount == DiscountType.Subscription &&
-                discountModel.CreditsRemain < (decimal).25) return null;
+            if ((discountModel.TypeOfDiscount == DiscountType.Subscription &&
+                discountModel.CreditsRemain < (decimal).25)
+                || discountModel.DiscountCode.ToLower().Contains("expired")
+                ) return null;
 
             return discountModel;
         }

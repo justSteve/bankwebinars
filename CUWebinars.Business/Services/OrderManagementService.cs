@@ -770,8 +770,6 @@ namespace CUWebinars.Business.Services
                         if (row.Discount.DateValidFrom != row.Discount.DateValidTo && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                         {
                             discountTotal = discountTotal - 50;
-
-
                             var newJson = new JProperty(
                                 "ShippingSurcharge",
                                 new JObject(
@@ -814,7 +812,6 @@ namespace CUWebinars.Business.Services
                                  " found "
                                  + creditsRemain + " against " + row.RegistrationType.CreditCost);
                 }
-
             }
             else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
             {
@@ -827,11 +824,11 @@ namespace CUWebinars.Business.Services
             {
                 discountTotal = row.RowPrice;
             }
-            else
-            {
-                ProcessPartialDiscount(row, discountTotal);
-            }
 
+            if (row.Discount != null && row.Discount.DiscountCode.ToLower().Contains("expired"))
+            {
+                row.Discount = null;
+            }
             row.RowPrice -= discountTotal;
             pricesAndDiscounts.TotalDiscount = discountTotal;
             pricesAndDiscounts.TotalCostOfOptions = totalOptionsPrice;
@@ -856,11 +853,6 @@ namespace CUWebinars.Business.Services
             pricesAndDiscounts.TotalPaid = order.TotalPaid;
 
             return pricesAndDiscounts;
-        }
-
-        private OrderRow ProcessPartialDiscount(OrderRow row, decimal discountTotal)
-        {
-            return null;
         }
 
         public decimal DiscountCreditUnitCost { get; private set; }

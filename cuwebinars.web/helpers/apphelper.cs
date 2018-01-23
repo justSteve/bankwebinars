@@ -1295,41 +1295,41 @@ namespace CUWebinars.Web.Helpers
 
         //}
 
-        private MapZenAddress GetMapzenAddress(string addString)
-        {
-            try
-            {
-                var a = 1;
-                WebRequest req = WebRequest.Create("https://libpostal.mapzen.com/parse?address=" + HttpUtility.UrlEncode(addString) + "&format=keys&api_key=mapzen-iYcwH4a");
+        //private MapZenAddress GetMapzenAddress(string addString)
+        //{
+        //    try
+        //    {
+        //        var a = 1;
+        //        WebRequest req = WebRequest.Create("https://libpostal.mapzen.com/parse?address=" + HttpUtility.UrlEncode(addString) + "&format=keys&api_key=mapzen-iYcwH4a");
 
-                req.Method = "GET";
-                string returnvalue1 = "";
+        //        req.Method = "GET";
+        //        string returnvalue1 = "";
 
-                WebResponse res = req.GetResponse();
-                using (WebResponse response = req.GetResponse())
-                {
-                    StreamReader reader = new StreamReader(res.GetResponseStream());
-                    //using (Stream stream = response.GetResponseStream())
-                    //{
-                    //    XmlTextReader reader = new XmlTextReader(stream);
-                    //    returnvalue1 = reader.Value;
-                    //}
-                    returnvalue1 = reader.ReadToEnd();
-                }
-                //
-                MapZenAddress importResult = JsonConvert.DeserializeObject<MapZenAddress>(returnvalue1);
+        //        WebResponse res = req.GetResponse();
+        //        using (WebResponse response = req.GetResponse())
+        //        {
+        //            StreamReader reader = new StreamReader(res.GetResponseStream());
+        //            //using (Stream stream = response.GetResponseStream())
+        //            //{
+        //            //    XmlTextReader reader = new XmlTextReader(stream);
+        //            //    returnvalue1 = reader.Value;
+        //            //}
+        //            returnvalue1 = reader.ReadToEnd();
+        //        }
+        //        //
+        //        MapZenAddress importResult = JsonConvert.DeserializeObject<MapZenAddress>(returnvalue1);
 
-                res.Close();
+        //        res.Close();
 
-                return importResult;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            return null;
-        }
+        //        return importResult;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e);
+        //        throw;
+        //    }
+        //    return null;
+        //}
 
         public ParseOrderModel ParseRateWatch(string __doc)
         {
@@ -1648,21 +1648,21 @@ namespace CUWebinars.Web.Helpers
 
         }
 
-        public Address ParseAddress(string address)
-        {
+        //public Address ParseAddress(string address)
+        //{
 
-            var myAddress = GetMapzenAddress(address);
-            var add = new Address();
+        //    var myAddress = GetMapzenAddress(address);
+        //    var add = new Address();
 
-            //add.AddressType = "Billing";
-            add.StreetAddress = myAddress.road.FirstOrDefault();
-            add.City = myAddress.city.FirstOrDefault();
-            add.State = myAddress.state.FirstOrDefault();
-            add.Zip = myAddress.postcode.FirstOrDefault();
-            add.Country = myAddress.country.FirstOrDefault();
+        //    //add.AddressType = "Billing";
+        //    add.StreetAddress = myAddress.road.FirstOrDefault();
+        //    add.City = myAddress.city.FirstOrDefault();
+        //    add.State = myAddress.state.FirstOrDefault();
+        //    add.Zip = myAddress.postcode.FirstOrDefault();
+        //    add.Country = myAddress.country.FirstOrDefault();
 
-            return add;
-        }
+        //    return add;
+        //}
 
         public string ParsePhone(string phoneTest)
         {
