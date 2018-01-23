@@ -3077,13 +3077,34 @@ namespace CUWebinars.Web.Controllers
             {
                 _logger.Info("Multi-event checkout: " + registrationSummaryViewModel.OrderRow.idOrder);
 
+                var createdSeriesOrders = "";
+                if (registrationSummaryViewModel.OrderRow.Webinar.SeriesInfo.Contains("Children"))
+                    if (registrationSummaryViewModel.OrderRow != null)
+                        createdSeriesOrders =
+                            _cartControllerOrchestrator.CreateSeriesOrders(
+                                registrationSummaryViewModel.OrderRow);
 
                 // update the rows to submitted status
                 _cartControllerOrchestrator.SetOrderStatus(registrationSummaryViewModel.OrderRow.idOrder, currentUserEmail, OrderStatus.Submitted); // validates that the user owns this orderid
 
                 _cartControllerOrchestrator.AddClaimForPostEventMaterials(registrationSummaryViewModel.OrderRow.Order.BillingEmail, registrationSummaryViewModel.OrderRow);
 
-
+                if (createdSeriesOrders != "")
+                {
+                    var seriesOrders = createdSeriesOrders.Split(',');
+                    foreach (var order in seriesOrders)
+                    {
+                        if (order != "")
+                        {
+                            _cartControllerOrchestrator.SetOrderStatus(Convert.ToInt32(order), currentUserEmail,
+                                OrderStatus.Submitted); // validates that the user owns this orderid
+                            var row = _cartControllerOrchestrator.GetOrderById(Convert.ToInt32(order)).OrderRows
+                                .SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+                            _cartControllerOrchestrator.AddClaimForPostEventMaterials(
+                                registrationSummaryViewModel.OrderRow.Order.BillingEmail, row);
+                        }
+                    }
+                }
                 // generate order summary email verbiage via RenderViewToString
                 sbOrdersSummary.Append(ViewHelpers.RenderViewToString(ControllerContext, "~/Views/Shared/Partials/_OrderSumUser2.cshtml", registrationSummaryViewModel, true));
                 sbHeaderSummary.Append("  " + registrationSummaryViewModel.OrderRow.idOrder + ",");
