@@ -409,7 +409,14 @@ namespace CUWebinars.Business.Services
 
         public OrderRow GetOrderRowById(int idOrderRow)
         {
-            return _orderRepository.GetOrderRowById(idOrderRow);
+            OrderRow row = _orderRepository.GetOrderRowById(idOrderRow);
+
+            if (row == null)
+            {
+                row = _orderRepository.GetOrderById(idOrderRow).OrderRows
+                    .SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            }
+            return row;
         }
 
         public IEnumerable<Order> GetOrdersForShippedNotification()

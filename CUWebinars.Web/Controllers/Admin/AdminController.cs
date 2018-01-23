@@ -1898,7 +1898,6 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             if (model.TemplateType == "Weekly")
             {
-
                 ViewBag.SubjectForCampaign = "Webinars: Week of " +
                                              DateTimeHelper.GetDateOfNextDay(model.SendDate, DayOfWeek.Monday) + " - " +
                                              DateTimeHelper.GetDateOfNextDay(model.SendDate, DayOfWeek.Friday);
@@ -1906,7 +1905,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 var upcomingDetail = new StringBuilder();
                 if (_globalConfig.Tenant == "BankWebinars" || _globalConfig.Tenant == "CUWebinars")
                     model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
+                if (model.Affiliate != null && model.Affiliate.idUserAff > 0)
+                {
+                    model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
+                    model.TimeZone = model.Affiliate.WebUser.timeZone;
 
+                }
                 if (TempData["ListOfWebinarsForWeekly"] != null)
                 {
                     foreach (var webinar in (IList<Webinar>)TempData["ListOfWebinarsForWeekly"])

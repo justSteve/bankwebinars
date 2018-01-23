@@ -282,141 +282,154 @@ namespace CUWebinars.Web.Controllers
         {
             if (id.HasValue)
             {
-                _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
-                var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
-                var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-
-
-                if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
-                {
-                    return Json(new
-                    {
-                        Result = "UserHasMulti"
-                    }, JsonRequestBehavior.AllowGet);
-                }
-                var createdSeriesOrders = "";
-                try
-                {
-                    if (model.Order.OrderStatus == OrderStatus.InProcess
-                        || model.Order.OrderStatus == OrderStatus.Canceled
-                        || model.Order.OrderStatus == OrderStatus.AwaitingVerification
-                        )
-                        model.Order.OrderDate = DateTime.Now;
-                    model.Order.OrderStatus = OrderStatus.Submitted;
-                    _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, row);
-                }
-                catch (Exception exception)
-                {
-                    ModelState.AddModelError(string.Empty,
-                        "ConfirmOrder|ConfirmOrder failed.");
-                    _logger.ErrorException("ConfirmOrder|ConfirmOrder failed " + model.Order.idOrder, exception);
-                    ErrorSignal.FromCurrentContext().Raise(exception);
-                }
-                try
-                {
-
-                    if (model.Order.Total == 0)
-                    {
-                        model.Order.OrderStatus = OrderStatus.Paid;
-                        model.Order.TotalPaid = model.Order.Total;
-                    }
-
-                    if (model.Webinar.idWebinar == 2520)
-                    {
-                        //is a WSP order
-                        _cartControllerOrchestrator.CreateWspCode(model.Order);
-                    }
-                    _cartControllerOrchestrator.SaveOrder(model.Order);
-                    _SendOrderConfirmation2(model.Order.idOrder);
-
-                    if (model.Webinar.SeriesInfo.Contains("Children"))
-                        if (model.Order.OrderRows != null)
-                            createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
-
-
-                    if (model.Webinar.Title.Contains("Compliance Perspectives")
-                        //test if CP code needs to be created by ensuring it's not a trial
-                        && row.RowPrice > 200)
-                        if (model.Order.OrderRows != null)
-                        {
-                            _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(
-                                model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
-                        }
-
-                    if (_globalConfig.Tenant == "DirectorSeries")
-                    {
-                        Order order = model.Order;
-                        Discount desSub = new Discount
-                        {
-                            DiscountType = DiscountType.ComplianceSeries,
-                            DateValidTo = order.OrderDate.AddYears(1),
-                            DateValidFrom = order.OrderDate,
-                            Cost = row.RowPrice,
-                            DateBilled = DateTime.UtcNow,
-                            DateVerified = DateTime.Now,
-                            DiscountCode = "DES" + order.idOrder,
-                            FlatOff = 0,
-                            Notes = "V3 entry",
-                            PercentOff = 0,
-                            RenewalTerm = 1,
-                            Status = "Active",
-                            TotalCount = 1,
-                            idAffiliate = order.idAffiliate,
-                            idDiscount = order.idOrder
-
-                        };
-                        row.Discount = desSub;
-                    }
-                    if (_globalConfig.Tenant == "CCS")
-                    {
-                        Order order = model.Order;
-                        Discount ccsSub = new Discount
-                        {
-                            DiscountType = DiscountType.DirectorSeries,
-                            DateValidTo = order.OrderDate.AddYears(1),
-                            DateValidFrom = order.OrderDate,
-                            Cost = row.RowPrice,
-                            DateBilled = DateTime.UtcNow,
-                            DateVerified = DateTime.Now,
-                            DiscountCode = "CCS" + order.idOrder,
-                            FlatOff = 0,
-                            Notes = "V3 entry",
-                            PercentOff = 0,
-                            RenewalTerm = 1,
-                            Status = "Active",
-                            TotalCount = 1,
-                            idAffiliate = order.idAffiliate,
-                            idDiscount = order.idOrder
-
-                        };
-                        row.Discount = ccsSub;
-                    }
-                    _cartControllerOrchestrator.SaveOrder(model.Order);
-
-                    //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
-                }
-                catch (Exception exception)
-                {
-                    ModelState.AddModelError(string.Empty, "ConfirmOrder|UpdateOrderPricing failed.");
-                    _logger.ErrorException("ConfirmOrder|UpdateOrderPricing failed:  " + model.Order.idOrder, exception);
-                    ErrorSignal.FromCurrentContext().Raise(exception);
-                }
-
-                return Json(new
-                {
-                    Result = WebUiConstants.Success,
-                    OrderRowID = model.Order.idOrder,
-                    Msg =
-                    string.Format("Thank you! Your registration is confirmed as: " + model.Order.idOrder + ". Complete details will be emailed to {0}. {1}",
-                        model.Order.BillingEmail, createdSeriesOrders)
-                }, JsonRequestBehavior.AllowGet);
-
+                return ConfirmOrder(id);
             }
 
             _logger.Error("ConfirmOrder Action | Id parameter was null");
             _logger.Error(string.Format("ConfirmOrder Action | {0}", _appHelper.GetUserAuditInfo()));
 
             return this.ModelStateJson(ModelState);
+        }
+
+        private ActionResult ConfirmOrder(int? id)
+        {
+            _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
+            var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
+            var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+
+
+            if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
+            {
+                return Json(new
+                {
+                    Result = "UserHasMulti"
+                }, JsonRequestBehavior.AllowGet);
+            }
+            var createdSeriesOrders = "";
+            try
+            {
+                if (model.Order.OrderStatus == OrderStatus.InProcess
+                    || model.Order.OrderStatus == OrderStatus.Canceled
+                    || model.Order.OrderStatus == OrderStatus.AwaitingVerification
+                )
+                    model.Order.OrderDate = DateTime.Now;
+                model.Order.OrderStatus = OrderStatus.Submitted;
+                _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, row);
+            }
+            catch (Exception exception)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "ConfirmOrder|ConfirmOrder failed.");
+                _logger.ErrorException("ConfirmOrder|ConfirmOrder failed " + model.Order.idOrder, exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
+            }
+            try
+            {
+                if (model.Order.Total == 0)
+                {
+                    model.Order.OrderStatus = OrderStatus.Paid;
+                    model.Order.TotalPaid = model.Order.Total;
+                }
+
+                if (model.Webinar.idWebinar == 2520)
+                {
+                    //is a WSP order
+                    _cartControllerOrchestrator.CreateWspCode(model.Order);
+                }
+                _cartControllerOrchestrator.SaveOrder(model.Order);
+                _SendOrderConfirmation2(model.Order.idOrder);
+
+                if (model.Webinar.SeriesInfo.Contains("Children"))
+                    if (model.Order.OrderRows != null)
+                        createdSeriesOrders =
+                            _cartControllerOrchestrator.CreateSeriesOrders(
+                                model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
+
+
+                if (model.Webinar.Title.Contains("Compliance Perspectives")
+                    //test if CP code needs to be created by ensuring it's not a trial
+                    && row.RowPrice > 200)
+                    if (model.Order.OrderRows != null)
+                    {
+                        _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(
+                            model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
+                    }
+
+                if (_globalConfig.Tenant == "DirectorSeries")
+                {
+                    Order order = model.Order;
+                    Discount desSub = new Discount
+                    {
+                        DiscountType = DiscountType.ComplianceSeries,
+                        DateValidTo = order.OrderDate.AddYears(1),
+                        DateValidFrom = order.OrderDate,
+                        Cost = row.RowPrice,
+                        DateBilled = DateTime.UtcNow,
+                        DateVerified = DateTime.Now,
+                        DiscountCode = "DES" + order.idOrder,
+                        FlatOff = 0,
+                        Notes = "V3 entry",
+                        PercentOff = 0,
+                        RenewalTerm = 1,
+                        Status = "Active",
+                        TotalCount = 1,
+                        idAffiliate = order.idAffiliate,
+                        idDiscount = order.idOrder
+                    };
+                    row.Discount = desSub;
+                }
+                if (_globalConfig.Tenant == "CCS")
+                {
+                    Order order = model.Order;
+                    Discount ccsSub = new Discount
+                    {
+                        DiscountType = DiscountType.DirectorSeries,
+                        DateValidTo = order.OrderDate.AddYears(1),
+                        DateValidFrom = order.OrderDate,
+                        Cost = row.RowPrice,
+                        DateBilled = DateTime.UtcNow,
+                        DateVerified = DateTime.Now,
+                        DiscountCode = "CCS" + order.idOrder,
+                        FlatOff = 0,
+                        Notes = "V3 entry",
+                        PercentOff = 0,
+                        RenewalTerm = 1,
+                        Status = "Active",
+                        TotalCount = 1,
+                        idAffiliate = order.idAffiliate,
+                        idDiscount = order.idOrder
+                    };
+                    row.Discount = ccsSub;
+                }
+                _cartControllerOrchestrator.SaveOrder(model.Order);
+
+                //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+            }
+            catch (Exception exception)
+            {
+                ModelState.AddModelError(string.Empty, "ConfirmOrder|UpdateOrderPricing failed.");
+                _logger.ErrorException("ConfirmOrder|UpdateOrderPricing failed:  " + model.Order.idOrder, exception);
+                ErrorSignal.FromCurrentContext().Raise(exception);
+            }
+
+            if (model.Order.Origin.ToLower().StartsWith("express"))
+            {
+
+                return RedirectToAction("OrderComplete", "Account", new { id = model.Order.idOrder });
+            }
+            else
+            {
+                return Json(new
+                {
+                    Result = WebUiConstants.Success,
+                    OrderRowID = model.Order.idOrder,
+                    Msg =
+                    string.Format(
+                        "Thank you! Your registration is confirmed as: " + model.Order.idOrder +
+                        ". Complete details will be emailed to {0}. {1}",
+                        model.Order.BillingEmail, createdSeriesOrders)
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpPost]
@@ -729,6 +742,7 @@ namespace CUWebinars.Web.Controllers
                     }
 
                     ViewBag.Order = order;
+                    model.DisplayRowPriceViewModel.Origin = order.Origin;
                 }
                 else
                 {

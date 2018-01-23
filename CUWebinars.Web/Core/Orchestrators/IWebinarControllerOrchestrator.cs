@@ -34,7 +34,8 @@ namespace CUWebinars.Web.Core.Orchestrators
         //List<string> GetCitrixRegsPerWebinar(Webinar webinar);
         ConnectionInfoEditModel GetConnectionInfo(string webinarKey);
         string BuildRecordingIsPostedMessage(Order order);
-        
+
+        DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow, decimal? optionsCost = null);
     }
 
 

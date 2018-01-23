@@ -35,7 +35,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
     $('body').on('click', 'input:button', (function (e, data) {
 
-        console.log("onBody click" );
+        console.log("onBody click");
 
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
@@ -67,31 +67,31 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         switch (clickedButton) {
             case RegistrationInCart.Button.SignInButton:
-                
+
                 regUserStateManager.logIn();
                 break;
             case RegistrationInCart.Button.TheSubmit:
-                
+
                 regUserStateManager.submit();
                 break;
             case RegistrationInCart.Button.nonUSAddressBtn:
-                
+
                 regUserStateManager.nonUsAdddressInvoked();
                 break;
             case RegistrationInCart.Button.ResetPass:
-                
+
                 regUserStateManager.resetPassword(normalResetPasswordButton);
                 break;
             case RegistrationInCart.Button.YesUseAddress:
-                
+
                 regUserStateManager.useRegisteredAddress();
                 break;
             case RegistrationInCart.Button.EnterDiffAddress:
-                
+
                 regUserStateManager.enterDifferentAddress();
                 break;
             case RegistrationInCart.Button.NotInstitution:
-                
+
                 regUserStateManager.notInstitutionAddress();
                 break;
             default:
@@ -270,7 +270,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 console.log(data);
                 console.log(cartStateManager.getOrderId());
-                
+
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
                     if (data.isConfirmed !== 'true') {
@@ -434,7 +434,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
             }
         }).done(function (data) {
-            //alert('done: ');
+
+            console.log('#ConfirmRegistrationBillMe3 ini');
             if (data.Result) {
                 if (data.Result === 'Success') {
 
@@ -476,11 +477,12 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                             }
                         }).done(function () {
 
+                            console.log('#ConfirmRegistrationBillMe ini');
+
                             // Upon return, load the 3rd tab. And once loaded, 
                             //create the MR UserAccount (but don't log the user in). 
 
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
-
 
                                 if (status == 'error') {
                                     L.clientLogger.error("Error at /cart/checkoutConfirm/", { rowid: cartStateManager.getOrderId() });
@@ -490,7 +492,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                 } else {
 
                                     $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                        
+
                                         completeOrder(userId, orderRowId, webinarId, orderId);
                                         L.clientLogger.info("BigGreenBillMe from register-user-in-cart", { orderid: orderId });
                                     });
@@ -640,7 +642,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                             $('#confirmationTab a').tab('show');
                                         } else {
                                             $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                                
+
                                                 e.preventDefault();
                                                 callback();
                                                 $('#confirmOrder').submit();
@@ -1312,7 +1314,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
             $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
             $('#taxAmt').html(data.Tax + '');
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
-            
+
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
             if (data.TotalPaid !== 0) {
                 if (data.OutstandingBalance > 0) {

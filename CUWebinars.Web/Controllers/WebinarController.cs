@@ -767,8 +767,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int? id, int? idOrder, string joinCode, string renew)
         {
-            //WebMVCClient.Notify(new ArgumentException("Non-fatal"));
-            //client.Notify(new ArgumentException("Non-fatal"));
+
             if (_globalConfig.Tenant == "DirectorSeries")
             {
                 _stateService.SetValue(WebUiConstants.DesSession, "true");
@@ -782,10 +781,6 @@ namespace CUWebinars.Web.Controllers
                 return RedirectToAction("DetailsCcs", new { id = id, idOrder = idOrder });
             }
 
-            if (!string.IsNullOrEmpty(renew))
-            {
-
-            }
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
 
@@ -817,19 +812,6 @@ namespace CUWebinars.Web.Controllers
                     try
                     {
                         InitializeDetailsStateFromExpChcSubmit(webinar, model, id.Value, incomingOrder);
-
-                        //  logger chokes if Discount is present in Order
-                        //var logModelState = JsonConvert.SerializeObject(model.Order, Formatting.None,
-                        //    new JsonSerializerSettings()
-                        //    {
-
-                        //        MaxDepth = 1,
-                        //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                        //    });
-
-                        //_logger.Info("Details | returning checkout session by" + currentUser + " on: " + incomingOrder +
-                        //             " {" + logModelState + "}, Audit: {" + _appHelper.GetUserAuditInfo() + "}");
-
                     }
                     catch (Exception ex)
                     {
@@ -838,7 +820,10 @@ namespace CUWebinars.Web.Controllers
                     }
                 }
                 InitializeViewCentricProperties(model);
-                // mostly just stuff that helps determine layout of the page on load. Not meant to be sent back here to Server from the View
+                // mostly helps determine layout 
+                // of the page on load. Not meant to be sent back 
+                // here to Server from the View
+
                 if (model.Webinar == null)
                 {
                     return HttpNotFound();
@@ -879,9 +864,17 @@ namespace CUWebinars.Web.Controllers
 
                 ActionResult partialView;
                 if (BuildVMForAffiliate(id, claimsIdentityOfAuthenticatedUser, model, webinar, out partialView)) return partialView;
+                model.CheckoutOptionsViewModel.OrderExists = false;
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
+
                 if (_stateService.HasValue(DomainConstants.OriginExpress))
                     if (model.Order != null)
+                    {
                         model.Order.Origin = DomainConstants.OriginExpress;
+                        model.CheckoutOptionsViewModel.OrderExists = false;
+                        model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
+
+                    }
                 BuildConfirmOrderView(model);
 
                 if (!string.IsNullOrWhiteSpace(joinCode) && joinCode == model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl)
@@ -911,10 +904,6 @@ namespace CUWebinars.Web.Controllers
                         model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
                     }
                 }
-                //model.Order = null;
-
-                model.CheckoutOptionsViewModel.OrderExists = false;
-                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
                 if (model.Webinar.idWebinar == 2520)
                 {
                     TempData["IsWSP"] = "true";
@@ -1596,8 +1585,8 @@ namespace CUWebinars.Web.Controllers
                                 OrderRowId = orderRow.idOrderRow,
                                 OrderRowRegistrationType = orderRow.RegistrationType
                             },
-                            DisplayRowPriceViewModel =
-                                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
+                            DisplayRowPriceViewModel = _webinarControllerOrchestrator.BuildDisplayRowPriceViewModel(null, orderRow.idOrderRow),
+                            //DisplayRowPriceViewModel = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
                             idUser = model.Order.idUser,
                             ShippingDetailsModel = new ShippingDetailsModel()
                             {

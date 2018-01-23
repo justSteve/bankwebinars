@@ -111,12 +111,12 @@ $(function () {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
+
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 $('#finalLoadingSpinner').remove();
                 confirmRegistrationBillMe.removeAttr('disabled');
                 $('#signUpSpinner').remove();
                 confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error #555. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
-
             });
 
         });
@@ -217,10 +217,9 @@ $(function () {
         cartStateManager.setOrderId(orderId);
         // see top of this file
         checkoutConfirm.initialize();
-
         //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
-            
+
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
             //submits to 
@@ -345,14 +344,15 @@ $(function () {
                                 // see top of this file
                                 checkoutConfirm.initialize();
 
+                                console.log('#ConfirmRegistrationBillMe1 ini');
                                 // The Bill Me button on 3rd tab
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
-                                    
+
                                     e.preventDefault();
                                     var confirmOrderForm = $('#confirmOrder');
                                     confirmOrderForm.submit();
                                 });
-                                
+
                                 // The Cancel Registration button on 3rd tab
                                 $('#Canceller').on('click', function (e) {
                                     e.preventDefault();
@@ -692,9 +692,9 @@ var deleteCcLocInputTab3 = function (event) {
 
     var trashClicked = event.currentTarget.id;
     var idx = trashClicked.substring(0, 1);
-    var spanToRemove = "CcLocationSpan-"  + idx;
+    var spanToRemove = "CcLocationSpan-" + idx;
     console.log(spanToRemove);
-    
+
     $('#' + spanToRemove).hide(500, function () {
         $(this).remove();
     });

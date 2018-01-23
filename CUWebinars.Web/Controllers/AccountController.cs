@@ -1021,15 +1021,17 @@ namespace CUWebinars.Web.Controllers
                             _orderManagementService.CalculateOrderCost(order, orderRow.Webinar.AdditionalLocationPrice),
                         RegistrationType = orderRow.RegistrationType,
                         SendHardcopy = orderRow.SendHardcopy != null && orderRow.SendHardcopy.Value,
-                        idOrder = order.idOrder
-                        //RowPrice = orderRow.RowPrice
+                        idOrder = order.idOrder,
+                        Origin = order.Origin
+                        
                     },
                     Discount = discount,
                     Order = order,
                     WebUser = order.WebUser,
                     WebinarId = orderRow.Webinar.idWebinar,
                     idOrderRow = orderRow.idOrderRow,
-                    NumberOfAdditionalLocations = additionalLocationsCount
+                    NumberOfAdditionalLocations = additionalLocationsCount,
+                    
                 }
             };
             var onDemandClaim = new PostEventClaim

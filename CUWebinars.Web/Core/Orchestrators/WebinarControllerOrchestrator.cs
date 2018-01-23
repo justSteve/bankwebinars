@@ -917,6 +917,70 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
 
+        public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow,
+            decimal? optionsCost = null)
+        {
+            //HACK:  this is pasted from _cartControllerOrch
+            if (idOrderRow.HasValue && idOrderRow.Value > 0)
+            {
+                try
+                {
+                    if (ReferenceEquals(orderRow, null))
+                        orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+
+                    if (orderRow.RowStatus != OrderRowStatus.Active)
+                        return null;
+
+                    _logger.Info("BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
+
+                    if (!optionsCost.HasValue)
+                    {
+                        optionsCost = _orderManagementService.GetAdditionalLocationsPricing(orderRow.idWebinar);
+                    }
+
+                    string addressesForAdditionalLocations = "";
+                    if (orderRow.AdditionalLocation.Count > 0)
+                    {
+                        foreach (var addy in orderRow.AdditionalLocation)
+                        {
+                            if (_appHelper.CheckIsEmailValid(addy.Email.Trim()))
+                                addressesForAdditionalLocations += addy.Email.Trim() + "<br>";
+                        }
+
+                        addressesForAdditionalLocations.Remove(addressesForAdditionalLocations.IndexOf('<'));
+
+                    }
+
+                    var displayRowPriceViewModel = new DisplayRowPriceViewModel
+                    {
+                        Origin = orderRow.Order.Origin,
+                        NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
+                        AddressesForAdditionalLocations = addressesForAdditionalLocations,
+                        //OrderStatus = orderRow.Order.OrderStatus,
+                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        PricesAndDiscounts =
+                            _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
+                        //RowPrice = orderRow.RowPrice,
+                        RegistrationType = orderRow.RegistrationType,
+                        SendHardcopy = orderRow.SendHardcopy != null && orderRow.SendHardcopy.Value,
+                        idOrder = orderRow.idOrder
+                    };
+
+                    _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
+
+                    return displayRowPriceViewModel;
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("BuildDisplayRowPriceViewModel", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+            }
+            return null;
+        }
+
+
         private void AddNoteClaim(IList<Order> ordersForWebinar)
         {
 

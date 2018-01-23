@@ -516,7 +516,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
-                        //Discount = orderRow.Discount,
+                        Origin = orderRow.Order.Origin,
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
                         AddressesForAdditionalLocations = addressesForAdditionalLocations,
                         //OrderStatus = orderRow.Order.OrderStatus,
@@ -1632,60 +1632,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public ExpressCheckoutModel ExpressCheckout(Order order, WebUser user)
         {
-            UpdateOrderWithUserId(order.idOrder, user.idUser);
-            var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+            //originally held callback to jotform
+            return null;
 
-            var addLocs = "";
-
-            if (row.AdditionalLocation != null && row.AdditionalLocation.Any())
-            {
-                foreach (var loc in row.AdditionalLocation)
-                {
-                    addLocs = loc.Email + Environment.NewLine;
-                }
-            }
-            string justNumbers = new String(order.BillingPhone.Where(Char.IsDigit).ToArray());
-            var area = justNumbers.Substring(0, 3);
-            var phone = justNumbers.Substring(3, 3) + "-" + justNumbers.Substring(6, 4);
-            var formID = "60456422151952";
-            if (_globalConfig.Tenant == "BankWebinars")
-            {
-                formID = "52205870745961"; //production
-                                           //formID = "60463854157965"; //dev
-            }
-
-            var model = new ExpressCheckoutModel
-            {
-                formID = formID,
-                q18_q_webinarid18 = row.Webinar.idWebinar,
-                q15_affiliateid15 = order.idAffiliate,
-                q12_webinarTitle = row.Webinar.Title,
-                q11_orderid = order.idOrder,
-                q9_title = user.Title,
-                q14_address14 = new Q14Address14
-                {
-                    addr_line1 = order.BillingAddress,
-                    addr_line2 = order.BillingAddress2,
-                    state = order.BillingState,
-                    city = order.BillingCity,
-                    postal = order.BillingZip,
-                    country = "United States"
-                },
-                q4_name = new Q4Name { first = order.FirstName, last = order.LastName },
-                q8_institution = order.Institution,
-                q6_phoneNumber6 = new Q6PhoneNumber6 { area = area, phone = phone },
-                q5_email5 = order.BillingEmail,
-                q19_additionalLocations19 = addLocs
-            };
-
-            if (order.WebUser.idSubscriptionDiscount.HasValue)
-            {
-                var discount =
-                    GetDiscountById(order.WebUser.idSubscriptionDiscount.Value);
-                model.q20_discountCode20 = discount.DiscountCode;
-            }
-
-            return model;
         }
 
         public RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar)

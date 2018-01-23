@@ -32,12 +32,13 @@ namespace CUWebinars.Business.Notification.Email
             var cloudStorageAccount = new CloudStorageAccount(storageCredentials, false);
 
             _queueClient = cloudStorageAccount.CreateCloudQueueClient();
-
+            // original message queue triggers mandrill 
             CloudQueue cloudQueue = _queueClient.GetQueueReference(_targetQueueName);  // passed in during construction, usually from web.config
             cloudQueue.CreateIfNotExists();
 
-            CloudQueue cloudQueue1 = _queueClient.GetQueueReference(_targetQueueName + "1");  
-            cloudQueue.CreateIfNotExists();
+            //// new message queue should trigger mandrill 
+            //CloudQueue cloudQueue1 = _queueClient.GetQueueReference(_targetQueueName + "1");  
+            //cloudQueue.CreateIfNotExists();
 
             EnsureMessage(notificationMessage);
 
@@ -45,8 +46,8 @@ namespace CUWebinars.Business.Notification.Email
             cloudQueue.EncodeMessage = true;
             cloudQueue.AddMessage(cloudQueueMessage);
 
-            cloudQueue1.EncodeMessage = true;
-            cloudQueue1.AddMessage(cloudQueueMessage);
+            //cloudQueue1.EncodeMessage = true;
+            //cloudQueue1.AddMessage(cloudQueueMessage);
 
             _logger.Info(string.Format("WebJobSmtpMsg to: {0}, filename is: {1} ", notificationMessage.To, notificationMessage.PersistedName));
         }
