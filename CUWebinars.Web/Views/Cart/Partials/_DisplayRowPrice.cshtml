@@ -211,13 +211,14 @@
         if (Model.Origin != null && Model.Origin.ToLower() != "cart")
         {
             <script language="javascript" type="text/javascript">
-                 $(function () {
+                $(function () {
+                    $('#revealOptions').hide();
+                    $('#revealAddLocsPanel').hide();
+                    $('#Canceller').html(
+                        '<div class="label label-warning large" role="button" id="Canceller"><span style="color: black"> &nbsp;&nbsp;Problems? Questions?<br /> Use our <b>Chat</b> button lower left or email us at info@ttstrain.com! &nbsp;&nbsp;</span></div>');
                      $('#ConfirmRegistrationBillMe').on('click',
                          function(e) {
-
-                             //var self = $(this);
-                             //self.find('input[name="id"]').val(orderRowId);
-
+                             
                              e.preventDefault();
                              var confirmOrderForm = $('#confirmOrder');
 
