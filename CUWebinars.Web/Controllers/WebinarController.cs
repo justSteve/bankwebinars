@@ -40,8 +40,10 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Bugsnag.Clients;
-using Citrix.GoToWebinar.Api;
-using Citrix.GoToWebinar.Api.Model;
+
+using LogMeIn.GoToWebinar.Api;
+using LogMeIn.GoToWebinar.Api.Model;
+
 using CUWebinars.Business.Notification.ViewModel;
 using MailChimp.Net;
 using MailChimp.Net.Core;
@@ -263,9 +265,12 @@ namespace CUWebinars.Web.Controllers
                         }
 
                         //searchDomainOnly (select * where email like '%@ttstrain.com')
-                        if (searchTerm.StartsWith("@") || searchTerm.StartsWith("aa") || searchTerm.StartsWith("l ") ||
-                            searchTerm.StartsWith("inprocess") || searchTerm.Contains("@") ||
-                            searchTerm.StartsWith("inprocess"))
+                        if (searchTerm.StartsWith("@") || searchTerm.StartsWith("aa")
+                            || searchTerm.StartsWith("l ")
+                            || searchTerm.StartsWith("inprocess")
+                            || searchTerm.Contains("@")
+                            || searchTerm.StartsWith("wsp")
+                            )
                         {
 
                             if (currentAffiliate.idUserAff != 19)
@@ -331,6 +336,12 @@ namespace CUWebinars.Web.Controllers
                 ViewBag.Title = "All Director Education Series Courses";
                 return View("~/Views/Webinar/AllActiveDes.cshtml", webinars);
             }
+            if (eventsToShow == "ccs")
+            {
+                webinars = _webinarManagementService.GetDesWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date);
+                ViewBag.Title = "All Director Education Series Courses";
+                return View("~/Views/Webinar/AllActiveCcs.cshtml", webinars);
+            }
 
             return View(webinars);
         }
@@ -353,8 +364,16 @@ namespace CUWebinars.Web.Controllers
             var orgKey = _globalConfig.ConvertToCitrixOrgKey(webinar.OrganizerKey);
             var cWebinarKey = _globalConfig.ConvertToCitrixWebinarKey(webinar.WebinarKey);
             var api = new RegistrantsApi();
-
-            var apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
+            List<Registrant> apiResponse = new List<Registrant>();
+            try
+            {
+                apiResponse = api.getAllRegistrantsForWebinar(webinar.OrganizerOAuthKey, orgKey, cWebinarKey); // {};
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("SendConnectionInfoPrep | LogMeIn api fails: ", e);
+                throw;
+            }
 
             var orders = _orderManagementService.GetOrdersForLiveNotifications(webinar.idWebinar);
 
@@ -748,19 +767,303 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int? id, int? idOrder, string joinCode, string renew)
         {
-            //WebMVCClient.Notify(new ArgumentException("Non-fatal"));
-            //client.Notify(new ArgumentException("Non-fatal"));
+
             if (_globalConfig.Tenant == "DirectorSeries")
             {
                 _stateService.SetValue(WebUiConstants.DesSession, "true");
 
                 return RedirectToAction("DetailsDes", new { id = id, idOrder = idOrder });
             }
-
-            if (!string.IsNullOrEmpty(renew))
+            if (_globalConfig.Tenant == "CCS")
             {
-                
+                _stateService.SetValue(WebUiConstants.CcsSession, "true");
+
+                return RedirectToAction("DetailsCcs", new { id = id, idOrder = idOrder });
             }
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+            var currentUser = User.Identity.Name ?? "anon";
+
+            int incomingOrder = 0;
+            if (idOrder.HasValue)
+            {
+                incomingOrder = idOrder.Value;
+            }
+
+            if (id.HasValue)
+            {
+
+                Webinar webinar = null;
+                WebinarDetailsViewModel model = null;
+
+                InitializeDetailsWebinar(id.Value, out webinar);
+
+                if (webinar == null) return HttpNotFound();
+
+                InitializeDetailsModel(webinar, out model, incomingOrder);
+
+                if (incomingOrder == 0 || joinCode != null)
+                {
+                    InitializeDetailsState(webinar, model, id.Value, joinCode);
+                    // form state, incl. stuff that will be posted back. 
+                }
+                else
+                {
+                    try
+                    {
+                        InitializeDetailsStateFromExpChcSubmit(webinar, model, id.Value, incomingOrder);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("Details | returning checkout session - ", ex);
+                        throw;
+                    }
+                }
+                InitializeViewCentricProperties(model);
+                // mostly helps determine layout 
+                // of the page on load. Not meant to be sent back 
+                // here to Server from the View
+
+                if (model.Webinar == null)
+                {
+                    return HttpNotFound();
+                }
+
+
+                if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                    (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+                {
+                    var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+
+                    ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
+                    var aff = _affiliateManagementService.LoadByTTSDomain("bankwebinars");
+                    // find a better check for admin
+                    if (model.CheckoutInProcess)
+                    {
+                        CheckoutResumeByAdmin(id, model);
+                    }
+
+                    //if (webinar.Status == WebinarStatus.Active || webinar.Status == WebinarStatus.InProgress)
+                    //{
+                    //    _webinarControllerOrchestrator.GetCitrixRegsPerWebinar(webinar);
+                    //}
+
+                    model.ShowOrdersViewModel = new ShowOrdersViewModel
+                    {
+                        Affiliate = aff,
+                        Orders = _orderManagementService.GetOrdersByWebinar(id.Value),
+                        UserIsAdmin = true,
+                        Webinar = model.Webinar
+                    };
+
+                    BuildConfirmOrderView(model);
+
+                    return PartialView("DetailsAdmin", model);
+                }
+
+                ActionResult partialView;
+                if (BuildVMForAffiliate(id, claimsIdentityOfAuthenticatedUser, model, webinar, out partialView)) return partialView;
+                model.CheckoutOptionsViewModel.OrderExists = false;
+                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
+
+                if (_stateService.HasValue(DomainConstants.OriginExpress))
+                    if (model.Order != null)
+                    {
+                        model.Order.Origin = DomainConstants.OriginExpress;
+                        model.CheckoutOptionsViewModel.OrderExists = false;
+                        model.CheckoutOptionsViewModel.DisplayOptionsViewModel.OrderRowExists = false;
+
+                    }
+                BuildConfirmOrderView(model);
+
+                if (!string.IsNullOrWhiteSpace(joinCode) && joinCode == model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl)
+                {
+                    ViewBag.byJoinCode = joinCode;
+                    var clickToJoinViewModel = new ClickToJoinViewModel
+                    {
+                        JoinCode = joinCode,
+                        RedirectLinkText = _globalConfig.TenantURL + "/" + joinCode,
+                        Webinar = webinar,
+                        Order = model.Order
+                    };
+                    model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
+                }
+                else
+                {
+                    if (model.Order != null && !string.IsNullOrWhiteSpace(model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl))
+                    {
+                        Debug.Assert(model.Order.OrderRows != null, "model.Order.OrderRows != null");
+                        var clickToJoinViewModel = new ClickToJoinViewModel
+                        {
+                            JoinCode = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl,
+                            RedirectLinkText = _globalConfig.TenantURL + "/" + model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).TtsJoinUrl,
+                            Webinar = webinar,
+                            Order = model.Order
+                        };
+                        model.RegistrationSummaryViewModel.ClickToJoinModel = clickToJoinViewModel;
+                    }
+                }
+                if (model.Webinar.idWebinar == 2520)
+                {
+                    TempData["IsWSP"] = "true";
+                }
+                return View(model);
+            }
+            _logger.Error("Details Action invoked with null 'id' parameter");
+
+            return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
+        }
+
+        private bool BuildVMForAffiliate(int? id, ClaimsIdentity claimsIdentityOfAuthenticatedUser,
+            WebinarDetailsViewModel model, Webinar webinar, out ActionResult partialView)
+        {
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == Business.Constants.ClaimTypes.Affiliate))
+            {
+                var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+
+                ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
+
+
+                // Get the claims values
+                var ttsDomain = claimsIdentityOfAuthenticatedUser.Claims
+                    .Where(c => c.Type == ClaimTypes.Affiliate)
+                    .Select(c => c.Value)
+                    .SingleOrDefault();
+
+                var aff = _affiliateManagementService.LoadByTTSDomain(ttsDomain);
+
+                if (model.CheckoutInProcess)
+                {
+                    CheckoutResumeByAdmin(id, model);
+                }
+
+                model.DNP = true;
+                if (aff.DoNotPromoteList != null)
+                    foreach (var w in aff.DoNotPromoteList)
+                    {
+                        if (webinar.idWebinar == w)
+                        {
+                            model.DNP = false;
+                        }
+                    }
+                model.ShowOrdersViewModel = new ShowOrdersViewModel
+                {
+                    Affiliate = aff,
+                    Orders =
+                        _orderManagementService.GetOrdersByWebinar(id.Value)
+                            .Where(o => o.idAffiliate == aff.idUserAff)
+                            .ToList(),
+                    UserIsAdmin = false,
+                    Webinar = model.Webinar
+                };
+                model.PromoLinks = new PromoLinks
+                {
+                    Affiliate = aff,
+                    Links =
+                        _affiliateManagementService.GetPromosByAffiliate(_globalConfig.Tenant, aff.idUserAff,
+                            webinar.idWebinar)
+                };
+                BuildConfirmOrderView(model);
+                {
+                    partialView = PartialView("DetailsAffiliate", model);
+                    return true;
+                }
+            }
+            //removing test for existing orders because we are 
+            // now attempting // to trap those at order's creation
+            InitializeInProcessProperties(id.Value, model, webinar);
+            partialView = null;
+            return false;
+        }
+
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ICalOrder(int? icsOrder, int? icsWebinar)
+        {
+            Order order = new Order { idOrder = 0 };
+            _logger.Info("ICalBuilder for: " + icsOrder);
+            if (icsOrder.HasValue && icsOrder > 0)
+                order = _orderManagementService.GetOrderById(icsOrder.Value);
+
+            Webinar webinar = new Webinar { idWebinar = 0 };
+            if (icsWebinar.HasValue && icsWebinar > 0)
+                _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
+            var descBuilder = new StringBuilder();
+
+
+            if (order.idOrder > 0)
+            {
+                webinar = _webinarControllerOrchestrator.GetWebinar(
+                    order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
+
+
+                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                        .RegistrationType.ShowLiveNotifications.ToLower() != "yes")
+                {
+                    descBuilder.Append("A reminder of your webinar (" + _globalConfig.TenantPrefix + icsOrder + "). ");
+                    descBuilder.Append("At the time this reminder was generated, your registration did not include " +
+                                       "'Live' attendance. If you would like to change that please visit us at "
+                                       + _globalConfig.TenantURL + "/resume/" + order.idOrder +
+                                       ". Otherwise, you'll see a notification that the recording is posted within 24 hours following the event. ");
+                }
+                else
+                {
+                    descBuilder.Append("Pre-event and other information about this webinar can be reviewed at:  " +
+                                       _globalConfig.TenantURL + "/j/" +
+                                       order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                           .TtsJoinUrl);
+                }
+            }
+            else
+            {
+                descBuilder.Append("A reminder of " + webinar.Title + ".");
+            }
+
+            var utcTime = TimeZoneInfo.ConvertTimeToUtc(webinar.Date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+
+
+            var icalStringbuilder = new StringBuilder();
+
+            icalStringbuilder.AppendLine("BEGIN:VCALENDAR");
+            icalStringbuilder.AppendLine("PRODID:-//Scheduled Event//EN");
+            icalStringbuilder.AppendLine("VERSION:2.0");
+
+            icalStringbuilder.AppendLine("BEGIN:VEVENT");
+            icalStringbuilder.AppendLine("SUMMARY;LANGUAGE=en-us:" + webinar.Title);
+            icalStringbuilder.AppendLine("CLASS:PUBLIC");
+            icalStringbuilder.AppendLine(string.Format("CREATED:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
+            icalStringbuilder.AppendLine("DESCRIPTION:" + descBuilder.ToString());
+            icalStringbuilder.AppendLine("X-ALT-DESC;FMTTYPE=text/html:" + descBuilder.ToString());
+            icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", utcTime));
+            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", utcTime.AddHours((double)webinar.Duration)));
+            icalStringbuilder.AppendLine("SEQUENCE:0");
+            icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
+
+            icalStringbuilder.AppendLine("BEGIN:VALARM");
+            icalStringbuilder.AppendLine("TRIGGER:-PT60M");
+            icalStringbuilder.AppendLine("ACTION:DISPLAY");
+            icalStringbuilder.AppendLine("DESCRIPTION:Reminder of Webinar");
+            icalStringbuilder.AppendLine("END:VALARM");
+
+            icalStringbuilder.AppendLine("END:VEVENT");
+            icalStringbuilder.AppendLine("END:VCALENDAR");
+
+            var bytes = Encoding.UTF8.GetBytes(icalStringbuilder.ToString());
+
+            return this.File(bytes, "text/calendar", "thisEvent.ics");
+
+        }
+
+        private string MakeTitleSafe(string webinarTitle)
+        {
+            return webinarTitle;
+        }
+
+        public ActionResult DetailsCcs(int? id, int? idOrder, string joinCode)
+        {
+
             ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
             var currentUser = User.Identity.Name ?? "anon";
 
@@ -944,89 +1247,6 @@ namespace CUWebinars.Web.Controllers
             _logger.Error("Details Action invoked with null 'id' parameter");
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
-        }
-
-
-        [System.Web.Mvc.HttpGet]
-        public ActionResult ICalOrder(int? icsOrder, int? icsWebinar)
-        {
-            Order order = new Order { idOrder = 0 };
-            _logger.Info("ICalBuilder for: " + icsOrder);
-            if (icsOrder.HasValue && icsOrder > 0)
-                order = _orderManagementService.GetOrderById(icsOrder.Value);
-
-            Webinar webinar = new Webinar { idWebinar = 0 };
-            if (icsWebinar.HasValue && icsWebinar > 0)
-                _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
-            var descBuilder = new StringBuilder();
-
-
-            if (order.idOrder > 0)
-            {
-                webinar = _webinarControllerOrchestrator.GetWebinar(
-                    order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
-
-
-                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                        .RegistrationType.ShowLiveNotifications.ToLower() != "yes")
-                {
-                    descBuilder.Append("A reminder of your webinar (" + _globalConfig.TenantPrefix + icsOrder + "). ");
-                    descBuilder.Append("At the time this reminder was generated, your registration did not include " +
-                                       "'Live' attendance. If you would like to change that please visit us at "
-                                       + _globalConfig.TenantURL + "/resume/" + order.idOrder +
-                                       ". Otherwise, you'll see a notification that the recording is posted within 24 hours following the event. ");
-                }
-                else
-                {
-                    descBuilder.Append("Pre-event and other information about this webinar can be reviewed at:  " +
-                                       _globalConfig.TenantURL + "/j/" +
-                                       order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                           .TtsJoinUrl);
-                }
-            }
-            else
-            {
-                descBuilder.Append("A reminder of " + webinar.Title + ".");
-            }
-
-            var utcTime = TimeZoneInfo.ConvertTimeToUtc(webinar.Date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
-
-
-            var icalStringbuilder = new StringBuilder();
-
-            icalStringbuilder.AppendLine("BEGIN:VCALENDAR");
-            icalStringbuilder.AppendLine("PRODID:-//Scheduled Event//EN");
-            icalStringbuilder.AppendLine("VERSION:2.0");
-
-            icalStringbuilder.AppendLine("BEGIN:VEVENT");
-            icalStringbuilder.AppendLine("SUMMARY;LANGUAGE=en-us:" + webinar.Title);
-            icalStringbuilder.AppendLine("CLASS:PUBLIC");
-            icalStringbuilder.AppendLine(string.Format("CREATED:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
-            icalStringbuilder.AppendLine("DESCRIPTION:" + descBuilder.ToString());
-            icalStringbuilder.AppendLine("X-ALT-DESC;FMTTYPE=text/html:" + descBuilder.ToString());
-            icalStringbuilder.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", utcTime));
-            icalStringbuilder.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", utcTime.AddHours((double)webinar.Duration)));
-            icalStringbuilder.AppendLine("SEQUENCE:0");
-            icalStringbuilder.AppendLine("UID:" + Guid.NewGuid());
-
-            icalStringbuilder.AppendLine("BEGIN:VALARM");
-            icalStringbuilder.AppendLine("TRIGGER:-PT60M");
-            icalStringbuilder.AppendLine("ACTION:DISPLAY");
-            icalStringbuilder.AppendLine("DESCRIPTION:Reminder of Webinar");
-            icalStringbuilder.AppendLine("END:VALARM");
-
-            icalStringbuilder.AppendLine("END:VEVENT");
-            icalStringbuilder.AppendLine("END:VCALENDAR");
-
-            var bytes = Encoding.UTF8.GetBytes(icalStringbuilder.ToString());
-
-            return this.File(bytes, "text/calendar", "thisEvent.ics");
-
-        }
-
-        private string MakeTitleSafe(string webinarTitle)
-        {
-            return webinarTitle;
         }
 
         public ActionResult DetailsDes(int? id, int? idOrder, string joinCode)
@@ -1287,14 +1507,14 @@ namespace CUWebinars.Web.Controllers
                     else
                     {
                         model.OptionsToDisplay =
-                            _orderManagementService.GetAllPossibleOptionsByWebinarId(model.Webinar.idWebinar, false);
+                            _orderManagementService.GetAllPossibleRegTypesByWebinarId(model.Webinar.idWebinar, false);
 
                     }
                 }
                 else
                 {
                     model.OptionsToDisplay =
-                        _orderManagementService.GetAllPossibleOptionsByWebinarId(model.Webinar.idWebinar, false);
+                        _orderManagementService.GetAllPossibleRegTypesByWebinarId(model.Webinar.idWebinar, false);
 
                 }
 
@@ -1325,8 +1545,7 @@ namespace CUWebinars.Web.Controllers
 
                     //populate viewbag for expresscheckout viewmodel
                     ViewBag.Order = order;
-
-                    order.OrderDate = DateTime.Now;
+                    //order.OrderDate = DateTime.Now;
 
                     PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
                     _orderManagementService.UpdateOrderChanges(orderRow.Order, ref pricesAndDiscounts);
@@ -1366,8 +1585,8 @@ namespace CUWebinars.Web.Controllers
                                 OrderRowId = orderRow.idOrderRow,
                                 OrderRowRegistrationType = orderRow.RegistrationType
                             },
-                            DisplayRowPriceViewModel =
-                                model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
+                            DisplayRowPriceViewModel = _webinarControllerOrchestrator.BuildDisplayRowPriceViewModel(null, orderRow.idOrderRow),
+                            //DisplayRowPriceViewModel = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel,
                             idUser = model.Order.idUser,
                             ShippingDetailsModel = new ShippingDetailsModel()
                             {
@@ -1610,7 +1829,7 @@ namespace CUWebinars.Web.Controllers
 
             if (!orderExists) return;
             model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
-            model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
+            //model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
             //var row = orderRowForOrder;
 
             model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
@@ -1759,7 +1978,7 @@ namespace CUWebinars.Web.Controllers
                 if (orderExists)
                 {
                     model.CheckoutOptionsViewModel.OrderStatus = model.Order.OrderStatus;
-                    model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
+                    //model.CheckoutOptionsViewModel.OrderHasId = model.Order.idOrder > 0;
                     var row = orderRowForOrder;
 
                     model.CheckoutOptionsViewModel.RegistrationType = orderRowForOrder.RegistrationType;
@@ -2586,6 +2805,8 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult ClickToJoin(string joinCode, int? idWebinar)
         {
+            if (joinCode == "0000") return null;
+
             var webinar = _orderManagementService.GetWebinarByJoinCode(joinCode);
 
             var order = _orderManagementService.GetOrderByJoinCode(joinCode);

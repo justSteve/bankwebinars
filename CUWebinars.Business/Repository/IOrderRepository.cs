@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Citrix.GoToWebinar.Api.Model;
+using LogMeIn.GoToWebinar.Api.Model;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Services;
 using Webinar = CUWebinars.Business.Models.Webinar;
@@ -52,7 +52,7 @@ namespace CUWebinars.Business.Repository
         void RemoveAndDeleteAdditionalLocation(AdditionalLocation deletedAdditionalLocation);
         
         IList<int> FindUserIdsByPartialId(int value);
-        object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
+        //object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search);
         void LoadWebinarIntoOrderRow(OrderRow newOrderRow);
         Order FindExpressCheckoutOrder(string trim, int idWebinar);
         

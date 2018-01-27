@@ -1,23 +1,13 @@
 ﻿using BrockAllen.MembershipReboot;
 using CUWebinars.Business.Models;
-using Ninject.Extensions.Logging;
 using System;
-using System.Collections;
-using System.Web;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Claims;
 using System.Text;
 using CUWebinars.Business.Constants;
-using CUWebinars.Business.Core.Extensions;
 using CUWebinars.Business.Services;
 using Newtonsoft.Json;
 
@@ -35,6 +25,57 @@ namespace CUWebinars.Business.Core
             _connectionString = connectionString;
         }
 
+
+        public string CheckForUnique(string code, string field)
+        {
+            var returnVal = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var CheckForUnique = new SqlCommand())
+                {
+                    var codeParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.VarChar,
+                        ParameterName = "@code",
+                        Value = code
+                    };
+                    var fieldParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.VarChar,
+                        ParameterName = "@field",
+                        Value = field
+                    };
+
+                    CheckForUnique.Parameters.Add(codeParameter);
+                    CheckForUnique.Parameters.Add(fieldParameter);
+
+                    CheckForUnique.Connection = sqlConnection;
+                    CheckForUnique.CommandType = CommandType.StoredProcedure;
+                    CheckForUnique.CommandText = "CheckForUnique";
+
+                    try
+                    {
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                        {
+                            sqlUpdateConnection.Open();
+
+                            returnVal = CheckForUnique.ExecuteScalar().ToString();
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("CheckForUnique", "CheckForUnique: " + CheckForUnique.CommandText +
+                                                      " Exception.Message: " + ex.Message);
+                    }
+                    return returnVal;
+
+                }
+            }
+        }
 
         public string FindRegTypeForRateWatch(string regTypeLable)
         {
@@ -587,13 +628,14 @@ namespace CUWebinars.Business.Core
                     {
                         FindAllPostEventClaims.Connection = sqlConnection;
                         FindAllPostEventClaims.CommandType = CommandType.StoredProcedure;
+                        PostEventClaim thisClaim;
 
                         using (var reader = FindAllPostEventClaims.ExecuteReader())
                         {
                             while (reader.Read())
                             {
                                 //PostEventClaim returnClaim = new PostEventClaim();
-                                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(reader[0].ToString());
+                                thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(reader[0].ToString());
                                 retList.Add(thisClaim);
                             }
                         }
@@ -983,7 +1025,7 @@ namespace CUWebinars.Business.Core
 
                             errorLogger.ExecuteNonQuery();
                         }
-                        
+
                         throw;
                     }
                 }
@@ -1554,5 +1596,201 @@ namespace CUWebinars.Business.Core
             }
             return reply;
         }
+
+        public void WebinarIsSetToRecorded()
+        {
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getLegacyWebinars = new SqlCommand())
+                {
+
+                    getLegacyWebinars.Connection = sqlConnection;
+                    getLegacyWebinars.CommandType = CommandType.StoredProcedure;
+                    getLegacyWebinars.CommandText = "updateRegGroups";
+
+                    try
+                    {
+                        int idWebinar;
+                        DateTime date;
+                        using (var sqlUpdateConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+                        {
+                            sqlUpdateConnection.Open();
+
+                            using (var reader = getLegacyWebinars.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    //reader.GetInt32(0), reader.GetDecimal(1)));
+                                    idWebinar = reader.GetInt32(0);
+                                    date = reader.GetDateTime(1);
+                                    var timeToStartWebinar = date.AddMinutes(-30) - DateTime.Now;
+                                    //AddMessage(idWebinar.ToString(), timeToStartWebinar);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public string GetAuditNotes(Order order, string auditType)
+        {
+            List<AuditChangedRegTypeModel> result = new List<AuditChangedRegTypeModel>();
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+
+                sqlConnection.Open();
+                using (var myConn = new SqlCommand("GetAuditNotes", sqlConnection))
+                {
+                    try
+                    {
+                        myConn.Connection = sqlConnection;
+                        myConn.CommandType = CommandType.StoredProcedure;
+                        var idOrderParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@idOrder",
+                            Value = order.idOrder
+                        };
+
+
+                        var auditTypeParam = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@auditType",
+                            Value = auditType
+                        };
+                        myConn.Parameters.Add(idOrderParam);
+                        myConn.Parameters.Add(auditTypeParam);
+
+                        using (var reader = myConn.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                if (reader[0] != null)
+                                {
+                                    var _reply = new AuditChangedRegTypeModel();
+                                    _reply.DateOfChange = reader[0].ToString();
+                                    var startBlock = reader[1].ToString().IndexOf("from: ") + 6;
+                                    var endBlock = reader[1].ToString().IndexOf("to: ");
+
+                                    _reply.From = reader[1].ToString().Substring(startBlock, endBlock - startBlock);
+
+                                    if (reader[1].ToString().Contains("note"))
+                                    {
+
+                                        startBlock = reader[1].ToString().IndexOf("to: ") + 4;
+                                        endBlock = reader[1].ToString().IndexOf("note:");
+                                        _reply.To = reader[1].ToString().Substring(startBlock, endBlock - startBlock);
+
+                                        startBlock = reader[1].ToString().IndexOf("note: ") + 6;
+                                        endBlock = reader[1].ToString().IndexOf("by: ");
+                                        _reply.Note = reader[1].ToString().Substring(startBlock, endBlock - startBlock);
+                                    }
+                                    else
+                                    {
+                                        startBlock = reader[1].ToString().IndexOf("to: ") + 4;
+                                        endBlock = reader[1].ToString().IndexOf("by:");
+                                        _reply.To = reader[1].ToString().Substring(startBlock, endBlock - startBlock);
+                                        _reply.Note = "";
+                                    }
+                                    startBlock = reader[1].ToString().IndexOf("\"RemoteUser\": ") + 14;
+                                    endBlock = reader[1].ToString().IndexOf("\"UserAgent\":");
+                                    _reply.By = reader[1].ToString().Substring(startBlock, endBlock - startBlock)
+                                        .Replace("\",\r\n  ", "")
+                                        .Replace("\"", "");
+
+                                    result.Add(_reply);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'GetAuditNotes' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'GetAuditNotes', 9 ,";
+                            errorLogger.CommandText += "'error at GetAuditNotes " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                        return null;
+                    }
+                }
+            }
+            var returnResult = JsonConvert.SerializeObject(result);
+            return returnResult;
+        }
+
+        public void BuildStampsLabels(int orderIdOrder)
+        {
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+
+                using (var buildStampsLabel = new SqlCommand())
+                {
+                    var idOrderParam = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.VarChar,
+                        ParameterName = "@idOrder",
+                        Value = orderIdOrder
+                    };
+
+
+                    buildStampsLabel.Connection = sqlConnection;
+                    buildStampsLabel.CommandType = CommandType.StoredProcedure;
+                    buildStampsLabel.CommandText = "BuildStampsLabel";
+
+                    buildStampsLabel.Parameters.Add(idOrderParam);
+
+                    try
+                    {
+                        buildStampsLabel.ExecuteScalar();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        using (
+                            var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'BuildStampsLabels' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'BuildStampsLabels', 9 ,";
+                            errorLogger.CommandText += "'error at BuildStampsLabels " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public class AuditChangedRegTypeModel
+    {
+        public string DateOfChange { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+        public string By { get; set; }
+        public string Note { get; set; }
     }
 }

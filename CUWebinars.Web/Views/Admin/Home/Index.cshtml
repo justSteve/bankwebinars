@@ -21,7 +21,25 @@
 @Styles.Render("~/Content/notifications-ops-styles")
 
 <script type="text/javascript">
-    $(function () {
+    $(function() {
+        $("[id^=inv]").on("click",
+            function(e) {
+                if (e.target.innerText === "2017") {
+                    
+                    $('#inv2017Body').show();
+                    $('#inv2018Body').hide();
+
+                    var string = $('#inv2017Body')
+                        .load(
+                            '/Admin/ShowInvoices?idAff=@Model.AffiliateSettingsViewModel.Affiliate.idUserAff&year=2017');
+
+                    $('#inv2017Body').html(string);
+                    
+                } else {
+                    $('#inv2018Body').show();
+                    $('#inv2017Body').hide();
+                }
+        });
 
         $("#ImportLearnUponEvents").on("click",
             function () {
@@ -82,6 +100,7 @@
     if (Model.UserDetailsViewModel.UserIsAdmin)
     {
         <section>
+            <div id="holder" style ="display: none;">...working...</div>
             <div style="width: 1100px; margin: 30px auto">
                 <h2>Admin</h2>
 
@@ -98,7 +117,7 @@
                             <li>
                                 <div>
                                     <div id="EditAffiliate_">
-                                        @using (Html.BeginForm("EditAffiliate", "Admin", FormMethod.Get, new { id = "frmEditAffiliate_" }))
+                                        @using (Html.BeginForm("EditAffiliate", "Admin", FormMethod.Get, new {id = "frmEditAffiliate_"}))
                                         {
                                             <span class="form-body">
                                                 @* content will be loaded here*@
@@ -130,6 +149,7 @@
                             <li><a id="GetAdhocEventsHtmlButton">Adhoc Notification</a></li>
                             <li><a href="@Url.Content("~/Admin/GetWeeklyInvoicesEvent")" id="GenerateWeeklyInvoicesHtmlButton">Generate Weekly Invoices</a></li>
 
+                            <li><a href="@Url.Content("~/Cart/importconfsem")" id="importconfsem">Import ConfSem</a></li>
                             @if (_globalConfig.Tenant == "DirectorSeries")
                             {
                                 <li><a id="ImportLearnUponEvents">Import Learn Upon Events</a></li>
@@ -184,14 +204,26 @@
             @{ Html.RenderPartial("Partials/_AffAccount", Model.AffiliateSettingsViewModel);}
         </div>
         <div class="tab-pane" id="reports">
-            @{ Html.RenderPartial("Admin/_Reports", Model.InvoicesModel); }
 
+            <ul class="nav nav-tabs">
+                <li id="inv2018" class="active"><a href="#" data-toggle="tab">2018</a></li>
+                <li id="inv2017"><a href="#" data-toggle="tab">2017</a></li>
+                @*<li id="inv2016"><a href="#" data-toggle="tab">2016</a></li>*@
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="inv2018Body">@{ Html.RenderPartial("Admin/_Reports", Model.InvoicesModel); }</div>
+                <div class="tab-pane" id="inv2017Body">...working...</div>
+                @*<div class="tab-pane" id="inv2016Body">@{ Html.RenderPartial("Admin/_Reports", Model.InvoicesModel); }</div>*@
+            </div>
         </div>
         <div class="tab-pane" id="subscriptions">
-            @{ Html.RenderPartial("Admin/_Subscriptions", Model.WpsViewModel); }
+            <a href="/Admin/ShowWSP?idAff=@Model.AffiliateSettingsViewModel.Affiliate.idUserAff">Webinar Subscription Packages  </a>
+            @*@{ Html.RenderPartial("Admin/_Subscriptions", Model.WpsViewModel); }*@
         </div>
         <div class="tab-pane" id="CompliancePerspectives">
-            @{ Html.RenderPartial("Admin/_SubscriptionsCP", Model.CompPersSubscriptionsModel); }
+            <a href="/Admin/ShowCP?idAff=@Model.AffiliateSettingsViewModel.Affiliate.idUserAff">Compliance Perspectives Subscriptions</a>
+            @*@{ Html.RenderPartial("Admin/_SubscriptionsCP", Model.CompPersSubscriptionsModel); }*@
 
         </div>
     </div>

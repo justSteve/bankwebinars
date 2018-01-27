@@ -1,0 +1,84 @@
+﻿@using System.Linq
+@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+@using CUWebinars.Web.Models.JsonModels
+@using Newtonsoft.Json
+@model  WpsViewModel
+@{
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+
+    var nfi = new CultureInfo("en-US", false).NumberFormat;
+    nfi.CurrencyDecimalDigits = 0;
+
+    if (Model.Affiliate == null)
+    {
+        <script language="javascript" type="text/javascript">
+            var idAffiliate = 19;
+        </script>
+    }
+    else
+    {
+
+        <script language="javascript" type="text/javascript">
+            var idAffiliate = @Model.Affiliate.idUserAff;;
+        </script>
+    }
+}
+
+<style>
+    table td {
+        border: medium;
+        padding: 4px;
+        text-align: left;
+    }
+</style>
+<div class="container">
+    <!--begin main content-->
+    <div class="row-fluid">
+        <!--begin row-fluid-->
+        <div class="span12">
+            @{
+                if (Model.Discounts != null)
+                {
+                    var rowCount = 0;
+                    <table  id='ShowWSP'>
+                        <tr style="background-color: black; color: gray"><td>&nbsp;</td><td>Code</td><td>Email</td><td>Remaining</td><td>Status</td></tr>
+                        @foreach (var discount in Model.Discounts.OrderBy(d => d.DateValidTo).Where(d => d.DiscountType == DiscountType.Subscription))
+                        {
+                            rowCount++;
+                            var users = "";
+                            foreach (var user in discount.WpsUsers.OrderBy(d => d.AcctStatus))
+                            {
+                                users += user.email + ", ";
+                            }
+                            <tr>
+                                <td>@rowCount<text>.</text></td>
+                                <td id="showDiscountDetails_@discount.idDiscount" data-thisid="@discount.idDiscount">
+                                    <a target="_blank" href="@_globalConfig.TenantURL/webinar/search?searchTerm=wsp @discount.idDiscount"> @discount.DiscountCode (@discount.idDiscount)</a>   
+                                    <div id="discountDetails_@discount.idDiscount" class="initialHide">
+
+                                    </div>
+                                </td>
+                                @if (Model.Affiliate.idUserAff == 19)
+                                {
+                                    <td>@discount.idAffiliate</td>
+                                }
+                                <td>@users.TrimEnd(' ').TrimEnd(',')</td>
+                                <td>
+                                    <div style="text-align: right">@discount.CreditsRemain</div>
+                                </td>
+                                <td>
+                                    <div style="text-align: right">@discount.Status</div>
+                                </td>
+
+                            </tr>
+                        }
+                    </table>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+
+

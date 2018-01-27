@@ -17,6 +17,7 @@ namespace CUWebinars.Web.ViewModel
         public PricesAndDiscounts PricesAndDiscounts { get; set; }
         public RegType  RegistrationType { get; set; }
         public bool SendHardcopy { get; set; }
+        public string Origin { get; set; }
 
         //public decimal RowPrice { get; set; }
     }

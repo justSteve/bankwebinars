@@ -1,0 +1,34 @@
+﻿@using CUWebinars.Web.Core
+@model PayTraceResponse
+
+@{
+    ViewBag.Title = "Payment Successful";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    
+    <div id="LogInContainer" class="container">
+        <div id="reset">
+
+            <div class="legendImitator">
+                <b>Thank you for your order!</b>
+            </div>
+            <div id="OrderSummaryContainer">
+                @Html.Partial("~/Views/Shared/Partials/_OrderSumUser.cshtml", Model.Order)
+            </div>
+            
+
+            <div id="OrderSummaryContainer">
+                You payment was accepted. You should see a confirmation email from <i>notifications@paytrace.com</i> for payment to <b>Total Training Solutions.</b>
+                @Html.ActionLink("Continue to MyWebinars", "MyWebinars", "Cart")
+            </div>
+            
+            <div id="FeedbackContainer" class="span6">
+                <section>
+                    <h4>Feedback</h4>
+                    @{Html.RenderPartial("Partials/_CheckoutFeedback");}
+                </section>
+            </div>
+        </div>
+    </div>
+}

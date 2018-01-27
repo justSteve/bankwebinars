@@ -282,7 +282,7 @@ namespace CUWebinars.Web.Helpers
 
             //Trace.TraceInformation(jobject.ToString(Newtonsoft.Json.Formatting.None));
 
-            return jobject.ToString(Newtonsoft.Json.Formatting.None);
+            return jobject.ToString(Newtonsoft.Json.Formatting.Indented);
         }
 
 
@@ -823,7 +823,8 @@ namespace CUWebinars.Web.Helpers
                 || order.idAffiliate != 12014
                 || order.idAffiliate != 16132
                 || order.idAffiliate != 22805
-                || order.idAffiliate != 31267)
+                || order.idAffiliate != 31267
+                )
             {
                 fields.PaymentCaption = "";
             }
@@ -851,6 +852,28 @@ namespace CUWebinars.Web.Helpers
                 }
             }
 
+            if (row.RegistrationType.SKU.ToLower().Contains("wsp"))
+            {
+                // uncomment if we decide to without the code until after payment
+
+                //if (order.OrderStatus == OrderStatus.Paid)
+                //{
+                //    fields.PaymentCaption =
+                //        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                //        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
+                //        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
+                //        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+                //}
+                //else
+                //{
+                fields.PaymentCaption =
+                    "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                    order.BillingEmail + " will have your WSP credits automatically applied. And feel free to share the code " + row.Discount.DiscountCode + " above with others in your organization. " +
+                    " It can be applied during checkout - look for the button labeled <i>Add Discount?</i>. Clicking that will prompt for your code [<b>" + row.Discount.DiscountCode + "</b>]." +
+                    " If you would like additional addresses to have the same <i>auto-apply</i>  rights as " +
+                    order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+                //}
+            }
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 fields.RegDesc =
@@ -858,7 +881,8 @@ namespace CUWebinars.Web.Helpers
                     TenantURL + "/Resume/" + order.idOrder +
                     "'>" + " We'll be happy to adjust your registration.</a> ";
             }
-            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no")
+            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no" && 
+                !row.Webinar.Title.Contains("Compliance Perspectives") )
             {
                 fields.RegDesc =
                     "Your registration includes access to the recording and handouts for six (6) months. <a href='" +
@@ -931,7 +955,7 @@ namespace CUWebinars.Web.Helpers
             copy = copy.Replace("{aff_EmailFooter}", aff.EmailFooter);
             copy = copy.Replace("{aff_ttsdomain}", aff.ttsDomain);
             copy = copy.Replace("{aff_idUserAff}", aff.idUserAff.ToString());
-            //copy = copy.Replace("{aff_timeZone}", aff.timeZone);
+            copy = copy.Replace("{aff_Logo}", aff.Logo);
             copy = copy.Replace("{aff_ContactPerson}", aff.ContactPerson);
             copy = copy.Replace("{aff_NotiPromos}", aff.NotiPromos);
             copy = copy.Replace("{aff_ContactPhone}", aff.ContactPhone);
@@ -967,9 +991,14 @@ namespace CUWebinars.Web.Helpers
             var regDataBlock = _doc.Substring(startBlock, endBlock - startBlock)
                 .Replace(". Sponsored by: BankWebinars.com: Registration -", "|")
                 .Replace(": Live Teleconference, ", "|").Trim().Split('|');
+
+            startBlock = _doc.IndexOf("DATE:") + 5;
+            endBlock = _doc.IndexOf("Mailing Address");
+            var orderDateBlock = _doc.Substring(startBlock, endBlock - startBlock)
+                .Trim();
             var model = new ParseOrderModel();
 
-            model.OrderDate = DateTime.Now;
+            model.OrderDate = Convert.ToDateTime(orderDateBlock);
 
             try
             {
@@ -987,7 +1016,7 @@ namespace CUWebinars.Web.Helpers
                         model.Email = line;
                         break;
                     }
-                    if (lineCount > 4 && phoneNum != "")
+                    if (phoneNum == "")
                     {
                         phoneNum = ParsePhone(line);
                     }
@@ -996,6 +1025,11 @@ namespace CUWebinars.Web.Helpers
                 {
                     model.LoggerNotes = "ERROR: no email address detected.";
                     return model;
+                }
+
+                if (phoneNum == "")
+                {
+                    phoneNum = "555-555-5555";
                 }
 
                 if (count > 1)
@@ -1018,24 +1052,48 @@ namespace CUWebinars.Web.Helpers
                 model.BillingAddress = new Address();
                 model.ShippingAddress = new Address();
                 model.BillingAddress.AddressType = "Billing";
+                model.BillingAddress.Phone = phoneNum;
                 model.BillingAddress.Name = name.FullName;
                 model.BillingAddress.StreetAddress = splitBlock[4];
-                model.BillingAddress.City = splitBlock[5].Split(',')[0];
-                model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
-                model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
-                model.BillingAddress.Country = splitBlock[6];
-                model.BillingAddress.Phone = splitBlock[7];
-
+                //check if city/state/zip found in [5] or [6]
+                var has2AddressLines = splitBlock[5].Split(',');
+                if (has2AddressLines.Length > 1)
+                {
+                    model.BillingAddress.City = splitBlock[5].Split(',')[0];
+                    model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
+                    model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                    model.BillingAddress.Country = splitBlock[6];
+                    model.BillingAddress.Phone = splitBlock[7];
+                }
+                else
+                {
+                    model.BillingAddress.City = splitBlock[6].Split(',')[0];
+                    model.BillingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                    model.BillingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    model.BillingAddress.Country = splitBlock[7];
+                    model.BillingAddress.Phone = splitBlock[8];
+                }
 
                 model.ShippingAddress.AddressType = "Shipping";
                 model.ShippingAddress.Name = name.FullName;
+                model.ShippingAddress.Phone = phoneNum;
                 model.ShippingAddress.StreetAddress = splitBlock[4];
-                model.ShippingAddress.City = splitBlock[5].Split(',')[0];
-                model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
-                model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
-                model.ShippingAddress.Country = splitBlock[6];
-                model.ShippingAddress.Phone = splitBlock[7];
-
+                if (has2AddressLines.Length > 1)
+                {
+                    model.ShippingAddress.City = splitBlock[5].Split(',')[0];
+                    model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
+                    model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                    model.ShippingAddress.Country = splitBlock[6];
+                    model.ShippingAddress.Phone = splitBlock[7];
+                }
+                else
+                {
+                    model.ShippingAddress.City = splitBlock[6].Split(',')[0];
+                    model.ShippingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                    model.ShippingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    model.ShippingAddress.Country = splitBlock[7];
+                    model.ShippingAddress.Phone = splitBlock[8];
+                }
                 model.EventTitle = regDataBlock[0].Trim();
                 if (model.EventTitle.Contains(":"))
                 {
@@ -1050,10 +1108,6 @@ namespace CUWebinars.Web.Helpers
                             model.EventTitle += line + ":";
                         }
                         model.EventTitle = model.EventTitle.TrimEnd(':').Trim();
-                    }
-                    else
-                    {
-                        model.EventTitle = regDataBlock[0].Trim().Split(':')[1].Trim();
                     }
                 }
                 model.EventDate = regDataBlock[1].Split(';')[1].Trim();
@@ -1229,41 +1283,41 @@ namespace CUWebinars.Web.Helpers
 
         //}
 
-        private MapZenAddress GetMapzenAddress(string addString)
-        {
-            try
-            {
-                var a = 1;
-                WebRequest req = WebRequest.Create("https://libpostal.mapzen.com/parse?address=" + HttpUtility.UrlEncode(addString) + "&format=keys&api_key=mapzen-iYcwH4a");
+        //private MapZenAddress GetMapzenAddress(string addString)
+        //{
+        //    try
+        //    {
+        //        var a = 1;
+        //        WebRequest req = WebRequest.Create("https://libpostal.mapzen.com/parse?address=" + HttpUtility.UrlEncode(addString) + "&format=keys&api_key=mapzen-iYcwH4a");
 
-                req.Method = "GET";
-                string returnvalue1 = "";
+        //        req.Method = "GET";
+        //        string returnvalue1 = "";
 
-                WebResponse res = req.GetResponse();
-                using (WebResponse response = req.GetResponse())
-                {
-                    StreamReader reader = new StreamReader(res.GetResponseStream());
-                    //using (Stream stream = response.GetResponseStream())
-                    //{
-                    //    XmlTextReader reader = new XmlTextReader(stream);
-                    //    returnvalue1 = reader.Value;
-                    //}
-                    returnvalue1 = reader.ReadToEnd();
-                }
-                //
-                MapZenAddress importResult = JsonConvert.DeserializeObject<MapZenAddress>(returnvalue1);
+        //        WebResponse res = req.GetResponse();
+        //        using (WebResponse response = req.GetResponse())
+        //        {
+        //            StreamReader reader = new StreamReader(res.GetResponseStream());
+        //            //using (Stream stream = response.GetResponseStream())
+        //            //{
+        //            //    XmlTextReader reader = new XmlTextReader(stream);
+        //            //    returnvalue1 = reader.Value;
+        //            //}
+        //            returnvalue1 = reader.ReadToEnd();
+        //        }
+        //        //
+        //        MapZenAddress importResult = JsonConvert.DeserializeObject<MapZenAddress>(returnvalue1);
 
-                res.Close();
+        //        res.Close();
 
-                return importResult;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            return null;
-        }
+        //        return importResult;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e);
+        //        throw;
+        //    }
+        //    return null;
+        //}
 
         public ParseOrderModel ParseRateWatch(string __doc)
         {
@@ -1582,32 +1636,50 @@ namespace CUWebinars.Web.Helpers
 
         }
 
-        public Address ParseAddress(string address)
-        {
+        //public Address ParseAddress(string address)
+        //{
 
-            var myAddress = GetMapzenAddress(address);
-            var add = new Address();
+        //    var myAddress = GetMapzenAddress(address);
+        //    var add = new Address();
 
-            //add.AddressType = "Billing";
-            add.StreetAddress = myAddress.road.FirstOrDefault();
-            add.City = myAddress.city.FirstOrDefault();
-            add.State = myAddress.state.FirstOrDefault();
-            add.Zip = myAddress.postcode.FirstOrDefault();
-            add.Country = myAddress.country.FirstOrDefault();
+        //    //add.AddressType = "Billing";
+        //    add.StreetAddress = myAddress.road.FirstOrDefault();
+        //    add.City = myAddress.city.FirstOrDefault();
+        //    add.State = myAddress.state.FirstOrDefault();
+        //    add.Zip = myAddress.postcode.FirstOrDefault();
+        //    add.Country = myAddress.country.FirstOrDefault();
 
-            return add;
-        }
+        //    return add;
+        //}
 
         public string ParsePhone(string phoneTest)
         {
             var phoneNum = "";
-            var phoneUtil = PhoneNumberUtil.IsViablePhoneNumber(phoneTest);
-            if (phoneUtil)
+            PhoneNumberUtil phoneUtil = PhoneNumberUtil.GetInstance();
+            var extractPossible = phoneUtil.IsPossibleNumber(phoneTest, "US");
+
+            if (extractPossible)
             {
                 phoneNum = phoneTest;
             }
 
             return phoneNum;
+        }
+
+        public string FindChangedRegTypes(Order order)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var auditChangedRegType = dataOperations.GetAuditNotes(order, "RegTypeChanges");
+
+            return auditChangedRegType;
+        }
+
+        public string FindChangedOrderStatus(Order order)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            var changedOrderStatus = dataOperations.GetAuditNotes(order, "OrderStatusChanges");
+
+            return changedOrderStatus;
         }
 
         public static string[] AddNonvalidToArray(string[] zipCentricFields)

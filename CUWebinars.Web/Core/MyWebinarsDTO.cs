@@ -11,7 +11,7 @@ namespace CUWebinars.Web.Core
 
         public AdditionalLocationsViewModel AdditionalLocationsViewModel { get; set; }
         public IList<RegistrationSummaryViewModel> Scheduled { get; set; }
-        public IDictionary<string, RegistrationSummaryViewModel> Recorded { get; set; }
+        public IList<RegistrationSummaryViewModel> Recorded { get; set; }
         public IList<RegistrationSummaryViewModel> Archived { get; set; }
         public IEnumerable MyClaims { get; set; }
         public DiscountModel Subscription { get; set; }

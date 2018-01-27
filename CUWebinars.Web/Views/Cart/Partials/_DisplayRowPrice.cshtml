@@ -94,6 +94,11 @@
                 statusLabelSpan.SetInnerText(@OrderStatus.Canceled.ToString());
                 break;
 
+            case OrderStatus.Billed:
+                statusLabelSpan.AddCssClass("label-success");
+                statusLabelSpan.SetInnerText(@OrderStatus.Billed.ToString());
+                break;
+
             case OrderStatus.OutstandingBalance:
                 statusLabelSpan.AddCssClass("label-important");
                 statusLabelSpan.SetInnerText("Outstanding Balance");
@@ -102,11 +107,9 @@
 
         return statusLabelSpan.ToString(TagRenderMode.Normal);
     }
-
 }
 
 @{
-
     if (Model != null)
     {
         string discountCaption = "";
@@ -135,13 +138,16 @@
 
                     $(function () {
                         $('#SendHardcopy').prop('checked', true);
+
                     });
+
+
                 </script>
             }
 
         }
 
-        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id=optionLabel>"
+        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id='optionLabel'>"
 + Model.RegistrationType.OptionLabel + "</span>: <span id='baseCost'>"
 + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
 
@@ -156,14 +162,16 @@
             else
             {
                 rowAmount.Append("<br />");
-
             }
         }
         else
         {
 
             if (!Model.RegistrationType.OptionLabel.Contains("Streaming")
-                && !Model.RegistrationType.OptionLabel.Contains("Module"))
+                && !Model.RegistrationType.OptionLabel.Contains("Module")
+                && !Model.RegistrationType.SKU.Contains("WSP")
+                && Model.RegistrationType.CreditCost > 0
+                )
             {
                 rowAmount.Append(GetDiscountedTextSpan());
                 if (!rowAmount.ToString().Contains("Insufficient"))
@@ -189,18 +197,45 @@
 
         if (Model.PricesAndDiscounts.TotalPaid != 0)
         {
-            rowAmount.Append("<br><span  style=\"color: green;\" id='showPaid'>Paid: <span id='totalPaid'>" + Model.PricesAndDiscounts.TotalPaid.ToString(CurrencyFormatToken) + "</span></span>");
+            rowAmount.Append("<br><span  style='color: green;' id='showPaid'>Paid: <span id='totalPaid'>" + Model.PricesAndDiscounts.TotalPaid.ToString(CurrencyFormatToken) + "</span></span>");
             if (Model.PricesAndDiscounts.TotalOrderPrice > 0)
             {
-                rowAmount.Append("<br><span  style=\"color: red;\" id='showOutstandingBalance'>Due: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
+                rowAmount.Append("<br><span  style='color: red;' id='showOutstandingBalance'>Due: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
             }
             else
             {
-                rowAmount.Append("<br><span  style=\"color: Green;\" id='showOutstandingBalance'>Due: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
+                rowAmount.Append("<br><span  style='color: Green;' id='showOutstandingBalance'>Due: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
             }
 
         }
+        if (Model.Origin != null && Model.Origin.ToLower() != "cart")
+        {
+            <script language="javascript" type="text/javascript">
+                $(function () {
+                    $('#revealOptions').hide();
+                    $('#revealAddLocsPanel').hide();
+                    $('#Canceller').html(
+                        '<div class="label label-warning large" role="button" id="Canceller"><span style="color: black"> &nbsp;&nbsp;Problems? Questions?<br /> Use our <b>Chat</b> button lower left or email us at info@ttstrain.com! &nbsp;&nbsp;</span></div>');
+                     $('#ConfirmRegistrationBillMe').on('click',
+                         function(e) {
+                             
+                             e.preventDefault();
+                             var confirmOrderForm = $('#confirmOrder');
 
+                             confirmOrderForm.find('input[name="id"]').val(@Model.idOrder);
+
+                             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+
+                             confirmRegistrationBillMe.prepend(
+                                 '<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                             confirmRegistrationBillMe.attr('disabled', 'disabled');
+
+                             confirmOrderForm.submit();
+                         });
+                 });
+            </script>
+
+        }
         <div id="billingDetails" style="text-align: right;">
 
             <div id="flyUpdateSuccessFlag"></div>
@@ -212,14 +247,14 @@
             </div>
 
             @if (!string.IsNullOrWhiteSpace(ViewBag.DiscountCaption))
-                {
+            {
                 <div class="@discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
                      id="discountCaption"><b>@Html.Raw(ViewBag.DiscountCaption.ToString())</b></div>
-            }
-            @*//following it for Multi-event checkout*@
+                }
+                @*//following it for Multi-event checkout*@
             @if (!Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
-                {
-                <div style="text-align: center; margin-top: 10px; ">
+            {
+                <div id="payment" style="text-align: center; margin-top: 10px;">
                     @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
                     {
                         <span>
@@ -231,8 +266,8 @@
                             &nbsp;
                             &nbsp;
                             @if (!Model.RegistrationType.OptionLabel.StartsWith("1-Month")
-                 && !Model.RegistrationType.OptionLabel.StartsWith("6-Month")
-                 && !Model.RegistrationType.OptionLabel.StartsWith("12-Month"))
+                                 && !Model.RegistrationType.OptionLabel.StartsWith("6-Month")
+                                 && !Model.RegistrationType.OptionLabel.StartsWith("12-Month"))
                             {
                                 <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
                             }
@@ -251,7 +286,9 @@
 
                     <div class="pull-right">
                         <br />
-                        <div class="label label-warning large" role="button" id="Canceller"><span style="color: black"> &nbsp;&nbsp;Place cart on-hold or<br /> <i>Cancel</i> this checkout &nbsp;&nbsp;</span></div>
+                        <div class="label label-warning large" role="button" id="Canceller">
+                            <span style="color: black"> &nbsp;&nbsp;Place cart on-hold or<br /> <i>Cancel</i> this checkout &nbsp;&nbsp;</span>
+                        </div>
                     </div>
 
                 </div>

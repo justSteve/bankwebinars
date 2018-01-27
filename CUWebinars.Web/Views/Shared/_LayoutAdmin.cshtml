@@ -167,7 +167,7 @@
         <div class="container">
 
             <!-- begin #main_menu -->
-            @if (globalConfig.Tenant != "DirectorSeries")
+            @if (globalConfig.Tenant != "DirectorSeries" && globalConfig.Tenant != "CCS")
             {
                 <nav id="main_menu">
                     <ul class="primary_menu">
@@ -214,7 +214,26 @@
                 </nav>
             <!-- close / #main_menu -->
             }
-            else
+            else if (globalConfig.Tenant == "CCS")
+            {
+                <nav id="main_menu" class="span8">
+                    <ul class="primary_menu">
+                       
+                        <li class="parent">
+                            <a href="javascript:void(0)">Course Catalog<i></i></a>
+                            <ul>@Html.Action("GetCcsModules", "Navigation")</ul>
+                        </li>
+                        <li role="presentation"><a target="_new" role="menuitem" tabindex="-1" href="https://ttsimages.blob.core.windows.net/$root/DSFutureReleases.pdf">Future Releases</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="/webinar/DetailsCcs/2485">Learn More</a></li>
+                        @if (Request.IsAuthenticated)
+                        {
+                            <li><a href="/Cart/MyWebinars">My Webinars</a></li>
+                        }
+
+                    </ul>
+                </nav>
+            }
+            else 
             {
                 <nav id="main_menu" class="span8">
                     <ul class="primary_menu">

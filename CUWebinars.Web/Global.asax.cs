@@ -117,6 +117,22 @@ namespace CUWebinars.Web
                     }
                     break;
 
+                case DomainConstants.CCS:
+                    if (!Debugger.IsAttached)
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                                "CCSLog4net.xml")));
+                        //"BWLocal.xml")));
+                    }
+                    else
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                           new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                               "CCSLocal.xml")));
+                    }
+                    break;
+
                 case DomainConstants.CUWebinars:
                     if (!Debugger.IsAttached)
                     {

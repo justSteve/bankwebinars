@@ -172,6 +172,12 @@
     <Reference Include="log4net.Appender.Azure">
       <HintPath>..\packages\log4net.Appender.Azure.1.1.1.0\lib\net45\log4net.Appender.Azure.dll</HintPath>
     </Reference>
+    <Reference Include="LogMeIn.GoToCoreLib.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogMeIn.GoToCoreLib.NET.1.0.0.0\lib\net40\LogMeIn.GoToCoreLib.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="LogMeIn.GoToWebinar.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogMeIn.GoToWebinar.NET.1.0.0.0\lib\net40\LogMeIn.GoToWebinar.NET.dll</HintPath>
+    </Reference>
     <Reference Include="MailChimp.Net.V3, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37d26d538413c581, processorArchitecture=MSIL">
       <HintPath>..\packages\MailChimp.Net.V3.2.0.0.0\lib\net45\MailChimp.Net.V3.dll</HintPath>
     </Reference>
@@ -690,6 +696,7 @@
     <Content Include="App_Data\mergeTemplates\WebinarPromoStandalone.docx" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
+    <Content Include="Content\images\AddDiscountCap.jpg" />
     <Content Include="Content\images\compass.png" />
     <Content Include="Content\images\presenters\nesbitt.jpg" />
     <Content Include="Content\mobile\Documentation\assets\css\documenter_style.css" />
@@ -727,6 +734,13 @@
     <Content Include="Content\mobile\Startup\vendor\swiper\swiper.css" />
     <Content Include="Content\mobile\Startup\vendor\swiper\swiper.min.js" />
     <Content Include="Content\mobile\Startup\vendor\typist\typist.js" />
+    <Content Include="Infrastructure\LogConfigs\CCSLocal.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Infrastructure\LogConfigs\CCSLog4net.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Infrastructure\LogConfigs\DESLog4net.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -741,10 +755,10 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="ApplicationInsights.config">
+    <None Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <None Include="App_Data\JsonSchemaStore\PostEventMaterialsWereAccessed.json" />
     <Content Include="Content\claims-mment.css" />
     <Content Include="Content\common.css" />
@@ -1831,17 +1845,22 @@
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_CompPerspectives.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_FedCompSchool.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_WSPSubscription.docx" />
+    <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventForCD.docx" />
+    <Content Include="Notification\Templates\SendPerDayPromoMaster2.cshtml" />
+    <Content Include="Notification\Templates\SendPerWeekPromoMaster2.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev.pubxml" />
+    <None Include="Properties\PublishProfiles\CoreComplianceSuite - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\CUWebinars33 - Web Deploy.pubxml" />
     <Content Include="Scripts\calendarview.js" />
     <None Include="Properties\PublishProfiles\DES33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\devtts - Web Deploy.pubxml" />
     <Content Include="Scripts\DataTables\pdfmake.min.js.map" />
+    <None Include="Properties\PublishProfiles\ttsCCS - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />
     <Content Include="Scripts\bootstrap-filestyle.min.js" />
@@ -2097,7 +2116,6 @@
     <Content Include="Views\Admin\Partials\SearchResultsGrid2Admin.cshtml" />
     <Content Include="Views\Admin\Partials\_ConnectionDetails.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\ShowCompPerspectivesSubscription.cshtml" />
-    <Content Include="Views\Shared\Admin\_Subscriptions.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowSubscriptions.cshtml" />
     <Content Include="Views\Shared\Partials\_Cancel_PauseOrder.cshtml" />
     <Content Include="Views\Admin\Partials\_ShowRevenueReportAdmin.cshtml" />
@@ -2118,7 +2136,7 @@
     <Content Include="Views\Cart\PayTraceDeclined.cshtml" />
     <Content Include="Views\Cart\PayTraceApproved.cshtml" />
     <Content Include="Views\Cart\PayTraceCanceled.cshtml" />
-    <Content Include="Views\Shared\Admin\_SubscriptionsCP.cshtml" />
+    <Content Include="Views\Shared\Admin\ShowCP.cshtml" />
     <Content Include="Views\Home\DESModules.cshtml" />
     <Content Include="Views\Webinar\AllActiveDes.cshtml" />
     <Content Include="Views\Webinar\DetailsDes.cshtml" />
@@ -2142,13 +2160,23 @@
     <Content Include="Views\Webinar\Partials\DisplayOptionsDESWizard.cshtml" />
     <Content Include="Views\Home\LearnMore.cshtml" />
     <Content Include="Views\Account\LoginAdmin.cshtml" />
-    <Content Include="Views\Admin\DESPromo.cshtml" />
+    <Content Include="Views\Admin\PromoForDES.cshtml" />
     <Content Include="Views\Cart\ImportConfSem.cshtml" />
     <Content Include="Views\Cart\MyWebinars.cshtml" />
     <Content Include="Views\Cart\Partials\Upcoming.cshtml" />
     <Content Include="Views\Cart\Partials\Recorded.cshtml" />
     <Content Include="Views\Shared\Partials\_OrderSumUser3.cshtml" />
     <Content Include="Views\Cart\Partials\OrderHasAdditionalLocations.cshtml" />
+    <Content Include="Views\Shared\Admin\ShowWSP.cshtml" />
+    <Content Include="Views\Home\IndexCcs.cshtml" />
+    <Content Include="Views\Shared\Partials\IndexDEL.cshtml" />
+    <Content Include="Views\Shared\_Layout_CCS.cshtml" />
+    <Content Include="Views\Shared\_LoginPartialCCS.cshtml" />
+    <Content Include="Views\Webinar\DetailsCcs.cshtml" />
+    <Content Include="Views\Webinar\Partials\_ShoppingCartCcs.cshtml" />
+    <Content Include="Views\Cart\Partials\CheckoutOptionsCcs.cshtml" />
+    <Content Include="Views\Webinar\Partials\PayTraceApproved.cshtml" />
+    <Content Include="Views\Webinar\Partials\DisplayOptionsCcs.cshtml" />
     <None Include="Web.BankWebinars33.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -2762,6 +2790,10 @@ copy /Y "$(ProjectDir)Membership\Email\EmailTemplates\*" "$(SolutionDir)..\CUUse
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\SlowCheetah.2.5.48\build\SlowCheetah.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SlowCheetah.2.5.48\build\SlowCheetah.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -235,6 +235,15 @@ namespace CUWebinars.Business.Repository
        .OrderByDescending(w => w.Date);
         }
 
+        public IQueryable<Webinar> GetCcs()
+        {
+            return items.Include(w => w.WebinarTopicXrefs.Select(wtx => wtx.Topic))
+                .Include(w => w.Presenter.WebUser)
+                .Where(
+                    w => (w.SeriesInfo == "CCS"))
+                .OrderByDescending(w => w.Date);
+        }
+
         public IQueryable<RegTypesGroup> GetRegTypeGroupsForWebinars(int idWebinar)
         {
             return items.Where(w => w.idWebinar == idWebinar)
@@ -511,8 +520,7 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
 
                 ;
-
-            //why is registration type not hydrated from here
+            
         }
 
         public IEnumerable<Order> GetOrdersByWebinarForPostEventClaims(int idWebinar)

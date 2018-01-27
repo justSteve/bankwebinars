@@ -1,0 +1,127 @@
+﻿@using System.Configuration
+@using CUWebinars.Business.Models
+@using CUWebinars.Web.Core
+@model List<Webinar>
+@{
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (!(ViewBag.Msg == null || ViewBag.Msg == string.Empty))
+    {
+        <script type="text/javascript" language="javascript">
+            alert(@ViewBag.Msg);
+        </script>
+    }
+
+    Layout = "~/Views/Shared/_Layout_CCS.cshtml";
+}
+
+<script language="javascript" type="text/javascript">
+    function GoToSignup() {
+        window.location = '/webinar/DetailsCcs/2485';
+    }
+
+</script>
+<script language="javascript" type="text/javascript">
+    function GoToSignupId(affId) {
+
+        window.location = '/webinar/DetailsCcs/2485?idAff=' + affId;
+    }
+
+</script>
+<style>
+    table {
+        margin-left: 100px;
+        border-width: 1px;
+        border-spacing: 2px;
+        border-style: solid;
+        border-color: black;
+    }
+
+
+    tr {
+        border-width: 1px;
+        border-spacing: 1px;
+        border-style: solid;
+        border-color: black;
+    }
+</style>
+
+<div id="page">
+    <div class="container visible-phone">
+        <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
+    </div>
+    <div class="hero-unit">
+        <div class="container">
+            <h1>Core Compliance Suite</h1>
+        </div>
+        <!--close container-->
+    </div>
+    <!--close hero-unit-->
+
+    <div class="container clearfix" id="main-content">
+        <!--begin main content-->
+
+        <div class="row-fluid sidebar-right">
+            <!--begin row-fluid-->
+
+            <div class="span4 ">
+                <img src="https://ttsimages.blob.core.windows.net/images/logo_powered_by.png" />
+            </div>
+            <div class="span5 primary-column large">
+                <div id="opener">
+                    <p>
+                        Your subscription to the Core Compliance Suite (CCS) includes a quarterly, two-hour webinar focused on the most recent changes to the compliance landscape.
+                    </p>
+                    <p>
+                        In addition, you will have access to six core compliance webinars presented by Carl Pry that will be essential to your annual compliance training.  <b>The CCS is backed by a fully functional Learning Management System (LMS).</b> This will allow you to assign training, set due dates, and track employee progress.
+                    </p>
+                    <p>
+                                                <ul>
+                                                    <li>Courses contain Audio & PowerPoint</li>
+                                                    <li>Handouts and Supplements</li>
+                                                    <li>Course/User Tracking and Reporting</li>
+                                                    <li>Accessible on a variety of devices (Tablets, Mobile Devices, Laptops, etc.)</li>
+                                                    <li>Printable Certificates of Completion</li>
+                                                </ul>
+                    </p>
+                    <div align="center">
+                        <button id="SignUp" onclick="javascript:GoToSignup();" role="button" class="btn btn-success">Learn More</button>
+                    </div>
+                </div>
+            </div>
+            <!-- close span9 primary-column-->
+
+            <section class="span3 sidebar secondary-column" id="secondary-nav">
+                <aside class="widget">
+                    <div class="rotating-testimonials">
+                        <!--"rotating-testimonials" is a required class-->
+                        <h5 class="short_headline"><span>Testimonials</span></h5>
+                        <div class="panels">
+
+                            <div id="t1">
+                                <blockquote>
+                                    <p>"Carl Pry is a wealth of knowledge in all things compliance and I would not have passed my CRCM exam if it wasn't for listening to many of his webinars along the way." </p>
+                                    <footer>Don Savino, SVP Risk Management, Pacific Western Bank</footer>
+                                </blockquote>
+                            </div>
+                            <!--close #t5 -->
+                        </div>
+                        <!--close panels-->
+                    </div>
+
+                    <!--close rotating-testimonials-->
+                </aside>
+                @*<aside class="widget">
+                    <h5 class="short_headline"><span>Stay Updated</span></h5>
+                    @{Html.RenderPartial("Partials/_AddToMailingBox");}
+
+                </aside>*@
+                <!--close aside widget-->
+            </section>
+            <!--close aside .widget-->
+            <!--close section sidebar span3-->
+        </div>
+        <!--close row-fluid-->
+    </div>
+</div>
+

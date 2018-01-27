@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +31,7 @@ using CUWebinars.Web.Infrastructure.Extensions;
 using CUWebinars.Web.Mapping.Mappers;
 using CUWebinars.Web.Models;
 using CUWebinars.Web.Models.DataTablesModels;
+using CUWebinars.Web.Models.JsonModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
@@ -37,6 +39,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
+using PostEventClaim = CUWebinars.Business.Services.PostEventClaim;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -313,7 +316,7 @@ namespace CUWebinars.Web.Controllers
             }
             return View();
         }
-        
+
 
         [System.Web.Mvc.AllowAnonymous]
         [System.Web.Mvc.HttpGet]
@@ -954,11 +957,11 @@ namespace CUWebinars.Web.Controllers
             {
                 claimsViewModel = new ClaimsViewModel { UserClaims = userAccount.Claims };
             }
-            var optionsToDisplay = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, true);
+            var optionsToDisplay = _orderManagementService.GetAllPossibleRegTypesByWebinarId(orderRow.idWebinar, true);
 
             if (User != null && User.Identity.IsAuthenticated)
             {
-                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity) User.Identity;
+                ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
 
                 if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == ClaimTypes.Affiliate))
                 {
@@ -968,7 +971,7 @@ namespace CUWebinars.Web.Controllers
             }
             //
 
-                DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
+            DisplayOptionsInDropDownViewModel regTypeDD = new DisplayOptionsInDropDownViewModel
             {
                 Options = optionsToDisplay,
                 OrderRowId = orderRow.idOrderRow,
@@ -998,6 +1001,8 @@ namespace CUWebinars.Web.Controllers
                 EditFields = new EditOrderModel
                 {
                     AuditInfo = GetFirstPageOrigin(order),
+                    AdminInfo = GetAdminComments(order),
+
                     AdditionalLocationsAvailableOnLoad = false, // see below for where this is properly decided.
                     AdditionalLocationsRenderer =
                         ViewHelpers.GetRendererOfAdditionalLocations(additionalLocations.Select(al => al.Email).ToList()),
@@ -1016,15 +1021,17 @@ namespace CUWebinars.Web.Controllers
                             _orderManagementService.CalculateOrderCost(order, orderRow.Webinar.AdditionalLocationPrice),
                         RegistrationType = orderRow.RegistrationType,
                         SendHardcopy = orderRow.SendHardcopy != null && orderRow.SendHardcopy.Value,
-                        idOrder = order.idOrder
-                        //RowPrice = orderRow.RowPrice
+                        idOrder = order.idOrder,
+                        Origin = order.Origin
+                        
                     },
                     Discount = discount,
                     Order = order,
                     WebUser = order.WebUser,
                     WebinarId = orderRow.Webinar.idWebinar,
                     idOrderRow = orderRow.idOrderRow,
-                    NumberOfAdditionalLocations = additionalLocationsCount
+                    NumberOfAdditionalLocations = additionalLocationsCount,
+                    
                 }
             };
             var onDemandClaim = new PostEventClaim
@@ -1062,10 +1069,8 @@ namespace CUWebinars.Web.Controllers
 
                         editModel.EditFields.PostEventClaim = onDemandClaim;
                     }
-
-
-
                 }
+
                 if (!odClaimIsFound)
                 {
 
@@ -1099,11 +1104,60 @@ namespace CUWebinars.Web.Controllers
             return editModel;
         }
 
+        private string GetAdminComments(Order order)
+        {
+
+            dynamic jsonObject = new JObject();
+            try
+            {
+                if (order.AdminComments == null) order.AdminComments = "";
+                var changedRegTypes = JsonConvert.DeserializeObject(_appHelper.FindChangedRegTypes(order));
+                var changedOrderStatus = JsonConvert.DeserializeObject(_appHelper.FindChangedOrderStatus(order));
+                if (order.AdminComments.Contains("PaidByCC"))
+                {
+                    var isValid = JObject.Parse(order.AdminComments);
+                    //var result = new PaytraceRecordedResponse.PaidByCc();
+                    //result.TxResponse = new PaytraceRecordedResponse.TxResponse();
+                    jsonObject.Amount = isValid.SelectToken("PaidByCC")[0]["TxResponse"]["Amount"].ToString();
+                    jsonObject.Appmsg = isValid.SelectToken("PaidByCC")[0]["TxResponse"]["Appmsg"].ToString();
+                    jsonObject.Transactionid =
+                        isValid.SelectToken("PaidByCC")[0]["TxResponse"]["Transactionid"].ToString();
+
+                    if (changedRegTypes != null)
+                        jsonObject.ChangedRegTypes = changedRegTypes;
+
+                    if (changedOrderStatus != null)
+                        jsonObject.ChangedOrderStatus = changedOrderStatus;
+
+                    return JsonConvert.SerializeObject(jsonObject);
+                }
+                if (changedRegTypes != null || changedOrderStatus != null)
+                {
+                    jsonObject.ChangedOrderStatus = changedOrderStatus;
+                    jsonObject.ChangedRegTypes = changedRegTypes;
+                    return JsonConvert.SerializeObject(jsonObject);
+                }
+                return order.AdminComments;
+
+            }
+            catch (Exception e)
+            {
+                //jsonObject.ChangedRegType = _appHelper.FindChangedRegTypes(order);
+                //_orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com"
+                //    , "Error at GetFirstPageOrigin: " + order.idOrder
+                //    , e.Message + Environment.NewLine + e.StackTrace);
+                return null;
+
+            }
+
+        }
+
         private string GetFirstPageOrigin(Order order)
         {
             try
             {
-                AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo.Replace("{\"AuditInfo\":", "").Replace("}}", "}"));
+                AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo);
+                //AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo.Replace("{\"AuditInfo\":", "").Replace("}}", "}"));
                 dynamic jsonObject = new JObject();
                 jsonObject.FirstPage = parseOutAudit.FirstPage;
                 jsonObject.RemoteUser = parseOutAudit.RemoteUser;
@@ -1113,6 +1167,9 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
+                _orderManagementService.FireMandrillNotificationEvent("steve@ttstrain.com"
+                    , "Error at GetFirstPageOrigin: " + order.idOrder
+                    , ex.Message + Environment.NewLine + ex.StackTrace);
                 dynamic jsonObject = new JObject();
                 jsonObject.FirstPage = "not found: " + order.idOrder;
                 jsonObject.RemoteUser = "not found ex:" + ex.Message;
@@ -1458,6 +1515,8 @@ namespace CUWebinars.Web.Controllers
         {
             if (_globalConfig.Tenant == "DirectorSeries")
                 return Redirect("http://my.directorseries.com/users/sign_in");
+            if (_globalConfig.Tenant == "CCS")
+                return Redirect("http://my.ttscompliancesuite.com/users/sign_in");
 
             try
             {

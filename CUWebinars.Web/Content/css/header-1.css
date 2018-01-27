@@ -41,6 +41,12 @@ body.tall-logo nav.user {
 	height: 95px;
 }
 
+#logoCcs, #logo img {
+	width: 450px;
+	/* width and height of logo desktop NON retina - this is the regular size logo */
+	height: 95px;
+}
+
 #logo {
 	/*padding: 0 0 10px 0;*/
 	float: left;

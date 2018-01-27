@@ -46,6 +46,9 @@
     }
 </style>
 <script type="text/javascript">
+    function ForwardToWSP() {
+        window.location = "/webinar/details/2520";
+    }
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
 
     // var webinarId = @(@Model.Webinar.idWebinar);
@@ -85,7 +88,7 @@
                     }
                     else
                     {
-                        
+
                         <aside class="widget">
                             <h5 class="short_headline">
                                 <span>Topics</span>
@@ -115,12 +118,16 @@
                         </span>
                     </h2>
                     @Html.Raw(Model.Webinar.LearnBody)
-                    <h2 class="short_headline">
-                        <span>
-                            Who Should Attend?
-                        </span>
-                    </h2>
-                    @Html.Raw(Model.Webinar.WhoAttend)
+                    @if (Model.Webinar.idWebinar != 2520)
+                    {
+                        <h2 class="short_headline">
+                            <span>
+                                Who Should Attend?
+                            </span>
+                        </h2>
+                        @Html.Raw(Model.Webinar.WhoAttend)
+
+                    }
                     <hr />
                 </div>
             }
@@ -140,8 +147,8 @@
         <div class="row-fluid span3">
             <div id="regDetails">
                 <div id="resumeOrderStatus" class="hidden"></div>
-                @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
 
+                @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
             </div>
             @if (Model.Webinar.idWebinar != 2520)
             {
@@ -175,7 +182,7 @@
                     </div>
 
                 </aside>
-    <!-- close .widget -->
+                <!-- close .widget -->
 
                 <aside class="widget">
                     <h5 class="short_headline">
@@ -190,20 +197,24 @@
                         }
                     </ul>
                 </aside>
-    <!--close aside .widget -->
+                <!--close aside .widget -->
                 <aside class="widget">
                     <h5 class="short_headline"><span>Stay Updated</span></h5>
                     @{ Html.RenderPartial("Partials/_AddToMailingBox"); }
                 </aside>
-    <!--close aside .widget -->
-                        @*<aside class="widget">
-                                <h5 class="short_headline"><span>Search</span></h5>
-                                <form class="searchform" method="get">
-                                    <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
-                                </form>
-                            </aside>*@
-    <!--close aside widget-->
-                        }
+                <!--close aside .widget -->
+                @*<aside class="widget">
+                        <h5 class="short_headline"><span>Search</span></h5>
+                        <form class="searchform" method="get">
+                            <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                        </form>
+                    </aside>*@
+                <!--close aside widget-->
+            }
+            else
+            {
+                <button role="button" class="btn btn-success btn-large" tabindex="-1" onclick="ForwardToWSP();" href="#">Learn More</button>
+            }
         </div>
         <!--close section tertiary-column sidebar span3-->
     </div>

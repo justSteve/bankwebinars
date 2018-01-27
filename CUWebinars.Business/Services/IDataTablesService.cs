@@ -19,5 +19,6 @@ namespace CUWebinars.Business.Services
         IEnumerable<Order> GetOrdersByPending(int affiliateId, out int totalNumberOrders);
         IEnumerable<Order> GetOrdersByDomain(string searchTerm, int affiliateId, out int totalNumberOrders);
         IEnumerable<Order> GetOrdersByInProcess(int affiliateId, out int totalNumberOrders);
+        IEnumerable<Order> GetOrdersByWSP(int idDiscount, int affiliateId, out int totalNumberOrders);
     }
 }

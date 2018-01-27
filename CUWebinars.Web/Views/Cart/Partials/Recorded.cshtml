@@ -19,11 +19,11 @@
     <div class="row-fluid">
         <!--begin row-fluid-->
         <div class="span12">
-            @foreach (var recorded in Model.Recorded)
+            @foreach (var recorded in Model.Recorded.OrderByDescending(w => w.OrderRow.Order.OrderDate))
             {
-                var row = recorded.Value.OrderRow;
+                var row = recorded.OrderRow;
 
-                if (row.Webinar.Title.EndsWith("Series"))
+                if (row.Webinar.Title.Contains("Webinar Subscription Packages"))
                 {
                     continue;
                 }
@@ -92,7 +92,7 @@
                         </div>
                         <div class="span3 offset1 " id="orderSum-@row.idWebinar">
                             
-                            @Html.Partial("~/Views/Shared/Partials/_OrderSumUser3.cshtml", recorded.Value)
+                            @Html.Partial("~/Views/Shared/Partials/_OrderSumUser3.cshtml", recorded)
                         </div>
                     </div>
 

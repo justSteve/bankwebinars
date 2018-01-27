@@ -1,4 +1,4 @@
-﻿using Citrix.GoToWebinar.Api;
+﻿
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Citrix.GoToWebinar.Api.Model;
+
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
 
@@ -517,11 +517,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (userIdentity.IsAuthenticated && !ReferenceEquals(null, orderRow.CitrixJoinUrl)) // CitrixJoinUrl will be null for impromtu user
                     {
-                        webinarUrl = orderRow.CitrixJoinUrl; // fully qualified authorative webinar-access link from Citrix.
+                        webinarUrl = orderRow.CitrixJoinUrl; // fully qualified authorative webinar-access link from Citrix
                     }
                     else
                     {
-                        // non-individualized version of webinar-access link from Citrix.
+                        // non-individualized version of webinar-access link from Citrix
                         webinarUrl = webinar.CitrixRegisterUrl;
                     }
                 }
@@ -687,6 +687,11 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                 _logger.Info(string.Format("Recordings posted for {0} is saved to {1} with expiry date of: {2}", webinar.idWebinar + " - " + webinar.Title, webinar.RecordingUrl, webinar.LivePlusFiveValue.ToShortDateString()));
                 SendRecordingIsPostedNotifications(webinarDetailsViewModel, webinar);
+
+                var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+                //updates regType Groups
+                dataOperations.WebinarIsSetToRecorded();
+
                 return true;
             }
             catch (Exception exception)
@@ -707,6 +712,16 @@ namespace CUWebinars.Web.Core.Orchestrators
                 try
                 {
                     var order = _orderManagementService.GetOrderById(orderId);
+
+                    if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType
+                            .ShowShippedNotifications.ToLower() == "yes")
+                    {
+                        var dataOperations =
+                            new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+                        dataOperations.BuildStampsLabels(order.idOrder);
+                    }
+
                     var expiryDate =
                         _orderManagementService.CalculatePostEventMaterialsAccessExpiry(
                             order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active));
@@ -901,6 +916,70 @@ namespace CUWebinars.Web.Core.Orchestrators
                 return "Error: " + ex.Message;
             }
         }
+
+        public DisplayRowPriceViewModel BuildDisplayRowPriceViewModel(OrderRow orderRow, int? idOrderRow,
+            decimal? optionsCost = null)
+        {
+            //HACK:  this is pasted from _cartControllerOrch
+            if (idOrderRow.HasValue && idOrderRow.Value > 0)
+            {
+                try
+                {
+                    if (ReferenceEquals(orderRow, null))
+                        orderRow = _orderManagementService.GetOrderRowById(idOrderRow.Value);
+
+                    if (orderRow.RowStatus != OrderRowStatus.Active)
+                        return null;
+
+                    _logger.Info("BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
+
+                    if (!optionsCost.HasValue)
+                    {
+                        optionsCost = _orderManagementService.GetAdditionalLocationsPricing(orderRow.idWebinar);
+                    }
+
+                    string addressesForAdditionalLocations = "";
+                    if (orderRow.AdditionalLocation.Count > 0)
+                    {
+                        foreach (var addy in orderRow.AdditionalLocation)
+                        {
+                            if (_appHelper.CheckIsEmailValid(addy.Email.Trim()))
+                                addressesForAdditionalLocations += addy.Email.Trim() + "<br>";
+                        }
+
+                        addressesForAdditionalLocations.Remove(addressesForAdditionalLocations.IndexOf('<'));
+
+                    }
+
+                    var displayRowPriceViewModel = new DisplayRowPriceViewModel
+                    {
+                        Origin = orderRow.Order.Origin,
+                        NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
+                        AddressesForAdditionalLocations = addressesForAdditionalLocations,
+                        //OrderStatus = orderRow.Order.OrderStatus,
+                        //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),
+                        PricesAndDiscounts =
+                            _orderManagementService.CalculateOrderCost(orderRow.Order, optionsCost.Value),
+                        //RowPrice = orderRow.RowPrice,
+                        RegistrationType = orderRow.RegistrationType,
+                        SendHardcopy = orderRow.SendHardcopy != null && orderRow.SendHardcopy.Value,
+                        idOrder = orderRow.idOrder
+                    };
+
+                    _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);
+
+                    return displayRowPriceViewModel;
+                }
+                catch (Exception exception)
+                {
+                    _logger.ErrorException("BuildDisplayRowPriceViewModel", exception);
+                    Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
+                    throw;
+                }
+            }
+            return null;
+        }
+
 
         private void AddNoteClaim(IList<Order> ordersForWebinar)
         {

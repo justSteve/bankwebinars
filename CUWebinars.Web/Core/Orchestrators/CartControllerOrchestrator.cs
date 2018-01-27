@@ -139,7 +139,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var displayOptionsInDropDownViewModel = new DisplayOptionsInDropDownViewModel
                     {
                         //Options = _orderManagementService.GetOptionsByWebinarId(orderRow.idWebinar, true),
-                        Options = _orderManagementService.GetAllPossibleOptionsByWebinarId(orderRow.idWebinar, false),
+                        Options = _orderManagementService.GetAllPossibleRegTypesByWebinarId(orderRow.idWebinar, false),
                         OrderRowId = idOrderRow.Value,
                         OrderRowRegistrationType = orderRow.RegistrationType
                     };
@@ -152,15 +152,12 @@ namespace CUWebinars.Web.Core.Orchestrators
                     Elmah.ErrorSignal.FromCurrentContext().Raise(exception);
                     throw;
                 }
-
             }
-
             return null;
         }
 
         public CheckoutConfirmViewModel BuildCheckoutConfirmViewModel(int? idOrder)
         {
-
             if (idOrder.HasValue && idOrder.Value > 0)
             {
                 var order = _orderManagementService.GetOrderById(idOrder.Value);
@@ -373,8 +370,10 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
             discountModel.TotalCount = userDiscount.TotalCount;
-            if (discountModel.TypeOfDiscount == DiscountType.Subscription &&
-                discountModel.CreditsRemain < (decimal).25) return null;
+            if ((discountModel.TypeOfDiscount == DiscountType.Subscription &&
+                discountModel.CreditsRemain < (decimal).25)
+                || discountModel.DiscountCode.ToLower().Contains("expired")
+                ) return null;
 
             return discountModel;
         }
@@ -426,7 +425,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     if (checkoutOptionsViewModel.OrderExists)
                     {
-                        checkoutOptionsViewModel.OrderHasId = order.idOrder > 0;
+                        //checkoutOptionsViewModel.OrderHasId = order.idOrder > 0;
 
                         if (order.OrderRows != null)
                         {
@@ -519,7 +518,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
-                        //Discount = orderRow.Discount,
+                        Origin = orderRow.Order.Origin,
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
                         AddressesForAdditionalLocations = addressesForAdditionalLocations,
                         //OrderStatus = orderRow.Order.OrderStatus,
@@ -724,7 +723,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (Request.IsAuthenticated)
             {
                 var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
-                if (user != null && user.Identity.Name != null)
+                if (user != null && user.Identity.Name != null && formModel.idWebinar != 2520)
                 {
                     existingOrder = _orderManagementService
                          .GetOrdersByEmail(user.Identity.Name, 19)
@@ -1222,7 +1221,9 @@ namespace CUWebinars.Web.Core.Orchestrators
             NotificationMessageFields fields = _appHelper.BuildNotiFields(order, _orderManagementService.OrderHasCc(order));
 
 
-            if (_globalConfig.Tenant != "DirectorSeries" && !account.HasClaim(ClaimTypes.FullName) && _globalConfig.Tenant != "DirectorSeries")
+            if (_globalConfig.Tenant != "DirectorSeries" && _globalConfig.Tenant != "CCS"
+                && !account.HasClaim(ClaimTypes.FullName)
+                )
             {
                 SendAccountCreatedConfirmation(order);
             }
@@ -1240,14 +1241,22 @@ namespace CUWebinars.Web.Core.Orchestrators
                DocumentModel.Load(
                    HttpContext.Current.Server.MapPath(
                        @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventForOnDemandOnly.docx"));
-
+            }
+            if (
+                row.RegistrationType.ShowShippedNotifications.ToLower() == "yes" &&
+                row.RegistrationType.ShowLiveNotifications.ToLower() == "no"
+                )
+            {
+                document =
+               DocumentModel.Load(
+                   HttpContext.Current.Server.MapPath(
+                       @"~/App_Data/mergeTemplates/OrderSubmitted_PreEventForCD.docx"));
             }
             if (webinar.Status == WebinarStatus.Recorded)
             {
                 document = DocumentModel.Load(
                         HttpContext.Current.Server.MapPath(
                             @"~/App_Data/mergeTemplates/OrderSubmitted_PostEvent.docx"));
-
             }
 
             if (webinar.SeriesInfo.Contains("Children"))
@@ -1284,6 +1293,29 @@ namespace CUWebinars.Web.Core.Orchestrators
                             @"~/App_Data/mergeTemplates/OrderSubmitted_FedCompSchool.docx"));
             }
 
+            if (_globalConfig.Tenant == "CCS")
+            {
+                document =
+                    DocumentModel.Load(
+                        System.Web.HttpContext.Current.Server.MapPath(
+                            @"~/App_Data/mergeTemplates/OrderSubmittedCCS.docx"));
+
+                fields = new NotificationMessageFields
+                {
+                    AttendType = row.RegistrationType.OptionLabelShort,
+                    RegDesc = order.FirstName + " " + order.LastName + "<br>" + order.Institution + "<br>" + order.BillingAddress + "<br>" + order.BillingCity + ", " + order.BillingState + "<br>Subscription Tier: " + row.RegistrationType.OptionLabelShort,
+                    TenantSignature = "The " + _globalConfig.Tenant + " Staff",
+                    OrderID = row.idOrder,
+                    BillingEmail = order.BillingEmail,
+                    TechSupportLink = "<a href='" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "'>" + _globalConfig.TenantURL + "/oh/" + order.idOrder + "</a>",
+                    OndemandLink = "<a href='" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + _globalConfig.TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>",
+                    LinkToMyWebinars = "<a href='" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "'>" + _globalConfig.TenantURL + "/MyWebinars?idOrder=" + order.idOrder + "</a>",
+                    TenantName = _globalConfig.Tenant,
+                    WebinarTitle = webinar.Title,
+                    FirstName = order.FirstName
+
+                };
+            }
             if (_globalConfig.Tenant == "DirectorSeries")
             {
                 document =
@@ -1336,7 +1368,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     container.CreateIfNotExists();
 
                     CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
-                    if (_globalConfig.Tenant == "DirectorSeries")
+                    if (_globalConfig.Tenant == "DirectorSeries" || _globalConfig.Tenant == "CCS" )
                         blob = container.GetBlockBlobReference(order.idOrder + ".htm");
                     using (MemoryStream output = new MemoryStream())
                     {
@@ -1420,12 +1452,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             }
         }
 
-
-
-        public string InvoicedOrderIsUpdated(Order order)
-        {
-            return _orderManagementService.InvoicedOrderIsUpdated(order);
-        }
 
         public void FireMandrillNotificationEvent(string emails, string subjectLine, string orderConfirmString)
         {
@@ -1608,60 +1634,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public ExpressCheckoutModel ExpressCheckout(Order order, WebUser user)
         {
-            UpdateOrderWithUserId(order.idOrder, user.idUser);
-            var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+            //originally held callback to jotform
+            return null;
 
-            var addLocs = "";
-
-            if (row.AdditionalLocation != null && row.AdditionalLocation.Any())
-            {
-                foreach (var loc in row.AdditionalLocation)
-                {
-                    addLocs = loc.Email + Environment.NewLine;
-                }
-            }
-            string justNumbers = new String(order.BillingPhone.Where(Char.IsDigit).ToArray());
-            var area = justNumbers.Substring(0, 3);
-            var phone = justNumbers.Substring(3, 3) + "-" + justNumbers.Substring(6, 4);
-            var formID = "60456422151952";
-            if (_globalConfig.Tenant == "BankWebinars")
-            {
-                formID = "52205870745961"; //production
-                                           //formID = "60463854157965"; //dev
-            }
-
-            var model = new ExpressCheckoutModel
-            {
-                formID = formID,
-                q18_q_webinarid18 = row.Webinar.idWebinar,
-                q15_affiliateid15 = order.idAffiliate,
-                q12_webinarTitle = row.Webinar.Title,
-                q11_orderid = order.idOrder,
-                q9_title = user.Title,
-                q14_address14 = new Q14Address14
-                {
-                    addr_line1 = order.BillingAddress,
-                    addr_line2 = order.BillingAddress2,
-                    state = order.BillingState,
-                    city = order.BillingCity,
-                    postal = order.BillingZip,
-                    country = "United States"
-                },
-                q4_name = new Q4Name { first = order.FirstName, last = order.LastName },
-                q8_institution = order.Institution,
-                q6_phoneNumber6 = new Q6PhoneNumber6 { area = area, phone = phone },
-                q5_email5 = order.BillingEmail,
-                q19_additionalLocations19 = addLocs
-            };
-
-            if (order.WebUser.idSubscriptionDiscount.HasValue)
-            {
-                var discount =
-                    GetDiscountById(order.WebUser.idSubscriptionDiscount.Value);
-                model.q20_discountCode20 = discount.DiscountCode;
-            }
-
-            return model;
         }
 
         public RegType GetRegTypeByLabel(string livePlusFive, int? idWebinar)
@@ -1902,7 +1877,6 @@ namespace CUWebinars.Web.Core.Orchestrators
             //}
             var upcomingOrders = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
             model.Scheduled = new List<RegistrationSummaryViewModel>();
-            model.Recorded = new Dictionary<string, RegistrationSummaryViewModel>();
 
             foreach (Order order in upcomingOrders)
             {
@@ -1962,7 +1936,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             }
             var ordersForRecordedWebinars = _orderManagementService.SelectOrdersWithRecordedWebinars(currentUser.idUser);
-
+            var summariesForRecorded = new List<RegistrationSummaryViewModel>();
             foreach (Order order in ordersForRecordedWebinars)
             {
                 try
@@ -2011,7 +1985,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                                                                            .ToString().Replace(".00", "");
                     }
 
-                    model.Recorded.Add(ordersForRecordedWebinars.Count.ToString(), registrationSummaryViewModel);
+                    summariesForRecorded.Add(registrationSummaryViewModel);
                 }
                 catch (Exception ex)
                 {
@@ -2020,67 +1994,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 }
 
             }
-
-            model.Recorded = new Dictionary<string, RegistrationSummaryViewModel>(ordersForRecordedWebinars.Count,
-                StringComparer.OrdinalIgnoreCase);
-
-            foreach (Order order in ordersForRecordedWebinars)
-            {
-                try
-                {
-
-                    OrderRow orderRowForOrder = order.OrderRows.SingleOrDefault(or => or.RowStatus == OrderRowStatus.Active);
-                    if (orderRowForOrder == null)
-                        continue;
-                    var lstAddLoc = "";
-                    foreach (var additionalLocation in orderRowForOrder.AdditionalLocation)
-                    {
-                        lstAddLoc += additionalLocation.Email + ",";
-                    }
-                    RegistrationSummaryViewModel registrationSummaryViewModel = new RegistrationSummaryViewModel
-                    {
-                        //AdditionalLocationsViewModel = _orderManagementService.BuildAdditionalLocationsViewModel(orderRowForOrder, orderRowForOrder.idOrder),
-                        AdditionalLocationsViewModel = new AdditionalLocationsViewModel
-                        {
-                            AdditionalLocations = orderRowForOrder.AdditionalLocation,
-                            Addresses = lstAddLoc.TrimEnd(','), //additionalLocationsPricing.Item1,
-                            OptionsCost = orderRowForOrder.Webinar.AdditionalLocationPrice,//additionalLocationsPricing.Item2
-                            EditAdditionalLocationsViewModel = new EditAdditionalLocationsViewModel
-                            {
-                                idUser = orderRowForOrder.Order.idUser,
-                                CostPerAdditionalLocation = orderRowForOrder.Webinar.AdditionalLocationPrice,
-                                NumberOfAdditionalLocations = 0,
-                                TotalCostOfOptions = 0,
-                                WebinarId = orderRowForOrder.Webinar.idWebinar,
-                                idOrder = orderRowForOrder.idOrder,
-                                idOrderRow = orderRowForOrder.idOrderRow
-                            }
-                        },
-                        OrderRow = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active),
-                        RecordingLink =
-                            "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + orderRowForOrder.Webinar.RecordingUrl +
-                            "' target=_blank /> Recording Playback</a>",
-                        WebinarStatus = orderRowForOrder.Webinar.Status
-                    };
+            model.Recorded = summariesForRecorded;
 
 
-                    if (orderRowForOrder.Discount != null &&
-                        orderRowForOrder.Discount.DiscountType == DiscountType.Subscription)
-                    {
-                        registrationSummaryViewModel.DiscountCaption = "WSP Credit Cost: " +
-                                                                       orderRowForOrder.RegistrationType.CreditCost
-                                                                           .ToString().Replace(".00", "");
-                    }
-
-                    model.Recorded.Add(ordersForRecordedWebinars.Count.ToString(), registrationSummaryViewModel);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    throw;
-                }
-
-            }
 
             //model.Archived = _orderManagementService.SelectOrdersWithArchivedWebinars(currentUser.idUser);
             try
@@ -2160,7 +2076,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 //&& w.Date.ToUniversalTime().Hour == parsedWDate.ToUniversalTime().Hour
                 ).ToList();
 
-                _logger.Info("LoadWebinarForImporter parsedWDate.Hour: " + parsedWDate.Hour );
+                _logger.Info("LoadWebinarForImporter parsedWDate.Hour: " + parsedWDate.Hour);
                 if (webinars.Count() == 1)
                 {
                     return webinars.First();
@@ -2186,8 +2102,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public int LoadRegistrationForImporter(Webinar webinar, string parsedOrderRegTypeAsString)
         {
+            return _orderManagementService.GetAllPossibleRegTypesByWebinarId(webinar.idWebinar).Where(r => r.OptionLabel == parsedOrderRegTypeAsString).SingleOrDefault().idRegType;
 
-            return _webinarManagementService.GetRegTypeByLableAndWebinar(parsedOrderRegTypeAsString, webinar.idWebinar);
         }
 
         public int GetRegTypeByRateWatch(string registrationType, int idWebinar)

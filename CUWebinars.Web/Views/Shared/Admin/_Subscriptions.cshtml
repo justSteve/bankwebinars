@@ -32,14 +32,14 @@
         text-align: left;
     }
 </style>
-<script type="text/javascript" language="javascript">
+@*<script type="text/javascript" language="javascript">
 
             var MakeTable = function (result1, thisId) {
                 var buildTable = "<table>";
                 var json = $.parseJSON(result1);
                 for (var i = 0, len = json.length; i < len; i++) {
                     console.log(json[i]);
-                    buildTable = buildTable + "<tr><td>" + json[i].idOrder + "</td><td>"+ json[i].OrderDate + "</td><td>" + json[i].Email + "</td><td>" + json[i].Credits +
+                    buildTable = buildTable + "<tr><td>"+i+".</td><td>" + json[i].idOrder + "</td><td>"+ json[i].OrderDate + "</td><td>" + json[i].Email + "</td><td>" + json[i].Credits +
                         "</td></tr>";
                 }
                 buildTable = buildTable + "</table>";
@@ -72,7 +72,7 @@
                         });
                     });
             });
-</script>
+</script>*@
 <div class="container">
     <!--begin main content-->
     <div class="row-fluid">
@@ -81,22 +81,29 @@
             @{
                 if (Model.Discounts != null)
                 {
-                    <table>
-                        <tr style="background-color: black; color: gray"><td>Code</td><td>Email</td><td>Remaining</td><td>Status</td></tr>
+                    var rowCount = 0;
+                    <table  id='ShowWSP'>
+                        <tr style="background-color: black; color: gray"><td>&nbsp;</td><td>Code</td><td>Email</td><td>Remaining</td><td>Status</td></tr>
                         @foreach (var discount in Model.Discounts.OrderBy(d => d.DateValidTo).Where(d => d.DiscountType == DiscountType.Subscription))
                         {
+                            rowCount++;
                             var users = "";
                             foreach (var user in discount.WpsUsers)
                             {
                                 users += user.email + ", ";
                             }
                             <tr>
+                                <td>@rowCount<text>.</text></td>
                                 <td id="showDiscountDetails_@discount.idDiscount" data-thisid="@discount.idDiscount">
-                                    @discount.DiscountCode (@discount.idDiscount)
+                                    <a target="_blank" href="@_globalConfig.TenantURL/webinar/search?searchTerm=wsp @discount.idDiscount"> @discount.DiscountCode (@discount.idDiscount)</a>   
                                     <div id="discountDetails_@discount.idDiscount" class="initialHide">
-                                        
+
                                     </div>
                                 </td>
+                                @if (Model.Affiliate.idUserAff == 19)
+                                {
+                                    <td>@discount.idAffiliate</td>
+                                }
                                 <td>@users.TrimEnd(' ').TrimEnd(',')</td>
                                 <td>
                                     <div style="text-align: right">@discount.CreditsRemain</div>

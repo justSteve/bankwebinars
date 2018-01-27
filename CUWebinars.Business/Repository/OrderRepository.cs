@@ -18,8 +18,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Citrix.GoToWebinar.Api;
-using Citrix.GoToWebinar.Api.Model;
+using LogMeIn.GoToWebinar.Api;
+using LogMeIn.GoToWebinar.Api.Model;
 using CUWebinars.Business.Services;
 using FluentValidation.Results;
 using Webinar = CUWebinars.Business.Models.Webinar;
@@ -103,8 +103,8 @@ namespace CUWebinars.Business.Repository
                 newOrderRow.idRegType = registrationType.idRegType;
 
                 newOrderRow.RowStatus = OrderRowStatus.Active;
-                newOrderRow.TtsJoinUrl = RandomHelpers.GetUniqueCode(5);
-                newOrderRow.OnDemandCode = RandomHelpers.GetUniqueCode(5);
+                newOrderRow.TtsJoinUrl = RandomHelpers.GetUniqueCode(5, "TtsJoinUrl");
+                newOrderRow.OnDemandCode = RandomHelpers.GetUniqueCode(5, "OnDemandCode");
 
                 // The RowPrice is just the starting point. The full price for an 
                 // order is calculated in CalculateOrderCost of the OrderManagementService
@@ -252,43 +252,43 @@ namespace CUWebinars.Business.Repository
                 .ToList();
         }
 
-        public Object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search)
-        {
-            var orders = items.Where(order => order.idAffiliate == affiliateId);
+        //public Object SearchOrders(int affiliateId, IList<int> excludeUserIDs, int skip, int take, string search)
+        //{
+        //    var orders = items.Where(order => order.idAffiliate == affiliateId);
 
-            int searchUserID;
-            if (search != string.Empty)
-                if (Int32.TryParse(search, out searchUserID))
-                {
-                    orders = orders.Where(o => o.idUser == searchUserID);
-                }
-                else
-                {
-                    orders = orders.Where(o => o.FirstName.ToString().Contains(search) ||
-                        o.LastName.ToString().Contains(search) ||
-                        o.BillingEmail.ToString().Contains(search) ||
-                        o.Institution.ToString().Contains(search)
-                        );
-                }
+        //    int searchUserID;
+        //    if (search != string.Empty)
+        //        if (Int32.TryParse(search, out searchUserID))
+        //        {
+        //            orders = orders.Where(o => o.idUser == searchUserID);
+        //        }
+        //        else
+        //        {
+        //            orders = orders.Where(o => o.FirstName.ToString().Contains(search) ||
+        //                o.LastName.ToString().Contains(search) ||
+        //                o.BillingEmail.ToString().Contains(search) ||
+        //                o.Institution.ToString().Contains(search)
+        //                );
+        //        }
 
-            int pagesToSkip = 0;
-            if (take != 0)
-            {
-                pagesToSkip = skip / take;
-            }
+        //    int pagesToSkip = 0;
+        //    if (take != 0)
+        //    {
+        //        pagesToSkip = skip / take;
+        //    }
 
-            int foundRecordsCount = orders.Count();
-            IList<Order> resultOrders = orders.Skip(pagesToSkip).Take(take).ToList();
+        //    int foundRecordsCount = orders.Count();
+        //    IList<Order> resultOrders = orders.Skip(pagesToSkip).Take(take).ToList();
 
-            int totalRecordsCount = items.Count(o => o.idAffiliate == affiliateId);
+        //    int totalRecordsCount = items.Count(o => o.idAffiliate == affiliateId);
 
-            return new
-            {
-                FoundCount = foundRecordsCount,
-                TotalCount = totalRecordsCount,
-                Orders = orders
-            };
-        }
+        //    return new
+        //    {
+        //        FoundCount = foundRecordsCount,
+        //        TotalCount = totalRecordsCount,
+        //        Orders = orders
+        //    };
+        //}
 
         public void LoadWebinarIntoOrderRow(OrderRow newOrderRow)
         {

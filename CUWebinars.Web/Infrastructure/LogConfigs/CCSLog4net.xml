@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<log4net>
+  <appender name="CsvFileAppender" type="log4net.Appender.FileAppender">
+    <file value="D:/home/logfiles/log4netCSVCCS.log" />
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+    <appendToFile value="true"/>
+    <threshold value="INFO" />
+    <!--<layout type=" MyApp.Web.CsvLogging.CsvPatternLayout, MyApp.Web">-->
+    <layout type=" CUWebinars.Web.CsvPatternLayout, CUWebinars.Web">
+      <header value="DateTime,Thread,Level,Logger,Message,Exception&#13;&#10;" />
+      <conversionPattern value="%date%newfield[%thread]%newfield %-5level%newfield%logger%newfield%message%newfield%exception%endrow" />
+    </layout>
+  </appender>
+
+  <appender name="FileAppender" type="log4net.Appender.RollingFileAppender">
+    <threshold value="INFO" />
+    <file type="log4net.Util.PatternString" value="D:/home/logfiles/log4netCCS_%date{yyyyMMdd}.log" />
+    <appendToFile value="true" />
+    <rollingStyle value="Date" />
+    <datePattern value="yyyyMMdd" />
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %-5level %logger %property – %message%newline%exception" />
+    </layout>
+  </appender>
+
+  <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
+    <threshold value="INFO" />
+    <bufferSize value="1" />
+    <connectionType value="System.Data.SqlClient.SqlConnection, System.Data,  Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <connectionString value="Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=CCS;User ID=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;" />
+    <commandText value="INSERT INTO Logger ([Date],[Level],[Message],[Exception], [Logger]) VALUES (@log_date, @log_level, @message, @exception, @logger)" />
+    <parameter>
+      <parameterName value="@log_date" />
+      <dbType value="DateTime" />
+      <layout type="log4net.Layout.RawTimeStampLayout" />
+    </parameter>
+    <parameter>
+      <parameterName value="@log_level" />
+      <dbType value="String" />
+      <size value="50" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%level" />
+      </layout>
+    </parameter>
+    <parameter>
+      <parameterName value="@message" />
+      <dbType value="String" />
+      <size value="4000" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%message" />
+      </layout>
+    </parameter>
+    <parameter>
+      <parameterName value="@exception" />
+      <dbType value="String" />
+      <size value="4000" />
+      <layout type="log4net.Layout.ExceptionLayout" />
+    </parameter>
+    <parameter>
+      <parameterName value="@logger" />
+      <dbType value="String" />
+      <size value="4000" />
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%logger" />
+      </layout>
+    </parameter>
+  </appender>
+  <root>
+    <appender-ref ref="AdoNetAppender" />
+    <appender-ref ref="CsvFileAppender" />
+
+    <appender-ref ref="FileAppender" />
+  </root>
+</log4net>

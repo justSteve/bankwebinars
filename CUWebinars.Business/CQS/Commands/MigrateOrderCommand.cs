@@ -27,5 +27,7 @@ namespace CUWebinars.Business.CQS.Commands
 
         //  Out parameter
         public int OrderId { get; set; }
+
+        public string Tenant { get; set; }
     }
 }

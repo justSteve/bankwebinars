@@ -10,7 +10,7 @@
 <script language="javascript" type="text/javascript">
 
     function openECWindow() {
-        @*window.location.href = "@url?idOrder=" + cartStateManager.getOrderId() + "&idWebinar=" + cartStateManager.getWebinarId() + "&idAffiliate=" + currentAffiliate + "&email=" + $('#Email1').val();*@
+        
         window.location.href = "/cart/express/" + cartStateManager.getOrderId();
     }
     function showAboutAccount() {
@@ -266,17 +266,15 @@
 <div id="modalShowExpressCheckout" class="modal hide">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Express Checkout</h3>
+        <h3>Checkout</h3>
     </div>
     <div id="UserHasAccount" class="modal-body">
-        <p>
-            Use our <i>Express Me!</i> button for guest checkout. Or get instant access to your account
-            with the <i>'Continue to Login'</i> button.
-        </p>
-        <div id="ECBtns">
+        <p>Please choose <i>'Continue to Login'</i> or use our <i>Express Me!</i> button for guest checkout.</p>
+        @*<p>Express Checkout is temporarily off-line. Login is required</p>*@
+        <div id="ECBtns1">
             <p>
-                <input type="button" onclick="javascript: openECWindow();" class=" btn btn-primary" name="ExpressMe" id="ExpressMe" value="Yes, Express Me!" />
                 <input type="button" data-dismiss="modal" class="btn btn-success" name="ResetMe" id="ResetMe" value="Continue to Login" />
+                <input type="button" onclick="javascript: openECWindow();" class=" btn btn-primary" name="ExpressMe" id="ExpressMe" value="Yes, Express Me!" />
             </p>
         </div>
     </div>

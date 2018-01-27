@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CUWebinars.Business.Models
 {
+    [DebuggerDisplay("Title: {Title}, ID: {idWebinar}")]
     public partial class Webinar
     {
         public Webinar()

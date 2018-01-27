@@ -124,7 +124,7 @@
 
         var rowAmount = new StringBuilder();
 
-        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id=optionLabel>"
+        rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id='optionLabel'>"
             + Model.RegistrationType.OptionLabel + "</span>: <span id='baseCost'>"
             + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
 
@@ -200,9 +200,9 @@
                             &nbsp;
                             &nbsp;
                             &nbsp;
-                            @*Bill Me Button is controled by $('#ConfirmRegistrationBillMe').hide();*@
-                            <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
-                            &nbsp;
+                            @*Bill Me Button is controled by $('#ConfirmRegistrationBillMe').hide();
+    <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
+    &nbsp;*@
                             &nbsp;
                             &nbsp;
                         </span>

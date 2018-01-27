@@ -877,3 +877,8 @@ CUWebinars.Web/App_Data/Trace/
 /CUWebinars.Web/Content/images/10p.png
 /CUWebinars.Web/WinSCP.exe
 /.vs/config/applicationhost.config
+/.vs/BankWebinars/v15/Server/sqlite3/db.lock
+/.vs/BankWebinars/v15/Server/sqlite3/storage.ide
+/.vs/BankWebinars/v15/Server/sqlite3/storage.ide-shm
+/.vs/BankWebinars/v15/Server/sqlite3/storage.ide-wal
+/.vs/BankWebinars/v15/sqlite3/db.lock

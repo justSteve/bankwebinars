@@ -29,8 +29,8 @@ using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 using BrockAllen.MembershipReboot;
-using Citrix.GoToWebinar.Api;
-using Citrix.GoToWebinar.Api.Model;
+using LogMeIn.GoToWebinar.Api;
+using LogMeIn.GoToWebinar.Api.Model;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Notification;
 using CUWebinars.Web.Models;
@@ -297,7 +297,7 @@ namespace CUWebinars.Business.Services
             return (IDictionary<RegType, bool>)options;
         }
 
-        public IDictionary<RegType, bool> GetAllPossibleOptionsByWebinarId(int idWebinar, bool detached)
+        public IDictionary<RegType, bool> GetAllPossibleRegTypesByWebinarId(int idWebinar, bool detached)
         {
             string cachKey = "options-" + idWebinar;
             var options = _cachingService.Get(cachKey);
@@ -313,6 +313,12 @@ namespace CUWebinars.Business.Services
             return (IDictionary<RegType, bool>)options;
         }
 
+
+        public IList<RegType> GetAllPossibleRegTypesByWebinarId(int idWebinar)
+        {
+            IList<RegType> regTypes = GetAllPossibleRegTypesByWebinarId(idWebinar, false).Select(r => r.Key).ToList();
+            return regTypes;
+        }
 
         public IEnumerable<Order> GetOrdersByEmail(string email, int aff)
         {
@@ -403,7 +409,14 @@ namespace CUWebinars.Business.Services
 
         public OrderRow GetOrderRowById(int idOrderRow)
         {
-            return _orderRepository.GetOrderRowById(idOrderRow);
+            OrderRow row = _orderRepository.GetOrderRowById(idOrderRow);
+
+            if (row == null)
+            {
+                row = _orderRepository.GetOrderById(idOrderRow).OrderRows
+                    .SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            }
+            return row;
         }
 
         public IEnumerable<Order> GetOrdersForShippedNotification()
@@ -432,11 +445,11 @@ namespace CUWebinars.Business.Services
             return _orderRepository.FindUserIdsByPartialId(value);
         }
 
-        public object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search)
-        {
-            return
-                _orderRepository.SearchOrders(affiliateID, excludeUserIDs, skip, take, search);
-        }
+        //public object SearchRegistrations(int affiliateID, IList<int> excludeUserIDs, int skip, int take, string search)
+        //{
+        //    return
+        //        _orderRepository.SearchOrders(affiliateID, excludeUserIDs, skip, take, search);
+        //}
 
         public bool VerifyWebUserExists(int idUser)
         {
@@ -757,8 +770,6 @@ namespace CUWebinars.Business.Services
                         if (row.Discount.DateValidFrom != row.Discount.DateValidTo && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
                         {
                             discountTotal = discountTotal - 50;
-
-
                             var newJson = new JProperty(
                                 "ShippingSurcharge",
                                 new JObject(
@@ -801,7 +812,6 @@ namespace CUWebinars.Business.Services
                                  " found "
                                  + creditsRemain + " against " + row.RegistrationType.CreditCost);
                 }
-
             }
             else if (row.Discount != null && row.Discount.FlatOff != 0.0M)
             {
@@ -814,11 +824,11 @@ namespace CUWebinars.Business.Services
             {
                 discountTotal = row.RowPrice;
             }
-            else
-            {
-                ProcessPartialDiscount(row, discountTotal);
-            }
 
+            if (row.Discount != null && row.Discount.DiscountCode.ToLower().Contains("expired"))
+            {
+                row.Discount = null;
+            }
             row.RowPrice -= discountTotal;
             pricesAndDiscounts.TotalDiscount = discountTotal;
             pricesAndDiscounts.TotalCostOfOptions = totalOptionsPrice;
@@ -843,11 +853,6 @@ namespace CUWebinars.Business.Services
             pricesAndDiscounts.TotalPaid = order.TotalPaid;
 
             return pricesAndDiscounts;
-        }
-
-        private OrderRow ProcessPartialDiscount(OrderRow row, decimal discountTotal)
-        {
-            return null;
         }
 
         public decimal DiscountCreditUnitCost { get; private set; }
@@ -1704,7 +1709,15 @@ namespace CUWebinars.Business.Services
 
         public List<Order> GetOrdersByWebinar(int idWebinar)
         {
-            return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
+            var orderIds = _webinarRepository.GetV3OrdersIdsByWebinar(idWebinar);
+            //return _webinarRepository.GetOrdersByWebinar(idWebinar).ToList();
+            List<Order> orders = new List<Order>();
+            foreach (var orderId in orderIds)
+            {
+                orders.Add(_orderRepository.GetOrderById(orderId));
+            }
+            return orders;
+
         }
 
         public List<Order> GetOrdersByWebinarForInvoice(int idWebinar)
@@ -1905,7 +1918,7 @@ namespace CUWebinars.Business.Services
 
         public Discount CreateWspCode(Order order)
         {
-            
+
             var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             var whichTier = "";
             var totalCount = 0;
@@ -1936,36 +1949,111 @@ namespace CUWebinars.Business.Services
                 default:
                     whichTier = "unknownTier";
                     break;
-                    
+
             }
             if (whichTier == "unknownTier")
             {
                 return null;
             }
-            Discount wspDiscount = new Discount
-            {
-                DiscountType = DiscountType.Subscription,
-                DateValidTo = order.OrderDate,
-                DateValidFrom = order.OrderDate,
-                Cost = row.RowPrice,
-                DateBilled = DateTime.UtcNow,
-                DateVerified = DateTime.UtcNow,
-                DiscountCode = whichTier + order.idOrder,
-                FlatOff = 0,
-                Notes = "V3 entry",
-                PercentOff = 100,
-                RenewalTerm = 0,
-                Status = "Active",
-                TotalCount = totalCount,
-                idAffiliate = order.idAffiliate,
-                idDiscount = order.idOrder,
-                
 
-            };
-            row.Discount = wspDiscount;
-            SaveOrderChanges(order, null, null);
-            return wspDiscount;
+            if (order.WebUser.idSubscriptionDiscount != null)
+            {
+                try
+                {
+                    var discount = GetDiscountById(order.WebUser.idSubscriptionDiscount.Value);
+                    if (discount.idAffiliate != order.idAffiliate)
+                    {
+                        FireMandrillNotificationEvent(
+                            "info@ttstrain.com",
+                            "affiliate did not match existing WSP " + order.idOrder
+                            , "Order Affiliate was: " + order.idAffiliate + " but existing WSP had: " + discount.idAffiliate);
+
+                        var aff = GetAffiliateByIdLoaded(discount.idAffiliate);
+                        order.Affiliate = aff;
+                        order.idAffiliate = discount.idAffiliate;
+                    }
+
+                    if (discount.DiscountType == DiscountType.Subscription)
+                    {
+                        discount.DateValidTo = order.OrderDate;
+                        discount.DateValidFrom = order.OrderDate;
+                        discount.Cost = row.RowPrice;
+                        discount.DateBilled = DateTime.UtcNow;
+                        discount.DateVerified = DateTime.UtcNow;
+                        discount.FlatOff = 0;
+                        discount.Notes = "V3 entry";
+                        discount.PercentOff = 100;
+                        discount.RenewalTerm = 0;
+                        discount.Status = "Active";
+                        discount.TotalCount += totalCount;
+                        discount.idAffiliate = order.idAffiliate;
+                        discount.Notes += "Renewed with " + totalCount;
+
+                    }
+
+                    row.Discount = discount;
+                    SaveOrderChanges(order, null, null);
+
+                    FireMandrillNotificationEvent("2afda898.ttstrain.com@amer.teams.ms"
+                        , "existing WSP was renewed: " + order.idOrder
+                        , "Renewal for : " + discount.DiscountCode);
+
+                    return discount;
+                }
+                catch (Exception e)
+                {
+                    _logger.FatalException("CreateWsp_renewal: ", e);
+                    throw;
+                }
+            }
+
+            try
+            {
+
+                Discount wspDiscount = new Discount
+                {
+                    DiscountType = DiscountType.Subscription,
+                    DateValidTo = order.OrderDate,
+                    DateValidFrom = order.OrderDate,
+                    Cost = row.RowPrice,
+                    DateBilled = DateTime.UtcNow,
+                    DateVerified = DateTime.UtcNow,
+                    DiscountCode = whichTier + order.idOrder,
+                    FlatOff = 0,
+                    Notes = "V3 entry",
+                    PercentOff = 100,
+                    RenewalTerm = 0,
+                    Status = "Active",
+                    TotalCount = totalCount,
+                    idAffiliate = order.idAffiliate,
+                    idDiscount = order.idOrder
+                };
+                row.Discount = wspDiscount;
+                SaveOrderChanges(order, null, null);
+
+                _webUserRepository.SetWebUserWSP(row.Discount.idDiscount, order.idUser);
+
+                FireMandrillNotificationEvent("2afda898.ttstrain.com@amer.teams.ms"
+                    , "New WSP: " + order.idOrder
+                    , "New WSP created for: " + wspDiscount.DiscountCode);
+
+                return wspDiscount;
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("CreateWsp_fromNew: ", e);
+                throw;
+            }
+
         }
+
+        //public IList<RegType> GetAllPossibleRegTypesByWebinarId(int idWebinar)
+        //{
+
+        //    IList<RegType> regTypes = GetAllPossibleRegTypesByWebinarId(idWebinar, false).Select(r => r.Key).ToList();
+        //    return regTypes;
+
+        //}
 
         public Discount ApplyDiscountCode(string code, OrderRow row)
         {
@@ -2075,6 +2163,8 @@ namespace CUWebinars.Business.Services
 
         private Discount RedeemDiscount(Discount discount, OrderRow row)
         {
+            if (row.idWebinar == 2025)
+                return null;
             var forNotes = new StringBuilder();
             //
             _logger.Info("Discount: RedeemDiscountStarts: {0}, validFrom: {1}, validTo: {2}, CreditedUsed: {3}, CreditsRemain: {4}", discount.DiscountCode, discount.DateValidFrom, discount.DateValidTo, CalculateCreditsUsed(discount), CalculateCreditsRemain(discount));
@@ -2222,6 +2312,7 @@ namespace CUWebinars.Business.Services
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)
                 .Where(o => o.OrderDate > userDiscount.DateVerified
                             || (o.InvoiceDetail.Contains("DiscountIsApplied"))
+                            || (userDiscount.DateVerified > Convert.ToDateTime("09/15/17"))
                             && (o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.OutstandingBalance)
                             && !o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title.StartsWith("Compliance Perspe"));
 
@@ -2244,11 +2335,7 @@ namespace CUWebinars.Business.Services
                             creditsUsed += thisUseCostAddLocs;
                         }
                     }
-                    _logger.Info("CalculateCreditsRemain processes: " + order.idOrder + " and adds: " + order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
-                                     .RegistrationType.CreditCost);
                 }
-            _logger.Info("CalculateCreditsRemain returns: " + userDiscount.TotalCount + " minus credits used: " +
-                         creditsUsed);
 
             return userDiscount.TotalCount - creditsUsed;
         }
@@ -2284,7 +2371,7 @@ namespace CUWebinars.Business.Services
 
         public void CreateTestRegistration(Webinar webinar)
         {
-            var idRegType = GetAllPossibleOptionsByWebinarId(webinar.idWebinar, false);
+            var idRegType = GetAllPossibleRegTypesByWebinarId(webinar.idWebinar, false);
 
             var live_id = 0;
 
@@ -2392,51 +2479,53 @@ namespace CUWebinars.Business.Services
 
             var row = existingOrder.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
-            Debug.Assert(row != null, "row != null");
-            var foundByEmail = _orderRepository.GetOrdersByUserId(existingOrder.idUser)
-                .Where(o => o.BillingEmail == existingOrder.BillingEmail && row.idWebinar == o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar);
-
-            var byEmail = foundByEmail as IList<Order> ?? foundByEmail.ToList();
-            if (byEmail.Count() > 1)
+            try
             {
-                //list.Where(o => o.B).Select(o => o.Txt))
-                _logger.Warn("UserHasPrexistingOrder: found:" + string.Join(",", byEmail.Select(o => o.idOrder)));
-                var foundPaidOrSubmitted = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
-                var paidOrSubmitted = foundPaidOrSubmitted as Order[] ?? foundPaidOrSubmitted.ToArray();
-                if (paidOrSubmitted.Any())
+                Debug.Assert(row != null, "row != null");
+                var foundByEmail = _orderRepository.GetOrdersByUserId(existingOrder.idUser)
+                    .Where(o => o.BillingEmail == existingOrder.BillingEmail && row.idWebinar == o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar);
+
+                var byEmail = foundByEmail as IList<Order> ?? foundByEmail.ToList();
+                if (byEmail.Count() > 1)
                 {
-                    _logger.Warn("UserHasPrexistingOrder: returnedPaid:" + paidOrSubmitted.FirstOrDefault().idOrder);
-                    return paidOrSubmitted.FirstOrDefault();
+                    //list.Where(o => o.B).Select(o => o.Txt))
+                    _logger.Warn("UserHasPrexistingOrder: found:" + string.Join(",", byEmail.Select(o => o.idOrder)));
+                    var foundPaidOrSubmitted = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
+                    var paidOrSubmitted = foundPaidOrSubmitted as Order[] ?? foundPaidOrSubmitted.ToArray();
+                    if (paidOrSubmitted.Any())
+                    {
+                        _logger.Warn("UserHasPrexistingOrder: returnedPaid:" + paidOrSubmitted.FirstOrDefault().idOrder);
+                        return paidOrSubmitted.FirstOrDefault();
+                    }
+
+                    var foundInProcess = byEmail.Where(o => o.OrderStatus == OrderStatus.InProcess).OrderByDescending(o => o.OrderDate).ToList();
+
+                    if (foundInProcess.Any())
+                    {
+                        _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + foundInProcess.FirstOrDefault().idOrder);
+                        return foundInProcess.FirstOrDefault();
+                    }
+
+
+                    var foundCanceled = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
+                    var canceled = foundCanceled as Order[] ?? foundInProcess.ToArray();
+                    if (canceled.Any())
+                    {
+                        _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + canceled.FirstOrDefault().idOrder);
+                        return canceled.FirstOrDefault();
+                    }
+
                 }
 
-                var foundInProcess = byEmail.Where(o => o.OrderStatus == OrderStatus.InProcess).OrderByDescending(o => o.OrderDate).ToList();
-
-                if (foundInProcess.Any())
-                {
-                    _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + foundInProcess.FirstOrDefault().idOrder);
-                    return foundInProcess.FirstOrDefault();
-                }
-
-
-                var foundCanceled = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
-                var canceled = foundCanceled as Order[] ?? foundInProcess.ToArray();
-                if (canceled.Any())
-                {
-                    _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + canceled.FirstOrDefault().idOrder);
-                    return canceled.FirstOrDefault();
-                }
-
+                return null;
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("UserHasPrexistingOrder: ", e);
+                throw;
             }
 
-            return null;
         }
-
-
-        public string InvoicedOrderIsUpdated(Order order)
-        {
-            throw new NotImplementedException();
-        }
-
 
         public IList<WebUser> GetWebUsersOfDiscount(int idDiscount)
         {

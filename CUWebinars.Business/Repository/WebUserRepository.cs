@@ -91,6 +91,17 @@ namespace CUWebinars.Business.Repository
 
         }
 
+        public WebUser SetWebUserWSP(int idDiscount, int idUser)
+        {
+            var user = ((TTSWebinarsContext)db).WebUsers
+                .Where(u => u.idUser == idUser)
+                .FirstOrDefault();
+
+            user.idSubscriptionDiscount = idDiscount;
+            return user;
+
+        }
+
         public Affiliate FindAffiliateOfLastOrder(string identity)
         {
             var aff = ((TTSWebinarsContext)db).Orders
@@ -103,7 +114,7 @@ namespace CUWebinars.Business.Repository
 
         public Presenter GetPresenterById(int userIdUser)
         {
-            var presenter = ((TTSWebinarsContext) db).Presenters
+            var presenter = ((TTSWebinarsContext)db).Presenters
                 .Where(p => p.idUser == userIdUser).Include(u => u.WebUser).FirstOrDefault();
             return presenter;
         }
@@ -112,7 +123,7 @@ namespace CUWebinars.Business.Repository
         {
             var firstName = fullName.Split(' ')[0];
             var lastName = fullName.Split(' ')[1];
-            var userId = ((TTSWebinarsContext) db).WebUsers
+            var userId = ((TTSWebinarsContext)db).WebUsers
                 .Where(p => p.FirstName == firstName && p.LastName == lastName).Select(p => p.idUser).FirstOrDefault();
             return userId;
         }

@@ -189,7 +189,95 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
+        //
+        // GET: /Admin/
+        //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
+        public ActionResult ShowInvoices(int idaff, string year)
+        {
+            var affiliate = _affiliateManagementService.FindById(idaff);
 
+            var InvoicesModel =
+                new InvoicesModel
+                {
+                    Affiliate = affiliate,
+                    Links =
+                        _affiliateManagementService.GetInvoicesByAffiliate(_globalConfig.Tenant,
+                            affiliate.idUserAff, year)
+                };
+            var htmlString = new StringBuilder();
+            htmlString.Append("<ul id=\"limheight\">");
+            foreach (var link in InvoicesModel.Links)
+            {
+                var weekNumber = link.AbsoluteUri.Split('/')[4];
+                htmlString.Append("<li><a href=" + link.AbsoluteUri + ">" + weekNumber + "</a></li>");
+            }
+
+            htmlString.Append("</ul>");
+            return Content(htmlString.ToString());
+        }
+
+        //
+        // GET: /Admin/
+        //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
+        public ActionResult ShowWSP(int idaff)
+        {
+            var affiliate = _affiliateManagementService.FindById(19);
+
+            string searchTerm = Request["searchTerm"];
+
+            ViewBag.Title = "Search Results";
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+            {
+            }
+
+            var model = new WpsViewModel
+            {
+                Discounts =
+                    _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                        .Where(d => d.DiscountType == DiscountType.Subscription)
+                        .ToList(),
+                Affiliate = affiliate
+            };
+
+            return View("~/Views/Shared/Admin/ShowWSP.cshtml", model);
+            //CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+            //{
+            //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+            //}
+        }
+
+        // GET: /Admin/
+        //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
+        public ActionResult ShowCP(int idaff)
+        {
+            var affiliate = _affiliateManagementService.FindById(19);
+
+            string searchTerm = Request["searchTerm"];
+
+            ViewBag.Title = "Search Results";
+
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+
+            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+            {
+            }
+            var model = new CompPersSubscriptionsModel
+            {
+                Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+            };
+
+
+            return View("~/Views/Shared/Admin/ShowCP.cshtml", model);
+            //CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+            //{
+            //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+            //}
+        }
         //
         // GET: /Admin/
         //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
@@ -224,8 +312,23 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         Affiliate = affiliate,
                         WebUser = user
-                    }
+                    },
+
+                    //WpsViewModel = new WpsViewModel
+                    //{
+                    //    Discounts =
+                    //        _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                    //            .Where(d => d.DiscountType == DiscountType.Subscription)
+                    //            .ToList(),
+                    //    Affiliate = affiliate
+                    //},
+
+                    //CompPersSubscriptionsModel = new CompPersSubscriptionsModel
+                    //{
+                    //    Discounts = _affiliateManagementService.GetSubscriptionsByAffiliate(affiliate.idUserAff)
+                    //}
                 };
+
                 return View("~/Views/Admin/Home/Index.cshtml", model);
             }
             if (claimsIdentityOfAuthenticatedUser.HasClaim(
@@ -255,7 +358,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             Affiliate = affiliate,
                             Links =
                                 _affiliateManagementService.GetInvoicesByAffiliate(_globalConfig.Tenant,
-                                    affiliate.idUserAff)
+                                    affiliate.idUserAff, "2018")
                         },
 
                     WpsViewModel = new WpsViewModel
@@ -443,7 +546,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         //[ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException]
-        public ActionResult UpdateOrderStatus(ManageOrderEditModel model, int? discountId)
+        public ActionResult UpdateOrderStatus(ManageOrderEditModel model, int? discountId, string note)
         {
             var _discountId = 0;
             if (discountId.HasValue)
@@ -453,23 +556,22 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
-
                     var order = _orderManagementService.GetOrderById(model.Id);
-                    _logger.Info("Updating OrderStatus " + order.idOrder + " from: " + order.OrderStatus + " to: " +
-                                 model.DisplayRowPriceViewModel.OrderStatus + " by: " + _appHelper.GetUserAuditInfo());
+
 
                     if ((model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Billed ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Submitted)
 
-                        && (order.OrderStatus == OrderStatus.AwaitingVerification || order.OrderStatus == OrderStatus.InProcess)
+                        && (order.OrderStatus == OrderStatus.AwaitingVerification
+                        || order.OrderStatus == OrderStatus.InProcess)
                         )
                     {
 
                         var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
 
-
-                        order.OrderDate = DateTime.Now;
+                        if (order.OrderStatus == OrderStatus.InProcess)
+                            order.OrderDate = DateTime.Now;
 
                         if (order.idAffiliate == 62)
                         {
@@ -477,13 +579,21 @@ namespace CUWebinars.Web.Controllers.Admin
                             FireOrderSubmittedEvent(order, false, false);
                             JProperty pendingAcsOrderIsApproved = new JProperty(JsonPropertyKeys.PendingACSOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
                             order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
+                            order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
+
                         }
                         else
                         {
                             JProperty incompleteOrderIsApproved = new JProperty(JsonPropertyKeys.IncompleteOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
                             order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, incompleteOrderIsApproved, "IncompleteOrderIsApproved");
+                            order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, incompleteOrderIsApproved, "IncompleteOrderIsApproved");
                         }
                     }
+
+                    _logger.Info("Updating OrderStatus " + order.idOrder
+                                 + " from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus +
+                                 " note: " + note + " by: " + _appHelper.GetUserAuditInfo());
+
                     order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
                     if (model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid)
                     {
@@ -531,22 +641,32 @@ namespace CUWebinars.Web.Controllers.Admin
 
         private void FireOrderSubmittedEvent(Order order, bool b, bool b1)
         {
+            try
+            {
+                string parameter_list = "orderId=" + order.idOrder;
 
-            string parameter_list = "orderId=" + order.idOrder;
+                ASCIIEncoding encoding = new ASCIIEncoding();
+                byte[] bytes = encoding.GetBytes(parameter_list);
 
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            byte[] bytes = encoding.GetBytes(parameter_list);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_globalConfig.TenantURL + "/Cart/SendOrderConfirmation2");
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = bytes.Length;
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_globalConfig.TenantURL + "/Cart/SendOrderConfirmation2");
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = bytes.Length;
+                // send validation request
+                Stream str = request.GetRequestStream();
+                str.Write(bytes, 0, bytes.Length);
+                str.Flush();
+                str.Close();
+            }
+            catch (Exception ex)
+            {
+                _logger.FatalException("FireOrderSubmittedEvent", ex);
 
-            // send validation request
-            Stream str = request.GetRequestStream();
-            str.Write(bytes, 0, bytes.Length);
-            str.Flush();
-            str.Close();
+                _orderManagementService.FireMandrillNotificationEvent(
+                    "steve@ttstrain.com"
+                    , "ERROR! FireOrderSubmittedEvent" + ex.Message, "exception.stack: " + ex.StackTrace);
+            }
 
         }
 
@@ -1251,7 +1371,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
             return Json(new { Error = WebUiConstants.NullValueParameter });
         }
-        
+
         [AllowAnonymous]
         [HttpPost]
         public ActionResult ResendOrderConfirmation(int orderId, string source = "System")
@@ -1778,7 +1898,6 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             if (model.TemplateType == "Weekly")
             {
-
                 ViewBag.SubjectForCampaign = "Webinars: Week of " +
                                              DateTimeHelper.GetDateOfNextDay(model.SendDate, DayOfWeek.Monday) + " - " +
                                              DateTimeHelper.GetDateOfNextDay(model.SendDate, DayOfWeek.Friday);
@@ -1786,7 +1905,12 @@ namespace CUWebinars.Web.Controllers.Admin
                 var upcomingDetail = new StringBuilder();
                 if (_globalConfig.Tenant == "BankWebinars" || _globalConfig.Tenant == "CUWebinars")
                     model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
+                if (model.Affiliate != null && model.Affiliate.idUserAff > 0)
+                {
+                    model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
+                    model.TimeZone = model.Affiliate.WebUser.timeZone;
 
+                }
                 if (TempData["ListOfWebinarsForWeekly"] != null)
                 {
                     foreach (var webinar in (IList<Webinar>)TempData["ListOfWebinarsForWeekly"])
@@ -1907,7 +2031,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 "<p style=\"color: #f5f5f5\">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. </p>";
             bodyRight += "<p style=\"color: #f5f5f5\" align=\"center\"><b>Webinar Subscription Packages</b></p>";
             bodyRight +=
-                "<p style=\"color: #f5f5f5\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; </p>";
+                "<p style=\"color: #f5f5f5\" align=\"center\"><b>Webinar Subscription Packages</b></p><p style=\"color: #f5f5f5\">Would you and your colleagues like to attend webinars at a lower price?&nbsp; With a Webinar Subscription Package, we can help you greatly reduce that expense.&nbsp; <a href=\"https://bankwebinars.com/webinar/details/2520?idaff={aff_idUserAff}\" style=\"color: red; text-decoration: none; border-bottom: 1px dotted red; font-style: italic;\">Click here to learn more about this cost-saving option.</a></p>";
 
             model.BodyRight = bodyRight;
 
@@ -2071,7 +2195,7 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<ActionResult> DESPromo(int id)
+        public async Task<ActionResult> PromoForDES(int id)
         {
 
             var webinarsForUpcoming = _webinarManagementService.GetDesWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date).Take(8);
@@ -2182,7 +2306,9 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             if (flag)
             {
-                theTime = (int)affiliate.WebUser.timeZone + 1;
+                //adjust for Daylight Savings
+                //theTime = (int)affiliate.WebUser.timeZone + 1;
+                theTime = (int)affiliate.WebUser.timeZone;
             }
             if (sendDate.Contains("-"))
             {
@@ -2201,7 +2327,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
 
-                List list = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
+                //List list = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
 
                 var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
 
@@ -2211,15 +2337,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (_segment != null)
                 {
 
-                    //var segmentMembers =
-                    //    await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
-                    //        _segment.Id.ToString(), new QueryableBaseRequest
-                    //        {
-
-                    //        }).ConfigureAwait(false);
-
-                    //if (segmentMembers.Any())
-                    //    _logger.Info("Segment found: " + _segment.Id.ToString());
                     recp = new Recipient
                     {
                         ListId = _globalConfig.TenantMailChimpList,
@@ -2244,18 +2361,8 @@ namespace CUWebinars.Web.Controllers.Admin
                 //https://github.com/brandonseydel/MailChimp.Net/issues/157
                 // or find a way to nav to URL
 
-                var affiliatePromoSenderEmail = "";
-                var affiliatePromoSenderName = "";
-#if DEBUG
-
-                affiliatePromoSenderEmail = "steve@ttstrain.com";
-                affiliatePromoSenderName = "steve";
-
-#else
-
-                affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
-                affiliatePromoSenderName = affiliate.PromoSenderName;
-#endif
+                var affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
+                var affiliatePromoSenderName = affiliate.PromoSenderName;
 
                 var newCamp = new Campaign
                 {
@@ -2273,6 +2380,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         AutoFooter = true,
                         AutoTweet = false,
                         ToName = "*|FNAME|* *|LNAME|* ",
+                        //FromName = "steve@ttstrain.com",
+                        //ReplyTo = "steve@ttstrain.com",
                         FromName = affiliatePromoSenderName,
                         ReplyTo = affiliatePromoSenderEmail,
                         UseConversation = true,
@@ -2304,18 +2413,9 @@ namespace CUWebinars.Web.Controllers.Admin
                 var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
                 List<string> sendToEmails = new List<string>();
-#if DEBUG
 
-
-                sendToEmails.Add("steve@ttstrain.com");
-
-#else
-
-
-
+                //sendToEmails.Add("steve@ttstrain.com");
                 sendToEmails.Add("all.of.us@ttstrain.com");
-                
-#endif
                 sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
 
                 CampaignTestRequest emails = new CampaignTestRequest
@@ -2324,7 +2424,13 @@ namespace CUWebinars.Web.Controllers.Admin
                     Emails = sendToEmails.ToArray()
                 };
 
-                await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+                //await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+                foreach (var sendToEmail in sendToEmails)
+                {
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        sendToEmail
+                        , "[Testing] " + subject, messageBodyHtml);
+                }
 
                 _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
                 await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
@@ -2507,7 +2613,7 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             var ordersByDiscount = _orderManagementService.GetOrdersByDiscount(idDiscount)
                 .Where(o => o.idAffiliate == idAffiliate)
-                .Select(o => new AuditDiscountModel {idOrder = o.idOrder, OrderDate = o.OrderDate.ToShortDateString(), OrderStatus = o.OrderStatus, Email = o.BillingEmail, Credits = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.CreditCost});
+                .Select(o => new AuditDiscountModel { idOrder = o.idOrder, OrderDate = o.OrderDate.ToShortDateString(), OrderStatus = o.OrderStatus, Email = o.BillingEmail, Credits = o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.CreditCost });
 
             string orders = JsonConvert.SerializeObject(ordersByDiscount);
 
@@ -3228,10 +3334,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                         _orderManagementService.GetOrdersByDomain(searchTerm, affiliateId,
                                                 out totalNumberOrders)
                                             .ToList();
-                                    //_dataTablesService.GetOrdersByDomain(searchTerm, affiliateId,
-                                    //        out totalNumberOrders)
-                                    //    .ToList();
-
                                 }
                                 else
                                 {
@@ -3260,6 +3362,21 @@ namespace CUWebinars.Web.Controllers.Admin
                             {
                                 dtsource =
                                     _dataTablesService.GetOrdersByInProcess(affiliateId, out totalNumberOrders).ToList();
+                            }
+                            else if (searchTerm.StartsWith("wsp"))
+                            {
+                                try
+                                {
+                                    var idDiscount = Convert.ToInt32(searchTerm.Split(' ')[1]);
+                                    dtsource =
+                                        _dataTablesService.GetOrdersByWSP(idDiscount, affiliateId, out totalNumberOrders).ToList();
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    throw;
+                                }
+
                             }
                         }
                         else
@@ -3598,7 +3715,12 @@ namespace CUWebinars.Web.Controllers.Admin
                                             order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
                                         string _price = row.RowPrice.ToString("C").Replace(".00", "");
+                                        string _priceOutstanding = "";
 
+                                        if (order.OrderStatus == OrderStatus.OutstandingBalance)
+                                        {
+                                            _priceOutstanding = (order.Total - order.TotalPaid).ToString("C").Replace(".00", "");
+                                        }
 
                                         string _percent =
                                             (row.PercentPaid * 100).ToString().Replace(".00", "").Replace(".0", "") +
@@ -3658,6 +3780,25 @@ namespace CUWebinars.Web.Controllers.Admin
                                             , order.idOrder
                                             , webinar.idWebinar
                                         );
+
+                                        if (order.OrderStatus == OrderStatus.OutstandingBalance)
+                                        {
+                                            ordersPerAff.Rows.Add(
+                                                rowNumber
+                                                , "  The prior row included a partial payment. " + Environment.NewLine
+                                                + "Total Cost: " + _price + Environment.NewLine + "Minus amount paid: " + order.TotalPaid.ToString("C") + Environment.NewLine
+
+                                                , order.BillingEmail
+                                                ,
+                                                "  Unpaid portion: "
+                                                , _priceOutstanding
+                                                , 0//_percent
+                                                , 0// row.Royalty.ToString("C").Replace(".00", "")
+                                                , "Remains to be billed: " + _priceOutstanding //abbrevRegType(row.idRegType) + Environment.NewLine + order.OrderStatus
+                                                , order.idOrder
+                                                , webinar.idWebinar
+                                            );
+                                        }
                                     }
                                     catch (Exception ex)
                                     {

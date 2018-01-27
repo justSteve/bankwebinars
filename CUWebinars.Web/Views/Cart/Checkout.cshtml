@@ -105,12 +105,6 @@
                                 }
                                 else
                                 {
-                                    <script type="text/javascript" language="javascript">
-                                        $(function () {
-
-
-                                        });
-                                    </script>
                                     <div id="checkout-action-container" style="margin-bottom: 10px;">
                                         @{
                                             string confirmButtonLabel = "Submit Registrations";
@@ -118,7 +112,6 @@
                                             // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
                                         }
                                         <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
-                                        @*<button data-toggle="modal" role="button" data-target="#PayByPayTraceModal" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />*@
                                         <button role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
 
 
