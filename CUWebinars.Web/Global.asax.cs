@@ -122,14 +122,14 @@ namespace CUWebinars.Web
                     {
                         log4net.Config.XmlConfigurator.Configure(
                             new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
-                                "DESLog4net.xml")));
+                                "CCSLog4net.xml")));
                         //"BWLocal.xml")));
                     }
                     else
                     {
                         log4net.Config.XmlConfigurator.Configure(
                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
-                               "DESLocal.xml")));
+                               "CCSLocal.xml")));
                     }
                     break;
 

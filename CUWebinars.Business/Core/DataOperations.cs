@@ -628,13 +628,14 @@ namespace CUWebinars.Business.Core
                     {
                         FindAllPostEventClaims.Connection = sqlConnection;
                         FindAllPostEventClaims.CommandType = CommandType.StoredProcedure;
+                        PostEventClaim thisClaim;
 
                         using (var reader = FindAllPostEventClaims.ExecuteReader())
                         {
                             while (reader.Read())
                             {
                                 //PostEventClaim returnClaim = new PostEventClaim();
-                                var thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(reader[0].ToString());
+                                thisClaim = JsonConvert.DeserializeObject<PostEventClaim>(reader[0].ToString());
                                 retList.Add(thisClaim);
                             }
                         }
