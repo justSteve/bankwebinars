@@ -334,7 +334,7 @@ namespace CUWebinars.Web.Controllers
         [ValidateInput(false)]
         public JsonResult MigrateOrder(MigrateOrderModel migratedOrder)
         {
-            
+
             int idOfLastOrder = default(int);
             string verificationKey = string.Empty;
             string confirmChangeEmailUrl = string.Empty;
@@ -1067,15 +1067,18 @@ namespace CUWebinars.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post), ValidateInput(false)]
         public void ReplyToHandler()
         {
-            var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
-            _logger.Info("ReplyToHandler: " + incoming);
-            string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", ""); 
-            //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. 
-            //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
-            List<MandrillIncomingMsg.mandrill_events> mandrillEventList = JsonConvert.DeserializeObject<List<MandrillIncomingMsg.mandrill_events>>(validJson);
+
 
             try
             {
+
+                var incoming = HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']');
+                _logger.Info("ReplyToHandler: " + incoming);
+                string validJson = HttpContext.Request.Form["mandrill_events"].Replace("mandrill_events=", "");
+                //"mandrill_events=" is not valid JSON. If you take that out you should be able to parse it. 
+                //http://stackoverflow.com/questions/24521326/deserializing-mandrillapp-webhook-response
+                List<MandrillIncomingMsg.mandrill_events> mandrillEventList = JsonConvert.DeserializeObject<List<MandrillIncomingMsg.mandrill_events>>(validJson);
+
                 foreach (MandrillIncomingMsg.mandrill_events mandrillEvent in mandrillEventList)
                 {
                     if (mandrillEvent.msg.email != null && (
@@ -1093,7 +1096,7 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.Warn("ReplyToHandler: " + incoming + " exception: " + ex);
+                _logger.Warn("ReplyToHandler: " + HttpContext.Request.Form[0].TrimStart('[').TrimEnd(']') + " exception: " + ex);
             }
             //return null;
         }

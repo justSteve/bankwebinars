@@ -221,7 +221,7 @@ namespace CUWebinars.Web.Controllers.Admin
         //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
         public ActionResult ShowWSP(int idaff)
         {
-            var affiliate = _affiliateManagementService.FindById(19);
+            var affiliate = _affiliateManagementService.FindById(idaff);
 
             string searchTerm = Request["searchTerm"];
 
@@ -254,7 +254,7 @@ namespace CUWebinars.Web.Controllers.Admin
         //[ClaimsAuthorize(IdentityConstants.Access, IdentityConstants.AffiliateFunction)]
         public ActionResult ShowCP(int idaff)
         {
-            var affiliate = _affiliateManagementService.FindById(19);
+            var affiliate = _affiliateManagementService.FindById(idaff);
 
             string searchTerm = Request["searchTerm"];
 

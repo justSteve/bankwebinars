@@ -29,7 +29,7 @@ namespace CUWebinars.Web.Infrastructure.Attributes
         public void OnActionExecuting(ActionExecutingContext filterContext)
         {
             HttpRequestBase currentRequest = filterContext.RequestContext.HttpContext.Request;
-            //subdomains and currentHost is depricated
+            //depricated method of affiliate sourcing is no longer used.
             //var currentHost = currentRequest.ServerVariables[ServerName].Split(DotCharSeparator)[0];
             //var subdomainBranding = _stateService.GetValue<string>(WebUiConstants.SubdomainBranding);
             //var subdomainBranding = string.Empty;
@@ -37,12 +37,14 @@ namespace CUWebinars.Web.Infrastructure.Attributes
 
             if (!string.IsNullOrEmpty(currentRequest.QueryString[WebUiConstants.AffiliateId]))
             {
-                /* ATTEMPT 1: Handle the affiliate ID comming from the ?idAff query string */
+                /* ATTEMPT 1: Handle the affiliate ID comming from the 
+                 * query string */
                 ExtractFromQueryString(currentRequest);
             }
             else
             {
-                /* ATTEMPT 3: assign the Affiliate based on business rules regarding historical behaviour */
+                /* ATTEMPT 3: assign the Affiliate based on 
+                 * business rules regarding historical behaviour */
                 ExtractFromHistoricalUsageOfLoggedInUser(filterContext);
             }
         }
@@ -82,7 +84,11 @@ namespace CUWebinars.Web.Infrastructure.Attributes
             }
             else
             {
+                //HeyGeorge:
                 //hardwires 'house' affiliate
+                // re: affiliate id = 2988
+                // both 19 and 2988 are 'magic Ids' that point to TTS affiliate accounts. 
+                // Consider them to be interchangeable.
                 var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(2988);
                 _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
             }
@@ -94,35 +100,36 @@ namespace CUWebinars.Web.Infrastructure.Attributes
             // Not Implemented by Design. Not an Omission.
         }
 
-        private void ExtractFromDomain(string subdomainBranding)
-        {
-            var subdomainBrandType = subdomainBranding.Split(DotCharSeparator).FirstOrDefault();
+        //depricated method of affiliate sourcing is no longer used.
+        //private void ExtractFromDomain(string subdomainBranding)
+        //{
+        //    var subdomainBrandType = subdomainBranding.Split(DotCharSeparator).FirstOrDefault();
 
-            if (!string.IsNullOrEmpty(subdomainBrandType) && subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
-            {
-                //  we discover we are running with an affiliate's subdomain
-                string affilliateDomain = @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split(DotCharSeparator)[1];
+        //    if (!string.IsNullOrEmpty(subdomainBrandType) && subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        //  we discover we are running with an affiliate's subdomain
+        //        string affilliateDomain = @System.Configuration.ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split(DotCharSeparator)[1];
 
-                try
-                {
-                    _stateService.SetValue("AffiliateSessionSource", string.Concat("Sub | ", affilliateDomain));
-                    //   the name of the property 'ttsDomain' is the abbreviated name chosen
-                    //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
-                    //   be literally the Domain Name used by the given affiliate.
+        //        try
+        //        {
+        //            _stateService.SetValue("AffiliateSessionSource", string.Concat("Sub | ", affilliateDomain));
+        //            //   the name of the property 'ttsDomain' is the abbreviated name chosen
+        //            //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
+        //            //   be literally the Domain Name used by the given affiliate.
 
-                    _stateService.SetValue(
-                        WebUiConstants.CurrentAffiliate,
-                        _orderManagementService.GetAffiliateByDomain(affilliateDomain) ?? _orderManagementService.GetAffiliateByDomain("bennett")
-                        );
-                }
-                catch (Exception exception)
-                {
-                    ILog logger = LogManager.GetLogger(typeof(MonitorAffiliateFilter));
-                    logger.Fatal(exception);
-                    throw;
-                }
-            }
-        }
+        //            _stateService.SetValue(
+        //                WebUiConstants.CurrentAffiliate,
+        //                _orderManagementService.GetAffiliateByDomain(affilliateDomain) ?? _orderManagementService.GetAffiliateByDomain("bennett")
+        //                );
+        //        }
+        //        catch (Exception exception)
+        //        {
+        //            ILog logger = LogManager.GetLogger(typeof(MonitorAffiliateFilter));
+        //            logger.Fatal(exception);
+        //            throw;
+        //        }
+        //    }
+        //}
 
         private void ExtractFromQueryString(HttpRequestBase currentRequest)
         {

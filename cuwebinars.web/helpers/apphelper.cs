@@ -1062,21 +1062,16 @@ namespace CUWebinars.Web.Helpers
                     model.BillingAddress.City = splitBlock[5].Split(',')[0];
                     model.BillingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
                     model.BillingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                    model.BillingAddress.Country = splitBlock[6];
+                    model.BillingAddress.Phone = splitBlock[7];
                 }
                 else
                 {
-                    if (splitBlock[4].Contains(","))
-                    {
-                        model.BillingAddress.City = splitBlock[4].Split(',')[0];
-                        model.BillingAddress.State = splitBlock[4].Split(',')[1].Split(' ')[1];
-                        model.BillingAddress.Zip = splitBlock[4].Split(',')[1].Split(' ')[2];
-                    }
-                    else
-                    {
-                        model.BillingAddress.City = splitBlock[6].Split(',')[0];
-                        model.BillingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
-                        model.BillingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
-                    }
+                    model.BillingAddress.City = splitBlock[6].Split(',')[0];
+                    model.BillingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                    model.BillingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    model.BillingAddress.Country = splitBlock[7];
+                    model.BillingAddress.Phone = splitBlock[8];
                 }
 
                 model.ShippingAddress.AddressType = "Shipping";
@@ -1088,23 +1083,16 @@ namespace CUWebinars.Web.Helpers
                     model.ShippingAddress.City = splitBlock[5].Split(',')[0];
                     model.ShippingAddress.State = splitBlock[5].Split(',')[1].Split(' ')[1];
                     model.ShippingAddress.Zip = splitBlock[5].Split(',')[1].Split(' ')[2];
+                    model.ShippingAddress.Country = splitBlock[6];
+                    model.ShippingAddress.Phone = splitBlock[7];
                 }
                 else
                 {
-                    if (splitBlock[4].Contains(","))
-                    {
-                        model.ShippingAddress.City = splitBlock[4].Split(',')[0];
-                        model.ShippingAddress.State = splitBlock[4].Split(',')[1].Split(' ')[1];
-                        model.ShippingAddress.Zip = splitBlock[4].Split(',')[1].Split(' ')[2];
-                    }
-                    else
-                    {
-
-                        model.ShippingAddress.City = splitBlock[6].Split(',')[0];
-                        model.ShippingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
-                        model.ShippingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
-                    }
-
+                    model.ShippingAddress.City = splitBlock[6].Split(',')[0];
+                    model.ShippingAddress.State = splitBlock[6].Split(',')[1].Split(' ')[1];
+                    model.ShippingAddress.Zip = splitBlock[6].Split(',')[1].Split(' ')[2];
+                    model.ShippingAddress.Country = splitBlock[7];
+                    model.ShippingAddress.Phone = splitBlock[8];
                 }
                 model.EventTitle = regDataBlock[0].Trim();
                 if (model.EventTitle.Contains(":"))

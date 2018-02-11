@@ -696,7 +696,6 @@
     <Content Include="App_Data\mergeTemplates\WebinarPromoStandalone.docx" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
-    <Content Include="Content\images\AddDiscountCap.jpg" />
     <Content Include="Content\images\compass.png" />
     <Content Include="Content\images\presenters\nesbitt.jpg" />
     <Content Include="Content\mobile\Documentation\assets\css\documenter_style.css" />
@@ -2765,15 +2764,8 @@
     <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUUserAccount\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AdhocNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmMultiWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
-copy /Y "$(ProjectDir)Notification\Templates\OrderSubmitted.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\CUWebinars.Azure.OrderConfirmNotifier\Notifications\Templates\OrderSubmitted.cshtml"
-copy /Y "$(ProjectDir)Notification\Templates\OrderSubmittedAdditionalLocation.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\CUWebinars.Azure.AddLocConfirm\Notifications\Templates\OrderSubmittedAdditionalLocation.cshtml"
-copy /Y "$(ProjectDir)Notification\Templates\AdhocNotification.cshtml" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AdhocNotifier\CUWebinars.Azure.AdhocNotifier\Notifications\Templates\AdhocNotification.cshtml"
-copy /Y "$(ProjectDir)Membership\Email\EmailTemplates\*" "$(SolutionDir)..\CUUserAccount\CUWebinars.Azure.UserCreationFromAnon\Notifications\EmailTemplates\"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Label="SlowCheetah">
     <SlowCheetahToolsPath>$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\SlowCheetah.2.5.14\tools\))</SlowCheetahToolsPath>

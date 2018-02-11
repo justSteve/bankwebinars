@@ -1693,7 +1693,7 @@ namespace CUWebinars.Web.Controllers
                         if (_stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate) != null)
                         {
                             var cAffilliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-
+                            //HeyGeorge: 'assign affiliate' routine is fired
                             if (cAffilliate.idUserAff == 19)
                             {
                                 _logger.Info(

@@ -544,8 +544,6 @@ namespace CUWebinars.Business.Services
 
                     .ToList();
 
-                // keeps affiliateIds object in cache for 1 hour.
-                //_cachingService.Add(cachKey, affiliateIds, DomainConstants.BuildUtcNowAsCts.AddHours(1));
             }
 
             if (affiliateIds.Any())
@@ -608,8 +606,6 @@ namespace CUWebinars.Business.Services
                     {
                         affiliate = GetAffiliateById(19);
                     }
-                    // keeps Affiliate object in cache for 1 hour.
-                    //_cachingService.Add(cachKey, affiliate, DomainConstants.BuildUtcNowAsCts.AddHours(1));
                 }
                 _logger.Info("DetermineAffiliateByAlternativeMeans returned: " + affiliate.idUserAff + " for: " + idUser);
 

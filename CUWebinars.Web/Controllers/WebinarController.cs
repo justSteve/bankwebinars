@@ -1528,7 +1528,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (!ReferenceEquals(null, order))
                 {
-
+                    //HeyGeorge: 'assign affiliate' routine is fired
                     if (aff != null && aff.idUserAff == 19)
                     {
                         var _aff = _orderManagementService.DetermineAffiliateByAlternativeMeans(model.Order.idUser);
