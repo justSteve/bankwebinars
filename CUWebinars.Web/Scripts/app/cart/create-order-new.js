@@ -4,33 +4,33 @@
 var OrderRegistration;
 (function (OrderRegistration) {
     //  todo: duplicate in Registration module
-    var Constants = (function () {
+    var Constants = /** @class */ (function () {
         function Constants() {
         }
+        Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
+        Constants.City = '_City';
+        Constants.Country = '_Country';
+        Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
+        Constants.FormPostContentType = 'application/x-www-form-urlencoded';
+        Constants.JsonContentType = 'application/json; charset=utf-8';
+        Constants.JsonDataType = 'json';
+        Constants.HtmlDataType = 'html';
+        Constants.Phone = '_Phone';
+        Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
+        Constants.ShippingAddressContainer = '#ShippingAddressContainer';
+        Constants.State = '_State';
+        Constants.AddShippingAddressLink = '#AddShippingAddressLink';
+        Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
+        Constants.StreetAddress = '_StreetAddress';
+        Constants.StreetAddress2 = '_StreetAddress2';
+        Constants.TypeofAddressBilling = 'Billing';
+        Constants.TypeofAddressShipping = 'Shipping';
+        Constants.Zip = '_Zip';
         return Constants;
     }());
-    Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
-    Constants.City = '_City';
-    Constants.Country = '_Country';
-    Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
-    Constants.FormPostContentType = 'application/x-www-form-urlencoded';
-    Constants.JsonContentType = 'application/json; charset=utf-8';
-    Constants.JsonDataType = 'json';
-    Constants.HtmlDataType = 'html';
-    Constants.Phone = '_Phone';
-    Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
-    Constants.ShippingAddressContainer = '#ShippingAddressContainer';
-    Constants.State = '_State';
-    Constants.AddShippingAddressLink = '#AddShippingAddressLink';
-    Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
-    Constants.StreetAddress = '_StreetAddress';
-    Constants.StreetAddress2 = '_StreetAddress2';
-    Constants.TypeofAddressBilling = 'Billing';
-    Constants.TypeofAddressShipping = 'Shipping';
-    Constants.Zip = '_Zip';
     OrderRegistration.Constants = Constants;
     ;
-    var StateManager = (function () {
+    var StateManager = /** @class */ (function () {
         function StateManager() {
         }
         StateManager.prototype.getAddressVerified = function () {

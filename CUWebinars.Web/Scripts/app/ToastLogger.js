@@ -2,7 +2,7 @@
 /// <reference path="../typings/toastr/toastr.d.ts" />
 var Common;
 (function (Common) {
-    var Logger = (function () {
+    var Logger = /** @class */ (function () {
         function Logger() {
             var _this = this;
             this.getLogFn = function (moduleId, fnName) {

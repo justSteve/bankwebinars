@@ -28,7 +28,7 @@ var QuizDomain;
         EditType[EditType["Deleted"] = 2] = "Deleted";
     })(EditType = QuizDomain.EditType || (QuizDomain.EditType = {}));
     ;
-    var Quiz = (function () {
+    var Quiz = /** @class */ (function () {
         function Quiz() {
         }
         Quiz.prototype.getCompleted = function () {
@@ -67,7 +67,7 @@ var QuizDomain;
         return Quiz;
     }());
     QuizDomain.Quiz = Quiz;
-    var Question = (function () {
+    var Question = /** @class */ (function () {
         function Question() {
         }
         Question.prototype.incrementOptionsCount = function () {
@@ -120,7 +120,7 @@ var QuizDomain;
     }());
     QuizDomain.Question = Question;
     ;
-    var Option = (function () {
+    var Option = /** @class */ (function () {
         function Option() {
         }
         Option.prototype.getText = function () {
@@ -145,7 +145,7 @@ var QuizDomain;
     }());
     QuizDomain.Option = Option;
     ;
-    var EditableQuestion = (function (_super) {
+    var EditableQuestion = /** @class */ (function (_super) {
         __extends(EditableQuestion, _super);
         function EditableQuestion() {
             return _super.call(this) || this;
@@ -159,7 +159,7 @@ var QuizDomain;
         return EditableQuestion;
     }(Question));
     QuizDomain.EditableQuestion = EditableQuestion;
-    var EditableOption = (function (_super) {
+    var EditableOption = /** @class */ (function (_super) {
         __extends(EditableOption, _super);
         function EditableOption() {
             return _super.call(this) || this;
@@ -173,14 +173,14 @@ var QuizDomain;
         return EditableOption;
     }(Option));
     QuizDomain.EditableOption = EditableOption;
-    var EditedQuestion = (function () {
+    var EditedQuestion = /** @class */ (function () {
         function EditedQuestion(id) {
             this.QuestionId = id;
         }
         return EditedQuestion;
     }());
     QuizDomain.EditedQuestion = EditedQuestion;
-    var EditedOption = (function () {
+    var EditedOption = /** @class */ (function () {
         function EditedOption() {
         }
         return EditedOption;
