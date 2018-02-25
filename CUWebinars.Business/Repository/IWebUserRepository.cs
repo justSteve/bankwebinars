@@ -31,7 +31,7 @@ namespace CUWebinars.Business.Repository
         WebUser SetWebUserWSP(int idDiscount, int idUser);
 
         IList<WebUser> GetWebUsersOfDiscount(int idDiscount);
-        Affiliate FindAffiliateOfLastOrder(string identity);
+        Affiliate FindAffiliateForSession(string identity);
         Presenter GetPresenterById(int userIdUser);
         int? GetUserIdByFirstNameLastName(string fullName);
     }

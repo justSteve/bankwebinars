@@ -165,7 +165,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     try
                     {
-                        var existingOrdersByEmail = _orderManagementService.GetOrdersByEmail(order.BillingEmail, 19) //_orderRepository.FindOrdersByBillingEmail(webUser.email, 19)
+                        var existingOrdersByEmail = _orderManagementService.GetOrdersByEmail(order.BillingEmail, order.idAffiliate) //_orderRepository.FindOrdersByBillingEmail(webUser.email, 19)
                             .Where(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
                                     order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar).ToList();
 
@@ -726,7 +726,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 if (user != null && user.Identity.Name != null && formModel.idWebinar != 2520)
                 {
                     existingOrder = _orderManagementService
-                         .GetOrdersByEmail(user.Identity.Name, 19)
+                         .GetOrdersByEmail(user.Identity.Name, _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff)
                          .FirstOrDefault(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == formModel.idWebinar);
 
                     if (existingOrder != null)
@@ -1368,7 +1368,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     container.CreateIfNotExists();
 
                     CloudBlockBlob blob = container.GetBlockBlobReference(webinar.idWebinar + "/" + order.idOrder + ".htm");
-                    if (_globalConfig.Tenant == "DirectorSeries" || _globalConfig.Tenant == "CCS" )
+                    if (_globalConfig.Tenant == "DirectorSeries" || _globalConfig.Tenant == "CCS")
                         blob = container.GetBlockBlobReference(order.idOrder + ".htm");
                     using (MemoryStream output = new MemoryStream())
                     {
@@ -1534,6 +1534,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var order = CreateNewOrder(model.Order.Affiliate, _orderManagementService.GetWebUser(model.Order.idUser), _webinar, row);
 
                     order.OrderStatus = OrderStatus.Paid;
+                    
+                    //ensure that WSP credits are not used by child orders
+                    row.Discount = null;
+                    
 
 
                     JProperty checkoutComment = new JProperty(

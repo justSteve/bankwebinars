@@ -1536,9 +1536,9 @@ namespace CUWebinars.Web.Controllers
                         {
                             _stateService.SetValue(WebUiConstants.CurrentAffiliate, _aff);
                             aff = _aff;
-                            _orderManagementService.AssignAffiliateToOrder(_aff.idUserAff, order);
+                            _orderManagementService.AssignAffiliateToOrder(aff.idUserAff, order);
                             _logger.Warn("BuildConfirmOrder AffiliateOnOrderIsReassignedFrom19: " + order.idOrder +
-                                         " to: " + _aff.idUserAff);
+                                         " to: " + aff.idUserAff);
                         }
                     }
 

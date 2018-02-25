@@ -326,6 +326,12 @@ namespace CUWebinars.Web
                     //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
                     StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
 
+                    //This session var lets us understand the origin of the Affiliate session - 
+                    //...answers the question - How was the Session Affiliate determined?
+                    //Here we the initial value to 'default' ... later code will
+                    // override if conditions dictate.
+                    StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
+
                     if (User != null && User.Identity.IsAuthenticated)
                     {
                         ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
@@ -343,29 +349,30 @@ namespace CUWebinars.Web
                         }
                         else
                         {
-                            StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                webUserRepository.FindAffiliateOfLastOrder(User.Identity.Name));
-                        }
-                        if (claimsIdentityOfAuthenticatedUser.HasClaim(
-                            (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
-                        {
+                            if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                                (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
+                            {
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    affiliateRepository.LoadById(19));
+                            }
+                            else
+                            {
+                                var findAff = webUserRepository.FindAffiliateForSession(User.Identity.Name);
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate, findAff
+                                );
+                                StateService.SetValue("AffiliateSessionSource",
+                                    "FindAffiliateForSession" + Pipe + findAff);
 
-                            StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                affiliateRepository.LoadById(19));
+                                logger.Info(string.Format("Resolving Affiliate via FindAffiliateForSession {0}",
+                                    findAff));
+                            }
                         }
                     }
 
-                    //This session var lets us understand the origin of the Affiliate session - 
-                    //...answers the question - How was the Session Affiliate determined?
-                    //Here we the initial value to 'default' ... later code will
-                    // override if conditions dictate.
-                    StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
-                    //StateService.SetValue(WebUiConstants.SubdomainBranding, ConfigurationManager.AppSettings[AppConst.TESTING_URL]);  //TODO: [dar] I think this can be deleted
-
-                    //following are values to be stored for audit purposes.
-                    if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null && HttpContext.Current.Request.UrlReferrer.ToString().ToLower().Contains("webinars"))
-                        StateService.SetValue(WebUiConstants.SubdomainBranding,
-                            HttpContext.Current.Request.UrlReferrer.ToString().Trim());
+                    //depricated SubdomainBranding
+                    //if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null && HttpContext.Current.Request.UrlReferrer.ToString().ToLower().Contains("webinars"))
+                    //    StateService.SetValue(WebUiConstants.SubdomainBranding,
+                    //        HttpContext.Current.Request.UrlReferrer.ToString().Trim());
 
                     if (HttpContext.Current != null)
                     {
@@ -409,40 +416,39 @@ namespace CUWebinars.Web
                     }
 
 
-                    var subdomainBranding = StateService.GetValue<string>(WebUiConstants.SubdomainBranding);
-                    //METHOD 2: VIA THE DOMAIN NAME BEING RUN
+                    //depricated subdomainBranding = StateService.GetValue<string>(WebUiConstants.SubdomainBranding);
                     //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
-                    if (!string.IsNullOrEmpty(subdomainBranding))
-                    {
-                        logger.Info(string.Format("Resolving Affiliate via subdomainBranding {0}", subdomainBranding));
+                    //if (!string.IsNullOrEmpty(subdomainBranding))
+                    //{
+                    //    logger.Info(string.Format("Resolving Affiliate via subdomainBranding {0}", subdomainBranding));
 
-                        var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
-                        if (!string.IsNullOrEmpty(subdomainBrandType) &&
-                            subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
-                        {
-                            //we discover we are running with an affiliate's subdomain
-                            string affilliateDomain =
-                                ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
-                            try
-                            {
-                                StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
-                                //   the name of the property 'ttsDomain' is the abbreviated name chosen
-                                //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
-                                //   be literally the Domain Name used by the given affiliate.
+                    //    var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
+                    //    if (!string.IsNullOrEmpty(subdomainBrandType) &&
+                    //        subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
+                    //    {
+                    //        //we discover we are running with an affiliate's subdomain
+                    //        string affilliateDomain =
+                    //            ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
+                    //        try
+                    //        {
+                    //            StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
+                    //            //   the name of the property 'ttsDomain' is the abbreviated name chosen
+                    //            //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
+                    //            //   be literally the Domain Name used by the given affiliate.
 
-                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                    affiliateRepository.LoadByTTSDomain(affilliateDomain) ??
-                                    affiliateRepository.LoadByTTSDomain("bennett"));
-                            }
-                            catch (Exception ex)
-                            {
-                                logger.Error(string.Format("Failed to resolving Affiliate via subdomainBranding {0}",
-                                    subdomainBranding));
-                                logger.Fatal(ex);
-                                throw;
-                            }
-                        }
-                    }
+                    //            StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                    //                affiliateRepository.LoadByTTSDomain(affilliateDomain) ??
+                    //                affiliateRepository.LoadByTTSDomain("bennett"));
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            logger.Error(string.Format("Failed to resolving Affiliate via subdomainBranding {0}",
+                    //                subdomainBranding));
+                    //            logger.Fatal(ex);
+                    //            throw;
+                    //        }
+                    //    }
+                    //}
 
                     var allCookies = new StringBuilder();
 

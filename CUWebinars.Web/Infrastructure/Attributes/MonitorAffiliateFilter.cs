@@ -13,6 +13,9 @@ using LogManager = log4net.LogManager;
 
 namespace CUWebinars.Web.Infrastructure.Attributes
 {
+
+    //This class was originally a way to Assign Affiliate
+    // but was depricated and is not being hit any longer
     public class MonitorAffiliateFilter : IActionFilter
     {
         private const char DotCharSeparator = '.';

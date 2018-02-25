@@ -142,7 +142,7 @@ namespace CUWebinars.Business.Services
             }
             try
             {
-                var existingEmail = _orderRepository.FindOrdersByBillingEmail(webUser.email, 19)
+                var existingEmail = _orderRepository.FindOrdersByBillingEmail(webUser.email, affiliate.idUserAff)
                     .SingleOrDefault(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
                             webinar.idWebinar);
                 if (existingEmail != null)
@@ -541,7 +541,7 @@ namespace CUWebinars.Business.Services
                 affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
                     .OrderByDescending(o => o.OrderDate)
                     .Select(o => o.idAffiliate)
-
+                    .Distinct()
                     .ToList();
 
             }
@@ -556,12 +556,13 @@ namespace CUWebinars.Business.Services
 
                 var sb = new StringBuilder();
                 // The history is of more than 1 affiliate
-                if (affiliateIds.Distinct().Count() > 1)
+                if (affiliateIds.Count() > 1)
                 {
-
                     // The business rule is that where there is more than one Affiliate which the 
                     // user has made orders for, if one affiliate has been used twice as many times 
                     // as the most recent Affiliate, then make the order for that Affiliate.
+                    
+                    
                     var groups = affiliateIds.GroupBy(a => a);
                     //
                     int mostUsedAffiliateId = 0;
@@ -570,18 +571,28 @@ namespace CUWebinars.Business.Services
                     int current = 0;
                     foreach (var group in groups)
                     {
-                        sb.Append(group.Key + ", ");
-                        current = group.Count();
+                        var ordersByAffForThisUser = _orderRepository.FindOrdersByUserId(idUser)
+                            .Where(o => o.idAffiliate == group.Key
+                                        && (o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed))
+                            .ToList().Count;
 
-                        if (current > mostUses)
+                        numberOfUsesOfMostRecentAffiliate = _orderRepository.FindOrdersByUserId(idUser)
+                            .Where(o => o.idUser == idUser
+                                        && o.idAffiliate == affiliateIds.FirstOrDefault()
+                                        && (o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed))
+                            .ToList().Count;
+
+                        if (ordersByAffForThisUser > mostUses)
                         {
-                            mostUses = current;
+                            mostUses = ordersByAffForThisUser;
                             mostUsedAffiliateId = group.Key;
+                            affiliateIdForOrder = group.Key;
                         }
 
-                        if (group.Key == mostRecentAffiliateId)
+
+                        if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         {
-                            numberOfUsesOfMostRecentAffiliate = current;
+                            affiliateIdForOrder = mostUsedAffiliateId;
                         }
                     }
 
@@ -592,11 +603,9 @@ namespace CUWebinars.Business.Services
                     }
                     _logger.Error("DetermineAffiliateByAlternativeMeans ({1}) found multiple affiliates: {0} Credited to {2}.", sb.ToString(),
                         idUser, affiliateIdForOrder, current);
-
                 }
 
-                //cachKey = "affiliateId-" + affiliateIdForOrder;
-                var affiliate = _cachingService.Get(cachKey) as Affiliate;
+                var affiliate = _affiliateRepository.LoadById(affiliateIdForOrder);// _cachingService.Get(cachKey) as Affiliate;
 
                 if (affiliate == null)
                 {

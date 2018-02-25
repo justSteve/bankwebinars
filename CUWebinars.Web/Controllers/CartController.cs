@@ -41,6 +41,7 @@ using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Controllers
 {
+    
     public class CartController : Controller
     {
         private readonly ILogger _logger;
@@ -50,7 +51,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IStateService _stateService;
         private readonly IMembershipService _membershipService;
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
-
+        
         private bool _disposed;
 
         public CartController(ILogger logger,
@@ -67,9 +68,7 @@ namespace CUWebinars.Web.Controllers
             _stateService = stateService;
             _membershipService = membershipService;
         }
-
-
-
+        
         [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
@@ -538,6 +537,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 else
                 {
+                    // order is being placed by a New User
                     var subject = "Confirmation of Registration for " + row.Webinar.Title;
 
                     if (_globalConfig.Tenant == "Director Series")

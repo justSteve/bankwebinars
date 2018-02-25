@@ -46,7 +46,8 @@ namespace CUWebinars.Web.Helpers
         public const string SessionRoot = "SessionRoot";
         public const string FirstCookies = "FirstCookies";
         public const string InitialQueryString = "InitialQueryString";
-        public const string SubdomainBranding = "SubdomainBranding";
+        //depricated
+        //public const string SubdomainBranding = "SubdomainBranding";
 
 
         public const string Webinars = "webinars";
