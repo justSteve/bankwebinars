@@ -34,5 +34,6 @@ namespace CUWebinars.Business.Repository
         Affiliate FindAffiliateForSession(string identity);
         Presenter GetPresenterById(int userIdUser);
         int? GetUserIdByFirstNameLastName(string fullName);
+        bool UserHasWsp(int idUser);
     }
 }

@@ -357,14 +357,31 @@ namespace CUWebinars.Web
                             }
                             else
                             {
-                                var findAff = webUserRepository.FindAffiliateForSession(User.Identity.Name);
-                                StateService.SetValue(WebUiConstants.CurrentAffiliate, findAff
-                                );
-                                StateService.SetValue("AffiliateSessionSource",
-                                    "FindAffiliateForSession" + Pipe + findAff);
+                                try
+                                {
+                                    var findAff = webUserRepository.FindAffiliateForSession(User.Identity.Name);
 
-                                logger.Info(string.Format("Resolving Affiliate via FindAffiliateForSession {0}",
-                                    findAff));
+                                    if (findAff != null)
+                                    {
+                                        StateService.SetValue(WebUiConstants.CurrentAffiliate, findAff
+                                        );
+                                        StateService.SetValue("AffiliateSessionSource",
+                                            "FindAffiliateForSession" + Pipe + findAff);
+
+                                        logger.Info(string.Format("SessionStart: Resolving Affiliate via FindAffiliateForSession {0}",
+                                            findAff.idUserAff));
+                                    }
+                                    else
+                                    {
+
+                                        logger.Warn(string.Format("SessionStart: unable to resolve Affiliate via FindAffiliateForSession {0}",
+                                            findAff.idUserAff));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    logger.Fatal("SessionStart: FindAffiliateForSession", ex);
+                                }
                             }
                         }
                     }
@@ -397,19 +414,19 @@ namespace CUWebinars.Web
                                         affiliateRepository.FindByIdWithIncluding(loadAff));
                                     StateService.SetValue("AffiliateSessionSource", "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff));
 
-                                    logger.Info(string.Format("Resolving Affiliate via query string with id {0}",
+                                    logger.Info(string.Format("SessionStart: Resolving Affiliate via query string with id {0}",
                                         loadAff));
 
                                 }
                                 else
                                 {
-                                    logger.Info(SessionStartError + "failed to load idAff code: " +
+                                    logger.Info("SessionStart: failed to load idAff code: " +
                                                 HttpContext.Current.Request.Url);
                                 }
                             }
                             else
                             {
-                                logger.Error(SessionStartError + "Non-numeric idAff: " +
+                                logger.Error("SessionStart: Non-numeric idAff: " +
                                              HttpContext.Current.Request.QueryString);
                             }
                         }

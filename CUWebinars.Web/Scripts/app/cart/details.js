@@ -100,11 +100,9 @@ $(function () {
                     utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
 
                 } else if (data.Result === 'UserHasMulti') {
-
                     utilities.goToUrl('/Cart/Checkout');
                 } else {
                     //console.error('Failed to post order');
-
                     confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
                 }
 

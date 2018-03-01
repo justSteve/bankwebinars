@@ -1214,6 +1214,7 @@ namespace CUWebinars.Web.Core.Orchestrators
             return _orderManagementService.UserHasMultipleEvents(order.idUser);
         }
 
+
         public string BuildOrderSubmitted2Notification(Order order)
         {
             OrderRow row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
@@ -1277,6 +1278,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 document = DocumentModel.Load(
                         HttpContext.Current.Server.MapPath(
                             @"~/App_Data/mergeTemplates/OrderSubmitted_WSPSubscription.docx"));
+
             }
 
             if (webinar.Title == "Bank Secrecy Act Seminar OnDemand with Live Streaming")
@@ -1344,6 +1346,29 @@ namespace CUWebinars.Web.Core.Orchestrators
             {
                 fields.AddLocsCost =
                     " Compliance Perspective events include 3 Additional Locations at no extra cost - $50 per seat afterwards.";
+            }
+
+            if (row.Webinar.Title.Contains("Webinar Subscription Package"))
+            {
+
+                var creditsRemain = _orderManagementService.CalculateCreditsRemain(row.Discount);
+
+                fields.PaymentCaption =
+                    "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                    order.BillingEmail + " will have your WSP credits automatically applied. And feel free to share the code " + row.Discount.DiscountCode + " above with others in your organization. " +
+                    " It can be applied during checkout - look for the button labeled <i>Add Discount?</i>. Clicking that will prompt for your code [<b>" + row.Discount.DiscountCode + "</b>]." +
+                    " If you would like additional addresses to have the same <i>auto-apply</i>  rights as " +
+                    order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+                if (row.Discount.Notes.ToLower().Contains("renewal"))
+                {
+                    fields.PaymentCaption =
+                        "Your existing subscription code [" + row.Discount.DiscountCode + "] has been refilled with  and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
+                        order.BillingEmail + " will have your WSP credits automatically applied. And feel free to share the code " + row.Discount.DiscountCode + " above with others in your organization. " +
+                        " It can be applied during checkout - look for the button labeled <i>Add Discount?</i>. Clicking that will prompt for your code [<b>" + row.Discount.DiscountCode + "</b>]." +
+                        " If you would like additional addresses to have the same <i>auto-apply</i>  rights as " +
+                        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
+
+                }
             }
 
 
@@ -1534,10 +1559,10 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var order = CreateNewOrder(model.Order.Affiliate, _orderManagementService.GetWebUser(model.Order.idUser), _webinar, row);
 
                     order.OrderStatus = OrderStatus.Paid;
-                    
+
                     //ensure that WSP credits are not used by child orders
                     row.Discount = null;
-                    
+
 
 
                     JProperty checkoutComment = new JProperty(
@@ -1839,6 +1864,14 @@ namespace CUWebinars.Web.Core.Orchestrators
             discountModel.Status = userDiscount.Status;
             discountModel.DiscountCode = userDiscount.DiscountCode;
 
+            if (discountModel.TypeOfDiscount == DiscountType.Subscription)
+            {
+                discountModel.UsersOnWsp = _orderManagementService.GetOrdersByDiscount(discountModel.idDiscount)
+                    .Select(u => u.WebUser).ToList();
+                discountModel.WspUsageSum = _orderManagementService.GetOrdersByDiscount(discountModel.idDiscount)
+                                    .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid).ToList();
+
+            }
 
             return discountModel;
         }
@@ -1869,16 +1902,11 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (!ReferenceEquals(discountModel, null) &&
                 (
                     discountModel.TypeOfDiscount == DiscountType.ComplianceSeries
-                    || discountModel.TypeOfDiscount == DiscountType.Package
                     || discountModel.TypeOfDiscount == DiscountType.Subscription))
             {
                 model.Subscription = discountModel;
             }
 
-            //if (discountModel.TypeOfDiscount == DiscountType.Package)
-            //{
-            //    model.Package = discountModel;
-            //}
             var upcomingOrders = _orderManagementService.SelectOrdersWithScheduledWebinars(currentUser.idUser);
             model.Scheduled = new List<RegistrationSummaryViewModel>();
 

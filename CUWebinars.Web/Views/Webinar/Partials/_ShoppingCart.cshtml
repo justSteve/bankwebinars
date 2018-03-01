@@ -77,7 +77,7 @@
                 || Model.Webinar.SeriesInfo == "DES"
                 )
             {
-                if (Model.UserOwnsThisEvent < 1 || Model.CheckoutInProcess
+                if (Model.UserOwnsThisEvent < 1 || Model.CheckoutInProcess || Model.Webinar.idWebinar == 2520
                     )
                 {
                     <div id="SignUpFormContainer">
@@ -88,7 +88,7 @@
                                 <li id="confirmationTab"><a href="#confirmation" data-toggle="tab">@Model.ConfirmationCaption</a></li>
                             </ul>
                             <div class="tab-content">
-                                @if (Model.UserOwnsThisEvent < 1)
+                                @if (Model.UserOwnsThisEvent < 1 || Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == 2520)
                                 {
                                     <div class="tab-pane active" id="signUp">@Html.Partial(partialViewName: "~/Views/Cart/Partials/CheckoutOptions.cshtml", model: Model.CheckoutOptionsViewModel)</div>
                                     <div class="tab-pane" id="contactInfo"></div>

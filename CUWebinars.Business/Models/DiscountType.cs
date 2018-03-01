@@ -5,7 +5,7 @@ namespace CUWebinars.Business.Models
         Promo = 1,
         Compensation = 2,
         Subscription = 3,
-        Package = 4,
+        //Package = 4,
         ComplianceSeries = 5,
         DirectorSeries = 6,
         TwoPart = 7,

@@ -655,6 +655,13 @@ namespace CUWebinars.Business.AccountService
             return _webUserRepository.GetPresenterById(userIdUser);
         }
 
+        public bool UserHasWsp(int idUser)
+        {
+           return _webUserRepository.UserHasWsp(idUser);
+
+
+        }
+
 
         public void AddAccountTypeNotVerifiedClaim(UserAccount userAccount, string accountType)
         {

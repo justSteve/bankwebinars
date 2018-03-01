@@ -907,6 +907,26 @@ namespace CUWebinars.Web.Controllers
                 if (model.Webinar.idWebinar == 2520)
                 {
                     TempData["IsWSP"] = "true";
+                    if (_membershipService.UserHasWsp(model.WebUser.idUser))
+                    {
+                        model.Webinar.Title = "Refill Your WSP!";
+                        var sb = new StringBuilder();
+                        var creditRemain =
+                            _orderManagementService.CalculateCreditsRemain(model.Order.OrderRows
+                                .SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount);
+                        if (creditRemain > 1)
+                            sb.Append("Your existing WSP has " + creditRemain + " credits remaining. Add to that total by refilling your subscription!");
+                        if (creditRemain == 1)
+                            sb.Append("Your existing WSP has a single credit remaining. You can carry that credit over by refilling your subscription!");
+                        if (creditRemain == 0)
+                            sb.Append("Your existing WSP has no credits remaining. Refill your subscription to save on your next webinar!");
+
+                        if (creditRemain < 1 && creditRemain < 0)
+                            sb.Append("Your existing WSP has a partial credit remaining. You can carry that credit over by refilling your subscription!");
+
+
+                        TempData["WSPSummary"] = sb.ToString();
+                    }
                 }
                 return View(model);
             }

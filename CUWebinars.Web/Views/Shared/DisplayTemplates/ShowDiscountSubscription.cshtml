@@ -53,6 +53,51 @@ Model.TypeOfDiscount == DiscountType.Subscription
                             <p style="font-size: larger">
                                 Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> credits remaining.
                             </p>
+
+                            <p style="font-size: larger">
+                                @if (Model.UsersOnWsp != null && Model.UsersOnWsp.Count() > 1)
+                                {
+                                    <div><b>The following users have access: </b></div>
+                                    foreach (var webUser in @Model.UsersOnWsp.Distinct())
+                                    {
+                                        <div class="userOfWsp">@webUser.email</div>
+                                    }
+                                    @*<div><b>Need to add someone?</b> <input type="text" name="addUserToWSP" /></div>*@
+                                }
+                            </p>
+                            <p style="font-size: larger">
+                                @if (Model.WspUsageSum != null && Model.WspUsageSum
+                                    .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid).Count() > 1)
+                                {
+                                    <div><b>The following orders have been paid for via this WSP:</b></div>
+                                    //build table starts here
+                                    <table width="600">
+                                        <tr><td>Order ID</td><td>Date</td><td>Event Title</td></tr>
+                                        @foreach (var order in @Model.WspUsageSum)
+                                        {
+                                            //these are the rows
+                                            <tr>
+                                                <td>
+                                                    <div class="orderByWsp">
+                                                        @order.idOrder
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="orderByWsp">
+                                                        @order.OrderDate.ToShortDateString()
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="orderByWsp">
+                                                        @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                    @*<div>Have a question or comment?<input type="text" name="addQuestionFromWspUsageSum" /></div>*@
+                                }
+                            </p>
                         }
                     }
                 }
@@ -79,27 +124,27 @@ Model.TypeOfDiscount == DiscountType.Subscription
         </div>
 
         @*<div class="span4 offset1 ">
-            Combine your Webinar Subscription Package
-            with a 6 or 12 month Compliance Perspectives subscription
-            package for the ultimate in regulatory training coverage.
+                Combine your Webinar Subscription Package
+                with a 6 or 12 month Compliance Perspectives subscription
+                package for the ultimate in regulatory training coverage.
 
-            <table align="center" style="border: black; margin-top: 6px;">
-                <tr style="background-color: lightcyan">
-                    <td>Add 6 Months</td>
-                    <td>$990</td>
-                </tr>
-                <tr style="background-color: lightblue">
-                    <td>Add 12 Months</td>
-                    <td>$1,695</td>
-                </tr>
-            </table>
+                <table align="center" style="border: black; margin-top: 6px;">
+                    <tr style="background-color: lightcyan">
+                        <td>Add 6 Months</td>
+                        <td>$990</td>
+                    </tr>
+                    <tr style="background-color: lightblue">
+                        <td>Add 12 Months</td>
+                        <td>$1,695</td>
+                    </tr>
+                </table>
 
-            <div style="margin: 10px;">
-                <p>
-                    <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51955606623964', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
-                </p>
-            </div>
+                <div style="margin: 10px;">
+                    <p>
+                        <a class="btn btn-success pull-right" href="javascript:void( window.open('http://form.jotformpro.com/form/51955606623964', 'blank','scrollbars=yes,toolbar=no,width=700,height=500'))">Order Today!</a>
+                    </p>
+                </div>
 
-        </div>*@
+            </div>*@
     </div>
 }

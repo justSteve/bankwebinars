@@ -110,21 +110,21 @@ namespace CUWebinars.Business.Repository
                 .Where(o => o.BillingEmail == identity)
                 .Select(o => o.idUser).FirstOrDefault();
 
-            if (idUser == null || idUser < 0)
+            if (idUser < 0)
             {
+                return null;
             }
-            if (affiliateIds == null)
-            {
 
-                affiliateIds = ((TTSWebinarsContext)db).Orders
-                    .Where(o => o.BillingEmail == identity)
-                    .OrderByDescending(o => o.OrderDate)
-                    .Include(u => u.WebUser)
-                    .Select(o => o.idAffiliate)
-                    .Distinct()
-                    .ToList();
 
-            }
+            affiliateIds = ((TTSWebinarsContext)db).Orders
+                .Where(o => o.BillingEmail == identity)
+                .OrderByDescending(o => o.OrderDate)
+                .Include(u => u.WebUser)
+                .Select(o => o.idAffiliate)
+                .Distinct()
+                .ToList();
+
+
 
             if (affiliateIds.Any())
             {
@@ -199,6 +199,26 @@ namespace CUWebinars.Business.Repository
             var userId = ((TTSWebinarsContext)db).WebUsers
                 .Where(p => p.FirstName == firstName && p.LastName == lastName).Select(p => p.idUser).FirstOrDefault();
             return userId;
+        }
+
+        public bool UserHasWsp(int idUser)
+        {
+
+            var userDiscounts = items
+                .Include(wu => wu.Orders.Select(o => o.OrderRows.Select(or => or.Discount)))
+                .SingleOrDefault(wu => wu.idUser == idUser
+                );
+            if (userDiscounts != null)
+            {
+                foreach (var order in userDiscounts.Orders)
+                {
+                    var discount = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount;
+                    if (discount != null
+                        && discount.DiscountType == DiscountType.Subscription)
+                        return true;
+                }
+            }
+            return false;
         }
 
         public int? GetWebUserIdByEmail(string email)

@@ -68,6 +68,9 @@ namespace CUWebinars.Web.Models
         [HiddenInput]
         public WebUserDiscountXref WebUserDiscountXref { get; set; }
 
+        public IList<WebUser> UsersOnWsp { get; set; }
+        public IList<Order> WspUsageSum { get; set; }
+
         //[ScaffoldColumn(false)]
         //public string ClientScriptActionHint { get; set; }
     }

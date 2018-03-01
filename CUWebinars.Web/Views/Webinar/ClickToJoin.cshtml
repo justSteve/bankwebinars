@@ -14,7 +14,11 @@
     nfi.CurrencyDecimalDigits = 2;
     if (Model.Webinar.Status == WebinarStatus.Recorded)
     {
-        <div>This event took place on @Model.Webinar.Date.ToShortDateString()</div>
+
+        if (Model.Webinar.idWebinar != 2520)
+        {
+<div>This event took place on @Model.Webinar.Date.ToShortDateString()</div>
+        }
     }
     else
     {

@@ -852,28 +852,7 @@ namespace CUWebinars.Web.Helpers
                 }
             }
 
-            if (row.RegistrationType.SKU.ToLower().Contains("wsp"))
-            {
-                // uncomment if we decide to without the code until after payment
 
-                //if (order.OrderStatus == OrderStatus.Paid)
-                //{
-                //    fields.PaymentCaption =
-                //        "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
-                //        order.BillingEmail + " will have your WSP credits automatically applied. In addition, you can distribute the code shown below to others within your organization. " +
-                //        " During checkout that code can be entered manually and will work just the same as if used by the primary email address. If you would like additional addresses to have the same 'auto-apply' rights as " +
-                //        order.BillingEmail + " just get in touch with us and we will be happy to add them.";
-                //}
-                //else
-                //{
-                fields.PaymentCaption =
-                    "Your subscription code is [" + row.Discount.DiscountCode + "] and is activated - ready to use! From now until the credits have been exhausted any order placed by " +
-                    order.BillingEmail + " will have your WSP credits automatically applied. And feel free to share the code " + row.Discount.DiscountCode + " above with others in your organization. " +
-                    " It can be applied during checkout - look for the button labeled <i>Add Discount?</i>. Clicking that will prompt for your code [<b>" + row.Discount.DiscountCode + "</b>]." +
-                    " If you would like additional addresses to have the same <i>auto-apply</i>  rights as " +
-                    order.BillingEmail + " just get in touch with us and we will be happy to add them.";
-                //}
-            }
             if (row.RegistrationType.ShowRecordingNotifications.ToLower() == "no")
             {
                 fields.RegDesc =

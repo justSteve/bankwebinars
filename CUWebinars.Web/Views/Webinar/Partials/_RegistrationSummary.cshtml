@@ -47,23 +47,33 @@
                 {
                     <aside style="width: 100%" class="widget clearfix">
 
-                        <h5 class="short_headline"><span>Order Summary</span></h5>
-                        <div class="OrderSumUser" id="idWebinar-@Model.OrderRow.idWebinar">
-                            @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", Model); }
-                        </div>
+                        @if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == 2520)
+                        {
 
-                        <h5 style="text-align: right; background-color: darkorange; color: whitesmoke; font-weight: bold; padding-top: 2px; padding-right: 3px;" class="short_headline"><span>Connection Status</span></h5>
-
-                        @{
-                            if (Model.ClickToJoinModel != null)
-                            {
-                                @Html.Partial("ClickToJoin", Model.ClickToJoinModel)
-                            }
-
+                            <h5 class="short_headline"><span>WSP Summary</span></h5>
+                            <div class="OrderSumUser" id="WSP-@Model.OrderRow.idWebinar">
+                                <i>Webinar Subscription Package</i>@TempData["WSPSummary"]
+                            </div>
                         }
+                        else
+                        {
+                            <h5 class="short_headline"><span>Order Summary</span></h5>
+                            <div class="OrderSumUser" id="idWebinar-@Model.OrderRow.idWebinar">
+                                @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", Model); }
+                            </div>
+
+                            <h5 style="text-align: right; background-color: darkorange; color: whitesmoke; font-weight: bold; padding-top: 2px; padding-right: 3px;" class="short_headline"><span>Connection Status</span></h5>
+                        }
+
+                        @if (Model.ClickToJoinModel != null)
+                        {
+                            @Html.Partial("ClickToJoin", Model.ClickToJoinModel)
+                        }
+
+
                     </aside>
-                            }
+                }
             }
         </div>
-                            }
+    }
 }

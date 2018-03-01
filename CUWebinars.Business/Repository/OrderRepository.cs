@@ -68,6 +68,13 @@ namespace CUWebinars.Business.Repository
 
             if (validationResult.Errors.FirstOrDefault().ErrorMessage.Contains("already has"))
             {
+                if (webinar.idWebinar == 2520)
+                {
+                    Add(newOrder);
+                    return newOrder;
+                }
+
+
                 if (origin == "Imported" || origin == "Migrator" || origin == "AcsImporter")
                 {
                     //instead of throwing error - passback the pre-existing order id
@@ -195,7 +202,7 @@ namespace CUWebinars.Business.Repository
             {
                 return items.Include(o => o.WebUser)
                     .Include(o => o.OrderRows.Select(or => or.Discount))
-                    .Where(o => o.BillingEmail.ToLower() == (email.ToLower()) 
+                    .Where(o => o.BillingEmail.ToLower() == (email.ToLower())
                         && o.Affiliate.idUserAff == aff);
             }
             return items.Include(o => o.WebUser)

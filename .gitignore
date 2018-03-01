@@ -23,7 +23,7 @@ build/
 [Bb]uild[Ll]og.*
 
 db.lock
-storage.*
+*.ide*
 *_i.c
 *_p.c
 *.ilk

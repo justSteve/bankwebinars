@@ -130,7 +130,7 @@ namespace CUWebinars.Business.Services
             try
             {
                 var existingOrder = _orderRepository.FindOrderForUserByWebinarId(webUser.idUser, webinar.idWebinar);
-                if (existingOrder != null)
+                if (existingOrder != null && existingOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar != 2520)
                 {
                     _logger.Warn("CreateNewOrder found and returned existing: " + existingOrder.idOrder);
                     return existingOrder;
@@ -145,7 +145,7 @@ namespace CUWebinars.Business.Services
                 var existingEmail = _orderRepository.FindOrdersByBillingEmail(webUser.email, affiliate.idUserAff)
                     .SingleOrDefault(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
                             webinar.idWebinar);
-                if (existingEmail != null)
+                if (existingEmail != null && webinar.idWebinar != 2520)
                 {
                     _logger.Warn("CreateNewOrder2 found and returned existing by email: " + existingEmail.idOrder);
                     return existingEmail;
@@ -1958,6 +1958,11 @@ namespace CUWebinars.Business.Services
             }
             if (whichTier == "unknownTier")
             {
+                FireMandrillNotificationEvent(
+                    "info@ttstrain.com",
+                    "Failed to create WSP " + order.idOrder
+                    , "Unknown tier: " );
+
                 return null;
             }
 
@@ -1986,13 +1991,13 @@ namespace CUWebinars.Business.Services
                         discount.DateBilled = DateTime.UtcNow;
                         discount.DateVerified = DateTime.UtcNow;
                         discount.FlatOff = 0;
-                        discount.Notes = "V3 entry";
+
                         discount.PercentOff = 100;
                         discount.RenewalTerm = 0;
                         discount.Status = "Active";
                         discount.TotalCount += totalCount;
                         discount.idAffiliate = order.idAffiliate;
-                        discount.Notes += "Renewed with " + totalCount;
+                        discount.Notes += " Renewed with " + totalCount + " on " + DateTime.Now.ToString("dd-MM-yyyy");
 
                     }
 
@@ -2000,7 +2005,7 @@ namespace CUWebinars.Business.Services
                     SaveOrderChanges(order, null, null);
 
                     FireMandrillNotificationEvent("2afda898.ttstrain.com@amer.teams.ms"
-                        , "existing WSP was renewed: " + order.idOrder
+                        , "Existing WSP was renewed: " + order.idOrder
                         , "Renewal for : " + discount.DiscountCode);
 
                     return discount;
@@ -2012,27 +2017,28 @@ namespace CUWebinars.Business.Services
                 }
             }
 
+            // we are not refilling WSP, create a new one
+            Discount wspDiscount = new Discount
+            {
+                DiscountType = DiscountType.Subscription,
+                DateValidTo = order.OrderDate,
+                DateValidFrom = order.OrderDate,
+                Cost = row.RowPrice,
+                DateBilled = DateTime.UtcNow,
+                DateVerified = DateTime.UtcNow,
+                DiscountCode = whichTier + order.idOrder,
+                FlatOff = 0,
+                Notes = "V3 entry",
+                PercentOff = 100,
+                RenewalTerm = 0,
+                Status = "Active",
+                TotalCount = totalCount,
+                idAffiliate = order.idAffiliate,
+                idDiscount = order.idOrder
+            };
             try
             {
 
-                Discount wspDiscount = new Discount
-                {
-                    DiscountType = DiscountType.Subscription,
-                    DateValidTo = order.OrderDate,
-                    DateValidFrom = order.OrderDate,
-                    Cost = row.RowPrice,
-                    DateBilled = DateTime.UtcNow,
-                    DateVerified = DateTime.UtcNow,
-                    DiscountCode = whichTier + order.idOrder,
-                    FlatOff = 0,
-                    Notes = "V3 entry",
-                    PercentOff = 100,
-                    RenewalTerm = 0,
-                    Status = "Active",
-                    TotalCount = totalCount,
-                    idAffiliate = order.idAffiliate,
-                    idDiscount = order.idOrder
-                };
                 row.Discount = wspDiscount;
                 SaveOrderChanges(order, null, null);
 
@@ -2049,7 +2055,6 @@ namespace CUWebinars.Business.Services
                 _logger.FatalException("CreateWsp_fromNew: ", e);
                 throw;
             }
-
         }
 
         //public IList<RegType> GetAllPossibleRegTypesByWebinarId(int idWebinar)
@@ -2086,19 +2091,19 @@ namespace CUWebinars.Business.Services
                             _logger.Warn("ApplyDiscountCode: Mismatched WSP Affiliate attempt is corrected on idOrder: " + row.idOrder, "WSP's affiliate is: " + thisDiscount.idAffiliate + ". Order's affiliate was: " + row.Order.idAffiliate);
                         }
                         thisDiscount = RedeemDiscount(thisDiscount, row);
-                        thisDiscount.Notes += Environment.NewLine +
-                            "Applied to: " + row.idOrder + " and used " + row.RegistrationType.CreditCost + " credits. " +
-                            (hasRemaining - row.RegistrationType.CreditCost).ToString().Replace(".00", "") +
-                            " will remain.";
+                        //thisDiscount.Notes += Environment.NewLine +
+                        //    "Applied to: " + row.idOrder + " and used " + row.RegistrationType.CreditCost + " credits. " +
+                        //    (hasRemaining - row.RegistrationType.CreditCost).ToString().Replace(".00", "") +
+                        //    " will remain.";
 
                         row.Discount = thisDiscount;
                         _logger.Info("ApplyDiscountCode: " + row.Discount.DiscountCode + " idOrder: " + row.idOrder);
                     }
                     else
                     {
-                        thisDiscount.Notes += Environment.NewLine +
-                            "Insufficient credits: " + hasRemaining.ToString().Replace(".00", "") + " remain but " +
-                            row.RegistrationType.CreditCost.ToString().Replace(".00", "") + " are required.";
+                        //thisDiscount.Notes += Environment.NewLine +
+                        //    "Insufficient credits: " + hasRemaining.ToString().Replace(".00", "") + " remain but " +
+                        //    row.RegistrationType.CreditCost.ToString().Replace(".00", "") + " are required.";
                         _logger.Info("ApplyDiscountCode failed due to insufficient credits: " +
                                      thisDiscount.DiscountCode + " idOrder: " + row.idOrder + +hasRemaining +
                                      " remain but " + row.RegistrationType.CreditCost + " are required.");
@@ -2184,7 +2189,7 @@ namespace CUWebinars.Business.Services
                 case DiscountType.FourPart:
                 case DiscountType.ThreePart:
                 case DiscountType.TwoPart:
-                case DiscountType.Package:
+                //case DiscountType.Package:
                 case DiscountType.Promo:
                 case DiscountType.Subscription:
                     if (creditsRemain > 0)
@@ -2216,11 +2221,11 @@ namespace CUWebinars.Business.Services
             //    discount.Notes = ("This webinar took place prior to activation of " + discount.DiscountCode + ".<br> For more info contact us by using the <i>Help & Feedback</i> button below<br>.");
             //}
 
-            if (discount.DiscountType == DiscountType.Subscription && discount.DateValidTo < row.Order.OrderDate)
-            {
-                _logger.Warn("Discount error: webinar takes place prior to activation " + discount.idDiscount + " - " + row.idOrder);
-                discount.Notes = ("This webinar is scheduled to take place after the expiration of this Subscription Package: " + discount.DiscountCode + ".<br> For more info contact us by using the <i>Help & Feedback</i> button below<br>.");
-            }
+            //if (discount.DiscountType == DiscountType.Subscription && discount.DateValidTo < row.Order.OrderDate)
+            //{
+            //    _logger.Warn("Discount error: webinar takes place prior to activation " + discount.idDiscount + " - " + row.idOrder);
+            //    discount.Notes = ("This webinar is scheduled to take place after the expiration of this Subscription Package: " + discount.DiscountCode + ".<br> For more info contact us by using the <i>Help & Feedback</i> button below<br>.");
+            //}
 
 
             var forNotes = new StringBuilder();
@@ -2301,7 +2306,7 @@ namespace CUWebinars.Business.Services
                 forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
             }
 
-            discount.Notes = forNotes.ToString();
+            //discount.Notes = forNotes.ToString();
 
             return discount;
         }

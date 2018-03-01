@@ -73,7 +73,11 @@
     <meta name="msvalidate.01" content="EC4039EF0FA485B010F4E9AA1E51FF9C" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <script src="~/Scripts/js.cookie/js.cookie.js"></script>
-    <script type="text/javascript">
+    @{
+        try
+        {
+
+            <script type="text/javascript">
 
         var offset = new Date().getTimezoneOffset();
         offset = offset / 60 * -1;
@@ -83,7 +87,25 @@
         var sessionID = "@sessionID";
         var affiliateSessionSource = "@affiliateSessionSource";
         var currentAffiliate = "@currentAffiliate.idUserAff";
-    </script>
+            </script>
+        }
+        catch (Exception e)
+        {
+
+            <script type="text/javascript">
+
+                var offset = new Date().getTimezoneOffset();
+                offset = offset / 60 * -1;
+                Cookies.set('timezoneoffset', offset);
+
+                var firstPage = "@firstPage";
+                var sessionID = "@sessionID";
+                var affiliateSessionSource = "un";
+                var currentAffiliate = "19";
+            </script>
+        }
+
+    }
     @*<script type="text/javascript">  var appInsights = window.appInsights || function (config) { function i(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } } var t = { config: config }, u = document, e = window, o = "script", s = "AuthenticatedUserContext", h = "start", c = "stop", l = "Track", a = l + "Event", v = l + "Page", y = u.createElement(o), r, f; y.src = config.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js"; u.getElementsByTagName(o)[0].parentNode.appendChild(y); try { t.cookie = u.cookie } catch (p) { } for (t.queue = [], t.version = "1.0", r = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; r.length;) i("track" + r.pop()); return i("set" + s), i("clear" + s), i(h + a), i(c + a), i(h + v), i(c + v), i("flush"), config.disableExceptionTracking || (r = "onerror", i("_" + r), f = e[r], e[r] = function (config, i, u, e, o) { var s = f && f(config, i, u, e, o); return s !== !0 && t["_" + r](config, i, u, e, o), s }), t }({ instrumentationKey: "740ba977-f1a1-4c25-9819-cf6d01e7f1a2" }); window.appInsights = appInsights; appInsights.trackPageView();</script>*@
     <!--Start of Zopim Live Chat Script-->
     <script type="text/javascript">
@@ -222,15 +244,15 @@
     </style>
 
     <script>
-                //to accomodate IE  http://stackoverflow.com/questions/5522164/input-placeholders-for-internet-explorer -- Jonathan Tonge
-                var placeholder = 'placeholder' in document.createElement('input');
-                if (!placeholder) {
-                    $.getScript("/Scripts/placeholder.js", function () {
-                        $(":input").each(function () {   // this will work for all input fields
-                            $(this).placeHolder();
-                        });
-                    });
-                }
+        //to accomodate IE  http://stackoverflow.com/questions/5522164/input-placeholders-for-internet-explorer -- Jonathan Tonge
+        var placeholder = 'placeholder' in document.createElement('input');
+        if (!placeholder) {
+            $.getScript("/Scripts/placeholder.js", function () {
+                $(":input").each(function () {   // this will work for all input fields
+                    $(this).placeHolder();
+                });
+            });
+        }
     </script>
     @{
         if (User.Identity.IsAuthenticated)
@@ -299,7 +321,7 @@
                     <ul class="primary_menu">
                         <li class="parent"><a href="/webinar/calendar">calendar</a></li>
                         <li class="parent">
-                        <a href="javascript:void(0)">topics<i></i></a>
+                            <a href="javascript:void(0)">topics<i></i></a>
                             @*listing is produced by SPROC: EXEC BuildTopicDescriptions*@
                             @if (globalConfig.Tenant == "BankWebinars")
                             {
@@ -433,13 +455,13 @@
     @using (Html.BeginForm("ICalOrder", "Webinar", FormMethod.Get, new { name = "frmAddIcs", id = "frmAddIcs" }))
     {
         <input type="hidden" id="icsWebinar" name="icsWebinar" />
-            <input type="hidden" id="icsOrder" name="icsOrder" />
+        <input type="hidden" id="icsOrder" name="icsOrder" />
 
     }
     @using (Html.BeginForm("ICalOrder", "Webinar", FormMethod.Post, new { name = "frmAddGmail", id = "frmAddGmail" }))
     {
         <input type="hidden" id="glWebinar" name="glWebinar" />
-            <input type="hidden" id="glOrder" name="glOrder" />
+        <input type="hidden" id="glOrder" name="glOrder" />
     }
     <div class="modal hide fade in" id="DisplayErrorModal">
         <div class="modal-header">
@@ -514,10 +536,10 @@
     @Scripts.Render("~/bundles/CrispApp")
 
     <script type="text/javascript">
-                $(document).ready(function () {
+        $(document).ready(function () {
 
 
-                });
+        });
     </script>
     @RenderSection("scripts", required: false)
 </body>
