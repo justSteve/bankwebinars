@@ -548,78 +548,109 @@ namespace CUWebinars.Business.Services
 
             if (affiliateIds.Any())
             {
-                _logger.Info("DetermineAffiliateByAlternativeMeans for " + idUser + " found: " + affiliateIds);
-
-                //  get the most recent
-                int affiliateIdForOrder, mostRecentAffiliateId;
-                affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
-
-                var sb = new StringBuilder();
-                // The history is of more than 1 affiliate
-                if (affiliateIds.Count() > 1)
+                try
                 {
-                    // The business rule is that where there is more than one Affiliate which the 
-                    // user has made orders for, if one affiliate has been used twice as many times 
-                    // as the most recent Affiliate, then make the order for that Affiliate.
-                    
-                    
-                    var groups = affiliateIds.GroupBy(a => a);
-                    //
-                    int mostUsedAffiliateId = 0;
-                    int mostUses = 0;
-                    int numberOfUsesOfMostRecentAffiliate = 0;
-                    int current = 0;
-                    foreach (var group in groups)
+                    _logger.Info("DetermineAffiliateByAlternativeMeans for " + idUser + " found: " + affiliateIds);
+
+                    //  get the most recent
+                    int affiliateIdForOrder, mostRecentAffiliateId;
+                    affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
+
+                    var sb = new StringBuilder();
+                    sb.Append("This user: " + _webUserRepository.FindByIdLoaded(idUser).email);
+
+                    // The history is of more than 1 affiliate
+                    if (affiliateIds.Count() > 1)
                     {
-                        var ordersByAffForThisUser = _orderRepository.FindOrdersByUserId(idUser)
-                            .Where(o => o.idAffiliate == group.Key
-                                        && (o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed))
-                            .ToList().Count;
+                        // The business rule is that where there is more than one Affiliate which the 
+                        // user has made orders for, if one affiliate has been used twice as many times 
+                        // as the most recent Affiliate, then make the order for that Affiliate.
 
-                        numberOfUsesOfMostRecentAffiliate = _orderRepository.FindOrdersByUserId(idUser)
-                            .Where(o => o.idUser == idUser
-                                        && o.idAffiliate == affiliateIds.FirstOrDefault()
-                                        && (o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed))
-                            .ToList().Count;
-
-                        if (ordersByAffForThisUser > mostUses)
+                        var groups = affiliateIds.GroupBy(a => a);
+                        //
+                        int mostUsedAffiliateId = 0;
+                        int mostUses = 0;
+                        int numberOfUsesOfMostRecentAffiliate = 0;
+                        int current = 0;
+                        foreach (var group in groups)
                         {
-                            mostUses = ordersByAffForThisUser;
-                            mostUsedAffiliateId = group.Key;
-                            affiliateIdForOrder = group.Key;
-                        }
+                            sb.Append("Aff: " + _affiliateRepository.FindById(group.Key).ttsDomain);
 
+                            var ordersByAffForThisUser = _orderRepository.FindOrdersByUserId(idUser)
+                                .Where(o => o.idAffiliate == group.Key
+                                            && (o.OrderStatus == OrderStatus.Paid ||
+                                                o.OrderStatus == OrderStatus.Billed))
+                                .ToList().Count;
+
+                            numberOfUsesOfMostRecentAffiliate = _orderRepository.FindOrdersByUserId(idUser)
+                                .Where(o => o.idUser == idUser
+                                            && o.idAffiliate == affiliateIds.FirstOrDefault()
+                                            && (o.OrderStatus == OrderStatus.Paid ||
+                                                o.OrderStatus == OrderStatus.Billed))
+                                .ToList().Count;
+
+                            if (ordersByAffForThisUser > mostUses)
+                            {
+                                mostUses = ordersByAffForThisUser;
+                                mostUsedAffiliateId = group.Key;
+                                affiliateIdForOrder = group.Key;
+                                sb.Append(" ordersByAffForThisUser > mostUses " +
+                                          "- mostUses: " + mostUses + "aff: " + _affiliateRepository.LoadById(group.Key).ttsDomain);
+                            }
+
+
+                            if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
+                            {
+                                sb.Append("Awarded to  " + _affiliateRepository.LoadById(group.Key).ttsDomain + " based on mostUses:  >= 2 * numberOfUsesOfMostRecentAffiliate" + mostUses);
+                                affiliateIdForOrder = mostUsedAffiliateId;
+                            }
+                        }
 
                         if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         {
+
+                            sb.Append("Awarded to  " 
+                                + _affiliateRepository.LoadById(affiliateIdForOrder).ttsDomain + " based on mostUses:  >= 2 * numberOfUsesOfMostRecentAffiliate" + mostUses);
+                            
+                            _logger.Info("DetermineAffiliateByAlternativeMeans by mostUses: " + idUser + " awarded: " +
+                                         mostUsedAffiliateId);
                             affiliateIdForOrder = mostUsedAffiliateId;
                         }
+                        _logger.Error(
+                            "DetermineAffiliateByAlternativeMeans ({1}) found multiple affiliates: {0} Credited to {2}."
+                            , sb.ToString(),
+                            idUser, affiliateIdForOrder, current);
                     }
 
-                    if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
-                    {
-                        _logger.Info("DetermineAffiliateByAlternativeMeans by mostUses: " + idUser + " awarded: " + mostUsedAffiliateId);
-                        affiliateIdForOrder = mostUsedAffiliateId;
-                    }
-                    _logger.Error("DetermineAffiliateByAlternativeMeans ({1}) found multiple affiliates: {0} Credited to {2}.", sb.ToString(),
-                        idUser, affiliateIdForOrder, current);
-                }
+                    var affiliate =
+                        _affiliateRepository.LoadById(
+                            affiliateIdForOrder); // _cachingService.Get(cachKey) as Affiliate;
 
-                var affiliate = _affiliateRepository.LoadById(affiliateIdForOrder);// _cachingService.Get(cachKey) as Affiliate;
-
-                if (affiliate == null)
-                {
-                    affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder); // use the most recent
-                    //affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
                     if (affiliate == null)
                     {
-                        affiliate = GetAffiliateById(19);
+                        affiliate =
+                            _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder); // use the most recent
+                        //affiliate = _affiliateRepository.FindByIdWithIncluding(affiliateIdForOrder, a => a.WebUser); // use the most recent
+                        if (affiliate == null)
+                        {
+                            affiliate = GetAffiliateById(19);
+                        }
                     }
-                }
-                _logger.Info("DetermineAffiliateByAlternativeMeans returned: " + affiliate.idUserAff + " for: " + idUser);
+                    _logger.Info("DetermineAffiliateByAlternativeMeans returned: " + affiliate.idUserAff + " for: " +
+                                 idUser);
 
-                return affiliate;
+                    return affiliate;
+
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
             }
+            _logger.Info("DetermineAffiliateByAlternativeMeans found none: " + idUser);
+
             return null;
         }
 
@@ -1961,7 +1992,7 @@ namespace CUWebinars.Business.Services
                 FireMandrillNotificationEvent(
                     "info@ttstrain.com",
                     "Failed to create WSP " + order.idOrder
-                    , "Unknown tier: " );
+                    , "Unknown tier: ");
 
                 return null;
             }

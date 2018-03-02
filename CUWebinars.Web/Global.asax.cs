@@ -416,7 +416,6 @@ namespace CUWebinars.Web
 
                                     logger.Info(string.Format("SessionStart: Resolving Affiliate via query string with id {0}",
                                         loadAff));
-
                                 }
                                 else
                                 {
@@ -432,41 +431,7 @@ namespace CUWebinars.Web
                         }
                     }
 
-
-                    //depricated subdomainBranding = StateService.GetValue<string>(WebUiConstants.SubdomainBranding);
-                    //e.g. http://webinars.cftws.org - means CurrentAffiliate should be 'cftws'
-                    //if (!string.IsNullOrEmpty(subdomainBranding))
-                    //{
-                    //    logger.Info(string.Format("Resolving Affiliate via subdomainBranding {0}", subdomainBranding));
-
-                    //    var subdomainBrandType = subdomainBranding.Split('.').FirstOrDefault();
-                    //    if (!string.IsNullOrEmpty(subdomainBrandType) &&
-                    //        subdomainBrandType.Equals(WebUiConstants.Webinars, StringComparison.OrdinalIgnoreCase))
-                    //    {
-                    //        //we discover we are running with an affiliate's subdomain
-                    //        string affilliateDomain =
-                    //            ConfigurationManager.AppSettings[AppConst.TESTING_URL].Split('.')[1];
-                    //        try
-                    //        {
-                    //            StateService.SetValue("AffiliateSessionSource", "Sub" + Pipe + affilliateDomain);
-                    //            //   the name of the property 'ttsDomain' is the abbreviated name chosen
-                    //            //   for use (as a shortcut or nicname) by us to refer to a given affiliate. It may or may not
-                    //            //   be literally the Domain Name used by the given affiliate.
-
-                    //            StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                    //                affiliateRepository.LoadByTTSDomain(affilliateDomain) ??
-                    //                affiliateRepository.LoadByTTSDomain("bennett"));
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            logger.Error(string.Format("Failed to resolving Affiliate via subdomainBranding {0}",
-                    //                subdomainBranding));
-                    //            logger.Fatal(ex);
-                    //            throw;
-                    //        }
-                    //    }
-                    //}
-
+                    
                     var allCookies = new StringBuilder();
 
                     for (var i = 0; i < Request.Cookies.Count; i++)
