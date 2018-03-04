@@ -56,7 +56,7 @@ var commonFuncs = function() {
             return; // do nothing
         } else {
             //Rollbar.error( jqXHR.statusCode().status + ' nError: ' + jqXHR.statusCode().statusText);
-            alert('An error occurred: ')+ textStatus + errorThrown; 
+            alert('An error occurred: '+ textStatus + errorThrown); 
         };
     };
 

@@ -1,4 +1,5 @@
-﻿using CUWebinars.Business.Constants;
+﻿using Newtonsoft.Json;
+using CUWebinars.Business.Constants;
 using CUWebinars.Business.Core;
 using CUWebinars.Business.Models;
 using CUWebinars.Business.Repository;
@@ -51,6 +52,7 @@ namespace CUWebinars.Web
         {
             // Clears all previously registered view engines.
             ViewEngines.Engines.Clear();
+            AntiForgeryConfig.SuppressIdentityHeuristicChecks = true;
 
             ComponentInfo.SetLicense("DUZ7-YWDS-BDTM-7Z5I");
             // Registers our Razor C# specific view engine.
@@ -268,7 +270,8 @@ namespace CUWebinars.Web
                             && User.Identity.Name.StartsWith("admin")
                             && User.Identity.Name.EndsWith("ttstrain.com"))
                         {
-                            logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session);
+                            logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session.SessionID + " context: "
+                                         + httpContext.Request.Path);
 
                             //Now that we know we have an authenticated/authorized Admin
                             // no need to hide sensitive info. Figure out how to dump the Context's error message
@@ -278,7 +281,8 @@ namespace CUWebinars.Web
                         }
                         else
                         {
-                            logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session);
+                            logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session.SessionID + " context: "
+                                + httpContext.Request.Path);
 
                             newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
                             _errorResponseCommand.Execute(errorResponse);
@@ -286,8 +290,8 @@ namespace CUWebinars.Web
                         break;
                     default:
                         Response.StatusCode = 500;
-                        logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session);
-
+                        logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session.SessionID + " context: "
+                                     + httpContext.Request.Path);
                         newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
                         _errorResponseCommand.Execute(errorResponse);
                         break;
@@ -431,7 +435,7 @@ namespace CUWebinars.Web
                         }
                     }
 
-                    
+
                     var allCookies = new StringBuilder();
 
                     for (var i = 0; i < Request.Cookies.Count; i++)

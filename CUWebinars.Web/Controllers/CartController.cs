@@ -41,7 +41,7 @@ using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
 
 namespace CUWebinars.Web.Controllers
 {
-    
+
     public class CartController : Controller
     {
         private readonly ILogger _logger;
@@ -51,7 +51,7 @@ namespace CUWebinars.Web.Controllers
         private readonly IStateService _stateService;
         private readonly IMembershipService _membershipService;
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
-        
+
         private bool _disposed;
 
         public CartController(ILogger logger,
@@ -68,7 +68,7 @@ namespace CUWebinars.Web.Controllers
             _stateService = stateService;
             _membershipService = membershipService;
         }
-        
+
         [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
@@ -725,6 +725,7 @@ namespace CUWebinars.Web.Controllers
                                       sessionAff.idUserAff);
                         order.Affiliate = sessionAff;
                         order.idAffiliate = sessionAff.idUserAff;
+                        _cartControllerOrchestrator.SaveOrder(order);
                     }
                     var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                     ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
@@ -732,13 +733,6 @@ namespace CUWebinars.Web.Controllers
                     {
                         ViewBag.DiscountCaption = _cartControllerOrchestrator.GetDiscountCaption(
                             row.Discount, row, null, 1);
-                        if (row.Discount.DiscountType == DiscountType.Subscription &&
-                            row.Discount.DateValidFrom != row.Discount.DateValidTo &&
-                            row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
-                        {
-                            ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
-                            order.Total = order.Total + (int)50.00;
-                        }
                     }
 
                     ViewBag.Order = order;
@@ -2076,8 +2070,20 @@ namespace CUWebinars.Web.Controllers
         {
             if (orderId.HasValue && userId.HasValue)
             {
-                _cartControllerOrchestrator.UpdateOrderWithUserId(orderId.Value, userId.Value);
+                var oOrder = _cartControllerOrchestrator.GetOrderById(orderId);
 
+                _cartControllerOrchestrator.UpdateOrderWithUserId(orderId.Value, userId.Value);
+                var uOrder = _cartControllerOrchestrator.GetOrderById(orderId);
+
+                if (oOrder.idAffiliate != uOrder.idAffiliate)
+                {
+
+                    _stateService.SetValue(WebUiConstants.CurrentAffiliate, uOrder.Affiliate);
+                    _logger.Info("UpdateOrderWithUserId updated the original Affiliate. idOrder: {1}, Affiliate: {2},  Session: {0}",
+                        _appHelper.GetUserAuditInfo(),
+                        uOrder.idOrder, uOrder.Affiliate.ttsDomain
+                    );
+                }
                 return Json(new { Result = WebUiConstants.Success });
             }
 

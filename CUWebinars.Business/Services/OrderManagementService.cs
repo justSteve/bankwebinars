@@ -1454,7 +1454,14 @@ namespace CUWebinars.Business.Services
         {
             var user = _webUserRepository.FindByIdLoaded(userId);
             var order = _orderRepository.FindById(orderId);
+            var oAffId = order.idAffiliate;
             order.AuditInfo = "{\"anon user becomes " + user.email + "\":" + order.AuditInfo + "}";
+
+            order.idAffiliate = DetermineAffiliateByAlternativeMeans(userId).idUserAff;
+
+            if (oAffId != order.idAffiliate)
+                order.AuditInfo = "{\"anon user updates Affiliate from: " + oAffId + "\" to:" + order.idAffiliate + "}";
+
             order.idUser = userId;
 
             RemoveDupedOrders(order);

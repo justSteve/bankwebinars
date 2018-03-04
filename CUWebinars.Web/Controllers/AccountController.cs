@@ -13,6 +13,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Web.UI;
 using BrockAllen.MembershipReboot;
 using CUWebinars.Business.AccountService;
 using CUWebinars.Business.Constants;
@@ -1023,7 +1024,7 @@ namespace CUWebinars.Web.Controllers
                         SendHardcopy = orderRow.SendHardcopy != null && orderRow.SendHardcopy.Value,
                         idOrder = order.idOrder,
                         Origin = order.Origin
-                        
+
                     },
                     Discount = discount,
                     Order = order,
@@ -1031,7 +1032,7 @@ namespace CUWebinars.Web.Controllers
                     WebinarId = orderRow.Webinar.idWebinar,
                     idOrderRow = orderRow.idOrderRow,
                     NumberOfAdditionalLocations = additionalLocationsCount,
-                    
+
                 }
             };
             var onDemandClaim = new PostEventClaim
@@ -1158,6 +1159,12 @@ namespace CUWebinars.Web.Controllers
             {
                 AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo);
                 //AuditInfoModel parseOutAudit = JsonConvert.DeserializeObject<AuditInfoModel>(order.AuditInfo.Replace("{\"AuditInfo\":", "").Replace("}}", "}"));
+                if (parseOutAudit.FirstPage == null)
+                    parseOutAudit.FirstPage = "";
+                if (parseOutAudit.RemoteUser == null)
+                    parseOutAudit.RemoteUser = "";
+                if (order.Origin == null)
+                    order.Origin = "";
                 dynamic jsonObject = new JObject();
                 jsonObject.FirstPage = parseOutAudit.FirstPage;
                 jsonObject.RemoteUser = parseOutAudit.RemoteUser;
@@ -1571,104 +1578,119 @@ namespace CUWebinars.Web.Controllers
 
         [System.Web.Mvc.HttpPost]
         [System.Web.Mvc.AllowAnonymous]
+        [OutputCache(NoStore = true, Location = OutputCacheLocation.None)]
         [ValidateAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
         public ActionResult SignIn(SignInModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (Request.IsAuthenticated)
-                {
-                    _logger.Warn("Authenticated user was served SignIn page. SessionInfo: " +
-                                 _appHelper.GetSessionStartInfo());
-                    return RedirectToAction("MyWebinars", "Cart");
-                }
 
-                try
+                if (ModelState.IsValid)
                 {
-                    string userMustVerify;
-
-                    if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+                    if (Request.IsAuthenticated)
                     {
-                        var webUser = _orderManagementService.GetWebUser(model.Email);
-
-                        var userPendingOrder =
-                            _orderManagementService.GetOrdersByEmail(model.Email, 19)
-                                .Where(o => o.OrderStatus == OrderStatus.InProcess)
-                                .ToList();
-                        var MsgForUser = "";
-                        if (userPendingOrder.Count() > 1)
-                        {
-                            MsgForUser =
-                                "We found these 'In Process' orders and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
-
-                            return Json(new { msgForUser = MsgForUser, result = LoggedInResult, returnUrl = "/cart/checkout" });
-                        }
-
-                        if (userPendingOrder.Count() == 1)
-                        {
-
-                            MsgForUser =
-                                "We found an 'In Process' order and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
-
-                            return
-                                Json(
-                                    new
-                                    {
-                                        msgForUser = MsgForUser,
-                                        result = LoggedInResult,
-                                        returnUrl = "/resume/" + userPendingOrder.SingleOrDefault().idOrder
-                                    });
-                        }
-
-                        // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
-                        // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
-                        var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl)
-                            ? @"/"
-                            : model.ReturnUrl.Contains(@"ACC/APWD") ? @"/" : Server.HtmlDecode(model.ReturnUrl);
-                        if (returnUrl == "MyWebinars") returnUrl = "/MyWebinars";
-                        return Json(new { result = LoggedInResult, returnUrl = returnUrl });
+                        _logger.Warn("Authenticated user was served SignIn page. SessionInfo: " +
+                                     _appHelper.GetSessionStartInfo());
+                        return RedirectToAction("MyWebinars", "Cart");
                     }
 
-
-                    if (!string.IsNullOrEmpty(userMustVerify))
+                    try
                     {
-                        _logger.Info("Account.SignIn UserMustVerify. Session: {0}, Email: {1}",
-                            _appHelper.GetUserAuditInfo(),
-                            model.Email
+                        string userMustVerify;
+
+                        if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
+                        {
+                            var webUser = _orderManagementService.GetWebUser(model.Email);
+
+                            var userPendingOrder =
+                                _orderManagementService.GetOrdersByEmail(model.Email, 19)
+                                    .Where(o => o.OrderStatus == OrderStatus.InProcess)
+                                    .ToList();
+                            var MsgForUser = "";
+                            if (userPendingOrder.Count() > 1)
+                            {
+                                MsgForUser =
+                                    "We found these 'In Process' orders and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
+
+                                return Json(new { msgForUser = MsgForUser, result = LoggedInResult, returnUrl = "/cart/checkout" });
+                            }
+
+                            if (userPendingOrder.Count() == 1)
+                            {
+
+                                MsgForUser =
+                                    "We found an 'In Process' order and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
+
+                                return
+                                    Json(
+                                        new
+                                        {
+                                            msgForUser = MsgForUser,
+                                            result = LoggedInResult,
+                                            returnUrl = "/resume/" + userPendingOrder.SingleOrDefault().idOrder
+                                        });
+                            }
+
+                            // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
+                            // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
+                            var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl)
+                                ? @"/"
+                                : model.ReturnUrl.Contains(@"ACC/APWD") ? @"/" : Server.HtmlDecode(model.ReturnUrl);
+                            if (returnUrl == "MyWebinars") returnUrl = "/MyWebinars";
+                            return Json(new { result = LoggedInResult, returnUrl = returnUrl });
+                        }
+
+
+                        if (!string.IsNullOrEmpty(userMustVerify))
+                        {
+                            _logger.Info("Account.SignIn UserMustVerify. Session: {0}, Email: {1}",
+                                _appHelper.GetUserAuditInfo(),
+                                model.Email
+                            );
+
+                            return Json(new { result = ConfirmedResult, email = model.Email, password = model.Password });
+                        }
+
+                        // If we got this far, something failed, redisplay form
+                        _logger.Warn("Account.SignIn Failed. Email: {0},  Session: {1}",
+                            model.Email,
+                            _appHelper.GetUserAuditInfo()
                         );
 
-                        return Json(new { result = ConfirmedResult, email = model.Email, password = model.Password });
+                        ModelState.AddModelError(
+                            string.Empty,
+                            // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                            "The user name or password provided is incorrect."
+                        );
                     }
+                    catch (Exception exception)
+                    {
+                        _logger.ErrorException(
+                            string.Format("Account.SignIn Failed. Email: {0}, Session: {1}"
+                                , model.Email, _appHelper.GetUserAuditInfo()), exception);
+                        ErrorSignal.FromCurrentContext().Raise(exception);
 
-                    // If we got this far, something failed, redisplay form
-                    _logger.Warn("Account.SignIn Failed. Email: {0},  Session: {1}",
-                        model.Email,
-                        _appHelper.GetUserAuditInfo()
-                    );
-
-                    ModelState.AddModelError(
-                        string.Empty,
-                        // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                        "The user name or password provided is incorrect."
-                    );
-                }
-                catch (Exception exception)
-                {
-                    _logger.ErrorException(
-                        string.Format("Account.SignIn Failed. Email: {0}, Session: {1}"
-                            , model.Email, _appHelper.GetUserAuditInfo()), exception);
-                    ErrorSignal.FromCurrentContext().Raise(exception);
-
-                    ModelState.AddModelError(
-                        string.Empty,
-                        // Needs to be an empty string to show up in ValidationSummary as not model-level error.
-                        "Server Error #536: For customer service contact us by using the Online Chat button below or emailing " +
-                        _globalConfig.TenantEmail + "."
-                    );
+                        ModelState.AddModelError(
+                            string.Empty,
+                            // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                            "Server Error #536: For customer service contact us by using the Online Chat button below or emailing " +
+                            _globalConfig.TenantEmail + "."
+                        );
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                _logger.FatalException("In SignIn Action", e);
+                ModelState.AddModelError(
+                    string.Empty,
+                    // Needs to be an empty string to show up in ValidationSummary as not model-level error.
+                    "There was an error. Please close your browser and try again.");
 
+
+
+            }
             return this.ModelStateJson(ModelState);
         }
 
