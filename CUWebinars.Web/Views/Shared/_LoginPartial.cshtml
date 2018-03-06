@@ -18,6 +18,7 @@
 @if (Request.IsAuthenticated)
 {
     <nav class="user clearfix">
+
         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
         {
             Claim fullNameClaim;
@@ -35,6 +36,19 @@
             {
                 fullNameClaim = ViewBag.LoggedInUserIdentity as Claim;
 
+            }
+
+            Claim userHasWspClaim;
+            if (!ReferenceEquals(null, ViewBag.UserHasWsp))
+            {
+                userHasWspClaim = claimsIdentity.Claims
+                    .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp);
+
+                var claimCaption = userHasWspClaim.Value;
+
+                <div id="WspHolder">
+                    @userHasWspClaim.Value
+                </div>
             }
 
             if (!ReferenceEquals(null, fullNameClaim))
@@ -60,11 +74,11 @@
                     @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) != null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Admin) == null)
                     {
                         <span>
-                            <button type="button" class="btn btn-mini" style="margin-left: 20px; " data-toggle="collapse" data-target="#affUrl">
+                            <button type="button" class="btn btn-mini" style="margin-left: 20px;" data-toggle="collapse" data-target="#affUrl">
                                 promo url
                             </button>
                         </span>
-                        <div id="affUrl"  style="color: whitesmoke; " class="collapse out">@url</div>
+                        <div id="affUrl" style="color: whitesmoke;" class="collapse out">@url</div>
                     }
                 </div>
             }

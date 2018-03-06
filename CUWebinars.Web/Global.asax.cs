@@ -325,9 +325,7 @@ namespace CUWebinars.Web
                     IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
 
-                    StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                        affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE));
-                    //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE, a => a.WebUser));
+                    StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE));
                     StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
 
                     //This session var lets us understand the origin of the Affiliate session - 
@@ -335,106 +333,96 @@ namespace CUWebinars.Web
                     //Here we the initial value to 'default' ... later code will
                     // override if conditions dictate.
                     StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
+                    if (HttpContext.Current != null)
+                    {
+                        StateService.SetValue(WebUiConstants.FirstPage, HttpContext.Current.Request.Url.ToString().Trim());
+                        StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
+                        StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
+                    }
+                    else
+                    {
+                        StateService.SetValue(WebUiConstants.FirstPage, "null");
+                        StateService.SetValue(WebUiConstants.InitialQueryString, "null");
+                        StateService.SetValue(WebUiConstants.SessionId, "null");
+                        logger.Warn("SessionStart: HttpContext.Current is null!!!");
+                    }
 
                     if (User != null && User.Identity.IsAuthenticated)
                     {
                         ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
-
+                        //
                         if (claimsIdentityOfAuthenticatedUser.HasClaim(
                             (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
                         {
-                            var claimTTSDomain =
-                                claimsIdentityOfAuthenticatedUser.Claims.Where(
-                                        c => c.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate)
-                                    .First()
-                                    .Value;
-                            StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                            var claimTTSDomain = claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type ==
+                                CUWebinars.Business.Constants.ClaimTypes.Affiliate).First().Value;
+                            StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(claimTTSDomain));
                         }
                         else
                         {
                             if (claimsIdentityOfAuthenticatedUser.HasClaim(
                                 (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
                             {
-                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                    affiliateRepository.LoadById(19));
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadById(19));
                             }
                             else
                             {
                                 try
                                 {
+                                    // authenticated end-user
                                     var findAff = webUserRepository.FindAffiliateForSession(User.Identity.Name);
 
                                     if (findAff != null)
                                     {
-                                        StateService.SetValue(WebUiConstants.CurrentAffiliate, findAff
-                                        );
-                                        StateService.SetValue("AffiliateSessionSource",
-                                            "FindAffiliateForSession" + Pipe + findAff);
+                                        StateService.SetValue(WebUiConstants.CurrentAffiliate, findAff);
+                                        StateService.SetValue("AffiliateSessionSource", "FindAffiliateForSession" + Pipe + findAff);
 
-                                        logger.Info(string.Format("SessionStart: Resolving Affiliate via FindAffiliateForSession {0}",
-                                            findAff.idUserAff));
+                                        logger.Info(string.Format("SessionStart: Resolved Affiliate via FindAffiliateForSession {0} {1}", findAff.idUserAff,  StateService.GetValue<string>(WebUiConstants.SessionId)));
                                     }
                                     else
                                     {
-
-                                        logger.Warn(string.Format("SessionStart: unable to resolve Affiliate via FindAffiliateForSession {0}",
-                                            findAff.idUserAff));
+                                        logger.Warn(string.Format("SessionStart: unable to resolve Affiliate via FindAffiliateForSession {0} {1}", User.Identity.Name, StateService.GetValue<string>(WebUiConstants.SessionId)));
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    logger.Fatal("SessionStart: FindAffiliateForSession", ex);
+                                    logger.Fatal("SessionStart: FindAffiliateForSession " + StateService.GetValue<string>(WebUiConstants.SessionId) , ex);
                                 }
                             }
                         }
                     }
 
-                    //depricated SubdomainBranding
-                    //if (HttpContext.Current != null && HttpContext.Current.Request.UrlReferrer != null && HttpContext.Current.Request.UrlReferrer.ToString().ToLower().Contains("webinars"))
-                    //    StateService.SetValue(WebUiConstants.SubdomainBranding,
-                    //        HttpContext.Current.Request.UrlReferrer.ToString().Trim());
 
-                    if (HttpContext.Current != null)
+                    //DETERMINE CURRENT AFFILIATE
+                    //VIA QUERY STRING -- idAff=[idUserAff]   
+                    if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
                     {
-                        StateService.SetValue(WebUiConstants.FirstPage,
-                            HttpContext.Current.Request.Url.ToString().Trim());
-                        StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
-                        StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
+                        int loadAff;
 
-                        //DETERMINE CURRENT AFFILIATE
-                        //MEHTOD 1: VIA QUERY STRING -- idAff=[idUserAff]   
-                        if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
+                        if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                         {
-                            int loadAff;
+                            Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
 
-                            if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
+                            if (!ReferenceEquals(foundAff, null))
                             {
-                                Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    affiliateRepository.FindByIdWithIncluding(loadAff));
+                                StateService.SetValue("AffiliateSessionSource", "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff));
 
-                                if (!ReferenceEquals(foundAff, null))
-                                {
-                                    StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                        affiliateRepository.FindByIdWithIncluding(loadAff));
-                                    StateService.SetValue("AffiliateSessionSource", "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff));
-
-                                    logger.Info(string.Format("SessionStart: Resolving Affiliate via query string with id {0}",
-                                        loadAff));
-                                }
-                                else
-                                {
-                                    logger.Info("SessionStart: failed to load idAff code: " +
-                                                HttpContext.Current.Request.Url);
-                                }
+                                logger.Info(string.Format("SessionStart: " + StateService.GetValue<string>(WebUiConstants.SessionId) + " Resolving Affiliate via query string with id   {0}", loadAff));
                             }
                             else
                             {
-                                logger.Error("SessionStart: Non-numeric idAff: " +
-                                             HttpContext.Current.Request.QueryString);
+                                logger.Info("SessionStart: failed to load idAff code: " +
+                                            HttpContext.Current.Request.Url + "_" + StateService.GetValue<string>(WebUiConstants.SessionId));
                             }
                         }
+                        else
+                        {
+                            logger.Error("SessionStart: Non-numeric idAff: " +
+                                         HttpContext.Current.Request.QueryString + "_" + StateService.GetValue<string>(WebUiConstants.SessionId));
+                        }
                     }
-
 
                     var allCookies = new StringBuilder();
 
@@ -446,7 +434,7 @@ namespace CUWebinars.Web
                         if (aCookie != null)
                         {
 
-                            allCookies.Append("\"CookieName\": \"" + aCookie.Name);
+                            allCookies.Append("\"CookieName_" + StateService.GetValue<string>(WebUiConstants.SessionId) + "\": \"" + aCookie.Name);
 
                             if (aCookie.HasKeys)
                             {
@@ -481,11 +469,9 @@ namespace CUWebinars.Web
                     {
                         logger.Info("Authenticated Session Starts with: {\"Name\": \"" + User.Identity.Name
                                     + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-                                    + "\", \"QueryString\": \"" +
-                                    StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                    + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
                                     + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-                                    + "\", \"FirstCookies\": {" +
-                                    StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                                    + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
                         );
                     }
                     else

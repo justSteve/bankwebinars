@@ -715,26 +715,53 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Order CreateOrder(CheckoutOptionsViewModel formModel)
         {
-
+            if (formModel.idOrder == 0)
+            {
+                
+            }
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
             Claim beingImpersonatedClaim = null;
             Order existingOrder = new Order();
+            List<Order> existingOrders = new List<Order>();
+            var cAff = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
 
             if (Request.IsAuthenticated)
             {
                 var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
                 if (user != null && user.Identity.Name != null && formModel.idWebinar != 2520)
                 {
-                    existingOrder = _orderManagementService
-                         .GetOrdersByEmail(user.Identity.Name, _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff)
-                         .FirstOrDefault(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar == formModel.idWebinar);
-
-                    if (existingOrder != null)
+                    if (cAff != null)
                     {
+                        existingOrders = _orderManagementService
+                            .GetOrdersByEmail(user.Identity.Name, cAff.idUserAff)
+                            .Where(o => o.OrderRows.Single( r => r.RowStatus == OrderRowStatus.Active).idWebinar == formModel.idWebinar).ToList();
+                    }
 
+                    if (existingOrders.Count > 1)
+                    {
+                        existingOrder = existingOrders.SingleOrDefault(o => o.OrderRows.SingleOrDefault()
+                            .RowStatus == OrderRowStatus.Active && o.idAffiliate == cAff.idUserAff);
+
+                        if (existingOrder == null)
+                        { _logger.Error("CreateOrder had no matching affiliate: " + formModel.idOrder); }
+
+                        existingOrder = existingOrders.SingleOrDefault(o => o.OrderRows.SingleOrDefault()
+                            .RowStatus == OrderRowStatus.Active);
+
+                        if (existingOrder == null)
+                        {
+                            _logger.Error("CreateOrder had no matching order: " + formModel.idUser);
+                        }
+                        else
+                        {
+                            return _orderManagementService.UserHasPrexistingOrder(existingOrder);
+                        }
+                    }
+
+                    if (existingOrders.Count == 1)
+                    {
                         //_stateService.SetValue(DomainConstants.FoundExistingOrder, existingOrder);
                         return _orderManagementService.UserHasPrexistingOrder(existingOrder);
-
                     }
                 }
                 beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
@@ -755,8 +782,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                                formModel.RegistrationTypeId);
 
 
-                var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
-                _orderManagementService.AttachAffiliate(currentAffiliate);
+                //var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+                _orderManagementService.AttachAffiliate(cAff);
 
                 // At this point, user may not be registered. So, when creating the Order, if user 
                 // does not exist, a dummy user with an email of notauthenticated@cuwebinars.com will be created.
@@ -764,7 +791,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.SelectedWebUser) : // if logged in as admin or affiliate
                     _orderManagementService.GetWebUserWithAddressAndInstitution(formModel.idUser);
 
-                var order = CreateNewOrder(currentAffiliate, webUser, webinar, newOrderRow, beingImpersonatedClaim);
+                var order = CreateNewOrder(cAff, webUser, webinar, newOrderRow, beingImpersonatedClaim);
 
                 if (formModel.CCEmail != null)
                 {
@@ -772,7 +799,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
                     _orderManagementService.SaveChanges();
                 }
-
+                _orderManagementService.SaveChanges();
                 return order;
             }
             catch (Exception ex)

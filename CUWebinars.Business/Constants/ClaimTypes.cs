@@ -22,5 +22,6 @@ namespace CUWebinars.Business.Constants
         public static readonly string CommentAff = "http://ttstrain.com/ws/2014/01/identity/claims/CommentAff";
         public static readonly string CommentUser = "http://ttstrain.com/ws/2014/01/identity/claims/CommentUser";
         public static readonly string UserHasDiscount = "http://ttstrain.com/ws/2014/01/identity/claims/UserHasDiscount";
+        public static readonly string UserHasWsp = "http://ttstrain.com/ws/2014/01/identity/claims/UserHasWsp";
     }
 }

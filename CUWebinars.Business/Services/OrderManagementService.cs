@@ -609,9 +609,9 @@ namespace CUWebinars.Business.Services
                         if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         {
 
-                            sb.Append("Awarded to  " 
+                            sb.Append("Awarded to  "
                                 + _affiliateRepository.LoadById(affiliateIdForOrder).ttsDomain + " based on mostUses:  >= 2 * numberOfUsesOfMostRecentAffiliate" + mostUses);
-                            
+
                             _logger.Info("DetermineAffiliateByAlternativeMeans by mostUses: " + idUser + " awarded: " +
                                          mostUsedAffiliateId);
                             affiliateIdForOrder = mostUsedAffiliateId;
@@ -1460,7 +1460,7 @@ namespace CUWebinars.Business.Services
             order.idAffiliate = DetermineAffiliateByAlternativeMeans(userId).idUserAff;
 
             if (oAffId != order.idAffiliate)
-                order.AuditInfo = "{\"anon user updates Affiliate from: " + oAffId + "\" to:" + order.idAffiliate + "}";
+                order.AuditInfo = "{\"anon user (to " + user.email + ") updates Affiliate from: " + oAffId + "\" to:" + order.idAffiliate + "}";
 
             order.idUser = userId;
 

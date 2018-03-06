@@ -1685,7 +1685,7 @@ namespace CUWebinars.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _logger.Info("Signup2 Enters: " + _appHelper.GetSessionStartInfo());
+                _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
 
                 try
                 {
