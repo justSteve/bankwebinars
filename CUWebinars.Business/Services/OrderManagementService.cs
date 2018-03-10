@@ -646,12 +646,12 @@ namespace CUWebinars.Business.Services
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    throw;
+                    return GetAffiliateById(19);
                 }
             }
             _logger.Info("DetermineAffiliateByAlternativeMeans found none: " + idUser);
 
-            return null;
+            return GetAffiliateById(19); ;
         }
 
         public void DispatchDummyOrder()
@@ -2344,7 +2344,7 @@ namespace CUWebinars.Business.Services
                 forNotes.AppendFormat("Applying discount code: {0}", discount.DiscountCode);
             }
 
-            //discount.Notes = forNotes.ToString();
+            discount.Notes = forNotes.ToString();
 
             return discount;
         }

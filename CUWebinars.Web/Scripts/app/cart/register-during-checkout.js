@@ -218,14 +218,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 if (data['Invalid'] === 'UserNotVerified') {
                     L.clientLogger.error("#388 UserNotVerified ", { result: data && data.Result });
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email: ' + tenantTechEmail +' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
                     L.clientLogger.error("UnknownEmail", { result: data && data.Result });
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email: ' + tenantTechEmail +' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else {
                     L.clientLogger.error("Unknown error #454", { result: data && data.Result });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Error.Connection Error #454. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #454. Email: ' + tenantTechEmail +' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 }
             }
         }).fail(commonFuncs.failCallBack);
@@ -292,7 +292,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 } else if (data.error === 'Fail') {
 
                     L.clientLogger.info("goToAddressFields 319", { data: data });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email: ' + tenantTechEmail +' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
                     L.clientLogger.error("Uncaught Ajax Error 343", { result: data || "data was falsey", payload: payload });
 
@@ -638,7 +638,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                         if (status == 'error') {
                                             L.clientLogger.error("Connection Error #106.", { 'data': data || 'data was falsey' });
 
-                                            $(this).html('<div class="text-error">Connection Error #106. Email @globalConfig.TenantEmail  or use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
+                                            $(this).html('<div class="text-error">Connection Error #106. Email ' + globalConfig.TenantEmail + ' or use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
                                             $('#confirmationTab a').tab('show');
                                         } else {
                                             $('#ConfirmRegistrationBillMe').on('click', function (e) {

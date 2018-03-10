@@ -488,7 +488,7 @@ namespace CUWebinars.Web
                 }
                 catch (Exception exception)
                 {
-                    logger.Fatal("SessionStart Exception!!!", exception);
+                    logger.Fatal("SessionStart Exception!!! " + HttpContext.Current.Request.Url, exception);
                     Console.WriteLine(exception);
                 }
                 finally

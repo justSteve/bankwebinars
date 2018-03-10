@@ -799,7 +799,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                     order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, newJson);
                     _orderManagementService.SaveChanges();
                 }
-                _orderManagementService.SaveChanges();
+                //_orderManagementService.SaveChanges();
                 return order;
             }
             catch (Exception ex)

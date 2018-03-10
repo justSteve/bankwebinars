@@ -71,9 +71,9 @@ Model.TypeOfDiscount == DiscountType.Subscription
                                 {
                                     <div><b>The following orders have been paid for via this WSP:</b></div>
                                     //build table starts here
-                                    <table width="600">
-                                        <tr><td>Order ID</td><td>Date</td><td>Event Title</td></tr>
-                                        @foreach (var order in @Model.WspUsageSum)
+                                    <table width="1000">
+                                        <tr><td>Order ID</td><td>Date</td><td>Email</td><td>Event Title - Date</td><td>Credits Used</td></tr>
+                                        @foreach (var order in @Model.WspUsageSum.Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar != 2520))
                                         {
                                             //these are the rows
                                             <tr>
@@ -87,9 +87,18 @@ Model.TypeOfDiscount == DiscountType.Subscription
                                                         @order.OrderDate.ToShortDateString()
                                                     </div>
                                                 </td>
+
                                                 <td>
                                                     <div class="orderByWsp">
-                                                        @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title
+                                                        @order.BillingEmail
+                                                    </div>
+                                                </td>                                                <td>
+                                                    <div class="orderByWsp">
+                                                        @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title  (@order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date.ToShortDateString())
+                                                    </div>
+                                                </td>                                                <td>
+                                                    <div class="orderByWsp">
+                                                        @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.CreditCost
                                                     </div>
                                                 </td>
                                             </tr>

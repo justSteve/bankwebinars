@@ -884,3 +884,6 @@ CUWebinars.Web/App_Data/Trace/
 /.vs/BankWebinars/v15/Server/sqlite3/storage.ide-shm
 /.vs/BankWebinars/v15/Server/sqlite3/storage.ide-wal
 /.vs/BankWebinars/v15/sqlite3/db.lock
+/.vs/VSWorkspaceState.json
+/.vs/tasks.vs.json
+/.vs/slnx.sqlite
