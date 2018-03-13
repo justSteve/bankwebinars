@@ -513,6 +513,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Log4NetAspNetProperty.cs" />
     <Compile Include="Helpers\StringSift2.cs" />
     <Compile Include="Models\ParseOrderModel.cs" />
     <Compile Include="Models\AuditDiscountModel.cs" />

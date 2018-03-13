@@ -753,19 +753,6 @@ namespace CUWebinars.Web.Controllers
 
                     var newOrder = _orderManagementService.GetOrderById(idOfLastOrder);
 
-                    try
-                    {
-                        _logger.Info("ACS Imported: " +
-                                     JsonConvert.SerializeObject(newOrder, new JsonSerializerSettings()
-                                     {
-                                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                                     }));
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.FatalException("Attempt to seriealize order failed: " + newOrder.idOrder, ex);
-                    }
 
                     newOrder.OrderDate = importedOrder.OrderDate;
                     newOrder.OrderStatus = OrderStatus.AwaitingVerification;

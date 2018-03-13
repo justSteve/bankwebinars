@@ -33,6 +33,7 @@ using System.IdentityModel.Services;
 using System.IdentityModel.Tokens;
 using Elmah;
 using GemBox.Document;
+using RazorEngine.Compilation.ImpromptuInterface;
 
 namespace CUWebinars.Web
 {
@@ -47,7 +48,17 @@ namespace CUWebinars.Web
 
         public const string SessionStartError = "ERROR: --SESSION START-- ";
         const char Pipe = '|';
-
+        public class GetCurrentIp
+        {
+            public override string ToString()
+            {
+                if (null != HttpContext.Current && HttpContext.Current.Session != null)
+                {
+                    return HttpContext.Current.Session["Ip"].ToString();
+                }
+                return string.Empty; // or "[No Page]" if you prefer
+            }
+        }
         protected void Application_Start()
         {
             // Clears all previously registered view engines.
@@ -221,92 +232,112 @@ namespace CUWebinars.Web
         //https://www.simple-talk.com/dotnet/asp.net/handling-errors-effectively-in-asp.net-mvc/
         protected void Application_Error(object sender, EventArgs e)
         {
-            //  Variables related to error and context.
-            var httpContext = ((MvcApplication)sender).Context;
-            Exception exception = Server.GetLastError();
-            var httpException = exception as HttpException;
-
-            //  Variables for the error controller and action.
-            var controller = new StaticContentController();
-
-            // this will hold data about the new route to the custom error page
-            var newRouteData = new RouteData();
-
-            var errorResponse = new ErrorResponse
+            var appErrMsg = new StringBuilder();
+            var sessionId = "non Ini";
+            try
             {
-                Controller = controller,
-                HttpContext = httpContext,
-                ExceptionInstance = exception,
-                NewrouteData = newRouteData
-            };
 
+                //  Variables related to error and context.
+                var httpContext = ((MvcApplication)sender).Context;
+                Exception exception = Server.GetLastError();
+                var httpException = exception as HttpException;
 
-            newRouteData.Values[WebUiConstants.Controller] = WebUiConstants.StaticContent;
+                //  Variables for the error controller and action.
+                var controller = new StaticContentController();
 
-            // This instructs IIS to ignore it's own default error pages, allowing us to use our own.
-            // Note: in Web.config, httpErrors is as follows: <httpErrors existingResponse="PassThrough" />
-            // This is required (or set existingResponse to "auto"), otherwise Response.TrySkipIisCustomErrors
-            // is ignored.
-            ; Response.TrySkipIisCustomErrors = true;
+                // this will hold data about the new route to the custom error page
+                var newRouteData = new RouteData();
 
-            if (httpException != null)
-            {
-                var userName = "anon";
-                if (User.Identity.IsAuthenticated)
+                var errorResponse = new ErrorResponse
                 {
-                    userName = User.Identity.Name;
-                }
-                //ErrorSignal.FromCurrentContext().Raise(exception);
-                switch (httpException.GetHttpCode())
-                {
-                    case 404:
-                        Response.StatusCode = 404;
-                        newRouteData.Values[WebUiConstants.Action] = WebUiConstants.PageNotFound;
-                        _errorResponseCommand.Execute(errorResponse);
-                        break;
+                    Controller = controller,
+                    HttpContext = httpContext,
+                    ExceptionInstance = exception,
+                    NewrouteData = newRouteData
+                };
 
-                    case 500:
-                        if (User.Identity.IsAuthenticated
-                            && User.Identity.Name.StartsWith("admin")
-                            && User.Identity.Name.EndsWith("ttstrain.com"))
-                        {
+                newRouteData.Values[WebUiConstants.Controller] = WebUiConstants.StaticContent;
+
+                // This instructs IIS to ignore it's own default error pages, allowing us to use our own.
+                // Note: in Web.config, httpErrors is as follows: <httpErrors existingResponse="PassThrough" />
+                // This is required (or set existingResponse to "auto"), otherwise Response.TrySkipIisCustomErrors
+                // is ignored.
+                ; Response.TrySkipIisCustomErrors = true;
+
+                if (httpException != null)
+                {
+                    var userName = "anon";
+                    sessionId = "no session found";
+                    var userIp = httpContext.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]; 
+
+                    if (httpContext.Session != null && httpContext.Session.SessionID != null)
+                        sessionId = httpContext.Session.SessionID;
+                    
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        userName = User.Identity.Name + "_" + userIp;
+                    }
+                    appErrMsg.Append(" AppError Starts for " + userName + " at " + sessionId + " with error " + httpException.GetHttpCode());
+                    
+                    switch (httpException.GetHttpCode())
+                    {
+                        case 404:
+                            Response.StatusCode = 404;
+                            newRouteData.Values[WebUiConstants.Action] = WebUiConstants.PageNotFound;
+                            _errorResponseCommand.Execute(errorResponse);
+                            break;
+
+                        case 500:
+                            if (User.Identity.IsAuthenticated
+                                && User.Identity.Name.StartsWith("admin")
+                                && User.Identity.Name.EndsWith("ttstrain.com"))
+                            {
+                                logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session.SessionID + " context: "
+                                             + httpContext.Request.Path);
+
+                                //Now that we know we have an authenticated/authorized Admin
+                                // no need to hide sensitive info. Figure out how to dump the Context's error message
+                                // instead of the generic boiler plate.
+                                newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
+                                _errorResponseCommand.Execute(errorResponse);
+                            }
+                            else
+                            {
+                                logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session.SessionID + " context: "
+                                    + httpContext.Request.Path);
+
+                                newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
+                                _errorResponseCommand.Execute(errorResponse);
+                            }
+                            break;
+                        default:
+                            Response.StatusCode = 500;
                             logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session.SessionID + " context: "
                                          + httpContext.Request.Path);
-
-                            //Now that we know we have an authenticated/authorized Admin
-                            // no need to hide sensitive info. Figure out how to dump the Context's error message
-                            // instead of the generic boiler plate.
                             newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
                             _errorResponseCommand.Execute(errorResponse);
-                        }
-                        else
-                        {
-                            logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session.SessionID + " context: "
-                                + httpContext.Request.Path);
-
-                            newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
-                            _errorResponseCommand.Execute(errorResponse);
-                        }
-                        break;
-                    default:
-                        Response.StatusCode = 500;
-                        logger.Fatal("Global asax: " + userName + " error: " + exception.Message + " session: " + httpContext.Session.SessionID + " context: "
-                                     + httpContext.Request.Path);
-                        newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
-                        _errorResponseCommand.Execute(errorResponse);
-                        break;
+                            break;
+                    }
+                }
+                else
+                {
+                    Response.StatusCode = 500;
+                    newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
+                    _errorResponseCommand.Execute(errorResponse);
                 }
             }
-            else
+            catch (Exception e1)
             {
-                Response.StatusCode = 500;
-                newRouteData.Values[WebUiConstants.Action] = WebUiConstants.ServerErrorPage;
-                _errorResponseCommand.Execute(errorResponse);
+                appErrMsg.Append(" ERROR!! " + e1.Message + " at " + sessionId);
+                Console.WriteLine(e1);
+                
             }
-
         }
 
-
+        protected void Application_PostAcquireRequestState(object sender, EventArgs e)
+        {
+            log4net.ThreadContext.Properties["Ip"] = Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+        }
         private void Session_Start(object sender, EventArgs e)
         {
             var ua = Request.UserAgent;
@@ -317,6 +348,17 @@ namespace CUWebinars.Web
                 RegexOptions.IgnoreCase);
             if (!iscrawler)
             {
+                var userIp = Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+                if (userIp == null)
+                    userIp = "na";
+                StateService.SetValue(WebUiConstants.Ip, userIp);
+
+                //GlobalContext.Properties["Ip"] = new GetCurrentIp();
+                var userName = "anon";
+                if (User.Identity.IsAuthenticated)
+                {
+                    userName = User.Identity.Name + "_" + userIp;
+                }
                 var ttsWebinarsContext = new TTSWebinarsContext();
                 try
                 {
@@ -327,7 +369,9 @@ namespace CUWebinars.Web
 
                     StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(AppConst.DEFAULT_AFFILIATE));
                     StateService.SetValue("AValidInstitution", institutionRepository.FindFirst());
-
+                    //sessionStarter  = new StringBuilder();
+                    var ss = new StringBuilder();
+                    string sessionId = "";
                     //This session var lets us understand the origin of the Affiliate session - 
                     //...answers the question - How was the Session Affiliate determined?
                     //Here we the initial value to 'default' ... later code will
@@ -335,12 +379,16 @@ namespace CUWebinars.Web
                     StateService.SetValue("AffiliateSessionSource", "default" + Pipe + AppConst.DEFAULT_AFFILIATE);
                     if (HttpContext.Current != null)
                     {
+                        sessionId = HttpContext.Current.Session.SessionID;
+
                         StateService.SetValue(WebUiConstants.FirstPage, HttpContext.Current.Request.Url.ToString().Trim());
                         StateService.SetValue(WebUiConstants.InitialQueryString, Request.Url.Query);
-                        StateService.SetValue(WebUiConstants.SessionId, HttpContext.Current.Session.SessionID);
+                        StateService.SetValue(WebUiConstants.SessionId, sessionId);
+                        ss.Append("Starting for " + userName + " at " + sessionId);
                     }
                     else
                     {
+                        ss.Append("HttpCtxIsNull!");
                         StateService.SetValue(WebUiConstants.FirstPage, "null");
                         StateService.SetValue(WebUiConstants.InitialQueryString, "null");
                         StateService.SetValue(WebUiConstants.SessionId, "null");
@@ -354,39 +402,53 @@ namespace CUWebinars.Web
                         if (claimsIdentityOfAuthenticatedUser.HasClaim(
                             (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
                         {
+                            ss.Append($" Is found to be Admin {sessionId}");
+
                             var claimTTSDomain = claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type ==
                                 CUWebinars.Business.Constants.ClaimTypes.Affiliate).First().Value;
-                            StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                            ss.Append($" Is affiliate from {claimTTSDomain}");
                         }
                         else
                         {
                             if (claimsIdentityOfAuthenticatedUser.HasClaim(
                                 (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Admin))
                             {
+                                ss.Append($" Is admin {User.Identity.Name}");
+
                                 StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadById(19));
                             }
                             else
                             {
                                 try
                                 {
-                                    // authenticated end-user
                                     var findAff = webUserRepository.FindAffiliateForSession(User.Identity.Name);
 
+                                    // authenticated end-user
                                     if (findAff != null)
                                     {
                                         StateService.SetValue(WebUiConstants.CurrentAffiliate, findAff);
                                         StateService.SetValue("AffiliateSessionSource", "FindAffiliateForSession" + Pipe + findAff);
-
-                                        logger.Info(string.Format("SessionStart: Resolved Affiliate via FindAffiliateForSession {0} {1}", findAff.idUserAff,  StateService.GetValue<string>(WebUiConstants.SessionId)));
+                                        ss.Append(
+                                            $" Is enduser named {userName} at {sessionId} associated with {findAff}");
+                                        logger.Info(string.Format("SessionStart: Resolved Affiliate via FindAffiliateForSession {0} {1}", findAff.idUserAff, StateService.GetValue<string>(WebUiConstants.SessionId)));
                                     }
                                     else
                                     {
+                                        StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadById(19));
+                                        StateService.SetValue("AffiliateSessionSource", "SessionAffIsNull!!" + Pipe + 19);
+
+                                        ss.Append(
+                                            $" Is misaffiliated enduser from {userName} at {sessionId} associated with {findAff}");
                                         logger.Warn(string.Format("SessionStart: unable to resolve Affiliate via FindAffiliateForSession {0} {1}", User.Identity.Name, StateService.GetValue<string>(WebUiConstants.SessionId)));
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    logger.Fatal("SessionStart: FindAffiliateForSession " + StateService.GetValue<string>(WebUiConstants.SessionId) , ex);
+                                    StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadById(19));
+                                    StateService.SetValue("AffiliateSessionSource", "SessionHitEx!!" + ex.Message + " at " + sessionId + Pipe + 19);
+                                    ss.Append($" ERROR! Hit ex {ex.Message} at {sessionId}");
+
+                                    logger.Fatal("SessionStart: FindAffiliateForSession " + StateService.GetValue<string>(WebUiConstants.SessionId), ex);
                                 }
                             }
                         }
@@ -403,24 +465,45 @@ namespace CUWebinars.Web
                         {
                             Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
 
+
                             if (!ReferenceEquals(foundAff, null))
                             {
+                                ss.Append($" Found the affiliate to be {foundAff.ttsDomain} at {sessionId}");
+
                                 StateService.SetValue(WebUiConstants.CurrentAffiliate,
                                     affiliateRepository.FindByIdWithIncluding(loadAff));
-                                StateService.SetValue("AffiliateSessionSource", "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff));
+                                StateService.SetValue("AffiliateSessionSource",
+                                    "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff));
 
-                                logger.Info(string.Format("SessionStart: " + StateService.GetValue<string>(WebUiConstants.SessionId) + " Resolving Affiliate via query string with id   {0}", loadAff));
+                                logger.Info(string.Format(
+                                    "SessionStart: " + StateService.GetValue<string>(WebUiConstants.SessionId) +
+                                    " Resolving Affiliate via query string with id   {0}", loadAff));
                             }
                             else
                             {
-                                logger.Info("SessionStart: failed to load idAff code: " +
-                                            HttpContext.Current.Request.Url + "_" + StateService.GetValue<string>(WebUiConstants.SessionId));
+                                StateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    affiliateRepository.FindByIdWithIncluding(19));
+                                StateService.SetValue("AffiliateSessionSource",
+                                    "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(19));
+
+                                ss.Append($" Did not find the affiliate {sessionId}");
+
+                                logger.Info("SessionStart: failed to load idAff code: " + sessionId);
                             }
                         }
                         else
                         {
-                            logger.Error("SessionStart: Non-numeric idAff: " +
-                                         HttpContext.Current.Request.QueryString + "_" + StateService.GetValue<string>(WebUiConstants.SessionId));
+                            if (HttpContext.Current != null)
+                            {
+                                logger.Error("SessionStart: Non-numeric idAff: " +
+                                             HttpContext.Current.Request.QueryString + "_" + sessionId);
+                                ss.Append($" Did not find the affiliate {sessionId}");
+                            }
+                            else
+                            {
+                                logger.Error("SessionStart: HttpContext was null??!!: " + "_" + sessionId);
+                                ss.Append($" HttpContext was null??!! {sessionId}");
+                            }
                         }
                     }
 
@@ -433,8 +516,7 @@ namespace CUWebinars.Web
                         if (i > 0) allCookies.Append(", ");
                         if (aCookie != null)
                         {
-
-                            allCookies.Append("\"CookieName_" + StateService.GetValue<string>(WebUiConstants.SessionId) + "\": \"" + aCookie.Name);
+                            allCookies.Append("\"CookieName_" + sessionId + "\": \"" + aCookie.Name);
 
                             if (aCookie.HasKeys)
                             {
@@ -446,10 +528,14 @@ namespace CUWebinars.Web
                                 {
                                     string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
                                     string subkeyValue = Server.HtmlEncode(cookieValues[j]);
+                                    ss.Append($"Found cookie {subkeyName} with {subkeyValue}");
+
                                     if (!subkeyName.StartsWith("__") &&
                                         !subkeyName.StartsWith("Fed")
                                     )
                                     {
+                                        ss.Append($"and {subkeyName} with {subkeyValue}");
+
                                         allCookies.Append("\"SubkeyName: \"" + subkeyName);
                                         allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
                                     }
@@ -459,15 +545,25 @@ namespace CUWebinars.Web
                             }
                             else
                             {
+
                                 allCookies.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
+                                ss.Append($"Cookie had no keys at {sessionId}");
                             }
                         }
                     }
 
                     StateService.SetValue(WebUiConstants.FirstCookies, allCookies.ToString());
-                    if (User.Identity.IsAuthenticated)
+                    if (User == null)
+                        ss.Append(" User is found to be null!! " + sessionId);
+                    if (User != null && User.Identity.IsAuthenticated)
                     {
                         logger.Info("Authenticated Session Starts with: {\"Name\": \"" + User.Identity.Name
+                                    + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                    + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                    + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                        );
+                        ss.Append(" Authenticated Session Starts with: {\"Name\": \"" + User.Identity.Name
                                     + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
                                     + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
                                     + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
@@ -484,7 +580,17 @@ namespace CUWebinars.Web
                                     + "\", \"FirstCookies\": {" +
                                     StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
                         );
+                        ss.Append(" Anon Session Starts with: {"
+                                    + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                    + "\", \"QueryString\": \"" +
+                                    StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                    + "\", \"FirstCookies\": {" +
+                                    StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
+                        );
                     }
+                    logger.Info("SessionStart ss.EndUpWith: " + ss.ToString());
+
                 }
                 catch (Exception exception)
                 {
@@ -496,6 +602,7 @@ namespace CUWebinars.Web
                     //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
                     ttsWebinarsContext.Dispose();
                 }
+
             } //ends attempt to filter bots
             else
             {
@@ -510,90 +617,6 @@ namespace CUWebinars.Web
 
         private void Session_End(object sender, EventArgs e)
         {
-
-            //var ttsWebinarsContext = new TTSWebinarsContext();
-            //try
-            //{
-            //    IAffiliateRepository affiliateRepository = new AffiliateRepository(ttsWebinarsContext);
-            //    IWebUserRepository webUserRepository = new WebUserRepository(ttsWebinarsContext);
-            //    IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
-
-
-            //    var allCookiesEnder = new StringBuilder();
-
-            //    for (var i = 0; i < Request.Cookies.Count; i++)
-            //    {
-            //        HttpCookie aCookie = Request.Cookies[i];
-
-            //        if (i > 0) allCookiesEnder.Append(", ");
-            //        if (aCookie != null)
-            //        {
-
-            //            allCookiesEnder.Append("\"CookieName\": \"" + aCookie.Name);
-
-            //            if (aCookie.HasKeys)
-            //            {
-            //                NameValueCollection cookieValues = aCookie.Values;
-
-            //                string[] cookieValueNames = cookieValues.AllKeys;
-            //                allCookiesEnder.Append("\":  {\"SubKeys:\"");
-            //                for (int j = 0; j < cookieValues.Count; j++)
-            //                {
-            //                    string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
-            //                    string subkeyValue = Server.HtmlEncode(cookieValues[j]);
-            //                    if (!subkeyName.StartsWith("__") &&
-            //                        !subkeyName.StartsWith("Fed")
-            //                    )
-            //                    {
-            //                        allCookiesEnder.Append("\"SubkeyName: \"" + subkeyName);
-            //                        allCookiesEnder.Append("\", \"SubkeyValue: \"" + subkeyValue);
-            //                    }
-            //                }
-            //                allCookiesEnder.Append("\"},");
-
-            //            }
-            //            else
-            //            {
-            //                allCookiesEnder.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
-            //            }
-            //            logger.Info("SessionEnder: " + allCookiesEnder);
-            //        }
-            //    }
-
-            //    if (User.Identity.IsAuthenticated)
-            //    {
-            //        logger.Info("{\"NameEnder\": \"" + User.Identity.Name
-            //                    + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-            //                    + "\", \"QueryString\": \"" +
-            //                    StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-            //                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-            //                    + "\", \"FirstCookies\": {" +
-            //                    StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-            //        );
-            //    }
-            //    else
-            //    {
-            //        logger.Info("Anon Session ENDS with: {"
-            //                    + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-            //                    + "\", \"QueryString\": \"" +
-            //                    StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-            //                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
-            //                    + "\", \"FirstCookies\": {" +
-            //                    StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-            //        );
-            //    }
-
-            //}
-            //catch (Exception exception)
-            //{
-            //    logger.Fatal("SessionEND Exception!!!", exception);
-            //    Console.WriteLine(exception);
-            //}
-            //finally
-            //{
-            //    //ttsWebinarsContext.Database.Connection.Close(); --> THIS LINE PROBABLY NOT NECESSARY. DISPOSE SHOULD DO THIS FOR US.
-            //    ttsWebinarsContext.Dispose();
-            //}
         }
     }
 }

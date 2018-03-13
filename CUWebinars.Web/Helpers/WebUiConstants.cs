@@ -46,6 +46,7 @@ namespace CUWebinars.Web.Helpers
         public const string SessionRoot = "SessionRoot";
         public const string FirstCookies = "FirstCookies";
         public const string InitialQueryString = "InitialQueryString";
+        public const string Ip = "Ip";
         //depricated
         //public const string SubdomainBranding = "SubdomainBranding";
 
@@ -59,6 +60,6 @@ namespace CUWebinars.Web.Helpers
         public const string AnonUserEmail = "AnonUserEmail";
         public const string PayTraceSubmit = "PayTraceSubmit";
         public const string RemoteAddress = "RemoteAddress";
-
+        
     }
 }

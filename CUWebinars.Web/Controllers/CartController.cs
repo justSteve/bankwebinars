@@ -714,18 +714,18 @@ namespace CUWebinars.Web.Controllers
             if (model == null) throw new ArgumentNullException("model");
             try
             {
+                var sessionAff = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
                 if (ID != null && ID > 0)
                 {
                     var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
-                    var sessionAff = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-                    if (sessionAff != null && (sessionAff.idUserAff != order.Affiliate.idUserAff) ||
-                        sessionAff.idUserAff != order.idAffiliate)
+                    if (sessionAff != null && (sessionAff.idUserAff != order.Affiliate.idUserAff ||
+                                               sessionAff.idUserAff != order.idAffiliate))
                     {
                         _logger.Fatal("CheckoutConfirm has MISMATCHED AFFILIATE IDS: " + order.idOrder + " SessionAff: " +
                                       sessionAff.idUserAff);
-                        order.Affiliate = sessionAff;
-                        order.idAffiliate = sessionAff.idUserAff;
-                        _cartControllerOrchestrator.SaveOrder(order);
+                        //order.Affiliate = sessionAff;
+                        //order.idAffiliate = sessionAff.idUserAff;
+                        //_cartControllerOrchestrator.SaveOrder(order);
                     }
                     var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                     ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;

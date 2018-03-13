@@ -16,6 +16,11 @@ namespace CUWebinars.Web.App_Start
                 url: "{page}.php",
                 defaults: new { controller = "Home", action = "Index", page = UrlParameter.Optional }
             );
+            routes.MapRoute(
+                name: "blog",
+                url: "blog",
+                defaults: new { controller = "Home", action = "Index", page = UrlParameter.Optional }
+            );
             //replicates legacy's generic connection info endpoint
             routes.MapRoute(
                     "WebinarDetails1",

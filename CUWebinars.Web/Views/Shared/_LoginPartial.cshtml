@@ -67,7 +67,7 @@
                         <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Release]</a>
                     }
 
-                    @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) == null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Admin) == null)
+                    @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) == null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) != null)
                     {
                         <span id="shoppingCartInHeader"><a id="btnLogin" href="@Url.Action("Checkout", "Cart")"><i class="icon-large icon-shopping-cart"></i></a></span>
                     }
