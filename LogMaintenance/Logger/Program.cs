@@ -88,28 +88,6 @@ namespace LogMaintenance.Logger
 
             //BuildIISLog();
             BuildLog4Net();
-            // Get list of files in the specific directory.
-            // ... Please change the first argument.
-            //Uri blob = null;
-
-            //try
-            //{
-            //    //https://storeforbw.blob.core.windows.net/sitelogbw/BANKWEBINARS33/2018/03/10/15/2e933b.log
-            //    var blobTest = BlobHelper.GetBlob("sitelogbw", "BANKWEBINARS33/" + MapUtcToYear + "/" + MapUtcToMonth + "/" + MapUtcToDay + "/" + MapUtcToHour, "2e933b.log");
-            //    if (blobTest != null)
-            //    {
-            //        blob = Helpers.BlobHelper.GetInvoiceForPage(blobTest.FileName);
-            //     var lpOutput =   RunCmd("logparser select[date] ,[time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User - Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
-            //            "http://storeforbw.blob.core.windows.net/sitelogbw/BANKWEBINARS33/2018/03/10/15/2e933b.log" +
-            //            "'\" -i:W3C -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=E:\\Users\\Steve\\seeder.mdf;Integrated Security = True; Connect Timeout = 30;", "");
-            //        Console.WriteLine(lpOutput);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.FatalException("Get Log: ", ex);
-            //}
-
         }
         static long CountLinesInFile(string f)
         {
@@ -128,89 +106,22 @@ namespace LogMaintenance.Logger
         {
             //string[] files = Directory.GetFiles
             //File.Delete("C:\\Users\\steve\\Desktop\\logfiles\\Output.txt");
-            string outputFile = ("C:\\Users\\steve\\Desktop\\logfiles\\Output1.txt");
-            var f = "C:\\Users\\steve\\Desktop\\logfiles\\log4netCSV1.log";
-            //var f = "C:\\Users\\steve\\Desktop\\logfiles\\tester.log";
-            var totalLines = CountLinesInFile(f);
-            var currentLine = 0;
-            //using (StreamReader r = new StreamReader(f))
-            //{
-            //    try
-            //    {
-            //        string line;
-            //        string tempLine = "";
-            //        bool IsInACSImported = false;
-            //        while ((line = r.ReadLine()) != null)
-            //        {
-            //            currentLine++;
-            //            if (IsInACSImported)
-            //            {
-            //                if (!line.StartsWith("\"2018"))
-            //                {
-            //                    var a = 3;
-            //                }
-            //                else
-            //                {
-            //                    tempLine = "";
-            //                    IsInACSImported = false;
-            //                }
-            //            }
-            //            else
-            //            {
-            //                IsInACSImported = false;
+            string outputFile = ("C:\\Users\\steve\\Desktop\\logfiles\\Output.txt");
+            var f = "C:\\Users\\steve\\Desktop\\logfiles\\log4netCSV.log";
 
-            //                if (tempLine == "")
-            //                    tempLine = line;
+            string str = File.ReadAllText("C:\\Users\\steve\\Desktop\\logfiles\\Output.txt", Encoding.ASCII);
+            var filePath = "C:\\Users\\steve\\Desktop\\logfiles\\Output1.txt";
 
-            //                if (line != "DateTime,Thread,Level,Logger,Message,Exception")
-            //                {
-            //                    if (line.Contains("ACS Imported:"))
-            //                    {
-            //                        IsInACSImported = true;
-            //                    }
-            //                    else
-            //                    {
-            //                        Debug.WriteLine(currentLine + " of " + totalLines);
-            //                        if (tempLine.StartsWith("\"2018"))
-            //                        {
-            //                            using (StreamWriter sw = File.AppendText(outputFile))
-            //                            {
-            //                                sw.WriteLine(tempLine);
-            //                            }
-            //                            tempLine = "";
-            //                        }
-            //                        else
-            //                        {
-            //                            tempLine += line;
-            //                        }
-            //                    }
-            //                }
-            //                else
-            //                {
-            //                    tempLine = "";
-            //                }
-            //            }
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Console.WriteLine(e);
-            //        throw;
-            //    }
-            //}
-            string str = File.ReadAllText("C:\\Users\\steve\\Desktop\\logfiles\\Output.txt");
-            
-            Regex rx = new Regex("(?m)\r?\n^(?!\"2018)", RegexOptions.Singleline);
+            string pattern = @"(?m)\r?\n^(?!""2018)";
+            string substitution = @"";
             //Regex rx = new Regex("(?m)\r?\n^(?!\"2018)", RegexOptions.Singleline);
 
-            str = rx.Replace(str, "\"2018");
-            
-            File.WriteAllText("C:\\Users\\steve\\Desktop\\logfiles\\test1.txt", str);
+            Regex regex = new Regex(pattern);
+            string result = regex.Replace(str.ToString(), substitution);
 
+            File.WriteAllText("C:\\Users\\steve\\Desktop\\logfiles\\test1.txt", result);
 
-            //var lpOutput = RunCmd("logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception,\'\' into z_OrderSynch FROM '" +
-            //                      file +
-            //                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=E:\\Users\\Steve\\seeder.mdf;Integrated Security = True; Connect Timeout = 30;", "");
+            var lpOutput = RunCmd("logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception,\'\' into SiteLog FROM 'C:\\Users\\steve\\Desktop\\logfiles\\Output.txt'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=E:\\Users\\Steve\\seeder.mdf;Integrated Security = True; Connect Timeout = 30;", "");
             //Debug.WriteLine(lpOutput);
 
         }
@@ -224,7 +135,7 @@ namespace LogMaintenance.Logger
             // Display all the files.
             foreach (string file in files)
             {
-                var lpOutput = RunCmd("logparser \"select[date] ,[time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
+                var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
                                       file +
                                       "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=E:\\Users\\Steve\\seeder.mdf;Integrated Security = True; Connect Timeout = 30;", "");
                 Debug.WriteLine(lpOutput);

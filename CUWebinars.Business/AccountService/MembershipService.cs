@@ -128,10 +128,7 @@ namespace CUWebinars.Business.AccountService
                 .Where(c => c.Type == ClaimTypes.PostEventMaterials || c.Type == ClaimTypes.PostEventMaterialsExtended).ToList();
             foreach (var claim in claimsForOrder)
             {
-                // extract the date
-                _logger.Warn("RemovePostEventClaimByEvent: " + idOrder);
                 RemoveClaim(userAccount.Tenant, userAccount.Email, ClaimTypes.PostEventMaterials, claim.Value);
-
             }
         }
 
@@ -657,7 +654,7 @@ namespace CUWebinars.Business.AccountService
 
         public bool UserHasWsp(int idUser)
         {
-           return _webUserRepository.UserHasWsp(idUser);
+            return _webUserRepository.UserHasWsp(idUser);
 
 
         }

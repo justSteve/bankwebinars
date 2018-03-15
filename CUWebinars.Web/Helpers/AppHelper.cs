@@ -737,6 +737,7 @@ namespace CUWebinars.Web.Helpers
             fields.FirstName = order.FirstName;
             fields.LastName = order.LastName;
             fields.ShowTimeZone = order.WebUser.timeZone.ToString();
+            fields.WSPCode = row.Discount.DiscountCode;
 
             var hoursAdjust = row.Webinar.Date;
 

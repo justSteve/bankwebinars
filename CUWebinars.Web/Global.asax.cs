@@ -344,7 +344,8 @@ namespace CUWebinars.Web
             if (ua == null)
                 ua = "bot";
             bool iscrawler = Regex.IsMatch(ua,
-                @"bot|crawler|baiduspider|80legs^|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
+                @"search|spider|crawl|Bot|Monitor|BrowserMob|BingPreview|PagePeeker|WebThumb|URL2PNG|ZooShot|GomezA|Google SketchUp|Read Later|KTXN|KHTE|Keynote|Pingdom|AlwaysOn|zao|borg|oegp|silk|Xenu|zeal|NING|htdig|lycos|slurp|teoma|voila|yahoo|Sogou|CiBra|Nutch|Java|JNLP|Daumoa|Genieo|ichiro|larbin|pompos|Scrapy|snappy|speedy|vortex|favicon|indexer|Riddler|scooter|scraper|scrubby|WhatWeb|WinHTTP|voyager|archiver|Icarus6j|mogimogi|Netvibes|altavista|charlotte|findlinks|Retreiver|TLSProber|WordPress|wsr-agent|http client|Python-urllib|AppEngine-Google|semanticdiscovery|facebookexternalhit|web/snippet|Google-HTTP-Java-Client",
+                //@"bot|crawler|baiduspider|80legs^|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
                 RegexOptions.IgnoreCase);
             if (!iscrawler)
             {

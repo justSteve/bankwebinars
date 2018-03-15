@@ -387,6 +387,7 @@ namespace CUWebinars.Business.Repository
 
         public int? GetNextCompliancePerspectives()
         {
+
             var item = items.Where(w => w.Status == WebinarStatus.Scheduled
                                            || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress)
                                           .Where(w => w.Title.StartsWith("Compliance Perspectives"))

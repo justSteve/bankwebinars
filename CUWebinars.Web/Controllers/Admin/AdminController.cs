@@ -2307,8 +2307,8 @@ namespace CUWebinars.Web.Controllers.Admin
             if (flag)
             {
                 //adjust for Daylight Savings
-                //theTime = (int)affiliate.WebUser.timeZone + 1;
-                theTime = (int)affiliate.WebUser.timeZone;
+                theTime = (int)affiliate.WebUser.timeZone + 1;
+                //theTime = (int)affiliate.WebUser.timeZone;
             }
             if (sendDate.Contains("-"))
             {
