@@ -82,8 +82,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logger\Helpers\LoggerHelper.cs" />
-    <Compile Include="Logger\Program.cs" />
+    <Compile Include="DataOperations.cs" />
+    <Compile Include="LoggerHelper.cs" />
+    <Compile Include="program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

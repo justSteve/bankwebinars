@@ -737,7 +737,8 @@ namespace CUWebinars.Web.Helpers
             fields.FirstName = order.FirstName;
             fields.LastName = order.LastName;
             fields.ShowTimeZone = order.WebUser.timeZone.ToString();
-            fields.WSPCode = row.Discount.DiscountCode;
+            if (row.Discount != null)
+                fields.WSPCode = row.Discount.DiscountCode;
 
             var hoursAdjust = row.Webinar.Date;
 
@@ -861,8 +862,8 @@ namespace CUWebinars.Web.Helpers
                     TenantURL + "/Resume/" + order.idOrder +
                     "'>" + " We'll be happy to adjust your registration.</a> ";
             }
-            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no" && 
-                !row.Webinar.Title.Contains("Compliance Perspectives") )
+            else if (row.RegistrationType.ShowShippedNotifications.ToLower() == "no" &&
+                !row.Webinar.Title.Contains("Compliance Perspectives"))
             {
                 fields.RegDesc =
                     "Your registration includes access to the recording and handouts for six (6) months. <a href='" +

@@ -36,6 +36,7 @@ using CUWebinars.Web.Models.JsonModels;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
+using Microsoft.ApplicationInsights;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
@@ -45,9 +46,11 @@ using PostEventClaim = CUWebinars.Business.Services.PostEventClaim;
 namespace CUWebinars.Web.Controllers
 {
     [ElmahHandleError]
+
     //[System.Web.Mvc.Authorize]
     public class AccountController : Controller
     {
+        private TelemetryClient telemetry = new TelemetryClient();
         private const string ManageActionName = "Manage";
         private const string LoggedInResult = "LoggedIn";
         private const string ConfirmedResult = "Confirmed";
@@ -1709,6 +1712,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                     {
+                        telemetry.TrackEvent("cAffilliate=19");
                         _logger.Info("Account.SignIn Post Success in cart.{1} Session={0}",
                             _appHelper.GetUserAuditInfo(), model.Email);
                         WebUser webUser = _accountControllerOrchestrator.GetWebUserByEmail(model.Email);
@@ -1718,6 +1722,7 @@ namespace CUWebinars.Web.Controllers
                             //HeyGeorge: 'assign affiliate' routine is fired
                             if (cAffilliate.idUserAff == 19)
                             {
+                                telemetry.TrackEvent("cAffilliate=19");
                                 _logger.Info(
                                     "SigninFromCart calls DetermineAffiliateByAlternativeMeans where aff=19: " +
                                     webUser.idUser);
@@ -1765,6 +1770,8 @@ namespace CUWebinars.Web.Controllers
                     "The user name or password provided is incorrect."
                 );
             }
+
+            telemetry.TrackEvent("SIFC: Invalid ModelState");
 
             return this.ModelStateJson(ModelState);
         }

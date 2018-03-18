@@ -513,6 +513,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="MyTelemetryInitializer.cs" />
     <Compile Include="Log4NetAspNetProperty.cs" />
     <Compile Include="Helpers\StringSift2.cs" />
     <Compile Include="Models\ParseOrderModel.cs" />
@@ -2195,6 +2196,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.ttsCCS - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>

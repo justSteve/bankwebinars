@@ -33,6 +33,7 @@ using System.IdentityModel.Services;
 using System.IdentityModel.Tokens;
 using Elmah;
 using GemBox.Document;
+using Microsoft.ApplicationInsights;
 using RazorEngine.Compilation.ImpromptuInterface;
 
 namespace CUWebinars.Web
@@ -338,14 +339,15 @@ namespace CUWebinars.Web
         {
             log4net.ThreadContext.Properties["Ip"] = Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
         }
+        private TelemetryClient telemetry = new TelemetryClient();
         private void Session_Start(object sender, EventArgs e)
         {
+            
             var ua = Request.UserAgent;
             if (ua == null)
                 ua = "bot";
             bool iscrawler = Regex.IsMatch(ua,
-                @"search|spider|crawl|Bot|Monitor|BrowserMob|BingPreview|PagePeeker|WebThumb|URL2PNG|ZooShot|GomezA|Google SketchUp|Read Later|KTXN|KHTE|Keynote|Pingdom|AlwaysOn|zao|borg|oegp|silk|Xenu|zeal|NING|htdig|lycos|slurp|teoma|voila|yahoo|Sogou|CiBra|Nutch|Java|JNLP|Daumoa|Genieo|ichiro|larbin|pompos|Scrapy|snappy|speedy|vortex|favicon|indexer|Riddler|scooter|scraper|scrubby|WhatWeb|WinHTTP|voyager|archiver|Icarus6j|mogimogi|Netvibes|altavista|charlotte|findlinks|Retreiver|TLSProber|WordPress|wsr-agent|http client|Python-urllib|AppEngine-Google|semanticdiscovery|facebookexternalhit|web/snippet|Google-HTTP-Java-Client",
-                //@"bot|crawler|baiduspider|80legs^|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
+                @"search|spider|crawl|Bot|Monitor|BrowserMob|BingPreview|PagePeeker|WebThumb|URL2PNG|ZooShot|GomezA|Google SketchUp|Read Later|KTXN|KHTE|Keynote|Pingdom|AlwaysOn|zao|borg|oegp|silk|Xenu|zeal|NING|htdig|lycos|slurp|teoma|voila|yahoo|Sogou|CiBra|Nutch|Java|JNLP|Daumoa|Genieo|ichiro|larbin|pompos|Scrapy|snappy|speedy|vortex|favicon|indexer|Riddler|scooter|scraper|scrubby|WhatWeb|WinHTTP|voyager|archiver|Icarus6j|mogimogi|Netvibes|altavista|charlotte|findlinks|Retreiver|TLSProber|WordPress|wsr-agent|http client|Python-urllib|AppEngine-Google|semanticdiscovery|facebookexternalhit|web/snippet|Google-HTTP-Java-Client|bot|crawler|baiduspider|80legs^|ia_archiver|voyager|curl|wget|yahoo! slurp|mediapartners-google",
                 RegexOptions.IgnoreCase);
             if (!iscrawler)
             {
@@ -353,6 +355,7 @@ namespace CUWebinars.Web
                 if (userIp == null)
                     userIp = "na";
                 StateService.SetValue(WebUiConstants.Ip, userIp);
+                var appInsightUser = new MyTelemetryInitializer();
 
                 //GlobalContext.Properties["Ip"] = new GetCurrentIp();
                 var userName = "anon";

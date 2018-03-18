@@ -1625,8 +1625,8 @@ namespace CUWebinars.Business.Core
                                 {
                                     //reader.GetInt32(0), reader.GetDecimal(1)));
                                     idWebinar = reader.GetInt32(0);
-                                    date = reader.GetDateTime(1);
-                                    var timeToStartWebinar = date.AddMinutes(-30) - DateTime.Now;
+                                    //date = reader.GetDateTime(1);
+                                    //var timeToStartWebinar = date.AddMinutes(-30) - DateTime.Now;
                                     //AddMessage(idWebinar.ToString(), timeToStartWebinar);
                                 }
                             }

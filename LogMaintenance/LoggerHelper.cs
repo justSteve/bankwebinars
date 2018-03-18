@@ -8,7 +8,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 //using Microsoft.WindowsAzure.StorageClient;
 
-namespace LogMaintenance.Logger.Helpers
+namespace LogMaintenance
 {
     public class BlobFileInfo
     {
@@ -56,7 +56,7 @@ namespace LogMaintenance.Logger.Helpers
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
 
             //// Retrieve reference to a previously created container.
-            CloudBlobContainer container = blobClient.GetContainerReference("invoicesprivate");
+            CloudBlobContainer container = blobClient.GetContainerReference(containerName);
             var blobs = container.ListBlobs(null, false).ToList();
             // Loop over items within the container and output the length and URI.
             foreach (IListBlobItem item in container.ListBlobs(null, false))
@@ -93,71 +93,12 @@ namespace LogMaintenance.Logger.Helpers
                     Console.WriteLine("Directory: {0}", directory.Uri);
                 }
             }
-
             return blobInfos;
-        }
-
-
-        public static Uri GetInvoiceForPage(string theFileName)
-        {
-            //Objective is to retrieve a pdf from azure storage 
-            // and to present a link to that file using a 
-            // key presented by this 'readPolicy'
-
-            TtsConfigHelper _ttsConfig = new TtsConfigHelper();
-            var storageCredentials = new StorageCredentials(_ttsConfig.GetStorageAccountName(), _ttsConfig.GetStorageAccessKey());
-
-            var storageAccount = new CloudStorageAccount(storageCredentials, false);
-            CloudBlobClient client = storageAccount.CreateCloudBlobClient();
-
-            // Retrieve reference to a previously created container.
-            CloudBlobContainer container = client.GetContainerReference("sitelog/");
-
-            // Retrieve reference to a blob.
-            ICloudBlob blockBlob = container.GetBlockBlobReference(theFileName.TrimEnd('/'));
-            var readPolicy = blockBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
-            {
-                SharedAccessStartTime = DateTime.UtcNow.AddDays(-1),
-                Permissions = SharedAccessBlobPermissions.Read,
-                SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
-            });
-
-            //return new Uri(blockBlob.Uri.AbsoluteUri + readPolicy);
-            return new Uri(blockBlob.Uri.AbsoluteUri);
-        }
-        public static Uri GetPromosForPage(string theFileName)
-        {
-            //Objective is to retrieve a pdf from azure storage 
-            // and to present a link to that file using a 
-            // key presented by this 'readPolicy'
-
-            TtsConfigHelper _ttsConfig = new TtsConfigHelper();
-            var storageCredentials = new StorageCredentials(_ttsConfig.GetStorageAccountName(), _ttsConfig.GetStorageAccessKey());
-
-            var storageAccount = new CloudStorageAccount(storageCredentials, false);
-            CloudBlobClient client = storageAccount.CreateCloudBlobClient();
-
-            // Retrieve reference to a previously created container.
-            CloudBlobContainer container = client.GetContainerReference("v3generator/");
-
-            // Retrieve reference to a blob.
-            ICloudBlob blockBlob = container.GetBlockBlobReference(theFileName.TrimEnd('/'));
-            var readPolicy = blockBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
-            {
-
-                SharedAccessStartTime = DateTime.UtcNow.AddDays(-1),
-                Permissions = SharedAccessBlobPermissions.Read,
-                SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
-            });
-
-            //return new Uri(blockBlob.Uri.AbsoluteUri + readPolicy);
-            return new Uri(blockBlob.Uri.AbsoluteUri);
         }
 
 
         public static bool BlobExistsOnCloud(string containerName, string dirName, string key)
         {
-
             TtsConfigHelper _ttsConfig = new TtsConfigHelper();
             var storageCredentials = new StorageCredentials(_ttsConfig.GetStorageAccountName(),
                 _ttsConfig.GetStorageAccessKey());
