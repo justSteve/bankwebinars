@@ -1,28 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CUWebinars.Business.Notification;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-//using Microsoft.WindowsAzure.StorageClient;
-
 namespace LogMaintenance
 {
-    public class BlobFileInfo
-    {
-        public string FileName { get; set; }
-        public string BlobPath { get; set; }
-        public string BlobUri { get; set; }
-        public string BlobFilePath { get; set; }
-        public IListBlobItem Blob { get; set; }
-    }
-
     public static class BlobHelper
     {
         // Load blob container
 
+        public static string GetBlobAsFile(string containerName, string filename)
+        {
+
+            TtsConfigHelper _ttsConfig = new TtsConfigHelper();
+
+            var storageCredentials = new StorageCredentials(_ttsConfig.GetStorageAccountName(),
+                _ttsConfig.GetStorageAccessKey());
+
+            var storageAccount = new CloudStorageAccount(storageCredentials, false);
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+
+            // Retrieve reference to a previously created container.
+            CloudBlobContainer container = blobClient.GetContainerReference(containerName);
+
+            // Retrieve reference to a blob named "filename"
+            CloudBlockBlob blockBlob2 = container.GetBlockBlobReference(filename);
+
+            string text;
+            using (var memoryStream = new MemoryStream())
+            {
+                blockBlob2.DownloadToStream(memoryStream);
+                text = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
+            }
+
+            return text;
+        }
 
         public static CloudBlobContainer GetBlobContainer(string containerName)
         {

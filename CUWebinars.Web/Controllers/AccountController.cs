@@ -2190,7 +2190,7 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-                _logger.Info("CheckEmail called: " + email + "| Session=" + _appHelper.GetUserAuditInfo());
+
                 var resultObject = new Dictionary<string, string>();
 
                 if (orderId.HasValue)
@@ -2212,11 +2212,9 @@ namespace CUWebinars.Web.Controllers
                         {
                             resultObject.Add("orderId", foundExistingOrder.idOrder.ToString());
                             resultObject.Add("orderRowId", foundExistingOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow.ToString());
-                            _logger.Info("CheckEmail found existing: " + foundExistingOrder.idOrder + " when checking: " + orderId.Value);
+                            _logger.Info("CheckEmail found existing: " + foundExistingOrder.idOrder + " when checking: " + orderId.Value + " | Session = " + _appHelper.GetUserAuditInfo());
                         }
-
                     }
-
 
                     if (userAcct != null && !userAcct.HasClaim(ClaimTypes.FullName))
                     {

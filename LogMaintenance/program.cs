@@ -16,12 +16,20 @@ namespace LogMaintenance
         public static String MapUtcToDay;
         public static String MapUtcToHour;
         private static readonly ILogger _logger;
+        public static string localDb;
 
 
 
         static void Main(string[] args)
         {
-            GetLog4Net();
+            localDb = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\steve\\Logger.mdf;Integrated Security=True;Connect Timeout=30";
+            //localDb = "Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=bw33;User ID=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
+
+            //GetLog4Net();
+            //Upload();
+            //DownloadIISLog();
+            //GetIISLogs("19");
+            UploadIIS();
             //while (true) // Loop indefinitely
             //{
             //    Console.WriteLine("Enter input:"); // Prompt
@@ -33,16 +41,27 @@ namespace LogMaintenance
             //    if (line == "log4net")
             //        GetLog4Net();
             //    if (line == "iis")
-            //        GetIISLog();
+            //        DownloadIISLog();
             //    if (line == "upload")
             //        Upload();
             //}
         }
 
-        private static void Upload()
+        private static void UploadLog4Net()
         {
-            
+            var dataOperations = new DataOperations(localDb);
+            var idDiscount = dataOperations.UploadLog4Net();
+
         }
+
+        private static void UploadIIS()
+        {
+            var dataOperations = new DataOperations(localDb);
+            var idDiscount = dataOperations.UploadIIS();
+
+        }
+
+
         static long CountLinesInFile(string f)
         {
             long count = 0;
@@ -122,12 +141,53 @@ namespace LogMaintenance
                 File.Delete(outputFile);
 
                 Debug.WriteLine(lpOutput);
+                UploadLog4Net();
+
             }
         }
 
-        private static void GetIISLog()
+        private static void DownloadIISLog()
         {
-            string[] files = Directory.GetFiles("C:\\Users\\steve\\Desktop\\logfiles\\BANKWEBINARS33\\2018\\03\\",
+            MapBase = "BankWebinars";
+            DateTime thisHour = DateTime.UtcNow.AddHours(-1);
+            MapUtcToYear = thisHour.Year.ToString();
+            MapUtcToMonth = thisHour.Month.ToString();
+            if (thisHour.Month < 10)
+                MapUtcToMonth = "0" + MapUtcToMonth;
+
+            MapUtcToDay = thisHour.Date.ToString("dd");
+
+            //subtract an hour to prevent downloading partial logs
+            MapUtcToHour = thisHour.AddHours(-1).Hour.ToString();
+            if (thisHour.Hour < 10)
+                MapUtcToHour = "0" + thisHour.Hour.ToString();
+
+            var blob = BlobHelper.GetBlob("sitelogbw",
+                "BANKWEBINARS33/" + MapUtcToYear + "/" + MapUtcToMonth + "/" + MapUtcToDay + "/" + MapUtcToHour + "/",
+                "2e933b.log");
+
+            var blobAsFile = BlobHelper.GetBlobAsFile("sitelogbw",
+                "BANKWEBINARS33/" + MapUtcToYear + "/" + MapUtcToMonth + "/" + MapUtcToDay + "/" + MapUtcToHour + "/2e933b.log");
+            GetIISLog(blobAsFile);
+        }
+
+        private static void GetIISLog(string text)
+        {
+
+            var myTimeStamp = DateTime.Now.ToShortTimeString();
+            var outputFile = @"C:\Users\steve\Desktop\logfiles\iislog.log";
+            File.WriteAllText(outputFile, text, Encoding.ASCII);
+
+            var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken],1  into SiteLog FROM '" +
+                                      outputFile +
+                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;\"", "");
+            UploadIIS();
+            Debug.WriteLine(lpOutput);
+        }
+
+        private static void GetIISLogs(string userEnteredDay)
+        {
+            string[] files = Directory.GetFiles("C:\\Users\\steve\\Desktop\\logfiles\\BANKWEBINARS33\\2018\\03\\" + userEnteredDay + "\\",
                 "*.log",
                 SearchOption.AllDirectories);
 
@@ -136,10 +196,10 @@ namespace LogMaintenance
             {
                 var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
                                       file +
-                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;", "");
+                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;\"", "");
                 Debug.WriteLine(lpOutput);
 
-                File.Move(file, file.ToString().Replace(".log", ".done"));
+                //File.Move(file, file.ToString().Replace(".log", ".done"));
             }
 
         }
@@ -161,7 +221,7 @@ namespace LogMaintenance
 
                 foreach (string command in commands)
                 {
-                   //var cmd = System.Text.RegularExpressions.Regex.Unescape(command);
+                    //var cmd = System.Text.RegularExpressions.Regex.Unescape(command);
 
                     sw.WriteLine(command);
                 }

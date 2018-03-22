@@ -331,8 +331,11 @@ namespace CUWebinars.Web
             {
                 appErrMsg.Append(" ERROR!! " + e1.Message + " at " + sessionId);
                 Console.WriteLine(e1);
-                
+
+                telemetry.TrackException(e1);
             }
+
+            telemetry.TrackException(Server.GetLastError());
         }
 
         protected void Application_PostAcquireRequestState(object sender, EventArgs e)

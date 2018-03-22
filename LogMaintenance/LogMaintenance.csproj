@@ -82,8 +82,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlobHelper.cs" />
     <Compile Include="DataOperations.cs" />
-    <Compile Include="LoggerHelper.cs" />
     <Compile Include="program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

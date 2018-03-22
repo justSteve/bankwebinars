@@ -5,7 +5,6 @@
     <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <appendToFile value="true"/>
     <threshold value="INFO" />
-    <!--<layout type=" MyApp.Web.CsvLogging.CsvPatternLayout, MyApp.Web">-->
     <layout type=" CUWebinars.Web.CsvPatternLayout, CUWebinars.Web">
       <header value="DateTime,Thread,Level,Logger,Message,Exception&#13;&#10;" />
       <conversionPattern value="%date%newfield[%thread]%newfield %-5level%newfield% %property{Ip} _+ %aspnet-request{ASP.NET_SessionId} _+ %logger %newfield%message%newfield%exception%endrow" />

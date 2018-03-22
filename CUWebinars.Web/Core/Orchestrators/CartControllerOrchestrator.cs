@@ -960,15 +960,18 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var findTmpUser =
                         _membershipService.GetWebUserIdByEmail(
                             string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId),
-                                "@notauthenticated-" + Request.ServerVariables["REMOTE_ADDR"].ToString().Replace(":", "z").Replace(".", "_") + ".com"));
+                                "@notauthenticated-" + Request.ServerVariables["REMOTE_ADDR"].ToString()
+                                    .Replace(":", "z").Replace(".", "_") + ".com"));
                     if (findTmpUser != null && findTmpUser.Value > 0)
                     {
                         webUser = _membershipService.GetWebUserById(findTmpUser.Value);
-                        _logger.Info("Re-used tempUser account: " + _stateService.GetValue<string>(WebUiConstants.SessionId));
+                        _logger.Info("Re-used tempUser account: " +
+                                     _stateService.GetValue<string>(WebUiConstants.SessionId));
                     }
                     else
                     {
-                        _logger.Info("Building tempUser account: " + _stateService.GetValue<string>(WebUiConstants.SessionId));
+                        _logger.Info("Building tempUser account: " +
+                                     _stateService.GetValue<string>(WebUiConstants.SessionId));
 
                         webUser = _membershipService.CreateWebUser(
                             _globals.Tenant,
@@ -976,7 +979,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                             "Authenticated",
                             string.Empty,
                             string.Concat(_stateService.GetValue<string>(WebUiConstants.SessionId),
-                                "@notauthenticated-" + Request.ServerVariables["REMOTE_ADDR"].ToString().Replace(":", "z").Replace(".", "_") + ".com"),
+                                "@notauthenticated-" + Request.ServerVariables["REMOTE_ADDR"].ToString()
+                                    .Replace(":", "z").Replace(".", "_") + ".com"),
                             USTimeZone.Central,
                             UserType.Customer,
                             _stateService.GetValue<int>("AValidInstitution"),
@@ -987,15 +991,22 @@ namespace CUWebinars.Web.Core.Orchestrators
                     }
                 }
 
-                //_logger.Info("WebUser id is {0}", webUser.idUser);
-                // check for dupe is carried out in the CreateNewOrder method so do not do it here.
-                //var reuseOrder = _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(webinar.idWebinar, webUser.email);
+                _logger.Info("WebUser id is {0}", webUser.idUser);
+                //check for dupe is carried out in the CreateNewOrder method so do not do it here.
 
-                //Order newOrder = new Order();
-                //if (reuseOrder> 0)
-                //    newOrder = _orderManagementService.GetOrderById(reuseOrder);
+                var reuseOrder =
+                    _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(webinar.idWebinar, webUser.email);
 
-                var newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+                Order newOrder = new Order();
+                if (reuseOrder > 0)
+                {
+                    newOrder = _orderManagementService.GetOrderById(reuseOrder);
+                }
+                else
+                {
+                    newOrder = _orderManagementService.CreateNewOrder(affiliate, webUser, webinar, orderRow);
+                }
+
                 if (newOrder.AuditInfo != null)
                 {
                     _logger.Warn("CreateNewOrder: non-null AuditInfo: " + orderRow.idOrderRow + " - " + newOrder.AuditInfo + " is now: " + _appHelper.GetUserAuditInfo());
