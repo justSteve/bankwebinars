@@ -81,9 +81,9 @@ namespace LogMaintenance
                 using (var getUnParsedLogs = new SqlCommand())
                 {
                     getUnParsedLogs.Connection = sqlConnection;
-                    getUnParsedLogs.CommandType = CommandType.Text;
-                    getUnParsedLogs.CommandText =
-                        " SELECT * FROM dbo.Log4Net WHERE Logger LIKE '%|%'; ";
+                    getUnParsedLogs.CommandType = CommandType.StoredProcedure;
+                    getUnParsedLogs.CommandText = "PrepLog4NetImport";
+
                     DateTime DateTime;
                     var Thread = "";
                     var Level = "";
@@ -102,8 +102,6 @@ namespace LogMaintenance
                             {
                                 while (reader.Read())
                                 {
-                                    //reader.GetInt32(0), reader.GetDecimal(1)));
-
                                     DateTime = reader.GetDateTime(0);
                                     Thread = reader.GetString(1);
                                     Level = reader.GetString(2);
@@ -113,23 +111,27 @@ namespace LogMaintenance
                                     ipAddress = reader.GetString(3).Split('|')[0];
                                     idSession = reader.GetString(3).Split('|')[1];
 
-                                    InsertUserSession(DateTime, Thread, Level, Logger, Message, Exception, ipAddress,
+                                    InsertLog4NetParsed(DateTime, Thread, Level, Logger, Message, Exception, ipAddress,
                                         idSession);
                                 }
                             }
                         }
+                        getUnParsedLogs.CommandType = CommandType.Text;
+                        getUnParsedLogs.CommandText = "update dbo.Log4Net set Logger = Replace(Logger, \' _+ \', \'~\') WHERE Logger LIKE \'%|%\'";
+                        getUnParsedLogs.ExecuteNonQuery();
+
                     }
                     catch (Exception ex)
                     {
-                        throw;
+                        returnLable = "error on UploadLog4Net: " +  ex.Message;
+                        //throw;
                     }
                     return returnLable;
-
                 }
             }
         }
 
-        private string InsertUserSession(DateTime dateTime, string thread
+        private string InsertLog4NetParsed(DateTime dateTime, string thread
             , string level, string logger
             , string message, string exception
             , string ipAddress, string idSession)
@@ -139,14 +141,12 @@ namespace LogMaintenance
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-                // new SqlCommand("GetAuditNotes", sqlConnection))
 
                 using (var getUnParsedLogs = new SqlCommand())
                 {
                     getUnParsedLogs.Connection = sqlConnection;
-                    getUnParsedLogs.CommandType = CommandType.Text;
-                    getUnParsedLogs.CommandText =
-                        " SELECT * FROM dbo.Log4Net WHERE Logger LIKE '%|%'; ";
+                    getUnParsedLogs.CommandType = CommandType.StoredProcedure;
+                    getUnParsedLogs.CommandText = "InsertLog4NetParsed";
 
                     var dateTimeParam = new SqlParameter
                     {
@@ -244,10 +244,9 @@ namespace LogMaintenance
                     getUnParsedLogs.Connection = sqlConnection;
                     getUnParsedLogs.CommandType = CommandType.Text;
                     getUnParsedLogs.CommandText =
-                        " SELECT * FROM dbo.SiteLog WHERE time != '' ";
+                        " SELECT * FROM dbo.SiteLog WHERE [s-Sitename] = 'BANKWEBINARS33'  ";
                     try
                     {
-
                         using (var reader = getUnParsedLogs.ExecuteReader())
                         {
                             while (reader.Read())
@@ -303,6 +302,12 @@ namespace LogMaintenance
                                                 }
                                                 if (name == "ASP.NET_SessionId")
                                                     sessionId = value;
+
+                                                var insertCookie = InsertUserSessionCookies(name, value, Id);
+                                                if (insertCookie != "")
+                                                {
+                                                    returnLable.AppendLine("on inserting Cookie: " + insertCookie);
+                                                }
                                             }
                                         }
                                     }
@@ -316,6 +321,8 @@ namespace LogMaintenance
                                         "," + sc_Win32Status + ")";
 
                                     var insertAttempt = InsertUserSessionRecord(updateSiteLog.ToString());
+                                    if (insertAttempt != "")
+                                        returnLable.AppendLine("on inserting id: " + Id + " error: " + insertAttempt);
                                 }
                             }
                         }
@@ -333,7 +340,7 @@ namespace LogMaintenance
                     insertParsedLogs.Connection = sqlConnection;
                     insertParsedLogs.CommandType = CommandType.Text;
                     insertParsedLogs.CommandText =
-                        " update dbo.SiteLog set time = '' WHERE time != '' ";
+                        " update dbo.SiteLog set [s-Sitename] = 'parsed' ";
 
                     try
                     {
@@ -350,6 +357,35 @@ namespace LogMaintenance
                 }
             }
             return returnLable.ToString();
+        }
+
+        private string InsertUserSessionCookies(string name, string value, int id)
+        {
+            var returnLable = "";
+            try
+            {
+                using (var sqlConnection = new SqlConnection(_connectionString))
+                {
+                    sqlConnection.Open();
+                    var updateSiteLog = "";
+                    using (var getUnParsedLogs = new SqlCommand())
+                    {
+                        getUnParsedLogs.Connection = sqlConnection;
+                        getUnParsedLogs.CommandType = CommandType.Text;
+                        getUnParsedLogs.CommandText = updateSiteLog =
+                                "INSERT INTO[dbo].[UserSessionCookies]([Name],[Value],[idSiteLog])" +
+                                "VALUES('" + name + "','" + value + "'," + id + ")";
+
+                        getUnParsedLogs.ExecuteNonQuery();
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                returnLable = e.Message;
+            }
+            return returnLable;
         }
 
         private string InsertUserSessionRecord(string updateSiteLog)

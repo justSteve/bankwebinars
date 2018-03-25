@@ -84,7 +84,7 @@
   <ItemGroup>
     <Compile Include="BlobHelper.cs" />
     <Compile Include="DataOperations.cs" />
-    <Compile Include="program.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

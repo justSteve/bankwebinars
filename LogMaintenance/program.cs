@@ -25,11 +25,11 @@ namespace LogMaintenance
             localDb = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\steve\\Logger.mdf;Integrated Security=True;Connect Timeout=30";
             //localDb = "Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=bw33;User ID=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
 
-            //GetLog4Net();
+            GetLog4Net();
             //Upload();
             //DownloadIISLog();
             //GetIISLogs("19");
-            UploadIIS();
+            //UploadIIS();
             //while (true) // Loop indefinitely
             //{
             //    Console.WriteLine("Enter input:"); // Prompt
@@ -50,15 +50,23 @@ namespace LogMaintenance
         private static void UploadLog4Net()
         {
             var dataOperations = new DataOperations(localDb);
-            var idDiscount = dataOperations.UploadLog4Net();
+            var uploadLog4Net = dataOperations.UploadLog4Net();
+            var myTimeStamp = DateTime.Now.ToShortDateString() + "_"
+                              + DateTime.Now.ToShortTimeString();
 
+            var outputFile = @"C:\Users\steve\Desktop\logfiles\UploadLog4Net_" + myTimeStamp.ToString().Replace("/", "_").Replace(":", "_") + ".txt";
+            File.WriteAllText(outputFile, uploadLog4Net, Encoding.ASCII);
         }
 
         private static void UploadIIS()
         {
             var dataOperations = new DataOperations(localDb);
-            var idDiscount = dataOperations.UploadIIS();
+            var updateIIS = dataOperations.UploadIIS();
+            var myTimeStamp = DateTime.Now.ToShortDateString() + "_"
+                + DateTime.Now.ToShortTimeString();
 
+            var outputFile = @"C:\Users\steve\Desktop\logfiles\UploadIIS_" + myTimeStamp.ToString().Replace("/","_").Replace(":","_") + ".txt";
+            File.WriteAllText(outputFile, updateIIS, Encoding.ASCII);
         }
 
 
@@ -124,8 +132,9 @@ namespace LogMaintenance
             // Display all the files.
             foreach (string file in files)
             {
+               var _file = "log4netCSVlocal.log20180320";
                 string str = "DateTime,Thread,Level,Logger,Message,Exception\r\n";
-                str += File.ReadAllText(file, Encoding.ASCII);
+                str += File.ReadAllText(_file, Encoding.ASCII);
 
                 File.Move(file, file.ToString().Replace(".log", ".done"));
 
@@ -138,7 +147,12 @@ namespace LogMaintenance
                 File.WriteAllText(outputFile, "DateTime,Thread,Level,Logger,Message,Exception\r\n", Encoding.ASCII);
                 File.WriteAllText(outputFile, result, Encoding.ASCII);
                 var lpOutput = RunCmd("logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception  into Log4Net FROM '" + outputFile + "\"' -i:CSV -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=c:\\Users\\Steve\\Logger.mdf;Integrated Security = True; Connect Timeout = 30;\"");
-                File.Delete(outputFile);
+                //File.Delete(outputFile);
+
+                if (lpOutput.ToLower().Contains("aborted"))
+                {
+                    var a = 1;
+                }
 
                 Debug.WriteLine(lpOutput);
                 UploadLog4Net();
@@ -199,9 +213,9 @@ namespace LogMaintenance
                                       "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;\"", "");
                 Debug.WriteLine(lpOutput);
 
-                //File.Move(file, file.ToString().Replace(".log", ".done"));
+                File.Move(file, file.ToString().Replace(".log", ".done"));
             }
-
+            UploadIIS();
         }
 
         public static string RunCmd(params string[] commands)

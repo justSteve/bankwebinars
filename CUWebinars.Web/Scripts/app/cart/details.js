@@ -38,7 +38,7 @@ function checkVersion() {
 
 $(function () {
     checkVersion();
-
+    
     if (ieVer === "preIE10")
         $("#iePre10").show();
 
@@ -260,16 +260,31 @@ $(function () {
         shippingAddressRequired = isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = signUpForm.serialize();
+        console.log(data);
+        
+        $('#setCookie').load('/cart/checkoutConfirmSetCookie/?' + data,
+            function (response,
+                status,
+                xhr) {
 
+                if (status === 'error') {
+                    window.Cookies.set('data', data);
+
+                } else {
+                    //primary objective is to set cookie state according to inital button click.
+                    window.Cookies.set('data', response.data);
+                }
+            });
 
         var spinner = $('#signUpSpinner');
         $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
         var loadingSpinner = $('#loadingSpinner');
 
-        // If the user IS NOT LOGGED IN - control moves to the register-during-checkout.js script
+        // If the user IS NOT LOGGED IN - control moves 
+        //    to the register- during - checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
 
-            //Account/Signup2
+            //Cart/Signup2
             $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
@@ -321,7 +336,8 @@ $(function () {
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
-                                $(this).html('<div class="text-error">There has been an error at the server. Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.</div>');
+                                $(this).html('<div class="text-error">There has been an error at the server. ' +
+                                    'Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.</div>');
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTab a').tab('show');
 
@@ -342,7 +358,6 @@ $(function () {
                                 // see top of this file
                                 checkoutConfirm.initialize();
 
-                                console.log('#ConfirmRegistrationBillMe1 ini');
                                 // The Bill Me button on 3rd tab
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
 

@@ -155,8 +155,7 @@ namespace CUWebinars.Business.Services
         string CheckOrderComments();
         decimal CalculateCreditsRemain(Discount userDiscount);
         decimal CalculateCreditsUsed(Discount userDiscount);
-
-        void CreateTestRegistration(Webinar webinar);
+        
         int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
         bool UserHasMultipleEvents(int idUser);
         Order GetOrderByJoinCode(string joinCode);

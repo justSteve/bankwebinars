@@ -515,6 +515,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\CheckoutConfirmCookie.cs" />
     <Compile Include="MyTelemetryInitializer.cs" />
     <Compile Include="Log4NetAspNetProperty.cs" />
     <Compile Include="Helpers\StringSift2.cs" />
@@ -2180,6 +2181,7 @@
     <Content Include="Views\Cart\Partials\CheckoutOptionsCcs.cshtml" />
     <Content Include="Views\Webinar\Partials\PayTraceApproved.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptionsCcs.cshtml" />
+    <Content Include="Views\Cart\Partials\CheckoutConfirmSetCookie.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

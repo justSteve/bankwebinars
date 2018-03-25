@@ -73,7 +73,8 @@ Model.TypeOfDiscount == DiscountType.Subscription
                                     //build table starts here
                                     <table width="1000">
                                         <tr><td>Order ID</td><td>Date</td><td>Email</td><td>Event Title - Date</td><td>Credits Used</td></tr>
-                                        @foreach (var order in @Model.WspUsageSum.Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar != 2520))
+                                        @foreach (var order in @Model.WspUsageSum.Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar != 2520)
+                                            .OrderByDescending(o => o.OrderDate))
                                         {
                                             //these are the rows
                                             <tr>

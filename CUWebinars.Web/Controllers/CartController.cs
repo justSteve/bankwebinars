@@ -32,6 +32,7 @@ using CUWebinars.Web.Models.Importers;
 using CUWebinars.Web.Services;
 using CUWebinars.Web.ViewModel;
 using Elmah;
+using Microsoft.ApplicationInsights;
 using NameParser;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -53,7 +54,7 @@ namespace CUWebinars.Web.Controllers
         private readonly GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
         private bool _disposed;
-
+        private TelemetryClient telemetry = new TelemetryClient();
         public CartController(ILogger logger,
             ICartControllerOrchestrator cartControllerOrchestrator,
             IAppHelper appHelper,
@@ -708,6 +709,12 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/CheckoutOptions", model);
         }
 
+        public ActionResult CheckoutConfirmSetCookie(string data)
+        {
+            var model = new CheckoutConfirmCookieModel();
+            return PartialView("Partials/CheckoutConfirmSetCookie", model);
+        }
+
         public ActionResult CheckoutConfirm(int? ID = null)
         {
             var model = _cartControllerOrchestrator.BuildCheckoutConfirmViewModel(ID);
@@ -723,9 +730,9 @@ namespace CUWebinars.Web.Controllers
                     {
                         _logger.Fatal("CheckoutConfirm has MISMATCHED AFFILIATE IDS: " + order.idOrder + " SessionAff: " +
                                       sessionAff.idUserAff);
-                        //order.Affiliate = sessionAff;
-                        //order.idAffiliate = sessionAff.idUserAff;
-                        //_cartControllerOrchestrator.SaveOrder(order);
+                        order.Affiliate = sessionAff;
+                        order.idAffiliate = sessionAff.idUserAff;
+                        _cartControllerOrchestrator.SaveOrder(order);
                     }
                     var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                     ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
@@ -1683,8 +1690,10 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult Signup2(CheckoutOptionsViewModel formModel)
         {
+            MyTelemetryInitializer telemetry = new MyTelemetryInitializer();
             if (ModelState.IsValid)
             {
+                //telemetry.Initialize();
                 _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
 
                 try
@@ -2068,23 +2077,48 @@ namespace CUWebinars.Web.Controllers
         [HttpPost, ValidateJsonAntiForgeryToken]
         public ActionResult UpdateOrderWithUserId(int? orderId, int? userId)
         {
+
+            // Set up some properties:
+            var properties = new Dictionary<string, string>
+            {
+                {"tenant", _globalConfig.Tenant},
+                {"affiliate", _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).ttsDomain}
+            };
+
+            // Send the event:
+            telemetry.TrackEvent("UpdateOrderWithUserId", properties);
+
             if (orderId.HasValue && userId.HasValue)
             {
-                var oOrder = _cartControllerOrchestrator.GetOrderById(orderId);
-
-                _cartControllerOrchestrator.UpdateOrderWithUserId(orderId.Value, userId.Value);
-                var uOrder = _cartControllerOrchestrator.GetOrderById(orderId);
-
-                if (oOrder.idAffiliate != uOrder.idAffiliate)
+                try
                 {
+                    var oOrder = _cartControllerOrchestrator.GetOrderById(orderId);
 
-                    _stateService.SetValue(WebUiConstants.CurrentAffiliate, uOrder.Affiliate);
-                    _logger.Info("UpdateOrderWithUserId updated the original Affiliate. idOrder: {1}, Affiliate: {2},  Session: {0}",
-                        _appHelper.GetUserAuditInfo(),
-                        uOrder.idOrder, uOrder.Affiliate.ttsDomain
-                    );
+                    _cartControllerOrchestrator.UpdateOrderWithUserId(orderId.Value, userId.Value);
+                    var uOrder = _cartControllerOrchestrator.GetOrderById(orderId);
+
+                    if (oOrder.idAffiliate != uOrder.idAffiliate)
+                    {
+
+                        _stateService.SetValue(WebUiConstants.CurrentAffiliate, uOrder.Affiliate);
+                        _logger.Info("UpdateOrderWithUserId updated the original Affiliate. idOrder: {1}, Affiliate: {2},  Session: {0}",
+                            _appHelper.GetUserAuditInfo(),
+                            uOrder.idOrder, uOrder.Affiliate.ttsDomain
+                        );
+                    }
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success
+                    });
                 }
-                return Json(new { Result = WebUiConstants.Success });
+                catch (Exception e)
+                {
+                    telemetry.TrackException(e, properties);
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Fail
+                    });
+                }
             }
 
             return View();
@@ -2579,7 +2613,7 @@ namespace CUWebinars.Web.Controllers
                 }
                 var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
 
-                if (order == null) throw new ArgumentNullException("order");
+                if (order == null) throw new ArgumentNullException("orderAtPaytracePostback");
                 order.AdminComments = order.AdminComments.Replace("\"PendingPaytraceResponse\"", JsonConvert.SerializeObject(payTraceModel));
 
                 if (payTraceModel.Appmsg.StartsWith("Your TEST transaction was successfully processed.") ||
@@ -2591,7 +2625,8 @@ namespace CUWebinars.Web.Controllers
 
                     var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
-                    Debug.Assert(row != null, "row != null");
+                    if (row == null) throw new ArgumentNullException("rowAtPaytracePostback");
+
                     var createdSeriesOrders = "";
 
                     if (!multi)

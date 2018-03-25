@@ -471,8 +471,7 @@ namespace CUWebinars.Web
                         if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                         {
                             Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
-
-
+                            
                             if (!ReferenceEquals(foundAff, null))
                             {
                                 ss.Append($" Found the affiliate to be {foundAff.ttsDomain} at {sessionId}");
@@ -504,7 +503,7 @@ namespace CUWebinars.Web
                             {
                                 logger.Error("SessionStart: Non-numeric idAff: " +
                                              HttpContext.Current.Request.QueryString + "_" + sessionId);
-                                ss.Append($" Did not find the affiliate {sessionId}");
+                                ss.Append($" Did not find the affiliate in qstring "+ HttpContext.Current.Request.QueryString + "_" + sessionId);
                             }
                             else
                             {

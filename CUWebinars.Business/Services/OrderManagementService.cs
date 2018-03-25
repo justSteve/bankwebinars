@@ -531,33 +531,30 @@ namespace CUWebinars.Business.Services
 
         public Affiliate DetermineAffiliateByAlternativeMeans(int idUser)
         {
+            var buildDABAMStory = new StringBuilder();
+            buildDABAMStory.Append("Starting with " + idUser);
             string cachKey = "webUserId-" + idUser;
             //var affiliateIds = _cachingService.Get(cachKey) as IList<int>;
             IList<int> affiliateIds = null;
 
             if (affiliateIds == null)
             {
-
                 affiliateIds = _orderRepository.FindOrdersByUserId(idUser)
+                    .Where(o => o.idAffiliate != 19)
                     .OrderByDescending(o => o.OrderDate)
-                    .Select(o => o.idAffiliate)
                     .Distinct()
+                    .Select(o => o.idAffiliate)
                     .ToList();
-
             }
 
             if (affiliateIds.Any())
             {
                 try
                 {
-                    _logger.Info("DetermineAffiliateByAlternativeMeans for " + idUser + " found: " + affiliateIds);
-
+                    buildDABAMStory.Append(" found " + string.Join(", ", affiliateIds));
                     //  get the most recent
                     int affiliateIdForOrder, mostRecentAffiliateId;
                     affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
-
-                    var sb = new StringBuilder();
-                    sb.Append("This user: " + _webUserRepository.FindByIdLoaded(idUser).email);
 
                     // The history is of more than 1 affiliate
                     if (affiliateIds.Count() > 1)
@@ -574,34 +571,37 @@ namespace CUWebinars.Business.Services
                         int current = 0;
                         foreach (var group in groups)
                         {
-                            sb.Append("Aff: " + _affiliateRepository.FindById(group.Key).ttsDomain);
-
-                            var ordersByAffForThisUser = _orderRepository.FindOrdersByUserId(idUser)
+                            var ordersByThisAff = _orderRepository.FindOrdersByUserId(idUser)
                                 .Where(o => o.idAffiliate == group.Key
                                             && (o.OrderStatus == OrderStatus.Paid ||
-                                                o.OrderStatus == OrderStatus.Billed))
+                                                o.OrderStatus == OrderStatus.Submitted ||
+                                                o.OrderStatus == OrderStatus.Billed
+                                                ))
                                 .ToList().Count;
+
+                            buildDABAMStory.Append(" Number of orders by " + _affiliateRepository.FindById(group.Key).ttsDomain + " was " + ordersByThisAff);
 
                             numberOfUsesOfMostRecentAffiliate = _orderRepository.FindOrdersByUserId(idUser)
-                                .Where(o => o.idUser == idUser
-                                            && o.idAffiliate == affiliateIds.FirstOrDefault()
+                                .Where(o => o.idAffiliate == affiliateIds.FirstOrDefault()
                                             && (o.OrderStatus == OrderStatus.Paid ||
+                                                o.OrderStatus == OrderStatus.Submitted ||
                                                 o.OrderStatus == OrderStatus.Billed))
                                 .ToList().Count;
 
-                            if (ordersByAffForThisUser > mostUses)
+                            if (ordersByThisAff > mostUses)
                             {
-                                mostUses = ordersByAffForThisUser;
+                                buildDABAMStory.Append(" ordersByThisAff (" + _affiliateRepository.LoadById(group.Key).ttsDomain + " had " + ordersByThisAff
+                                    + ") is > than previous mostUses " + mostUses);
+
+                                mostUses = ordersByThisAff;
                                 mostUsedAffiliateId = group.Key;
                                 affiliateIdForOrder = group.Key;
-                                sb.Append(" ordersByAffForThisUser > mostUses " +
-                                          "- mostUses: " + mostUses + "aff: " + _affiliateRepository.LoadById(group.Key).ttsDomain);
                             }
 
 
                             if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                             {
-                                sb.Append("Awarded to  " + _affiliateRepository.LoadById(group.Key).ttsDomain + " based on mostUses:  >= 2 * numberOfUsesOfMostRecentAffiliate" + mostUses);
+                                //
                                 affiliateIdForOrder = mostUsedAffiliateId;
                             }
                         }
@@ -609,17 +609,13 @@ namespace CUWebinars.Business.Services
                         if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         {
 
-                            sb.Append("Awarded to  "
+                            buildDABAMStory.Append(" based on most uses order is awarded to  "
                                 + _affiliateRepository.LoadById(affiliateIdForOrder).ttsDomain + " based on mostUses:  >= 2 * numberOfUsesOfMostRecentAffiliate" + mostUses);
 
                             _logger.Info("DetermineAffiliateByAlternativeMeans by mostUses: " + idUser + " awarded: " +
                                          mostUsedAffiliateId);
                             affiliateIdForOrder = mostUsedAffiliateId;
                         }
-                        _logger.Error(
-                            "DetermineAffiliateByAlternativeMeans ({1}) found multiple affiliates: {0} Credited to {2}."
-                            , sb.ToString(),
-                            idUser, affiliateIdForOrder, current);
                     }
 
                     var affiliate =
@@ -638,18 +634,19 @@ namespace CUWebinars.Business.Services
                     }
                     _logger.Info("DetermineAffiliateByAlternativeMeans returned: " + affiliate.idUserAff + " for: " +
                                  idUser);
-
+                    _logger.Info(buildDABAMStory.ToString());
                     return affiliate;
-
-
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    buildDABAMStory.Append("  ERROR!! " + e.Message);
+                    _logger.Info(buildDABAMStory.ToString());
                     return GetAffiliateById(19);
                 }
             }
-            _logger.Info("DetermineAffiliateByAlternativeMeans found none: " + idUser);
+
+            buildDABAMStory.Append(" Didn't find any besides 19!");
+            _logger.Info(buildDABAMStory.ToString());
 
             return GetAffiliateById(19); ;
         }
@@ -1460,7 +1457,7 @@ namespace CUWebinars.Business.Services
             order.idAffiliate = DetermineAffiliateByAlternativeMeans(userId).idUserAff;
 
             if (oAffId != order.idAffiliate)
-                order.AuditInfo = "{\"anon user (to " + user.email + ") updates Affiliate from: " + oAffId + "\" to:" + order.idAffiliate + "}";
+                order.AuditInfo = "{\"anon user (to " + user.email + ") updates Affiliate from: " + oAffId + " to: " + order.idAffiliate + "}";
 
             order.idUser = userId;
 
@@ -2417,34 +2414,7 @@ namespace CUWebinars.Business.Services
             return credits;
         }
 
-        public void CreateTestRegistration(Webinar webinar)
-        {
-            var idRegType = GetAllPossibleRegTypesByWebinarId(webinar.idWebinar, false);
 
-            var live_id = 0;
-
-            foreach (var _regType in idRegType)
-            {
-                if (_regType.Key.OptionLabel.Contains("Five"))
-                    live_id = _regType.Key.idRegType;
-                ;
-            }
-
-            var row = CreateOrderRow(webinar, null, live_id);
-            var orders = new List<Order>();
-            var order = CreateNewOrder(_affiliateRepository.FindById(19), GetWebUser(1), webinar, row, "testing");
-
-            AssignWebUserToOrder(GetWebUser(1), order);
-            AssignAffiliateToOrder(19, order);
-
-            order.OrderStatus = OrderStatus.Submitted;
-
-            orders.Add(order);
-
-            FireSendConnectionInfoNotificationEvent(orders, false); // this is where a single email is specified
-
-            DeleteOrder(order.idOrder);
-        }
 
         public int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email)
         {
