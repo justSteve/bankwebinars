@@ -709,10 +709,121 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/CheckoutOptions", model);
         }
 
-        public ActionResult CheckoutConfirmSetCookie(string data)
+        [HttpPost]
+        public ActionResult Logger(string level, string id, string obj)
         {
-            var model = new CheckoutConfirmCookieModel();
-            return PartialView("Partials/CheckoutConfirmSetCookie", model);
+            var guid = Guid.NewGuid();
+            _logger.Warn("Guid: " + guid + ", level: " + level + ", id: " + id + ", ojb:" + obj + ", session: " + _appHelper.GetUserAuditInfo());
+            //var allCookies = new StringBuilder();
+            //var setAffCookie = "";
+            //bool foundStartOrderCookie = false;
+            //var startedCookie = "";
+            //for (var i = 0; i < Request.Cookies.Count; i++)
+            //{
+            //    System.Web.HttpCookie aCookie = Request.Cookies[i];
+
+            //    if (i > 0) allCookies.Append(", ");
+            //    if (aCookie != null && aCookie.Name.StartsWith("OrderStart"))
+            //    {
+            //        foundStartOrderCookie = true;
+            //        startedCookie = aCookie.Value;
+            //    }
+            //}
+
+            //var model = new CheckoutConfirmCookieModel
+            //{
+            //    InitialAffiliate = setAffCookie
+            //};
+            return Json(new
+            {
+                guid
+
+            }, JsonRequestBehavior.AllowGet);
+
+        }
+
+        [HttpPost]
+        public ActionResult CheckoutConfirmSetCookie(CheckoutOptionsViewModel formModel)
+        {
+            var allCookies = new StringBuilder();
+            var setAffCookie = "";
+            bool foundStartOrderCookie = false;
+            var startedCookie = "";
+            for (var i = 0; i < Request.Cookies.Count; i++)
+            {
+                System.Web.HttpCookie aCookie = Request.Cookies[i];
+
+                if (i > 0) allCookies.Append(", ");
+                if (aCookie != null && aCookie.Name.StartsWith("OrderStart"))
+                {
+                    foundStartOrderCookie = true;
+                    startedCookie = aCookie.Value;
+                }
+            }
+            if (!foundStartOrderCookie)
+            {
+                try
+                {
+                    _logger.Info("CheckoutConfirmSetCookie was not found");
+                    var initialAffiliate = _stateService.GetValue<string>("AffiliateSessionSource");
+                    if (initialAffiliate.Contains("QueryString"))
+                    {
+                        var aff = _cartControllerOrchestrator.GetAffiliateById(
+                            Convert.ToInt32(initialAffiliate.Split('|')[1]));
+
+                        if (aff != null)
+                        {
+                            setAffCookie = "AffiliateId=" + aff.idUserAff + "&" + Request.Form.ToString();
+                        }
+                        else
+                        {
+                            _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.FatalException("SetCookie", e);
+                }
+            }
+            else
+            {
+                try
+                {
+                    _logger.Info("CheckoutConfirmSetCookie was found");
+                    //var initialValues = (NameValueCollection)_stateService.GetValue<string>("AffiliateSessionSource");
+                    //if (initialAffiliate.Contains("QueryString"))
+                    //{
+                    //    var aff = _cartControllerOrchestrator.GetAffiliateById(
+                    //        Convert.ToInt32(initialAffiliate.Split('|')[1]));
+
+                    //    if (aff != null)
+                    //    {
+                    //        setAffCookie = "QueryString|" + aff.idUserAff;
+                    //    }
+                    //    else
+                    //    {
+                    //        _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
+                    //    }
+                    //}
+                }
+                catch (Exception e)
+                {
+                    _logger.FatalException("SetCookie", e);
+                }
+            }
+        
+
+        var model = new CheckoutConfirmCookieModel
+            {
+                InitialAffiliate = setAffCookie
+            };
+            return Json(new
+            {
+                model
+
+            }, JsonRequestBehavior.AllowGet);
+
         }
 
         public ActionResult CheckoutConfirm(int? ID = null)
@@ -726,13 +837,15 @@ namespace CUWebinars.Web.Controllers
                 {
                     var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
                     if (sessionAff != null && (sessionAff.idUserAff != order.Affiliate.idUserAff ||
-                                               sessionAff.idUserAff != order.idAffiliate))
+                                               sessionAff.idUserAff != order.idAffiliate
+                                               )
+                                            && order.idAffiliate == 19)
                     {
                         _logger.Fatal("CheckoutConfirm has MISMATCHED AFFILIATE IDS: " + order.idOrder + " SessionAff: " +
                                       sessionAff.idUserAff);
                         order.Affiliate = sessionAff;
                         order.idAffiliate = sessionAff.idUserAff;
-                        _cartControllerOrchestrator.SaveOrder(order);
+                        //_cartControllerOrchestrator.SaveOrder(order);
                     }
                     var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
                     ViewBag.TaxAmount = model.DisplayRowPriceViewModel.PricesAndDiscounts.TaxAmount;
@@ -1690,7 +1803,7 @@ namespace CUWebinars.Web.Controllers
         [HttpPost]
         public ActionResult Signup2(CheckoutOptionsViewModel formModel)
         {
-            MyTelemetryInitializer telemetry = new MyTelemetryInitializer();
+
             if (ModelState.IsValid)
             {
                 //telemetry.Initialize();
@@ -2099,7 +2212,7 @@ namespace CUWebinars.Web.Controllers
 
                     if (oOrder.idAffiliate != uOrder.idAffiliate)
                     {
-
+                        // DetermineAffByAltMeans overwrites aff.
                         _stateService.SetValue(WebUiConstants.CurrentAffiliate, uOrder.Affiliate);
                         _logger.Info("UpdateOrderWithUserId updated the original Affiliate. idOrder: {1}, Affiliate: {2},  Session: {0}",
                             _appHelper.GetUserAuditInfo(),
@@ -2916,6 +3029,7 @@ namespace CUWebinars.Web.Controllers
 
                 if (checkForDupedOrderId > 0)
                 {
+
                     _cartControllerOrchestrator.SetOrderStatus(checkForDupedOrderId, order.BillingEmail,
                         OrderStatus.Canceled);
                     _logger.Warn("BuildRegistrationSummaryMultiViewModel found duped order: " + checkForDupedOrderId + "_" + order.BillingEmail);

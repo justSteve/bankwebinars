@@ -1728,7 +1728,7 @@ namespace CUWebinars.Web.Controllers
                                     webUser.idUser);
 
                                 var affiliate =
-                                    _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+                                    _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser, cAffilliate.idUserAff);
                                 // if null returned, just use whatever is stored in Session for CurrentAffiliate.
                                 //      O/w, set that value.
                                 if (!ReferenceEquals(null, affiliate))

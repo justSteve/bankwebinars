@@ -529,7 +529,7 @@ namespace CUWebinars.Business.Services
             _orderRepository.DeleteOrder(order);
         }
 
-        public Affiliate DetermineAffiliateByAlternativeMeans(int idUser)
+        public Affiliate DetermineAffiliateByAlternativeMeans(int idUser, int sessionAff)
         {
             var buildDABAMStory = new StringBuilder();
             buildDABAMStory.Append("Starting with " + idUser);
@@ -554,7 +554,7 @@ namespace CUWebinars.Business.Services
                     buildDABAMStory.Append(" found " + string.Join(", ", affiliateIds));
                     //  get the most recent
                     int affiliateIdForOrder, mostRecentAffiliateId;
-                    affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
+                    affiliateIdForOrder =  affiliateIds.First();
 
                     // The history is of more than 1 affiliate
                     if (affiliateIds.Count() > 1)
@@ -1452,12 +1452,13 @@ namespace CUWebinars.Business.Services
             var user = _webUserRepository.FindByIdLoaded(userId);
             var order = _orderRepository.FindById(orderId);
             var oAffId = order.idAffiliate;
-            order.AuditInfo = "{\"anon user becomes " + user.email + "\":" + order.AuditInfo + "}";
+            order.AuditInfo = "{\"anon user becomes " + user.email + "\": " + order.AuditInfo + "}";
 
-            order.idAffiliate = DetermineAffiliateByAlternativeMeans(userId).idUserAff;
+            if (orderId == 19)
+            order.idAffiliate = DetermineAffiliateByAlternativeMeans(userId, oAffId).idUserAff;
 
             if (oAffId != order.idAffiliate)
-                order.AuditInfo = "{\"anon user (to " + user.email + ") updates Affiliate from: " + oAffId + " to: " + order.idAffiliate + "}";
+                order.AuditInfo = "{\"anon user (to " + user.email + ") updates Affiliate from: " + oAffId + " to: " + order.idAffiliate + " " + order.AuditInfo + "}";
 
             order.idUser = userId;
 
@@ -2509,18 +2510,21 @@ namespace CUWebinars.Business.Services
                     //list.Where(o => o.B).Select(o => o.Txt))
                     _logger.Warn("UserHasPrexistingOrder: found:" + string.Join(",", byEmail.Select(o => o.idOrder)));
                     var foundPaidOrSubmitted = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
-                    var paidOrSubmitted = foundPaidOrSubmitted as Order[] ?? foundPaidOrSubmitted.ToArray();
+                    var paidOrSubmitted = foundPaidOrSubmitted as Order[] 
+                        ?? foundPaidOrSubmitted.ToArray();
                     if (paidOrSubmitted.Any())
                     {
-                        _logger.Warn("UserHasPrexistingOrder: returnedPaid:" + paidOrSubmitted.FirstOrDefault().idOrder);
+                        _logger.Warn("UserHasPrexistingOrder: returnedPaid: " + paidOrSubmitted.FirstOrDefault()
+                            .idOrder);
                         return paidOrSubmitted.FirstOrDefault();
                     }
 
-                    var foundInProcess = byEmail.Where(o => o.OrderStatus == OrderStatus.InProcess).OrderByDescending(o => o.OrderDate).ToList();
+                    var foundInProcess = byEmail.Where(o => o.OrderStatus == OrderStatus.InProcess)
+                        .OrderByDescending(o => o.OrderDate).ToList();
 
                     if (foundInProcess.Any())
                     {
-                        _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + foundInProcess.FirstOrDefault().idOrder);
+                        _logger.Warn("UserHasPrexistingOrder: returned InProcess: " + foundInProcess.FirstOrDefault().idOrder);
                         return foundInProcess.FirstOrDefault();
                     }
 

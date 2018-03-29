@@ -38,7 +38,7 @@ function checkVersion() {
 
 $(function () {
     checkVersion();
-    
+
     if (ieVer === "preIE10")
         $("#iePre10").show();
 
@@ -171,6 +171,10 @@ $(function () {
     cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
 
 
+    function eraseOrderStartCookie() {
+        window.Cookies.set("OrderStart", "", -1);
+    }
+
     cartStateManager.SetCartState();
 
 
@@ -260,20 +264,13 @@ $(function () {
         shippingAddressRequired = isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = signUpForm.serialize();
-        console.log(data);
-        
-        $('#setCookie').load('/cart/checkoutConfirmSetCookie/?' + data,
+
+        $.post('/cart/checkoutConfirmSetCookie', data,
             function (response,
                 status,
                 xhr) {
-
-                if (status === 'error') {
-                    window.Cookies.set('data', data);
-
-                } else {
-                    //primary objective is to set cookie state according to inital button click.
-                    window.Cookies.set('data', response.data);
-                }
+                //primary objective is to set cookie state according to inital button click.
+                window.Cookies.set('OrderStart', response.model);
             });
 
         var spinner = $('#signUpSpinner');
@@ -291,6 +288,14 @@ $(function () {
                         cartStateManager.setOrderRowId(xhr.responseJSON['orderRowId']);
                         cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
+
+                        var cookieVals = window.Cookies.get("OrderStart");
+
+                        if (cookieVals.length > 0) {
+                            cookieVals = cookieVals.replace("AffiliateId=", "OrderId=" + xhr.responseJSON['orderId'] + "&AffiliateId=")
+                            window.Cookies.set('OrderStart', cookieVals);
+                        }
+
                         $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
                             if (status !== 'error') {
                                 $('#_CreateUserForm input[name="returnUrl"]').val('/Webinar/Details/' + cartStateManager.getWebinarId());
@@ -314,17 +319,16 @@ $(function () {
                         $('#labelEmail').html('<span class="label label-important">&nbsp;There were some problems with the form. Please refer to the items in red.</span>');
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
                         loadingSpinner.remove();
-
                     }
                 } else {
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Server error. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance!</span>');
                     loadingSpinner.remove();
-
                 }
             }, constants.JsonDataType);
         } else {
             // If the user IS LOGGED IN
             $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
+                
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
 
@@ -333,6 +337,13 @@ $(function () {
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
 
+                        var cookieVals = window.Cookies.get("OrderStart");
+
+                        if (cookieVals.length > 0) {
+                            cookieVals = cookieVals.replace("AffiliateId=", "OrderId=" + xhr.responseJSON['orderId'] + "&AffiliateId=")
+                            window.Cookies.set('OrderStart', cookieVals);
+                        }
+
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
                             if (status === 'error') {
@@ -340,8 +351,6 @@ $(function () {
                                     'Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.</div>');
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTab a').tab('show');
-
-
                             } else {
                                 if (DiscountSurcharge === "A $50 surcharge is added for shipping & handling") {
                                     alert("Note that a $50 surcharge is added for shipping & handling");

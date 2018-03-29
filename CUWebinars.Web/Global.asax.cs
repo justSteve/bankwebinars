@@ -358,8 +358,7 @@ namespace CUWebinars.Web
                 if (userIp == null)
                     userIp = "na";
                 StateService.SetValue(WebUiConstants.Ip, userIp);
-                var appInsightUser = new MyTelemetryInitializer();
-
+                
                 //GlobalContext.Properties["Ip"] = new GetCurrentIp();
                 var userName = "anon";
                 if (User.Identity.IsAuthenticated)
@@ -409,7 +408,7 @@ namespace CUWebinars.Web
                         if (claimsIdentityOfAuthenticatedUser.HasClaim(
                             (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.Affiliate))
                         {
-                            ss.Append($" Is found to be Admin {sessionId}");
+                            ss.Append($" Is found to be affiliate {sessionId}");
 
                             var claimTTSDomain = claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type ==
                                 CUWebinars.Business.Constants.ClaimTypes.Affiliate).First().Value;
@@ -479,7 +478,7 @@ namespace CUWebinars.Web
                                 StateService.SetValue(WebUiConstants.CurrentAffiliate,
                                     affiliateRepository.FindByIdWithIncluding(loadAff));
                                 StateService.SetValue("AffiliateSessionSource",
-                                    "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff));
+                                    "QueryString" + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff).idUserAff);
 
                                 logger.Info(string.Format(
                                     "SessionStart: " + StateService.GetValue<string>(WebUiConstants.SessionId) +
@@ -547,13 +546,12 @@ namespace CUWebinars.Web
                                     }
                                 }
                                 allCookies.Append("\"},");
-
                             }
                             else
                             {
-
-                                allCookies.Append("\", \"Value\": \"" + Server.HtmlEncode(aCookie.Value) + "\"");
-                                ss.Append($"Cookie had no keys at {sessionId}");
+                                var cookieValue = aCookie.Value ?? "";
+                                allCookies.Append("\", \"Value\": \"" + Server.HtmlEncode(cookieValue) + "\"");
+                                ss.Append("\", \"Value\": \"" + Server.HtmlEncode(cookieValue) + "\"");
                             }
                         }
                     }

@@ -1551,10 +1551,10 @@ namespace CUWebinars.Web.Controllers
                     //HeyGeorge: 'assign affiliate' routine is fired
                     if (aff != null && aff.idUserAff == 19)
                     {
-                        var _aff = _orderManagementService.DetermineAffiliateByAlternativeMeans(model.Order.idUser);
+                        var _aff = _orderManagementService.DetermineAffiliateByAlternativeMeans(model.Order.idUser, 19);
                         if (_aff.idUserAff != 19)
                         {
-                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, _aff);
+                            //_stateService.SetValue(WebUiConstants.CurrentAffiliate, _aff);
                             aff = _aff;
                             _orderManagementService.AssignAffiliateToOrder(aff.idUserAff, order);
                             _logger.Warn("BuildConfirmOrder AffiliateOnOrderIsReassignedFrom19: " + order.idOrder +

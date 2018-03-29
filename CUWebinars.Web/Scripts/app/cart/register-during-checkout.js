@@ -218,14 +218,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 if (data['Invalid'] === 'UserNotVerified') {
                     L.clientLogger.error("#388 UserNotVerified ", { result: data && data.Result });
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email: ' + tenantTechEmail +' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email: ' + tenantTechEmail + ' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
                     L.clientLogger.error("UnknownEmail", { result: data && data.Result });
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email: ' + tenantTechEmail +' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email: ' + tenantTechEmail + ' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else {
                     L.clientLogger.error("Unknown error #454", { result: data && data.Result });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #454. Email: ' + tenantTechEmail +' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #454. Email: ' + tenantTechEmail + ' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 }
             }
         }).fail(commonFuncs.failCallBack);
@@ -260,6 +260,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 }
             }).done(function (data) {
 
+                console.log("holder" + data);
+
+                alert("hold");
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
                 if (data.orderRowId) {
                     cartStateManager.setOrderRowId(data.orderRowId);
@@ -268,9 +271,13 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                     cartStateManager.setOrderId(data.orderId);
                 }
 
-                console.log(data);
-                console.log(cartStateManager.getOrderId());
 
+                var cookieVals = window.Cookies.get("OrderStart");
+
+                if (cookieVals.length > 0) {
+                    cookieVals = cookieVals.replace("OrderId=", "Email=" + email + "&OrderId=")
+                    window.Cookies.set('OrderStart', cookieVals);
+                }
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
                     if (data.isConfirmed !== 'true') {
@@ -292,7 +299,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 } else if (data.error === 'Fail') {
 
                     L.clientLogger.info("goToAddressFields 319", { data: data });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email: ' + tenantTechEmail +' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email: ' + tenantTechEmail + ' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
                     L.clientLogger.error("Uncaught Ajax Error 343", { result: data || "data was falsey", payload: payload });
 

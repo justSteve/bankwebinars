@@ -68,13 +68,13 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                     Affiliate affiliate = null;
                     if (webUser != null)
                     {
-                        affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser);
+                        //affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(webUser.idUser, 0);
 
                     }
                     else
                     {
                         //hardwire a valid affiliate ID
-                        affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19);
+                        //affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(19, 0);
                     }
 
                     // if null returned, just use whatever is stored in Session for CurrentAffiliate. O/w, set that value.
@@ -92,8 +92,8 @@ namespace CUWebinars.Web.Infrastructure.Attributes
                 // re: affiliate id = 2988
                 // both 19 and 2988 are 'magic Ids' that point to TTS affiliate accounts. 
                 // Consider them to be interchangeable.
-                var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(2988);
-                _stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
+                //var affiliate = _orderManagementService.DetermineAffiliateByAlternativeMeans(2988, 0);
+                //_stateService.SetValue(WebUiConstants.CurrentAffiliate, affiliate);
             }
         }
 

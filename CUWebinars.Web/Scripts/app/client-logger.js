@@ -12,12 +12,29 @@ L.clientLogger = function () {
     var log = function (logLevel, id, obj) {
 
         var logObj = {};
+        var SendErrRpt = function (level, id1, object) {
+
+            var data = {
+                level: level,
+                id: id1,
+                object: object
+            };
+
+            $.post('/Cart/Logger', data,
+                function (response,
+                    status,
+                    xhr) {
+
+                    window.Cookies.set('Log', response);
+                });
+
+        };
         logObj[id] = obj;
 
+        SendErrRpt(logLevel, id, obj);
         switch (logLevel) {
             case errorLevel:
-                //Rollbar.error(logObj);
-                //
+
                 if (typeof $zopim !== 'undefined') {
                     $zopim && $zopim(function () {
 

@@ -25,9 +25,9 @@ namespace LogMaintenance
             localDb = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\steve\\Logger.mdf;Integrated Security=True;Connect Timeout=30";
             //localDb = "Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=bw33;User ID=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
 
-            GetLog4Net();
+            //GetLog4Net();
             //Upload();
-            //DownloadIISLog();
+            DownloadIISLog();
             //GetIISLogs("19");
             //UploadIIS();
             //while (true) // Loop indefinitely
@@ -65,7 +65,7 @@ namespace LogMaintenance
             var myTimeStamp = DateTime.Now.ToShortDateString() + "_"
                 + DateTime.Now.ToShortTimeString();
 
-            var outputFile = @"C:\Users\steve\Desktop\logfiles\UploadIIS_" + myTimeStamp.ToString().Replace("/","_").Replace(":","_") + ".txt";
+            var outputFile = @"C:\Users\steve\Desktop\logfiles\UploadIIS_" + myTimeStamp.ToString().Replace("/", "_").Replace(":", "_") + ".txt";
             File.WriteAllText(outputFile, updateIIS, Encoding.ASCII);
         }
 
@@ -83,6 +83,7 @@ namespace LogMaintenance
             }
             return count;
         }
+
         private static void GetLog4Net()
         {
             MapBase = "BankWebinars";
@@ -122,8 +123,8 @@ namespace LogMaintenance
                 // Connect
                 session.Open(sessionOptions);
                 string timeStamp = DateTime.Now.ToString("MM_dd_yy_h_mm");
-                //session.MoveFile("/logfiles/log4netCSV.log", "/logfiles/log4netCSV." + timeStamp + ".log");
-                //session.GetFiles("/logfiles/log4netCSV." + timeStamp + ".log", @"C:\Users\steve\Desktop\logfiles\" + MapBase + "\\*").Check();
+                session.MoveFile("/logfiles/log4netCSV.log", "/logfiles/log4netCSV." + timeStamp + ".log");
+                session.GetFiles("/logfiles/log4netCSV." + timeStamp + ".log", @"C:\Users\steve\Desktop\logfiles\" + MapBase + "\\*").Check();
             }
 
             string[] files = Directory.GetFiles("C:\\Users\\steve\\Desktop\\logfiles\\" + MapBase, "*.log",
@@ -132,9 +133,9 @@ namespace LogMaintenance
             // Display all the files.
             foreach (string file in files)
             {
-               var _file = "log4netCSVlocal.log20180320";
+
                 string str = "DateTime,Thread,Level,Logger,Message,Exception\r\n";
-                str += File.ReadAllText(_file, Encoding.ASCII);
+                str += File.ReadAllText(file, Encoding.ASCII);
 
                 File.Move(file, file.ToString().Replace(".log", ".done"));
 

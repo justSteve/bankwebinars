@@ -31,7 +31,7 @@ namespace CUWebinars.Business.Services
             string webinarKey);
 
         void DeleteOrder(int orderId);
-        Affiliate DetermineAffiliateByAlternativeMeans(int idUser);
+        Affiliate DetermineAffiliateByAlternativeMeans(int idUser, int sessionAff);
         void DispatchDummyOrder();
         IEnumerable<Order> FindOrdersByUserId(int userId);
         void FireAdhocNotificationHandler(AdhocNotificationMessage adhocNotificationMessage);
