@@ -1605,6 +1605,14 @@ namespace CUWebinars.Web.Controllers
                         if (_accountControllerOrchestrator.SignUserIn(model, out userMustVerify))
                         {
                             var webUser = _orderManagementService.GetWebUser(model.Email);
+                            var isAff = _affiliateRepository.FindById(webUser.idUser);
+
+                            if (isAff != null)
+                            {
+                                _stateService.SetValue(WebUiConstants.CurrentAffiliate, isAff);
+                                _stateService.SetValue(WebUiConstants.AffiliateSessionSource, "Login" + "|" + isAff.idUserAff);
+                            }
+
 
                             var userPendingOrder =
                                 _orderManagementService.GetOrdersByEmail(model.Email, 19)
@@ -1613,6 +1621,14 @@ namespace CUWebinars.Web.Controllers
                             var MsgForUser = "";
                             if (userPendingOrder.Count() > 1)
                             {
+                                model.Password = "redacted";
+                                _logger.Info("SignIn redirects to Multi-Cart: " +
+                                             JsonConvert.SerializeObject(model, Formatting.None,
+                                                 new JsonSerializerSettings
+                                                 {
+                                                     MaxDepth = 1,
+                                                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                 }));
                                 MsgForUser =
                                     "We found these 'In Process' orders and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
 
@@ -1621,7 +1637,14 @@ namespace CUWebinars.Web.Controllers
 
                             if (userPendingOrder.Count() == 1)
                             {
-
+                                model.Password = "redacted";
+                                _logger.Info("SignIn redirects to Resume: " +
+                                                 JsonConvert.SerializeObject(model, Formatting.None,
+                                                     new JsonSerializerSettings
+                                                     {
+                                                         MaxDepth = 1,
+                                                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                                     }));
                                 MsgForUser =
                                     "We found an 'In Process' order and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
 
@@ -1634,7 +1657,14 @@ namespace CUWebinars.Web.Controllers
                                             returnUrl = "/resume/" + userPendingOrder.SingleOrDefault().idOrder
                                         });
                             }
-
+                            model.Password = "redacted";
+                            _logger.Info("SignIn: " +
+                                         JsonConvert.SerializeObject(model, Formatting.None,
+                                             new JsonSerializerSettings
+                                             {
+                                                 MaxDepth = 1,
+                                                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                                             }));
                             // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
                             // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
                             var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl)
@@ -1644,16 +1674,16 @@ namespace CUWebinars.Web.Controllers
                             return Json(new { result = LoggedInResult, returnUrl = returnUrl });
                         }
 
+                        // code block has never been hit
+                        //if (!string.IsNullOrEmpty(userMustVerify))
+                        //{
+                        //    _logger.Info("Account.SignIn UserMustVerify. Session: {0}, Email: {1}",
+                        //        _appHelper.GetUserAuditInfo(),
+                        //        model.Email
+                        //    );
 
-                        if (!string.IsNullOrEmpty(userMustVerify))
-                        {
-                            _logger.Info("Account.SignIn UserMustVerify. Session: {0}, Email: {1}",
-                                _appHelper.GetUserAuditInfo(),
-                                model.Email
-                            );
-
-                            return Json(new { result = ConfirmedResult, email = model.Email, password = model.Password });
-                        }
+                        //    return Json(new { result = ConfirmedResult, email = model.Email, password = model.Password });
+                        //}
 
                         // If we got this far, something failed, redisplay form
                         _logger.Warn("Account.SignIn Failed. Email: {0},  Session: {1}",

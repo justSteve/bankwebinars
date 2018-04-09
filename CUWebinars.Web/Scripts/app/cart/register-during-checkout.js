@@ -1,7 +1,22 @@
 ﻿var registerDuringCheckout = {};
 registerDuringCheckout.institutionNames = {};
 
-
+function getCookie(name) {
+    var cookie = document.cookie;
+    var prefix = name + "=";
+    var begin = cookie.indexOf("; " + prefix);
+    if (begin == -1) {
+        begin = cookie.indexOf(prefix);
+        if (begin != 0) return null;
+    } else {
+        begin += 2;
+        var end = document.cookie.indexOf(";", begin);
+        if (end == -1) {
+            end = cookie.length;
+        }
+    }
+    return unescape(cookie.substring(begin + prefix.length, end));
+}
 registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, addressOptions, callback) {
 
     L.clientLogger.info('registerDuringCheckout.initialize', { orderId: orderId, webinarId: webinarId, orderRowId: orderRowId, shippingAddressRequired: shippingAddressRequired });
@@ -262,7 +277,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 console.log("holder" + data);
 
-                alert("hold");
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
                 if (data.orderRowId) {
                     cartStateManager.setOrderRowId(data.orderRowId);
@@ -270,14 +284,16 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 if (data.orderId) {
                     cartStateManager.setOrderId(data.orderId);
                 }
+                var cookieVals = getCookie("OrderStart");
 
-
-                var cookieVals = window.Cookies.get("OrderStart");
-
-                if (cookieVals.length > 0) {
+                if (cookieVals == null) {
+                    var a = "holder";
+                }
+                else {
                     cookieVals = cookieVals.replace("OrderId=", "Email=" + email + "&OrderId=")
                     window.Cookies.set('OrderStart', cookieVals);
                 }
+
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
                     if (data.isConfirmed !== 'true') {

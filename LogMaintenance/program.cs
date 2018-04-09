@@ -25,9 +25,9 @@ namespace LogMaintenance
             localDb = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\steve\\Logger.mdf;Integrated Security=True;Connect Timeout=30";
             //localDb = "Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=bw33;User ID=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
 
-            //GetLog4Net();
+            GetLog4Net();
             //Upload();
-            DownloadIISLog();
+            GetIISLogsAll();
             //GetIISLogs("19");
             //UploadIIS();
             //while (true) // Loop indefinitely
@@ -198,6 +198,24 @@ namespace LogMaintenance
                                       "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;\"", "");
             UploadIIS();
             Debug.WriteLine(lpOutput);
+        }
+        private static void GetIISLogsAll()
+        {
+            string[] files = Directory.GetFiles("C:\\Users\\steve\\Desktop\\logfiles\\BANKWEBINARS33\\2018\\03\\",
+                "*.log",
+                SearchOption.AllDirectories);
+
+            // Display all the files.
+            foreach (string file in files)
+            {
+                var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
+                                      file +
+                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;\"", "");
+                Debug.WriteLine(lpOutput);
+
+                File.Move(file, file.ToString().Replace(".log", ".done"));
+            }
+            UploadIIS();
         }
 
         private static void GetIISLogs(string userEnteredDay)

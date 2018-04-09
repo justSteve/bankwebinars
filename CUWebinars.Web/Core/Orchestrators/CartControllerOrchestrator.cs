@@ -813,18 +813,19 @@ namespace CUWebinars.Web.Core.Orchestrators
         public Order CreateOrderByAffiliate(CheckoutOptionsViewModel formModel, Affiliate affiliate)
         {
 
-
-
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
             Claim beingImpersonatedClaim = null;
 
-            //if (Request.IsAuthenticated)
-            //{
             var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
-            if (user != null)
-                beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
+            if (user == null) throw new ArgumentNullException("user null at CreateOrderByAffiliate");
 
-            //}
+            beingImpersonatedClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.BeingImpersonated);
+
+            var currentAffByClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate);
+            var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+            if (currentAffByClaim != null && currentAffByClaim.Value != currentAffiliate.ttsDomain)
+                _stateService.SetValue(WebUiConstants.CurrentAffiliate,
+                    currentAffiliate.idUserAff);
 
             var webinar = _webinarManagementService.GetWebinar(formModel.idWebinar);
 
@@ -839,9 +840,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                                formModel.AdditionalLocations == null ? null
                                    : formModel.AdditionalLocations.ToList(),
                                formModel.RegistrationTypeId);
-
-                var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
-                //_orderManagementService.AttachAffiliate(currentAffiliate);
 
                 var tempAff = _orderManagementService.GetAffiliateById(19);
 
@@ -864,7 +862,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, adminMsg);
                 order.AffiliateComments = JsonHelpers.MergeJsonWithStoredField(order.AffiliateComments, adminMsg);
                 order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, adminMsg);
-
+                
                 _orderManagementService.SaveChanges();
 
                 return order;
@@ -1564,6 +1562,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                 {
                     var _webinar = _webinarManagementService.GetWebinar(Convert.ToInt32(listOfChildWebinars[i]));
                     var row = CreateOrderRow(_webinar, rowIn.AdditionalLocation.ToList(), rowIn.idRegType);
+                    //ensure that WSP credits are not used by child orders
+                    row.Discount = null;
+
                     if (_globalConfig.Tenant == "BankWebinars")
                     {
                         switch (listOfChildWebinars.Length)
@@ -1615,11 +1616,6 @@ namespace CUWebinars.Web.Core.Orchestrators
                     var order = CreateNewOrder(model.Order.Affiliate, _orderManagementService.GetWebUser(model.Order.idUser), _webinar, row);
 
                     order.OrderStatus = OrderStatus.Paid;
-
-                    //ensure that WSP credits are not used by child orders
-                    row.Discount = null;
-
-
 
                     JProperty checkoutComment = new JProperty(
                         JsonPropertyKeys.CheckoutMessage,

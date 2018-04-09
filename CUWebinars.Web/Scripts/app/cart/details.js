@@ -207,6 +207,22 @@ $(function () {
         signUpForm.submit();
     });
 
+    function getCookie(name) {
+        var cookie = document.cookie;
+        var prefix = name + "=";
+        var begin = cookie.indexOf("; " + prefix);
+        if (begin == -1) {
+            begin = cookie.indexOf(prefix);
+            if (begin != 0) return null;
+        } else {
+            begin += 2;
+            var end = document.cookie.indexOf(";", begin);
+            if (end == -1) {
+                end = cookie.length;
+            }
+        }
+        return unescape(cookie.substring(begin + prefix.length, end));
+    }
 
     // Flow goes inside this block where the order exists and is in process e.g. previously abandoned before finializing
     if (cartStateManager.getOrderRowId() > 0 && cartStateManager.getCheckoutInProcess()) {
@@ -266,9 +282,7 @@ $(function () {
         var data = signUpForm.serialize();
 
         $.post('/cart/checkoutConfirmSetCookie', data,
-            function (response,
-                status,
-                xhr) {
+            function (response, status, xhr) {
                 //primary objective is to set cookie state according to inital button click.
                 window.Cookies.set('OrderStart', response.model);
             });
@@ -289,12 +303,16 @@ $(function () {
                         cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
-                        var cookieVals = window.Cookies.get("OrderStart");
+                        var cookieVals = getCookie("OrderStart");
 
-                        if (cookieVals.length > 0) {
-                            cookieVals = cookieVals.replace("AffiliateId=", "OrderId=" + xhr.responseJSON['orderId'] + "&AffiliateId=")
+                        if (cookieVals == null) {
+                            var a = "holder";
+                        }
+                        else {
+                            cookieVals = cookieVals.replace("OrderId=", "Email=" + $('#Email1').val() + "&OrderId=")
                             window.Cookies.set('OrderStart', cookieVals);
                         }
+
 
                         $('#contactInfo').load('/Cart/CheckoutContactDetails', function (response, status, xhr) {
                             if (status !== 'error') {
@@ -328,7 +346,7 @@ $(function () {
         } else {
             // If the user IS LOGGED IN
             $.post(signUpForm.attr('action'), data, function (response, status, xhr) {
-                
+
                 if (status !== 'error') {
                     if (xhr.responseJSON['success']) {
 
@@ -336,11 +354,13 @@ $(function () {
                         cartStateManager.setOrderId(xhr.responseJSON['orderId']);
                         cartStateManager.setWebinarId(xhr.responseJSON['webinarId']);
 
+                        var cookieVals = getCookie("OrderStart");
 
-                        var cookieVals = window.Cookies.get("OrderStart");
-
-                        if (cookieVals.length > 0) {
-                            cookieVals = cookieVals.replace("AffiliateId=", "OrderId=" + xhr.responseJSON['orderId'] + "&AffiliateId=")
+                        if (cookieVals == null) {
+                            var a = "holder";
+                        }
+                        else {
+                            cookieVals = cookieVals.replace("OrderId=", "Email=" + $('#loginEmail').val()+ "&OrderId=")
                             window.Cookies.set('OrderStart', cookieVals);
                         }
 

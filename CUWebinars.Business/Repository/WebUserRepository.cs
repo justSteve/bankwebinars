@@ -104,83 +104,99 @@ namespace CUWebinars.Business.Repository
 
         public Affiliate FindAffiliateForSession(string identity)
         {
-
-            IList<int> affiliateIds = null;
-            int idUser = ((TTSWebinarsContext)db).Orders
-                .Where(o => o.BillingEmail == identity)
-                .Select(o => o.idUser).FirstOrDefault();
-
-            if (idUser < 0)
+            try
             {
-                return null;
-            }
+                IList<int> affiliateIds = null;
+                int idUser = ((TTSWebinarsContext)db).Orders
+                    .Where(o => o.BillingEmail == identity)
+                    .Select(o => o.idUser).FirstOrDefault();
 
-
-            affiliateIds = ((TTSWebinarsContext)db).Orders
-                .Where(o => o.BillingEmail == identity)
-                .OrderByDescending(o => o.OrderDate)
-                .Include(u => u.WebUser)
-                .Select(o => o.idAffiliate)
-                .Distinct()
-                .ToList();
-
-
-
-            if (affiliateIds.Any())
-            {
-                //  get the most recent
-                int affiliateIdForOrder, mostRecentAffiliateId;
-                affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
-
-                // The history is of more than 1 affiliate
-                if (affiliateIds.Count() > 1)
+                if (idUser < 0)
                 {
-                    // The business rule is that where there is more than one Affiliate which the 
-                    // user has made orders for, if one affiliate has been used twice as many times 
-                    // as the most recent Affiliate, then make the order for that Affiliate.
+                    return null;
+                }
 
-                    var groups = affiliateIds.GroupBy(a => a);
-                    //
-                    int mostUsedAffiliateId = 0;
-                    int mostUses = 0;
-                    int numberOfUsesOfMostRecentAffiliate = 0;
-                    int current = 0;
-                    foreach (var group in groups)
+                affiliateIds = ((TTSWebinarsContext)db).Orders
+                    .Where(o => o.BillingEmail == identity)
+                    .OrderByDescending(o => o.OrderDate)
+                    .Include(u => u.WebUser)
+                    .Select(o => o.idAffiliate)
+                    .Distinct()
+                    .ToList();
+
+                if (affiliateIds.Any())
+                {
+                    //  get the most recent
+                    int affiliateIdForOrder, mostRecentAffiliateId;
+                    affiliateIdForOrder = mostRecentAffiliateId = affiliateIds.First();
+
+                    // The history is of more than 1 affiliate
+                    if (affiliateIds.Count() > 1)
                     {
-                        var ordersByAffForThisUser = ((TTSWebinarsContext)db).Orders
-                            .Where(o => o.BillingEmail == identity
-                                        && o.idAffiliate == group.Key
-                                        && (o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed))
-                            .ToList().Count;
+                        // The business rule is that where there is more than one Affiliate which the 
+                        // user has made orders for, if one affiliate has been used twice as many times 
+                        // as the most recent Affiliate, then make the order for that Affiliate.
 
-                        numberOfUsesOfMostRecentAffiliate = ((TTSWebinarsContext)db).Orders
-                            .Where(o => o.BillingEmail == identity
-                                        && o.idAffiliate == affiliateIds.FirstOrDefault()
-                                        && (o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Billed))
-                            .ToList().Count;
-
-                        if (ordersByAffForThisUser > mostUses)
+                        var groups = affiliateIds.GroupBy(a => a);
+                        //
+                        int mostUsedAffiliateId = 0;
+                        int mostUses = 0;
+                        int numberOfUsesOfMostRecentAffiliate = 0;
+                        int current = 0;
+                        foreach (var group in groups)
                         {
-                            mostUses = ordersByAffForThisUser;
-                            mostUsedAffiliateId = group.Key;
-                            affiliateIdForOrder = group.Key;
-                        }
+                            var ordersByAffForThisUser = ((TTSWebinarsContext)db).Orders
+                                .Where(o => o.BillingEmail == identity
+                                            && o.idAffiliate == group.Key
+                                            && (o.OrderStatus == OrderStatus.Paid
+                                            || o.OrderStatus == OrderStatus.Billed
+                                            || o.OrderStatus == OrderStatus.Submitted
+                                            ))
+                                .ToList().Count;
 
+                            numberOfUsesOfMostRecentAffiliate = ((TTSWebinarsContext)db).Orders
+                                .Where(o => o.BillingEmail == identity
+                                            && o.idAffiliate == affiliateIds.FirstOrDefault()
+                                            && (o.OrderStatus == OrderStatus.Paid
+                                            || o.OrderStatus == OrderStatus.Billed
+                                            || o.OrderStatus == OrderStatus.Submitted
+                                            ))
+                                .ToList().Count;
+
+                            if (ordersByAffForThisUser > mostUses)
+                            {
+                                mostUses = ordersByAffForThisUser;
+                                mostUsedAffiliateId = group.Key;
+                                affiliateIdForOrder = group.Key;
+                            }
+
+
+                            if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
+                            {
+                                affiliateIdForOrder = mostUsedAffiliateId;
+                            }
+                        }
 
                         if (mostUses >= 2 * numberOfUsesOfMostRecentAffiliate)
                         {
+                            _logger.Info("FindAffForSession by mostUses: " + idUser + " awarded: " +
+                                         mostUsedAffiliateId);
                             affiliateIdForOrder = mostUsedAffiliateId;
                         }
+                        var aff = ((TTSWebinarsContext)db).Orders
+                            .Where(o => o.idAffiliate == affiliateIdForOrder)
+                            .OrderByDescending(o => o.OrderDate)
+                            //.Include(u => u.WebUser)
+                            .Select(o => o.Affiliate).FirstOrDefault();
+                        _logger.Info("FindAffForSession returns: " + aff.ttsDomain 
+                            + " for: " + FindByIdLoaded(idUser).email);
+                        return aff;
                     }
-
-                    var aff = ((TTSWebinarsContext)db).Orders
-                        .Where(o => o.idAffiliate == affiliateIdForOrder)
-                        .OrderByDescending(o => o.OrderDate)
-                        //.Include(u => u.WebUser)
-                        .Select(o => o.Affiliate).FirstOrDefault();
-
-                    return aff;
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("FindAffForSession: ", e);
             }
             return null;
         }

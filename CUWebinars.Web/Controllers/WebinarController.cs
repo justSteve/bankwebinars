@@ -767,7 +767,24 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int? id, int? idOrder, string joinCode, string renew)
         {
+            Affiliate currentAffiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+            String affCookieCheck = CheckAffiliateCookie();
+            if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
+            {
+                if (Request.QueryString.ToString().Contains("utm_campaign"))
+                {
+                    int loadAff;
+                    if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
+                    {
+                        Affiliate foundAff = _orderManagementService.GetAffiliateById(loadAff);
 
+                        if (!ReferenceEquals(foundAff, null))
+                        {
+                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, _orderManagementService.GetAffiliateById(loadAff));
+                        }
+                    }
+                }
+            }
             if (_globalConfig.Tenant == "DirectorSeries")
             {
                 _stateService.SetValue(WebUiConstants.DesSession, "true");
@@ -933,6 +950,68 @@ namespace CUWebinars.Web.Controllers
             _logger.Error("Details Action invoked with null 'id' parameter");
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
+        }
+
+        private string CheckAffiliateCookie()
+        {
+            var allCookies = new StringBuilder();
+
+            for (var i = 0; i < Request.Cookies.Count; i++)
+            {
+                HttpCookie aCookie = Request.Cookies[i];
+                if (i > 0)
+                {
+                    allCookies.Append(", ");
+                }
+                if (aCookie != null)
+                {
+                    allCookies.Append("\"CookieName_" + aCookie.Name);
+
+                    if (aCookie.HasKeys)
+                    {
+                        var cookieValues = aCookie.Values;
+
+                        string[] cookieValueNames = cookieValues.AllKeys;
+                        allCookies.Append("\":  {\"SubKeys:\"");
+                        for (int j = 0; j < cookieValues.Count; j++)
+                        {
+                            string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
+                            string subkeyValue = Server.HtmlEncode(cookieValues[j]);
+                            allCookies.Append("\"SubkeyName: \"" + subkeyName);
+
+                            if (!subkeyName.StartsWith("__") &&
+                                !subkeyName.StartsWith("Fed")
+                            )
+                            {
+                                allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
+                            }
+                            else
+                            {
+                                allCookies.Append("\", \"SubkeyValue: \"" + " (truncated)");
+                            }
+
+                            if (subkeyName.StartsWith("__")
+                            )
+                            {
+                                allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
+                            }
+                            else
+                            {
+                                allCookies.Append("\", \"SubkeyValue: \"" + " (truncated)");
+                            }
+
+                        }
+                        allCookies.Append("\"},");
+                    }
+                    else
+                    {
+                        var cookieValue = aCookie.Value ?? "";
+                        allCookies.Append("\", \"Value\": \"" + Server.HtmlEncode(cookieValue) + "\"");
+                    }
+                    _logger.Info(allCookies.ToString());
+                }
+            }
+            return allCookies.ToString();
         }
 
         private bool BuildVMForAffiliate(int? id, ClaimsIdentity claimsIdentityOfAuthenticatedUser,

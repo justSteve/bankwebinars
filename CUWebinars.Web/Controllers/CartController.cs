@@ -880,6 +880,14 @@ namespace CUWebinars.Web.Controllers
                 if (model == null) throw new ArgumentNullException("model");
                 try
                 {
+                    var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
+                    if (user == null) throw new ArgumentNullException("user null at CreateOrderByAffiliate");
+
+                    var currentAffByClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate);
+                    var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+                    if (currentAffByClaim != null && currentAffByClaim.Value != currentAffiliate.ttsDomain)
+                        throw new Exception("CurrentAffiliate Mismatched!!");
+
                     var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
 
                     if (order.OrderStatus == OrderStatus.Error)

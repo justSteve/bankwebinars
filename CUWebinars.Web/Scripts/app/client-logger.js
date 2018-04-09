@@ -8,30 +8,29 @@ L.clientLogger = function () {
     var errorLevel = 'error';
     var _logNote = '';
     var infoLevel = 'log';
+    var SendErrRpt = function (level, id1, object) {
 
+        var data = {
+            level: level,
+            id: id1,
+            object: object
+        };
+
+        $.post('/Cart/Logger', data,
+            function (response,
+                status,
+                xhr) {
+
+                window.Cookies.set('Log', response);
+            });
+    };
     var log = function (logLevel, id, obj) {
 
         var logObj = {};
-        var SendErrRpt = function (level, id1, object) {
 
-            var data = {
-                level: level,
-                id: id1,
-                object: object
-            };
-
-            $.post('/Cart/Logger', data,
-                function (response,
-                    status,
-                    xhr) {
-
-                    window.Cookies.set('Log', response);
-                });
-
-        };
         logObj[id] = obj;
 
-        SendErrRpt(logLevel, id, obj);
+        //SendErrRpt(logLevel, id, obj);
         switch (logLevel) {
             case errorLevel:
 
