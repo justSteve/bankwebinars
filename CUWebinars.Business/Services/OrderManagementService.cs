@@ -1959,7 +1959,7 @@ namespace CUWebinars.Business.Services
 
         public Discount CreateWspCode(Order order)
         {
-
+            _logger.Info("Create WSP: " + order.idOrder);
             var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
             var whichTier = "";
             var totalCount = 0;
