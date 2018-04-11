@@ -416,13 +416,8 @@ namespace CUWebinars.Web
                         {
                             ss.Append($" Is found to be affiliate {sessionId}");
 
-                            var claimTTSDomain = claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Type ==
-                                                                                                     CUWebinars.Business
-                                                                                                         .Constants
-                                                                                                         .ClaimTypes
-                                                                                                         .Affiliate)
-                                .First().Value;
-                            //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(claimTTSDomain));
+                            var claimTTSDomain = claimsIdentityOfAuthenticatedUser.Claims.FirstOrDefault(c => c.Type == Business.Constants.ClaimTypes.Affiliate).Value;
+                            StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadByTTSDomain(claimTTSDomain));
                             source = "AffiliateReturns";
                             aff = affiliateRepository.LoadByTTSDomain(claimTTSDomain).idUserAff;
 
@@ -436,7 +431,6 @@ namespace CUWebinars.Web
                                 ss.Append($" Is admin {User.Identity.Name}");
                                 source = "AdminReturns";
                                 aff = 19;
-                                //StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.LoadById(19));
                             }
                             else
                             {
@@ -447,7 +441,7 @@ namespace CUWebinars.Web
                                     // authenticated end-user
                                     if (findAff != null)
                                     {
-                                        //StateService.SetValue(WebUiConstants.CurrentAffiliate, findAff);
+                                        //
                                         source = "FindAffiliateForSession";
                                         aff = webUserRepository.GetWebUserByEmail(User.Identity.Name).idUser;
 
@@ -505,6 +499,7 @@ namespace CUWebinars.Web
                         }
                         if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
                         {
+
                             Affiliate foundAff = affiliateRepository.FindByIdWithIncluding(loadAff);
 
                             if (!ReferenceEquals(foundAff, null))
@@ -513,12 +508,6 @@ namespace CUWebinars.Web
                                 aff = foundAff.idUserAff;
                                 source = qsSource;
 
-
-                                //StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                //    affiliateRepository.FindByIdWithIncluding(loadAff));
-                                //StateService.SetValue("AffiliateSessionSource",
-                                //    source + Pipe + affiliateRepository.FindByIdWithIncluding(loadAff).idUserAff);
-
                                 logger.Info(string.Format(
                                     "SessionStart: " + sessionId +
                                     " Resolving Affiliate via query string with id   {0}", aff));
@@ -526,11 +515,6 @@ namespace CUWebinars.Web
                             else
                             {
                                 aff = affiliateRepository.FindByIdWithIncluding(loadAff).idUserAff;
-
-                                //StateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                //    affiliateRepository.FindByIdWithIncluding(19));
-                                //StateService.SetValue("AffiliateSessionSource",
-                                //    source + Pipe + affiliateRepository.FindByIdWithIncluding(19));
 
                                 ss.Append($" Did not find the affiliate {aff}");
                                 logger.Info("SessionStart: failed to load idAff code: " + sessionId);
@@ -605,29 +589,22 @@ namespace CUWebinars.Web
                         if (User != null && User.Identity.IsAuthenticated)
                         {
                             logger.Info("Authenticated Session Starts with: {\"Name\": \"" + User.Identity.Name
-                                        + "\", \"FirstPage\": \"" +
-                                        StateService.GetValue<string>(WebUiConstants.FirstPage)
-                                        + "\", \"QueryString\": \"" +
-                                        StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                                        + "\", \"SessionId\": \"" +
-                                        StateService.GetValue<string>(WebUiConstants.SessionId)
-                                        + "\", \"FirstCookies\": {" +
-                                        StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                                        + "\", \"source\": \"" + source + "}}"
-                                        + "\", \"aff\": {" + aff + "}}"
+                                        + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                        + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                        + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                        + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}"
+                                        + "\", \"source\": \"" + source
+                                        + "\", \"aff\": " + aff + "}"
                             );
                             ss.Append(" Authenticated Session Starts with: {\"Name\": \"" + User.Identity.Name
-                                      + "\", \"FirstPage\": \"" +
-                                      StateService.GetValue<string>(WebUiConstants.FirstPage)
-                                      + "\", \"QueryString\": \"" +
-                                      StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                                      + "\", \"SessionId\": \"" +
-                                      StateService.GetValue<string>(WebUiConstants.SessionId)
-                                      + "\", \"FirstCookies\": {" +
-                                      StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                                      + "\", \"source\": \"" + source + "}}"
-                                      + "\", \"aff\": {" + aff + "}}"
-                            );
+                                                                    + "\", \"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                                                    + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                                                    + "\", \"SessionId\": \"" + StateService.GetValue<string>(WebUiConstants.SessionId)
+                                                                    + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}"
+                                                                    + "\", \"source\": \"" + source
+                                                                    + "\", \"aff\": " + aff + "}"
+                                                        );
+
                         }
                         else
                         {
@@ -635,27 +612,26 @@ namespace CUWebinars.Web
                                         + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
                                         + "\", \"QueryString\": \"" +
                                         StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                                        + "\", \"SessionId\": \"" + sessionId
-                                        + "\", \"FirstCookies\": {" +
-                                        StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                                        + "\", \"source\": \"" + source + "}}"
-                                        + "\", \"aff\": {" + aff + "}}"
-                            );
-                            ss.Append(" Anon Session Starts with: {"
-                                      + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
-                                      + "\", \"QueryString\": \"" +
-                                      StateService.GetValue<string>(WebUiConstants.InitialQueryString)
-                                      + "\", \"SessionId\": \"" +
-                                      StateService.GetValue<string>(WebUiConstants.SessionId)
-                                      + "\", \"FirstCookies\": {" +
-                                      StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}}"
-                                      + "\", \"source\": \"" + source + "}}"
-                                      + "\", \"aff\": {" + aff + "}}"
-                            );
+                                        + "\", \"SessionId\": \"" + sessionId + "\", \"FirstCookies\": {" +
+                                        StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}"
+                                        + "\", \"source\": \"" + source
+                                        + "\", \"aff\": " + aff + "}");
+
+                            logger.Info("Anon Session Starts with: {"
+                                        + "\"FirstPage\": \"" + StateService.GetValue<string>(WebUiConstants.FirstPage)
+                                        + "\", \"QueryString\": \"" + StateService.GetValue<string>(WebUiConstants.InitialQueryString)
+                                        + "\", \"SessionId\": \"" + sessionId + "\", \"FirstCookies\": {" + StateService.GetValue<string>(WebUiConstants.FirstCookies) + "}"
+                                        + "\", \"source\": \"" + source
+                                        + "\", \"aff\": " + aff + "}");
+
                         }
                         logger.Info("SessionStart ss.EndUpWith: " + ss.ToString());
                         AffiliateSessionSource["Source"] = source;
                         AffiliateSessionSource["Affiliate"] = aff.ToString();
+
+                        StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(aff));
+                        StateService.SetValue(WebUiConstants.AffiliateSessionSource,
+                            source + Pipe + affiliateRepository.FindByIdWithIncluding(aff));
 
                         Response.Cookies.Add(AffiliateSessionSource);
 
@@ -663,7 +639,7 @@ namespace CUWebinars.Web
                 }
                 catch (Exception exception)
                 {
-                    StateService.SetValue(WebUiConstants.CurrentAffiliate, aff);
+                    StateService.SetValue(WebUiConstants.CurrentAffiliate, affiliateRepository.FindByIdWithIncluding(aff));
                     StateService.SetValue(WebUiConstants.AffiliateSessionSource,
                         source + Pipe + affiliateRepository.FindByIdWithIncluding(aff));
 

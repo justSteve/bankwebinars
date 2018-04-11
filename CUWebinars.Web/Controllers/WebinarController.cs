@@ -1761,7 +1761,7 @@ namespace CUWebinars.Web.Controllers
 
             webinar = _webinarManagementService.GetWebinar(webinarId);
 
-            if (webinar.Title.StartsWith("Compliance Perspectives:"))
+            if (webinar != null && webinar.Title.StartsWith("Compliance Perspectives:"))
             {
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
                 var currentUser = User.Identity.Name ?? "anon";

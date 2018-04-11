@@ -16,6 +16,7 @@ namespace LogMaintenance
         public static String MapUtcToDay;
         public static String MapUtcToHour;
         private static readonly ILogger _logger;
+        public static string db;
         public static string localDb;
 
 
@@ -23,11 +24,11 @@ namespace LogMaintenance
         static void Main(string[] args)
         {
             localDb = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\steve\\Logger.mdf;Integrated Security=True;Connect Timeout=30";
-            //localDb = "Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=bw33;User ID=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
+            db = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=BW33;Uid=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30";
 
             GetLog4Net();
             //Upload();
-            GetIISLogsAll();
+            //GetIISLogsAll();
             //GetIISLogs("19");
             //UploadIIS();
             //while (true) // Loop indefinitely
@@ -147,7 +148,7 @@ namespace LogMaintenance
                 var outputFile = @"C:\Users\steve\Desktop\logfiles\output.txt";
                 File.WriteAllText(outputFile, "DateTime,Thread,Level,Logger,Message,Exception\r\n", Encoding.ASCII);
                 File.WriteAllText(outputFile, result, Encoding.ASCII);
-                var lpOutput = RunCmd("logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception  into Log4Net FROM '" + outputFile + "\"' -i:CSV -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=c:\\Users\\Steve\\Logger.mdf;Integrated Security = True; Connect Timeout = 30;\"");
+                var lpOutput = RunCmd("logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception  into Log4Net FROM '" + outputFile + "\"' -i:CSV -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"");
                 //File.Delete(outputFile);
 
                 if (lpOutput.ToLower().Contains("aborted"))
@@ -195,7 +196,7 @@ namespace LogMaintenance
 
             var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken],1  into SiteLog FROM '" +
                                       outputFile +
-                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;\"", "");
+                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
             UploadIIS();
             Debug.WriteLine(lpOutput);
         }
@@ -210,7 +211,7 @@ namespace LogMaintenance
             {
                 var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
                                       file +
-                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;\"", "");
+                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
                 Debug.WriteLine(lpOutput);
 
                 File.Move(file, file.ToString().Replace(".log", ".done"));
@@ -229,7 +230,7 @@ namespace LogMaintenance
             {
                 var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
                                       file +
-                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"Driver={SQL Server Native Client 11.0}; Server=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Steve\\logger.mdf;Integrated Security = True; Connect Timeout = 30;\"", "");
+                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
                 Debug.WriteLine(lpOutput);
 
                 File.Move(file, file.ToString().Replace(".log", ".done"));

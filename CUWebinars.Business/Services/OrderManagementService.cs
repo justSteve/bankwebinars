@@ -554,7 +554,7 @@ namespace CUWebinars.Business.Services
                     buildDABAMStory.Append(" found " + string.Join(", ", affiliateIds));
                     //  get the most recent
                     int affiliateIdForOrder, mostRecentAffiliateId;
-                    affiliateIdForOrder =  affiliateIds.First();
+                    affiliateIdForOrder = affiliateIds.First();
 
                     // The history is of more than 1 affiliate
                     if (affiliateIds.Count() > 1)
@@ -1455,14 +1455,14 @@ namespace CUWebinars.Business.Services
             order.AuditInfo = "{\"anon user becomes " + user.email + "\": " + order.AuditInfo + "}";
 
             if (orderId == 19)
-            order.idAffiliate = DetermineAffiliateByAlternativeMeans(userId, oAffId).idUserAff;
+                order.idAffiliate = DetermineAffiliateByAlternativeMeans(userId, oAffId).idUserAff;
 
             if (oAffId != order.idAffiliate)
                 order.AuditInfo = "{\"anon user (to " + user.email + ") updates Affiliate from: " + oAffId + " to: " + order.idAffiliate + " " + order.AuditInfo + "}";
 
             order.idUser = userId;
 
-            RemoveDupedOrders(order);
+            //RemoveDupedOrders(order);
 
 
             var billingAddress = user.Addresses.Where(a => a.AddressType == DomainConstants.BillingAddress).SingleOrDefault();
@@ -1529,12 +1529,15 @@ namespace CUWebinars.Business.Services
         private void RemoveDupedOrders(Order order)
         {
             List<Order> orders =
-                GetOrdersByEmail(order.BillingEmail, 19).Where(o => o.OrderStatus == OrderStatus.InProcess).ToList();
+                GetOrdersByEmail(order.BillingEmail, 19)
+                    .Where(o => o.idOrder != order.idOrder)
+                    .ToList();
             IList<int> iDsToRemove = new List<int>();
 
             var result =
                     orders
-                        .SelectMany(o => o.OrderRows.Where(r => r.RowStatus == OrderRowStatus.Active))
+                        .SelectMany(o => o.OrderRows
+                        .Where(r => r.RowStatus == OrderRowStatus.Active))
                         .OrderBy(o => o.Order.OrderDate)
                         .GroupBy(y => y.idWebinar)
                         .Where(g => g.Skip(1).Any())
@@ -2502,41 +2505,26 @@ namespace CUWebinars.Business.Services
             {
                 Debug.Assert(row != null, "row != null");
                 var foundByEmail = _orderRepository.GetOrdersByUserId(existingOrder.idUser)
-                    .Where(o => o.BillingEmail == existingOrder.BillingEmail && row.idWebinar == o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar);
+                    .Where(o => o.BillingEmail == existingOrder.BillingEmail
+                    && row.idWebinar == o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar)
+                    .Where(o => o.idOrder != existingOrder.idOrder)
+                    ;
 
                 var byEmail = foundByEmail as IList<Order> ?? foundByEmail.ToList();
-                if (byEmail.Count() > 1)
+                if (byEmail.Any())
                 {
-                    //list.Where(o => o.B).Select(o => o.Txt))
+                    foreach (var order in byEmail)
+                    {
+                        if (order.OrderStatus == OrderStatus.Paid)
+                        {
+                            RemoveDupedOrders(order);
+                            return order;
+                        }
+                    }
+
+                    RemoveDupedOrders(byEmail.First());
                     _logger.Warn("UserHasPrexistingOrder: found:" + string.Join(",", byEmail.Select(o => o.idOrder)));
-                    var foundPaidOrSubmitted = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
-                    var paidOrSubmitted = foundPaidOrSubmitted as Order[] 
-                        ?? foundPaidOrSubmitted.ToArray();
-                    if (paidOrSubmitted.Any())
-                    {
-                        _logger.Warn("UserHasPrexistingOrder: returnedPaid: " + paidOrSubmitted.FirstOrDefault()
-                            .idOrder);
-                        return paidOrSubmitted.FirstOrDefault();
-                    }
-
-                    var foundInProcess = byEmail.Where(o => o.OrderStatus == OrderStatus.InProcess)
-                        .OrderByDescending(o => o.OrderDate).ToList();
-
-                    if (foundInProcess.Any())
-                    {
-                        _logger.Warn("UserHasPrexistingOrder: returned InProcess: " + foundInProcess.FirstOrDefault().idOrder);
-                        return foundInProcess.FirstOrDefault();
-                    }
-
-
-                    var foundCanceled = byEmail.Where(o => o.OrderStatus == OrderStatus.Paid || o.OrderStatus == OrderStatus.Submitted);
-                    var canceled = foundCanceled as Order[] ?? foundInProcess.ToArray();
-                    if (canceled.Any())
-                    {
-                        _logger.Warn("UserHasPrexistingOrder: returned InProcess:" + canceled.FirstOrDefault().idOrder);
-                        return canceled.FirstOrDefault();
-                    }
-
+                    return byEmail.First();
                 }
 
                 return null;

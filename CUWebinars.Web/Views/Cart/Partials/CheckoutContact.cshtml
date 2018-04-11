@@ -287,12 +287,28 @@
     </div>
     <div id="UserHasAccountUnconfirmed" class="modal-body">
         <p>
-            We've located an existing account for this email but it is currently <i>Unconfirmed</i>. Express Checkout is still available
-            but access to your account's features is limited pending confirmation.<br /><br />
-            Upon submission of this order a new link will be mailed from @globalConfig.TenantEmail with the subject line [@globalConfig.Tenant] Please confirm your account.
+            We've located your email but the account isn't yet confirmed. <br /><br />
+            After this order is completed watch for an email
+            from @globalConfig.TenantEmail with the subject line [@globalConfig.Tenant] Please confirm your account.
         </p>
         <div id="ECBtns">
             <p><input type="button" onclick="javascript: openECWindow();" class=" btn btn-primary" name="ExpressMe" id="ExpressMe" value="Yes, Express Me!" /></p>
+        </div>
+    </div>
+</div>
+
+<div id="modalShowPaidRegistrationExists" class="modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Express Checkout</h3>
+    </div>
+    <div id="UserHasPaidRegistration" class="modal-body">
+        <p>
+            We've located an existing order for this webinar that is already paid. 
+            Please login to review your existing order.
+        </p>
+        <div id="ECBtns">
+            <input type="button" data-dismiss="modal" class="btn btn-success" name="ResetMe" id="ResetMe" value="Continue to Login" />
         </div>
     </div>
 </div>

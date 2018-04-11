@@ -62,7 +62,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         if (regUserStateManager.getAction() === '') {
 
-            $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact @tenantTechEmail or, for immediate assistant, call @tenant.TechPhone.</span>');
+            $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact info@ttstrain.com  or, for immediate assistant, call @tenant.TechPhone.</span>');
             L.clientLogger.error("Connection Error #893. Item clicked: ", { value: e.currentTarget.value });
             return false;
         }
@@ -233,14 +233,14 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 if (data['Invalid'] === 'UserNotVerified') {
                     L.clientLogger.error("#388 UserNotVerified ", { result: data && data.Result });
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email: ' + tenantTechEmail + ' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #388. Email:  info@ttstrain.com  or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else if (data['Invalid'] === 'UnkownEmail') {
                     L.clientLogger.error("UnknownEmail", { result: data && data.Result });
 
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email: ' + tenantTechEmail + ' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;We do not have a record of that email address. Email:  info@ttstrain.com  or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else {
                     L.clientLogger.error("Unknown error #454", { result: data && data.Result });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #454. Email: ' + tenantTechEmail + ' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;<i class="icon icon-exclamation-sign"></i>&nbsp;Connection Error #454. Email:  info@ttstrain.com  or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 }
             }
         }).fail(commonFuncs.failCallBack);
@@ -275,7 +275,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 }
             }).done(function (data) {
 
-                console.log("holder" + data);
+                console.log(data);
 
                 regUserStateManager.setInputAction(RegistrationInCart.InputAction.None);
                 if (data.orderRowId) {
@@ -296,10 +296,15 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
-                    if (data.isConfirmed !== 'true') {
-                        regUserStateManager.resetPasswordOrLoginViewUnconfirmed(email, webinarId);
+                    if (data.IsPaid) {
+                        regUserStateManager.modalShowPaidRegistrationExists(email, webinarId);
+
                     } else {
-                        regUserStateManager.resetPasswordOrLoginView(email, webinarId);
+                        if (data.isConfirmed !== 'true') {
+                            regUserStateManager.resetPasswordOrLoginViewUnconfirmed(email, webinarId);
+                        } else {
+                            regUserStateManager.resetPasswordOrLoginView(email, webinarId);
+                        }
                     }
                 } else if (data.success === 'foundInstitution') {
                     regUserStateManager.foundInstitutionView(data, email);
@@ -315,7 +320,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 } else if (data.error === 'Fail') {
 
                     L.clientLogger.info("goToAddressFields 319", { data: data });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email: ' + tenantTechEmail + ' or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email:  info@ttstrain.com  or, for immediate assistance, use our Help & Feedback button (lower right corner).</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
                     L.clientLogger.error("Uncaught Ajax Error 343", { result: data || "data was falsey", payload: payload });
 

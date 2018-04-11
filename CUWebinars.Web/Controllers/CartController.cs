@@ -2787,14 +2787,11 @@ namespace CUWebinars.Web.Controllers
                         {
                             _cartControllerOrchestrator.FireMandrillNotificationEvent(
                                 "2afda898.ttstrain.com@amer.teams.ms" // Errors channel of teams
-                                , "PayTracePostback Error on: " + order.idOrder, "PaytracePostback hit error: " + ex.Message);
-
+                                , "PayTracePostback Error on: " + order.idOrder, "PaytracePostback hit error: " + e.Message);
                         }
-
                     }
                     else
                     {
-
                         var orderExcp = order.idOrder;
                         JObject o = JObject.Parse(order.AdminComments);
 

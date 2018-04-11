@@ -2236,10 +2236,16 @@ namespace CUWebinars.Web.Controllers
 
                     if (orderId != null)
                     {
+                        // check for Pre-existing is refactored to both find prior orders and,
+                        // if more than 1, cancel all but the one being returned.
                         var foundExistingOrder = _orderManagementService.UserHasPrexistingOrder(
                                 _orderManagementService.GetOrderById(orderId.Value));
                         if (foundExistingOrder != null)
                         {
+                            if (foundExistingOrder.OrderStatus == OrderStatus.Paid)
+                            {
+                                resultObject.Add("IsPaid", foundExistingOrder.idOrder.ToString());
+                            }
                             resultObject.Add("orderId", foundExistingOrder.idOrder.ToString());
                             resultObject.Add("orderRowId", foundExistingOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow.ToString());
                             _logger.Info("CheckEmail found existing: " + foundExistingOrder.idOrder + " when checking: " + orderId.Value + " | Session = " + _appHelper.GetUserAuditInfo());
