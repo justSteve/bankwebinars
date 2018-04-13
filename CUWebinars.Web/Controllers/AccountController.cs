@@ -2242,9 +2242,14 @@ namespace CUWebinars.Web.Controllers
                                 _orderManagementService.GetOrderById(orderId.Value));
                         if (foundExistingOrder != null)
                         {
-                            if (foundExistingOrder.OrderStatus == OrderStatus.Paid)
+
+                            if (
+                                foundExistingOrder.OrderStatus == OrderStatus.Paid ||
+                                foundExistingOrder.OrderStatus == OrderStatus.Billed ||
+                                foundExistingOrder.OrderStatus == OrderStatus.Submitted
+                                )
                             {
-                                resultObject.Add("IsPaid", foundExistingOrder.idOrder.ToString());
+                                resultObject.Add("IsEntered", foundExistingOrder.idOrder.ToString());
                             }
                             resultObject.Add("orderId", foundExistingOrder.idOrder.ToString());
                             resultObject.Add("orderRowId", foundExistingOrder.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow.ToString());
@@ -2254,7 +2259,6 @@ namespace CUWebinars.Web.Controllers
 
                     if (userAcct != null && !userAcct.HasClaim(ClaimTypes.FullName))
                     {
-
                         resultObject.Add("isConfirmed", "false");
                     }
                     else

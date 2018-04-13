@@ -296,7 +296,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                 // successful request; do something with the data
                 if (data.success === 'foundExisting') {
-                    if (data.IsPaid) {
+                    if (data.IsEntered) {
                         regUserStateManager.modalShowPaidRegistrationExists(email, webinarId);
 
                     } else {

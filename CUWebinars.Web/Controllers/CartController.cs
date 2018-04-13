@@ -39,6 +39,7 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using RestSharp;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
+using HttpCookie = System.Web.HttpCookie;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -709,110 +710,82 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/CheckoutOptions", model);
         }
 
-        [HttpPost]
-        public ActionResult Logger(string level, string id, string obj)
-        {
-            var guid = Guid.NewGuid();
-            _logger.Warn("Guid: " + guid + ", level: " + level + ", id: " + id + ", ojb:" + obj + ", session: " + _appHelper.GetUserAuditInfo());
-            //var allCookies = new StringBuilder();
-            //var setAffCookie = "";
-            //bool foundStartOrderCookie = false;
-            //var startedCookie = "";
-            //for (var i = 0; i < Request.Cookies.Count; i++)
-            //{
-            //    System.Web.HttpCookie aCookie = Request.Cookies[i];
-
-            //    if (i > 0) allCookies.Append(", ");
-            //    if (aCookie != null && aCookie.Name.StartsWith("OrderStart"))
-            //    {
-            //        foundStartOrderCookie = true;
-            //        startedCookie = aCookie.Value;
-            //    }
-            //}
-
-            //var model = new CheckoutConfirmCookieModel
-            //{
-            //    InitialAffiliate = setAffCookie
-            //};
-            return Json(new
-            {
-                guid
-
-            }, JsonRequestBehavior.AllowGet);
-
-        }
 
         [HttpPost]
         public ActionResult CheckoutConfirmSetCookie(CheckoutOptionsViewModel formModel)
         {
-            var allCookies = new StringBuilder();
+            var result = "";
             var setAffCookie = "";
             bool foundStartOrderCookie = false;
             var startedCookie = "";
-            for (var i = 0; i < Request.Cookies.Count; i++)
-            {
-                System.Web.HttpCookie aCookie = Request.Cookies[i];
 
-                if (i > 0) allCookies.Append(", ");
-                if (aCookie != null && aCookie.Name.StartsWith("OrderStart"))
-                {
-                    foundStartOrderCookie = true;
-                    startedCookie = aCookie.Value;
-                }
-            }
-            if (!foundStartOrderCookie)
+            try
             {
-                try
+                foreach (HttpCookie requestCookie in Request.Cookies)
                 {
-                    _logger.Info("CheckoutConfirmSetCookie was not found");
-                    var initialAffiliate = _stateService.GetValue<string>("AffiliateSessionSource");
-                    if (initialAffiliate.Contains("QueryString"))
+                    if (requestCookie.Name.StartsWith(WebUiConstants.AffiliateSessionSource))
                     {
-                        var aff = _cartControllerOrchestrator.GetAffiliateById(
-                            Convert.ToInt32(initialAffiliate.Split('|')[1]));
+                        var affByCookie = requestCookie.Value.Split('|')[1];
 
-                        if (aff != null)
+                        if (affByCookie != null && affByCookie !=
+                            _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString())
                         {
-                            setAffCookie = "AffiliateId=" + aff.idUserAff + "&" + Request.Form.ToString();
+                            _logger.Warn("Cookie/Session mismatch: " + affByCookie + " | " + _stateService
+                                             .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString());
+                            if (_stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff == 19)
+                                _stateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    _cartControllerOrchestrator.GetAffiliateById(Convert.ToInt32(affByCookie)));
                         }
-                        else
+                        result = affByCookie;
+                    }
+                    if (requestCookie != null && requestCookie.Name.StartsWith("OrderStart"))
+                    {
+                        foundStartOrderCookie = true;
+                        startedCookie = requestCookie.Value;
+                    }
+                    if (!foundStartOrderCookie)
+                    {
+                        _logger.Info("CheckoutConfirmSetCookie was not found");
+                        var initialAffiliate = _stateService.GetValue<string>("AffiliateSessionSource");
+                        if (initialAffiliate.Contains("QueryString"))
                         {
-                            _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
+                            var aff = _cartControllerOrchestrator.GetAffiliateById(
+                                Convert.ToInt32(initialAffiliate.Split('|')[1]));
+
+                            if (aff != null)
+                            {
+                                setAffCookie = "AffiliateId=" + aff.idUserAff + "&form=" + Request.Form.ToString();
+                            }
+                            else
+                            {
+                                _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
+                            }
                         }
                     }
                 }
-                catch (Exception e)
+
+                _logger.Info("CheckoutConfirmSetCookie was found");
+                var initialValues = _stateService.GetValue<string>("AffiliateSessionSource");
+
+                if (initialValues.Contains("QueryString"))
                 {
-                    _logger.FatalException("SetCookie", e);
+                    var aff = _cartControllerOrchestrator.GetAffiliateById(
+                        Convert.ToInt32(initialValues.Split('|')[1]));
+
+                    if (aff != null)
+                    {
+                        setAffCookie = "QueryString|" + aff.idUserAff;
+                    }
+                    else
+                    {
+                        _logger.Warn("SetCookie did not find affiliate: " + initialValues);
+                    }
                 }
             }
-            else
+            catch (Exception e)
             {
-                try
-                {
-                    _logger.Info("CheckoutConfirmSetCookie was found");
-                    //var initialValues = (NameValueCollection)_stateService.GetValue<string>("AffiliateSessionSource");
-                    //if (initialAffiliate.Contains("QueryString"))
-                    //{
-                    //    var aff = _cartControllerOrchestrator.GetAffiliateById(
-                    //        Convert.ToInt32(initialAffiliate.Split('|')[1]));
-
-                    //    if (aff != null)
-                    //    {
-                    //        setAffCookie = "QueryString|" + aff.idUserAff;
-                    //    }
-                    //    else
-                    //    {
-                    //        _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
-                    //    }
-                    //}
-                }
-                catch (Exception e)
-                {
-                    _logger.FatalException("SetCookie", e);
-                }
+                _logger.FatalException("SetCookie", e);
             }
-
 
             var model = new CheckoutConfirmCookieModel
             {

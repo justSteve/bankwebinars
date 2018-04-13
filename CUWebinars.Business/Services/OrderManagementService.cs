@@ -2515,7 +2515,9 @@ namespace CUWebinars.Business.Services
                 {
                     foreach (var order in byEmail)
                     {
-                        if (order.OrderStatus == OrderStatus.Paid)
+                        if (order.OrderStatus == OrderStatus.Paid 
+                            || order.OrderStatus == OrderStatus.Billed
+                            || order.OrderStatus == OrderStatus.Submitted)
                         {
                             RemoveDupedOrders(order);
                             return order;

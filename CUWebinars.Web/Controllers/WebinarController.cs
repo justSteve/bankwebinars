@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization.Json;
@@ -768,7 +769,8 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Details(int? id, int? idOrder, string joinCode, string renew)
         {
             Affiliate currentAffiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
-            String affCookieCheck = CheckAffiliateCookie();
+
+            var affCookieCheck = CheckAffiliateCookie(currentAffiliate);
             if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
             {
                 if (Request.QueryString.ToString().Contains("utm_campaign"))
@@ -945,6 +947,13 @@ namespace CUWebinars.Web.Controllers
                     //    TempData["WSPSummary"] = sb.ToString();
                     //}
                 }
+
+                if (model.Order != null && model.Order.idAffiliate != currentAffiliate.idUserAff)
+                {
+                    _logger.Warn("Details | Mismatched affiliates at exit!" + model.Order.idOrder + " model.Order.idAffiliate " + model.Order.idAffiliate + " != currentAffiliate.idUserAff " + currentAffiliate.idUserAff);
+
+                }
+
                 return View(model);
             }
             _logger.Error("Details Action invoked with null 'id' parameter");
@@ -952,66 +961,39 @@ namespace CUWebinars.Web.Controllers
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
         }
 
-        private string CheckAffiliateCookie()
+
+        private IEnumerable<string> CheckAffiliateCookie(Affiliate sessionAffiliate)
         {
-            var allCookies = new StringBuilder();
 
-            for (var i = 0; i < Request.Cookies.Count; i++)
-            {
-                HttpCookie aCookie = Request.Cookies[i];
-                if (i > 0)
-                {
-                    allCookies.Append(", ");
-                }
-                if (aCookie != null)
-                {
-                    allCookies.Append("\"CookieName_" + aCookie.Name);
+            //var result = "not found";
+            //foreach (HttpCookie requestCookie in Request.Cookies)
+            //{
+            //    if (requestCookie.Name.StartsWith(WebUiConstants.AffiliateSessionSource))
+            //    {
+            //        var affByCookie = requestCookie.Value.Split('|')[1];
 
-                    if (aCookie.HasKeys)
-                    {
-                        var cookieValues = aCookie.Values;
+            //        if (affByCookie != null && affByCookie !=
+            //            _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString())
+            //        {
+            //            _logger.Warn("Cookie/Session mismatch: " + affByCookie + " | " + _stateService
+            //                             .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString());
+            //            return "Cookie/Session mismatch: " + affByCookie + " | " + _stateService
+            //                       .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString();
+            //        }
+            //        result = affByCookie;
+            //    }
+            //}
+            var cookieName = WebUiConstants.AffiliateSessionSource;
+            var matches = Request.Cookies.AllKeys
+                .Select((name, i) => new { name, i })
+                .Where(x => x.name == cookieName)
+                .Select(x => ParseAffSourceCookie(Request.Cookies[x.i]));
+            return matches;
+        }
 
-                        string[] cookieValueNames = cookieValues.AllKeys;
-                        allCookies.Append("\":  {\"SubKeys:\"");
-                        for (int j = 0; j < cookieValues.Count; j++)
-                        {
-                            string subkeyName = Server.HtmlEncode(cookieValueNames[j]);
-                            string subkeyValue = Server.HtmlEncode(cookieValues[j]);
-                            allCookies.Append("\"SubkeyName: \"" + subkeyName);
-
-                            if (!subkeyName.StartsWith("__") &&
-                                !subkeyName.StartsWith("Fed")
-                            )
-                            {
-                                allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
-                            }
-                            else
-                            {
-                                allCookies.Append("\", \"SubkeyValue: \"" + " (truncated)");
-                            }
-
-                            if (subkeyName.StartsWith("__")
-                            )
-                            {
-                                allCookies.Append("\", \"SubkeyValue: \"" + subkeyValue);
-                            }
-                            else
-                            {
-                                allCookies.Append("\", \"SubkeyValue: \"" + " (truncated)");
-                            }
-
-                        }
-                        allCookies.Append("\"},");
-                    }
-                    else
-                    {
-                        var cookieValue = aCookie.Value ?? "";
-                        allCookies.Append("\", \"Value\": \"" + Server.HtmlEncode(cookieValue) + "\"");
-                    }
-                    _logger.Info(allCookies.ToString());
-                }
-            }
-            return allCookies.ToString();
+        private string ParseAffSourceCookie(HttpCookie requestCookie)
+        {
+            return "";
         }
 
         private bool BuildVMForAffiliate(int? id, ClaimsIdentity claimsIdentityOfAuthenticatedUser,
