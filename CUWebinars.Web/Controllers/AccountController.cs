@@ -1609,8 +1609,8 @@ namespace CUWebinars.Web.Controllers
 
                             if (isAff != null)
                             {
-                                _stateService.SetValue(WebUiConstants.CurrentAffiliate, isAff);
-                                _stateService.SetValue(WebUiConstants.AffiliateSessionSource, "Login" + "|" + isAff.idUserAff);
+                                _stateService.SetValue(WebUiConstants.CurrentAffiliate, _affiliateRepository.FindById(webUser.idUser));
+                                _stateService.SetValue(WebUiConstants.AffiliateSessionSource, "SetAtLogin" + "|" + isAff.idUserAff);
                             }
 
 

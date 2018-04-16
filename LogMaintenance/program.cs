@@ -24,7 +24,7 @@ namespace LogMaintenance
         static void Main(string[] args)
         {
             localDb = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\steve\\Logger.mdf;Integrated Security=True;Connect Timeout=30";
-            db = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=BW33;Uid=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30";
+            db = "Driver={ODBC Driver 13 for SQL Server};Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=BW33;Uid=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;";
 
             GetLog4Net();
             //Upload();
@@ -158,7 +158,6 @@ namespace LogMaintenance
 
                 Debug.WriteLine(lpOutput);
                 UploadLog4Net();
-
             }
         }
 
