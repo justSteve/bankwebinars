@@ -314,7 +314,7 @@ var RegistrationInCart;
         };
         StateManager.prototype.modalShowPaidRegistrationExists = function (email, webinarId) {
             //fires when existing user is detected entering 'signup'.
-            alert("hit");
+            //alert("hit");
             console.log("call modalShowPaidRegistrationExists: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);

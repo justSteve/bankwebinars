@@ -3,8 +3,10 @@ using CUWebinars.Web.Helpers;
 using CUWebinars.Web.Infrastructure.Attributes;
 using Ninject.Extensions.Logging;
 using System;
+using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
+using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Services;
 using CUWebinars.Web.Core;
@@ -102,6 +104,44 @@ namespace CUWebinars.Web.Controllers
             var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
             return View(lWebinars);
 
+        }
+        
+        public void GI_DeleteExistingUser()
+        {
+
+            var dataOperations =
+                new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+            dataOperations.GI_DeleteExistingUser();
+            var a = 1;
+        }
+        public void GI_DeleteExistingDomain()
+        {
+
+            var dataOperations =
+                new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+            dataOperations.GI_DeleteExistingDomain();
+            var a = 1;
+        }
+        public void GI_DeleteExistingOrder()
+        {
+
+            var dataOperations =
+                new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+            dataOperations.GI_DeleteExistingOrder();
+            var a = 1;
+        }
+
+        public void GI_SetExistingOrderToInProcess()
+        {
+
+            var dataOperations =
+                new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+            dataOperations.GI_SetExistingOrderToInProcess();
+            var a = 1;
         }
 
         [AcceptVerbs(HttpVerbs.Get)]

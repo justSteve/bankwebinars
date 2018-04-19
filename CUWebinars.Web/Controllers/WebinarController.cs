@@ -1070,15 +1070,13 @@ namespace CUWebinars.Web.Controllers
 
             Webinar webinar = new Webinar { idWebinar = 0 };
             if (icsWebinar.HasValue && icsWebinar > 0)
-                _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
+                  webinar =  _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
             var descBuilder = new StringBuilder();
 
 
+             
             if (order.idOrder > 0)
             {
-                webinar = _webinarControllerOrchestrator.GetWebinar(
-                    order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
-
 
                 if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                         .RegistrationType.ShowLiveNotifications.ToLower() != "yes")

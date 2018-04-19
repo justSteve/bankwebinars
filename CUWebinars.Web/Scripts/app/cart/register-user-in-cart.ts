@@ -393,7 +393,7 @@ module RegistrationInCart {
 
         modalShowPaidRegistrationExists(email: JQuery, webinarId: number): void {
             //fires when existing user is detected entering 'signup'.
-            alert("hit");
+            //alert("hit");
             console.log("call modalShowPaidRegistrationExists: " + email);
             $('#Email1').val(email);
             $('#ResetPassEmail').val(email);

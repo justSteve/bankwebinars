@@ -1783,6 +1783,139 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
+
+        public void GI_DeleteExistingUser()
+        {
+            var returnLable = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getLegacyWebinars = new SqlCommand())
+                {
+
+                    getLegacyWebinars.Connection = sqlConnection;
+                    getLegacyWebinars.CommandType = CommandType.Text;
+                    getLegacyWebinars.CommandText = "Delete from WebUser where email = 'giNew@existing.com'";
+
+                    try
+                    {
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                        {
+                            sqlUpdateConnection.Open();
+                            getLegacyWebinars.ExecuteNonQuery();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("GI_DeleteExistingEmail", "GI_DeleteExistingEmail: " + getLegacyWebinars.CommandText +
+                                                      " Exception.Message: " + ex.Message);
+                    }
+
+                }
+            }
+        }
+
+        public void GI_DeleteExistingDomain()
+        {
+            var returnLable = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getLegacyWebinars = new SqlCommand())
+                {
+
+                    getLegacyWebinars.Connection = sqlConnection;
+                    getLegacyWebinars.CommandType = CommandType.Text;
+                    getLegacyWebinars.CommandText = "Delete from WebUser where email like '%@newExisting.com'";
+
+                    try
+                    {
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                        {
+                            sqlUpdateConnection.Open();
+                            getLegacyWebinars.ExecuteNonQuery();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("GI_DeleteExistingDomain", "GI_DeleteExistingDomain: " + getLegacyWebinars.CommandText +
+                                                           " Exception.Message: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        public void GI_DeleteExistingOrder()
+        {
+
+            var returnLable = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getLegacyWebinars = new SqlCommand())
+                {
+
+                    getLegacyWebinars.Connection = sqlConnection;
+                    getLegacyWebinars.CommandType = CommandType.Text;
+                    getLegacyWebinars.CommandText = "DELETE FROM dbo.[Order] WHERE email = 'giOld@existing.com'";
+
+                    try
+                    {
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                        {
+                            sqlUpdateConnection.Open();
+                            getLegacyWebinars.ExecuteNonQuery();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("GI_DeleteExistingOrder", "GI_DeleteExistingOrder: " + getLegacyWebinars.CommandText +
+                                                            " Exception.Message: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+        public void GI_SetExistingOrderToInProcess()
+        {
+            
+            var returnLable = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var getLegacyWebinars = new SqlCommand())
+                {
+
+                    getLegacyWebinars.Connection = sqlConnection;
+                    getLegacyWebinars.CommandType = CommandType.Text;
+                    getLegacyWebinars.CommandText =
+                        "UPDATE dbo.[Order] SET OrderStatus = 1 WHERE BillingEmail = 'giOld@existing.com'";
+
+                    try
+                    {
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                        {
+                            sqlUpdateConnection.Open();
+                            getLegacyWebinars.ExecuteNonQuery();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("GI_SetExistingOrderToInProcess", "GI_SetExistingOrderToInProcess: " +
+                                                                   getLegacyWebinars.CommandText +
+                                                                   " Exception.Message: " + ex.Message);
+                    }
+                }
+            }
+        }
     }
 
     public class AuditChangedRegTypeModel
