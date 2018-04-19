@@ -2771,7 +2771,15 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>
-    </PostBuildEvent>
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).dll"
+
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AdhocNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmMultiWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
+
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Label="SlowCheetah">
     <SlowCheetahToolsPath>$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\SlowCheetah.2.5.14\tools\))</SlowCheetahToolsPath>
