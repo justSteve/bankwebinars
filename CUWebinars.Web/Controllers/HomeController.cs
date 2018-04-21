@@ -105,7 +105,7 @@ namespace CUWebinars.Web.Controllers
             return View(lWebinars);
 
         }
-        
+
         public void GI_DeleteExistingUser()
         {
 
@@ -141,7 +141,6 @@ namespace CUWebinars.Web.Controllers
                 new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
 
             dataOperations.GI_SetExistingOrderToInProcess();
-            var a = 1;
         }
 
         [AcceptVerbs(HttpVerbs.Get)]
