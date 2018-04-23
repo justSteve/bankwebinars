@@ -1588,7 +1588,6 @@ namespace CUWebinars.Web.Controllers
         {
             try
             {
-
                 if (ModelState.IsValid)
                 {
                     if (Request.IsAuthenticated)
@@ -1619,6 +1618,7 @@ namespace CUWebinars.Web.Controllers
                                     .Where(o => o.OrderStatus == OrderStatus.InProcess)
                                     .ToList();
                             var MsgForUser = "";
+                            var holdPass = model.Password;
                             if (userPendingOrder.Count() > 1)
                             {
                                 model.Password = "redacted";
@@ -1631,7 +1631,7 @@ namespace CUWebinars.Web.Controllers
                                                  }));
                                 MsgForUser =
                                     "We found these 'In Process' orders and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
-
+                                model.Password = holdPass;
                                 return Json(new { msgForUser = MsgForUser, result = LoggedInResult, returnUrl = "/cart/checkout" });
                             }
 
@@ -1647,7 +1647,7 @@ namespace CUWebinars.Web.Controllers
                                                      }));
                                 MsgForUser =
                                     "We found an 'In Process' order and are forwarding you to a screen where you can place the order 'OnHold', 'Cancel', or 'Submit' it.";
-
+                                model.Password = holdPass;
                                 return
                                     Json(
                                         new
@@ -1665,6 +1665,7 @@ namespace CUWebinars.Web.Controllers
                                                  MaxDepth = 1,
                                                  ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                                              }));
+                            model.Password = holdPass;
                             // Handles an edge case where a user has been created anonymously in the cart and has just set their password.
                             // In such a case, we don't want to redirect back to the page where they just set their password. So send to base instead.
                             var returnUrl = string.IsNullOrWhiteSpace(model.ReturnUrl)

@@ -1,9 +1,9 @@
 ﻿@using CUWebinars.Web.Core
 @using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes
 @{
-    IStateService stateService = new StateService();
+    IStateService _stateService = new StateService();
 
-    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    var currentAffiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
     var url = Request.Url.AbsoluteUri;
 
     if (url.Contains("?"))
@@ -38,19 +38,6 @@
 
             }
 
-            Claim userHasWspClaim;
-            if (!ReferenceEquals(null, ViewBag.UserHasWsp))
-            {
-                userHasWspClaim = claimsIdentity.Claims
-                    .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp);
-
-                var claimCaption = userHasWspClaim.Value;
-
-                <div id="WspHolder">
-                    @userHasWspClaim.Value
-                </div>
-            }
-
             if (!ReferenceEquals(null, fullNameClaim))
             {
                 <div>
@@ -66,7 +53,21 @@
                     {
                         <a href="javascript:document.getElementById('logoutForm').submit()">&nbsp;&nbsp;[Release]</a>
                     }
+                    @{
+                        Claim userHasWspClaim;
+                        if (!ReferenceEquals(null, claimsIdentity.Claims
+                            .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp)))
+                        {
+                            userHasWspClaim = claimsIdentity.Claims
+                                .FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp);
 
+                            var claimCaption = userHasWspClaim.Value;
+
+                            <span id="WspHolder" style="color: #758694">
+                                <i id="ShowWspHead" class="fa fa-certificate" aria-hidden="true"></i>@*@userHasWspClaim.Value*@
+                            </span>
+                        }
+                    }
                     @if (claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) == null && claimsIdentity.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate) != null)
                     {
                         <span id="shoppingCartInHeader"><a id="btnLogin" href="@Url.Action("Checkout", "Cart")"><i class="icon-large icon-shopping-cart"></i></a></span>
@@ -89,6 +90,7 @@
         }
 
     </nav>
+
 
 }
 else

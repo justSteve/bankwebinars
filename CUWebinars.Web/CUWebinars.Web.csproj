@@ -513,6 +513,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\WspModel.cs" />
     <Compile Include="Models\CheckoutConfirmCookie.cs" />
     <Compile Include="MyTelemetryInitializer.cs" />
     <Compile Include="Log4NetAspNetProperty.cs" />
@@ -736,6 +737,7 @@
     <Content Include="Content\mobile\Startup\vendor\swiper\swiper.css" />
     <Content Include="Content\mobile\Startup\vendor\swiper\swiper.min.js" />
     <Content Include="Content\mobile\Startup\vendor\typist\typist.js" />
+    <Content Include="Content\toastr.min.css" />
     <Content Include="Infrastructure\LogConfigs\CCSLocal.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -1303,9 +1305,6 @@
     <Content Include="Content\print.css" />
     <Content Include="Content\quiz.css" />
     <Content Include="Content\toastr.css" />
-    <Content Include="Content\toastr.min.css" />
-    <Content Include="Content\toastr.scss" />
-    <Content Include="Content\toastr.less" />
     <Content Include="Content\toastr.css.map">
       <DependentUpon>toastr.css</DependentUpon>
     </Content>
@@ -1851,6 +1850,8 @@
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventForCD.docx" />
     <Content Include="Notification\Templates\SendPerDayPromoMaster2.cshtml" />
     <Content Include="Notification\Templates\SendPerWeekPromoMaster2.cshtml" />
+    <Content Include="Content\toastr.scss" />
+    <Content Include="Content\toastr.less" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />

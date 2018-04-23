@@ -362,7 +362,7 @@ namespace CUWebinars.Web
                 IWebUserRepository webUserRepository = new WebUserRepository(ttsWebinarsContext);
                 IInstitutionRepository institutionRepository = new InstitutionRepository(ttsWebinarsContext);
 
-
+                
                 var userIp = Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
                 if (userIp == null)
                     userIp = "na";
@@ -439,6 +439,13 @@ namespace CUWebinars.Web
                                     var findAff = webUserRepository.FindAffiliateForSession(User.Identity.Name);
 
                                     // authenticated end-user
+
+                                    if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                                        (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp))
+                                    {
+                                        StateService.SetValue(WebUiConstants.HasWsp,
+                                            claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Value == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp));
+                                    }
                                     if (findAff != null)
                                     {
                                         //

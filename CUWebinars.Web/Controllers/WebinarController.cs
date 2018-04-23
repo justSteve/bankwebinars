@@ -925,27 +925,31 @@ namespace CUWebinars.Web.Controllers
                 }
                 if (model.Webinar.idWebinar == 2520)
                 {
+                    var wspClaim = _membershipService.UserHasWsp(model.WebUser.idUser, _globalConfig.Tenant);
+
                     TempData["IsWSP"] = "true";
-                    //if (_membershipService.UserHasWsp(model.WebUser.idUser))
-                    //{
-                    //    model.Webinar.Title = "Refill Your WSP!";
-                    //    var sb = new StringBuilder();
-                    //    var creditRemain =
-                    //        _orderManagementService.CalculateCreditsRemain(model.Order.OrderRows
-                    //            .SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount);
-                    //    if (creditRemain > 1)
-                    //        sb.Append("Your existing WSP has " + creditRemain + " credits remaining. Add to that total by refilling your subscription!");
-                    //    if (creditRemain == 1)
-                    //        sb.Append("Your existing WSP has a single credit remaining. You can carry that credit over by refilling your subscription!");
-                    //    if (creditRemain == 0)
-                    //        sb.Append("Your existing WSP has no credits remaining. Refill your subscription to save on your next webinar!");
+                    if (wspClaim != null)
+                    {
+                        var wspModel = JsonConvert.DeserializeObject<WspModel>(wspClaim.TrimStart('[').TrimEnd(']'));
 
-                    //    if (creditRemain < 1 && creditRemain < 0)
-                    //        sb.Append("Your existing WSP has a partial credit remaining. You can carry that credit over by refilling your subscription!");
+                        var discount = _orderManagementService.GetDiscountByCode(wspModel.DiscountCode);
+                        model.Webinar.Title = "Refill Your WSP!";
+                        var sb = new StringBuilder();
+                        var creditRemain =
+                            _orderManagementService.CalculateCreditsRemain(discount);
+                        if (creditRemain > 1)
+                            sb.Append("Your existing WSP has " + creditRemain + " credits remaining. Add to that total by refilling your subscription!");
+                        if (creditRemain == 1)
+                            sb.Append("Your existing WSP has a single credit remaining. You can carry that credit over by refilling your subscription!");
+                        if (creditRemain == 0)
+                            sb.Append("Your existing WSP has no credits remaining. Refill your subscription to save on your next webinar!");
+
+                        if (creditRemain < 1 && creditRemain < 0)
+                            sb.Append("Your existing WSP has a partial credit remaining. You can carry that credit over by refilling your subscription!");
 
 
-                    //    TempData["WSPSummary"] = sb.ToString();
-                    //}
+                        TempData["WSPSummary"] = sb.ToString();
+                    }
                 }
 
                 if (model.Order != null && model.Order.idAffiliate != currentAffiliate.idUserAff)
@@ -1070,11 +1074,11 @@ namespace CUWebinars.Web.Controllers
 
             Webinar webinar = new Webinar { idWebinar = 0 };
             if (icsWebinar.HasValue && icsWebinar > 0)
-                  webinar =  _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
+                webinar = _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
             var descBuilder = new StringBuilder();
 
 
-             
+
             if (order.idOrder > 0)
             {
 

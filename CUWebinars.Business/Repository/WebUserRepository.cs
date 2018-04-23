@@ -216,27 +216,7 @@ namespace CUWebinars.Business.Repository
                 .Where(p => p.FirstName == firstName && p.LastName == lastName).Select(p => p.idUser).FirstOrDefault();
             return userId;
         }
-
-        public bool UserHasWsp(int idUser)
-        {
-
-            var userDiscounts = items
-                .Include(wu => wu.Orders.Select(o => o.OrderRows.Select(or => or.Discount)))
-                .SingleOrDefault(wu => wu.idUser == idUser
-                );
-            if (userDiscounts != null)
-            {
-                foreach (var order in userDiscounts.Orders)
-                {
-                    var discount = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount;
-                    if (discount != null
-                        && discount.DiscountType == DiscountType.Subscription)
-                        return true;
-                }
-            }
-            return false;
-        }
-
+        
         public int? GetWebUserIdByEmail(string email)
         {
             return items.Where(w => w.email == email).Select(w => w.idUser).SingleOrDefault();

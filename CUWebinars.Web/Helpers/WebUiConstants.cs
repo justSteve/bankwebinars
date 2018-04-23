@@ -61,6 +61,7 @@ namespace CUWebinars.Web.Helpers
         public const string AnonUserEmail = "AnonUserEmail";
         public const string PayTraceSubmit = "PayTraceSubmit";
         public const string RemoteAddress = "RemoteAddress";
+        public const string HasWsp = "HasWsp";
         
     }
 }
