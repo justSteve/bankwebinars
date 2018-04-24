@@ -537,6 +537,8 @@
     <Compile Include="Models\ListSegmentsViewModel.cs" />
     <Compile Include="Models\WebinarStatusUpdate.cs" />
     <Compile Include="Notification\Templates\OrderSubmitted2ViewModel.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\IConfigurationService.cs" />
     <Compile Include="ViewModel\EditAdditionalLocationsViewModel.cs" />
     <Compile Include="ViewModel\EditPresenterViewModel.cs" />
     <Compile Include="Core\CalendarRssFullDTOAssembler.cs" />
