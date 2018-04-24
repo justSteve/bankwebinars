@@ -13,8 +13,29 @@ namespace CUWebinars.Web.Services
 
         }
 
-        public async void Initialize()
+        private static async Task Initialize( )
         {
+            try
+            {
+                if (config != null)
+                {
+                    return;
+                }
+
+                var builder = new ConfigurationBuilder( );
+
+                builder.AddAzureKeyVault(
+                    ConfigurationManager.AppSettings[ "Vault" ],
+                    ConfigurationManager.AppSettings[ "ClientId" ],
+                    ConfigurationManager.AppSettings[ "ClientSecret" ] );
+
+                await Task.Run( ( ) => config = builder.Build( ) );
+            }
+            catch (Exception ex)
+            {
+                var t = ex;
+            }
+
 
         }
     }
