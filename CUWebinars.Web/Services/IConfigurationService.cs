@@ -8,6 +8,6 @@ namespace CUWebinars.Web.Services
 {
     public interface IConfigurationService
     {
-        
+        string MailChimpId { get; }
     }
 }
