@@ -1782,53 +1782,58 @@ namespace CUWebinars.Web.Controllers
         public void InitializeInProcessProperties(int webinarId, WebinarDetailsViewModel model, Webinar webinar)
         {
 
-            // does use have on in-process or do they own it already?
-            var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
-                .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == webinarId) != null);
+            // does user have an in-process or do they own it already?
 
-            // perf tweak: ensures no multiple enumerations of usersOrders
-            var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
 
-            if (checkOrders.Any()) // we know user has order in some state
+            if (model.WebUser != null)
             {
-                foreach (var checkOrder in checkOrders)
+                var usersOrders = _orderManagementService.GetOrdersByUserId(model.WebUser.idUser)
+                    .Where(o => o.OrderRows.SingleOrDefault(or => or.idWebinar == webinarId) != null);
+
+                // perf tweak: ensures no multiple enumerations of usersOrders
+                var checkOrders = usersOrders as Order[] ?? usersOrders.ToArray();
+
+                if (checkOrders.Any()) // we know user has order in some state
                 {
-                    var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-
-                    var webinarFiles = webinar.WebinarFiles
-                        .Select(f => f.fileDesc + "|" + f.fileLocation)
-                        .ToArray();
-
-                    if (row.idWebinar == webinarId)
+                    foreach (var checkOrder in checkOrders)
                     {
-                        //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
-                        if (checkOrder.OrderStatus == OrderStatus.Billed
-                            || checkOrder.OrderStatus == OrderStatus.Paid
-                            || checkOrder.OrderStatus == OrderStatus.Submitted
-                            || checkOrder.OrderStatus == OrderStatus.OutstandingBalance
+                        var row = checkOrder.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
+
+                        var webinarFiles = webinar.WebinarFiles
+                            .Select(f => f.fileDesc + "|" + f.fileLocation)
+                            .ToArray();
+
+                        if (row.idWebinar == webinarId)
+                        {
+                            //var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, checkOrder.WebUser.email);
+                            if (checkOrder.OrderStatus == OrderStatus.Billed
+                                || checkOrder.OrderStatus == OrderStatus.Paid
+                                || checkOrder.OrderStatus == OrderStatus.Submitted
+                                || checkOrder.OrderStatus == OrderStatus.OutstandingBalance
                             )
-                        {
-                            if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >=
-                                DateTime.Today)
-                                model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
-                        }
+                            {
+                                if (_orderManagementService.FindPostEventClaimByOnDemandCode(checkOrder).ExpiryDate >=
+                                    DateTime.Today)
+                                    model.RegistrationSummaryViewModel.DisplayPostEventMaterials = checkOrder.idOrder;
+                            }
 
-                        model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
-                        model.UserOwnsThisEvent = checkOrder.idOrder;
+                            model.RegistrationSummaryViewModel.WebinarFiles = webinarFiles;
+                            model.UserOwnsThisEvent = checkOrder.idOrder;
 
-                        model.Order = checkOrder;
+                            model.Order = checkOrder;
 
-                        if (checkOrder.OrderStatus == OrderStatus.AwaitingVerification
-                            || checkOrder.OrderStatus == OrderStatus.InProcess)
-                        {
-                            //var newJson =
-                            //    new JProperty(
-                            //        string.Concat("PendingReturnsToCheckoutBy-" + currentUser, TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
-                            //            new JObject(new JProperty("LegacyComments", checkOrder.AdminComments))
-                            //        );
+                            if (checkOrder.OrderStatus == OrderStatus.AwaitingVerification
+                                || checkOrder.OrderStatus == OrderStatus.InProcess)
+                            {
+                                //var newJson =
+                                //    new JProperty(
+                                //        string.Concat("PendingReturnsToCheckoutBy-" + currentUser, TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeLongFormat)),
+                                //            new JObject(new JProperty("LegacyComments", checkOrder.AdminComments))
+                                //        );
 
-                            //checkOrder.AdminComments = newJson +", 'Prior Comments ': {" + checkOrder.AdminComments + "}";
-                            model.UserHasOpenOrder = checkOrder.idOrder;
+                                //checkOrder.AdminComments = newJson +", 'Prior Comments ': {" + checkOrder.AdminComments + "}";
+                                model.UserHasOpenOrder = checkOrder.idOrder;
+                            }
                         }
                     }
                 }
@@ -2154,7 +2159,7 @@ namespace CUWebinars.Web.Controllers
             ViewBag.metaDesc = string.Empty;
             ViewBag.metaKeywords = string.Empty;
 
-            var userExists = model.WebUser.idUser > 0;
+            var userExists = model.WebUser != null && model.WebUser.idUser > 0;
             var detectedTimeZone = USTimeZone.Central; //
             if (!ReferenceEquals(null, Request.Cookies["timezoneoffset"]))
             {
@@ -2176,7 +2181,7 @@ namespace CUWebinars.Web.Controllers
                                           true) + "<br /></i>";
 
             model.CeuShort = string.Empty;
-            if (model.WebUser.idSubscriptionDiscount != null)
+            if (model.WebUser != null && model.WebUser.idSubscriptionDiscount != null)
                 model.UserHasDiscount = _orderManagementService.GetDiscountByUser(model.WebUser);
 
             model.CeuStatement = string.Empty;
@@ -2275,6 +2280,50 @@ namespace CUWebinars.Web.Controllers
             }
             var postItems = data
                 .OrderBy(p => p.EventDate).Take(25)
+                .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
+
+            var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
+                _globalConfig.TenantURL + " <i>is</i> Webinars for the financial industry.",
+                new Uri(_globalConfig.TenantURL), postItems)
+            {
+
+            };
+            return new FeedResult(new Rss20FeedFormatter(feed));
+
+        }
+        [System.Web.Mvc.AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult CalendarRssFull2(int? idAff)
+        {
+            var _idAff = 19;
+            var tz = _membershipService.GetWebUserById(19).timeZone;
+            var aff = _affiliateManagementService.FindById(19);
+
+            if (idAff.HasValue)
+            {
+                _idAff = idAff.Value;
+
+                aff = _affiliateManagementService.FindById(_idAff);
+                tz = _membershipService.GetWebUserById(_idAff).timeZone;
+
+            }
+            IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
+
+            var data = new CalendarRssFullDTOAssembler2().Entities2DTOs(webinarsList);
+
+            foreach (var myEvent in data)
+            {
+
+                var showDate = "<b>" + DateTimeHelper.FormatDate(_webinarControllerOrchestrator.GetWebinar(myEvent.id).Date) + "</b> <i>" +
+                    DateTimeHelper.FormatTimeWithDuration(_webinarControllerOrchestrator.GetWebinar(myEvent.id).Date,
+                        tz, true, _webinarControllerOrchestrator.GetWebinar(myEvent.id).Duration) + "</i>";
+
+                myEvent.Content = "<div id=\"date\">" + showDate + "</div>" + myEvent.Content.Replace("[idAff]", _idAff.ToString());
+                myEvent.Url = myEvent.Url + "?idAff=" + _idAff;
+                //myEvent.start = 
+
+            }
+            var postItems = data
+                .OrderBy(p => p.EventDate).Take(50)
                 .Select(p => new SyndicationItem(p.Title, p.Content, new Uri(p.Url)));
 
             var feed = new SyndicationFeed("Events from " + _globalConfig.Tenant,
