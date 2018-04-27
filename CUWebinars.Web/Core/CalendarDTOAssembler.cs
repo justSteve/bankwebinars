@@ -32,14 +32,8 @@ namespace CUWebinars.Web.Core
                 title = entity.Title,
                 start = ToUnixTimespan(entity.Date),
                 end = ToUnixTimespan(entity.Date.AddHours((double)entity.Duration)),
-                url = "/" + entity.idWebinar + "/" + seoTitle,
-                description = entity.DescriptionLong,
-                learnCaption = entity.LearnCaption,
-                learnBody = entity.LearnBody,
-                whoattend = entity.WhoAttend,
-                //presenter = entity.Presenter.BiographyLong
-                ceu = ceuStatement,
-                pricing = "pending code"
+                url = "/" + entity.idWebinar + "/" + seoTitle
+                
             };
 
             //           	<cd till></cd till> (if not available for multiple years)
