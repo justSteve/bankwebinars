@@ -715,10 +715,7 @@ namespace CUWebinars.Web.Core.Orchestrators
 
         public Order CreateOrder(CheckoutOptionsViewModel formModel)
         {
-            if (formModel.idOrder == 0)
-            {
 
-            }
             _stateService.SetValue(DomainConstants.CheckoutInProcess, true);
             Claim beingImpersonatedClaim = null;
             Order existingOrder = new Order();

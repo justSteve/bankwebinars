@@ -1033,6 +1033,61 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        public int CheckIfEmailAlreadyRegisteredForWebinarByDomain(string orderEmail, int webinarId)
+        {
+            var result = "";
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (var checkIfOrderExists
+                    = new SqlCommand("CheckIfEmailAlreadyRegisteredForWebinarByDomain", sqlConnection))
+                {
+                    try
+                    {
+                        checkIfOrderExists.Connection = sqlConnection;
+                        checkIfOrderExists.CommandType = CommandType.StoredProcedure;
+
+                        var newEmailParm = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.VarChar,
+                            ParameterName = "@email",
+                            Value = orderEmail.Split('@')[1]
+                        };
+                        checkIfOrderExists.Parameters.Add(newEmailParm);
+
+                        var idWebinarParm = new SqlParameter
+                        {
+                            SqlDbType = SqlDbType.Int,
+                            ParameterName = "@idWebinar",
+                            Value = webinarId
+                        };
+                        checkIfOrderExists.Parameters.Add(idWebinarParm);
+
+
+                        result = checkIfOrderExists.ExecuteScalar().ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts + "',";
+                            errorLogger.CommandText += "'CheckIfEmailAlreadyRegisteredForWebinar' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'CheckIfEmailAlreadyRegisteredForWebinar', 9 ,";
+                            errorLogger.CommandText += "'error at CheckIfEmailAlreadyRegisteredForWebinar " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+                        }
+
+                        throw;
+                    }
+                }
+                return Convert.ToInt32(result);
+            }
+        }
+
         public string GetPreSaveValues(int idOrder)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))

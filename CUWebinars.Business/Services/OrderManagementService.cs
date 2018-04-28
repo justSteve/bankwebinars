@@ -2427,6 +2427,14 @@ namespace CUWebinars.Business.Services
             return dataOperations.CheckIfEmailAlreadyRegisteredForWebinar(email, idWebinar);
         }
 
+
+        public int CheckIfEmailAlreadyRegisteredForWebinarByDomain(int idWebinar, string email)
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+
+            return dataOperations.CheckIfEmailAlreadyRegisteredForWebinarByDomain(email, idWebinar);
+        }
+
         public bool UserHasMultipleEvents(int idUser)
         {
             var orders = GetOrdersByUserId(idUser).Where(o => o.OrderStatus == OrderStatus.InProcess);

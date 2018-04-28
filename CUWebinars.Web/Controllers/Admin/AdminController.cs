@@ -3360,8 +3360,41 @@ namespace CUWebinars.Web.Controllers.Admin
                             }
                             else if (searchTerm == "inprocess")
                             {
-                                dtsource =
-                                    _dataTablesService.GetOrdersByInProcess(affiliateId, out totalNumberOrders).ToList();
+                                try
+                                {
+                                    dtsource = new List<Order>();
+                                    var findOrdersByInProcess =
+                                        _dataTablesService.GetOrdersByInProcess(affiliateId, out totalNumberOrders).ToList();
+
+                                    foreach (var order in findOrdersByInProcess)
+                                    {
+                                        var orderExists = _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(
+                                             order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active)
+                                                 .idWebinar, order.BillingEmail);
+                                        if (orderExists == 0)
+                                        {
+                                            orderExists = _orderManagementService
+                                                .CheckIfEmailAlreadyRegisteredForWebinarByDomain(
+                                                    order.OrderRows.FirstOrDefault(r =>
+                                                            r.RowStatus == OrderRowStatus.Active)
+                                                        .idWebinar, order.BillingEmail);
+                                            if (orderExists == 0)
+                                            {
+                                                dtsource.Add(order);
+                                                _logger.Info("Checking Inprocess order {0} did not find existing by this or any within same email domain. Would send reminder. ", order.idOrder, orderExists);
+                                            }
+                                            else { _logger.Info("Checking Inprocess order {0} found existing {1} by different user. ", order.idOrder, orderExists); }
+                                        }
+                                        else { _logger.Info("Checking Inprocess order {0} found existing {1} by same user. ", order.idOrder, orderExists); }
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    _logger.FatalException("Checking InProc Orders: ", e);
+                                    //throw;
+                                }
+
+
                             }
                             else if (searchTerm.StartsWith("wsp"))
                             {
