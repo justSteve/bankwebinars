@@ -140,24 +140,8 @@ namespace CUWebinars.Business.Services
             {
                 _logger.FatalException("CreateNewOrder: ", ex);
             }
-            try
-            {
-                var existingEmail = _orderRepository.FindOrdersByBillingEmail(webUser.email, affiliate.idUserAff)
-                    .SingleOrDefault(o => o.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar ==
-                            webinar.idWebinar);
-                if (existingEmail != null && webinar.idWebinar != 2520)
-                {
-                    _logger.Warn("CreateNewOrder2 found and returned existing by email: " + existingEmail.idOrder);
-                    return existingEmail;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.FatalException("CreateNewOrder found email: ", ex);
-            }
 
             var order = _orderRepository.CreateOrder(affiliate, webUser, webinar, orderRow, origin);
-
             return order;
         }
 
@@ -2523,7 +2507,7 @@ namespace CUWebinars.Business.Services
                 {
                     foreach (var order in byEmail)
                     {
-                        if (order.OrderStatus == OrderStatus.Paid 
+                        if (order.OrderStatus == OrderStatus.Paid
                             || order.OrderStatus == OrderStatus.Billed
                             || order.OrderStatus == OrderStatus.Submitted)
                         {

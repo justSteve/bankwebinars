@@ -859,7 +859,7 @@ namespace CUWebinars.Web.Core.Orchestrators
                 order.AdminComments = JsonHelpers.MergeJsonWithStoredField(order.AdminComments, adminMsg);
                 order.AffiliateComments = JsonHelpers.MergeJsonWithStoredField(order.AffiliateComments, adminMsg);
                 order.UserComments = JsonHelpers.MergeJsonWithStoredField(order.UserComments, adminMsg);
-                
+
                 _orderManagementService.SaveChanges();
 
                 return order;
@@ -995,7 +995,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                 Order newOrder = new Order();
                 if (reuseOrder > 0)
                 {
+
+                    _logger.Warn("CCOrch CreateNewOrder is reusing order {0}. Affiliate was {1} and will become {2}."
+                        , reuseOrder, _orderManagementService.GetOrderById(reuseOrder).Affiliate.ttsDomain, affiliate.ttsDomain);
                     newOrder = _orderManagementService.GetOrderById(reuseOrder);
+                    newOrder.OrderStatus = OrderStatus.InProcess;
+                    newOrder.Affiliate = affiliate;
+                    newOrder.idAffiliate = affiliate.idUserAff;
+
                 }
                 else
                 {

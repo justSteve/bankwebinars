@@ -1619,10 +1619,7 @@ namespace CUWebinars.Business.Core
                             Value = tenant
                         };
                         myConn.Parameters.Add(tenantParam);
-
-
-
-
+                        
                         using (var reader = myConn.ExecuteReader())
                         {
                             while (reader.Read())
