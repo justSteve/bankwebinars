@@ -9,6 +9,15 @@ namespace CUWebinars.Web.Core
     {
         public CalendarDTO Entity2DTO(Webinar entity)
         {
+            var ceuStatement = "";
+
+            if (entity.ceu != null && entity.ceu.Contains("|"))
+            {
+                string[] ceu = entity.ceu.Split('|');
+                ceuStatement = ceu[1];
+            }
+
+
 
             string seoTitle =
                 entity.Title.RemoveIllegalCharacters()
@@ -23,9 +32,25 @@ namespace CUWebinars.Web.Core
                 title = entity.Title,
                 start = ToUnixTimespan(entity.Date),
                 end = ToUnixTimespan(entity.Date.AddHours((double)entity.Duration)),
-                url =  "/" + entity.idWebinar + "/" + seoTitle
-                //url = "/Webinar/Details/" + entity.idWebinar
+                url = "/" + entity.idWebinar + "/" + seoTitle
+                
             };
+
+            //           	<cd till></cd till> (if not available for multiple years)
+            //<description></description>
+            //<objectives></objectives>(what you will learn)
+            //<who should attend></who should attend>
+            //<presenter></presenter>
+            //<credits></credits> (if possibly multiple, json)
+            //either:
+            //<pricing live></pricing live>
+            //<pricing od></pricing od>
+            //<pricing cd></pricing cd>
+            //<pricing liveod></pricing liveod>
+            //<pricing livecd></pricing livecd>
+            //or:
+            //<pricing as json></pricing as json>
+
 
             return dto;
         }
@@ -37,7 +62,7 @@ namespace CUWebinars.Web.Core
             //DateTime theTime = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, myZone);
             TimeZoneInfo tzInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
             var convertedTimeToUtc = TimeZoneInfo.ConvertTimeToUtc(date, tzInfo);
- 
+
             //return (long)Math.Truncate(tspan.TotalSeconds);
 
 

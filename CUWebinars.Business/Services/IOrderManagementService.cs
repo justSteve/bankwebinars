@@ -157,6 +157,7 @@ namespace CUWebinars.Business.Services
         decimal CalculateCreditsUsed(Discount userDiscount);
         
         int CheckIfEmailAlreadyRegisteredForWebinar(int idWebinar, string email);
+        int CheckIfEmailAlreadyRegisteredForWebinarByDomain(int idWebinar, string email);
         bool UserHasMultipleEvents(int idUser);
         Order GetOrderByJoinCode(string joinCode);
         List<Registrant> GetCitrixRegistrantsByWebinar(int webinarId);
