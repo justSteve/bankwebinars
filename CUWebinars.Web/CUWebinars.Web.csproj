@@ -147,7 +147,7 @@
       <HintPath>..\packages\FluentValidation.5.5.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="GemBox.Document">
-      <HintPath>..\..\..\..\OneDrive\Code\DLLs\GemBox.Document.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Downloads\GemBox.Document.dll</HintPath>
     </Reference>
     <Reference Include="Glimpse.AspNet, Version=1.9.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Glimpse.AspNet.1.9.2\lib\net45\Glimpse.AspNet.dll</HintPath>
