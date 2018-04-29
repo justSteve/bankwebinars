@@ -652,11 +652,39 @@ namespace CUWebinars.Business.AccountService
             return _webUserRepository.GetPresenterById(userIdUser);
         }
 
-        public bool UserHasWsp(int idUser)
+        public string UserHasWsp(int idUser, string tenant)
         {
-            return _webUserRepository.UserHasWsp(idUser);
+            try
+            {
+                UserAccount userAccount = GetUserAccountByWebUserId(tenant, idUser);
+                if (userAccount.Claims.Where(claim => claim.Type == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp)
+                        .SingleOrDefault() != null)
+                {
+                    return userAccount.Claims.Where(c => c.Type == ClaimTypes.UserHasWsp).FirstOrDefault().Value;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("UserHasWsp: ", e);
+                
+            }
+            return null;
+        }
 
+        public string UserHasWspThatExpired(int idUser, string tenant)
+        {
+            UserAccount userAccount = GetUserAccountByWebUserId(tenant, idUser);
 
+            try
+            {
+                return userAccount.Claims
+                    .Where(c => c.Type == ClaimTypes.UserHasWsp).FirstOrDefault().ToString();
+            }
+            catch (Exception e)
+            {
+                _logger.FatalException("UserHasWsp: ", e);
+                return null;
+            }
         }
 
 

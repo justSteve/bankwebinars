@@ -50,7 +50,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         if (regUserStateManager.getAction() === '') {
 
-            $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact @tenantTechEmail or, for immediate assistant, call @tenant.TechPhone.</span>');
+            $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #893. Please refresh the page and re-try or contact info@ttstrain.com or, for immediate assistant, in our online chat application (lower right corner of this window).</span>');
             L.clientLogger.error("Connection Error #893. Item clicked: ", { value: e.currentTarget.value });
             return false;
         }
@@ -229,7 +229,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 } else if (data.error === 'Fail') {
 
                     L.clientLogger.info("goToAddressFields #319", { data: data });
-                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email @tenantTechEmail or, for immediate assistance, call @tenant.TechPhone.</span>');
+                    $('#labelEmail').html('<span class="label label-important">&nbsp;Connection Error #319. Email info@ttstrain.com or, for immediate assistance, in our online chat application (lower right corner of this window).</span>');
                 } else if (data.error === 'Uncaught Ajax Error') {
                     L.clientLogger.error("Uncaught Ajax Error 343", { result: data || "data was falsey", payload: payload });
                     $('#labelEmail').html('<span class="label label-important">&nbsp;Uncaught Ajax Error 343</span>');

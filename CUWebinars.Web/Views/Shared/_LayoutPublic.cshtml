@@ -1,4 +1,5 @@
 ﻿@using System.Configuration
+@using System.Runtime.InteropServices
 @using System.Text
 @using System.Web
 @using CUWebinars.Business.Constants
@@ -72,66 +73,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="msvalidate.01" content="EC4039EF0FA485B010F4E9AA1E51FF9C" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <script type="text/javascript">
-        var appInsights = window.appInsights || function (a) {
-            function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c
-        }({
-            instrumentationKey: "740ba977-f1a1-4c25-9819-cf6d01e7f1a2"
-        });
-
-        window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
-
-        // Adding telemetry initializer.
-        // This is called whenever a new telemetry item
-        // is created.
-
-        appInsights.queue.push(function () {
-            appInsights.context.addTelemetryInitializer(function (envelope) {
-                var telemetryItem = envelope.data.baseData;
-
-                // To set custom properties:
-                telemetryItem.properties = telemetryItem.properties || {};
-                telemetryItem.properties["globalProperty"] = "tenant: " + @globalConfig.Tenant;
-
+    @*<script type="text/javascript">
+            var appInsights = window.appInsights || function (a) {
+                function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c
+            }({
+                instrumentationKey: "740ba977-f1a1-4c25-9819-cf6d01e7f1a2"
             });
-        });
 
-        appInsights.trackPageView();
-    </script>
-    <script src="~/Scripts/js.cookie/js.cookie.js"></script>
-    @{
-        try
-        {
+            window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
 
-            <script type="text/javascript">
+            // Adding telemetry initializer.
+            // This is called whenever a new telemetry item
+            // is created.
 
-        var offset = new Date().getTimezoneOffset();
-        offset = offset / 60 * -1;
-        Cookies.set('timezoneoffset', offset);
+            appInsights.queue.push(function () {
+                appInsights.context.addTelemetryInitializer(function (envelope) {
+                    var telemetryItem = envelope.data.baseData;
 
-        var firstPage = "@firstPage";
-        var sessionID = "@sessionID";
-        var affiliateSessionSource = "@affiliateSessionSource";
-        var currentAffiliate = "@currentAffiliate.idUserAff";
-            </script>
-        }
-        catch (Exception e)
-        {
+                    // To set custom properties:
+                    telemetryItem.properties = telemetryItem.properties || {};
+                    telemetryItem.properties["globalProperty"] = "tenant: " + @globalConfig.Tenant;
 
-            <script type="text/javascript">
+                });
+            });
 
-                var offset = new Date().getTimezoneOffset();
-                offset = offset / 60 * -1;
-                Cookies.set('timezoneoffset', offset);
-
-                var firstPage = "@firstPage";
-                var sessionID = "@sessionID";
-                var affiliateSessionSource = "error: " + @e.Message;
-                var currentAffiliate = "19";
-            </script>
-        }
-
-    }
+            appInsights.trackPageView();
+        </script>*@
 
     <!--Start of Zopim Live Chat Script-->
     <script type="text/javascript">
@@ -157,6 +124,49 @@
         })(document, "script");
     </script>
     <!--End of Zopim Live Chat Script-->
+
+    <script src="~/Scripts/js.cookie/js.cookie.js"></script>
+    @{
+        try
+        {
+
+            <script type="text/javascript">
+                var offset = new Date().getTimezoneOffset();
+                offset = offset / 60 * -1;
+                Cookies.set('timezoneoffset', offset);
+
+                var firstPage = "@firstPage";
+                var sessionID = "@sessionID";
+                var affiliateSessionSource = "@affiliateSessionSource";
+                var currentAffiliate = "@currentAffiliate.idUserAff";
+
+                
+            </script>
+        }
+        catch (Exception e)
+        {
+
+            CUWebinars.Business.Core.Tracing.Tracer.Warning("LayoutPublic: {0} | Session: {1}",
+                e.Message, sessionID);
+            <script type="text/javascript">
+
+
+                var offset = new Date().getTimezoneOffset();
+                offset = offset / 60 * -1;
+                Cookies.set('timezoneoffset', offset);
+
+                var firstPage = "@firstPage";
+                var sessionID = "@sessionID";
+                var affiliateSessionSource = "error: " + @e.Message;
+                var currentAffiliate = "19";
+
+                $zopim(function () {
+                    $zopim.livechat.addTags("error: " + @e.Message);
+                });
+            </script>
+        }
+
+    }
 
     <title>@ViewBag.Title</title>
     @{
@@ -283,15 +293,12 @@
     @{
         if (User.Identity.IsAuthenticated)
         {
-            //if (!Html.IsDebug())
-            //{
             <script>
                 window.$zopim(function () {
                     window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
 
                 });
             </script>
-            //}
         }
     }
 </head>
@@ -311,6 +318,11 @@
             <!--this is the login for the user-->
             <div id="loginContainer">
                 @Html.Partial("_LoginPartial")
+            </div>
+
+            <!--this is the msgBox for the user-->
+            <div id="msgBoxContainer">
+                @Html.Partial("_MessagesPartial")
             </div>
 
 

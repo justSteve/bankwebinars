@@ -330,9 +330,8 @@
     <Reference Include="Microsoft.WindowsAzure.Jobs">
       <HintPath>..\packages\Microsoft.WindowsAzure.Jobs.0.2.0-alpha2\lib\net45\Microsoft.WindowsAzure.Jobs.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Storage, Version=8.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAzure.Storage.8.1.1\lib\net45\Microsoft.WindowsAzure.Storage.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=9.1.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.Storage.9.1.1\lib\net45\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsFabric.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAzure.Caching.1.7.0.0\lib\net35-full\Microsoft.WindowsFabric.Common.dll</HintPath>
@@ -346,9 +345,8 @@
     <Reference Include="NameParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NameParserSharp.1.2.0.0\lib\NameParser.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json.Schema, Version=2.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.Schema.2.0.3\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
@@ -566,6 +564,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Models\WspModel.cs" />
     <Compile Include="Models\CheckoutConfirmCookie.cs" />
     <Compile Include="MyTelemetryInitializer.cs" />
     <Compile Include="Log4NetAspNetProperty.cs" />
@@ -791,6 +790,7 @@
     <Content Include="Content\mobile\Startup\vendor\swiper\swiper.css" />
     <Content Include="Content\mobile\Startup\vendor\swiper\swiper.min.js" />
     <Content Include="Content\mobile\Startup\vendor\typist\typist.js" />
+    <Content Include="Content\toastr.min.css" />
     <Content Include="Infrastructure\LogConfigs\CCSLocal.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -1358,9 +1358,6 @@
     <Content Include="Content\print.css" />
     <Content Include="Content\quiz.css" />
     <Content Include="Content\toastr.css" />
-    <Content Include="Content\toastr.min.css" />
-    <Content Include="Content\toastr.scss" />
-    <Content Include="Content\toastr.less" />
     <Content Include="Content\toastr.css.map">
       <DependentUpon>toastr.css</DependentUpon>
     </Content>
@@ -1906,6 +1903,8 @@
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventForCD.docx" />
     <Content Include="Notification\Templates\SendPerDayPromoMaster2.cshtml" />
     <Content Include="Notification\Templates\SendPerWeekPromoMaster2.cshtml" />
+    <Content Include="Content\toastr.scss" />
+    <Content Include="Content\toastr.less" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
@@ -2826,7 +2825,15 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>
-    </PostBuildEvent>
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AddLocConfirm\ThirdPartyAssemblies\$(ProjectName).dll"
+
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.AdhocNotifier\ThirdPartyAssemblies\$(ProjectName).dll"
+
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)..\CUMailer\CUWebinars.Azure.OrderConfirmMultiWebJob\ThirdPartyAssemblies\$(ProjectName).dll"
+
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Label="SlowCheetah">
     <SlowCheetahToolsPath>$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\SlowCheetah.2.5.14\tools\))</SlowCheetahToolsPath>

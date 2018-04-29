@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization.Json;
@@ -767,7 +768,25 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult Details(int? id, int? idOrder, string joinCode, string renew)
         {
+            Affiliate currentAffiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
 
+            var affCookieCheck = CheckAffiliateCookie(currentAffiliate);
+            if (!string.IsNullOrEmpty(Request.QueryString[WebUiConstants.AffiliateId]))
+            {
+                if (Request.QueryString.ToString().Contains("utm_campaign"))
+                {
+                    int loadAff;
+                    if (int.TryParse(Request.QueryString[WebUiConstants.AffiliateId], out loadAff))
+                    {
+                        Affiliate foundAff = _orderManagementService.GetAffiliateById(loadAff);
+
+                        if (!ReferenceEquals(foundAff, null))
+                        {
+                            _stateService.SetValue(WebUiConstants.CurrentAffiliate, _orderManagementService.GetAffiliateById(loadAff));
+                        }
+                    }
+                }
+            }
             if (_globalConfig.Tenant == "DirectorSeries")
             {
                 _stateService.SetValue(WebUiConstants.DesSession, "true");
@@ -906,33 +925,79 @@ namespace CUWebinars.Web.Controllers
                 }
                 if (model.Webinar.idWebinar == 2520)
                 {
+                    var wspClaim = _membershipService.UserHasWsp(model.WebUser.idUser, _globalConfig.Tenant);
+
                     TempData["IsWSP"] = "true";
-                    //if (_membershipService.UserHasWsp(model.WebUser.idUser))
-                    //{
-                    //    model.Webinar.Title = "Refill Your WSP!";
-                    //    var sb = new StringBuilder();
-                    //    var creditRemain =
-                    //        _orderManagementService.CalculateCreditsRemain(model.Order.OrderRows
-                    //            .SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Discount);
-                    //    if (creditRemain > 1)
-                    //        sb.Append("Your existing WSP has " + creditRemain + " credits remaining. Add to that total by refilling your subscription!");
-                    //    if (creditRemain == 1)
-                    //        sb.Append("Your existing WSP has a single credit remaining. You can carry that credit over by refilling your subscription!");
-                    //    if (creditRemain == 0)
-                    //        sb.Append("Your existing WSP has no credits remaining. Refill your subscription to save on your next webinar!");
+                    if (wspClaim != null)
+                    {
+                        var wspModel = JsonConvert.DeserializeObject<WspModel>(wspClaim.TrimStart('[').TrimEnd(']'));
 
-                    //    if (creditRemain < 1 && creditRemain < 0)
-                    //        sb.Append("Your existing WSP has a partial credit remaining. You can carry that credit over by refilling your subscription!");
+                        var discount = _orderManagementService.GetDiscountByCode(wspModel.DiscountCode);
+                        model.Webinar.Title = "Refill Your WSP!";
+                        var sb = new StringBuilder();
+                        var creditRemain =
+                            _orderManagementService.CalculateCreditsRemain(discount);
+                        if (creditRemain > 1)
+                            sb.Append("Your existing WSP has " + creditRemain + " credits remaining. Add to that total by refilling your subscription!");
+                        if (creditRemain == 1)
+                            sb.Append("Your existing WSP has a single credit remaining. You can carry that credit over by refilling your subscription!");
+                        if (creditRemain == 0)
+                            sb.Append("Your existing WSP has no credits remaining. Refill your subscription to save on your next webinar!");
+
+                        if (creditRemain < 1 && creditRemain < 0)
+                            sb.Append("Your existing WSP has a partial credit remaining. You can carry that credit over by refilling your subscription!");
 
 
-                    //    TempData["WSPSummary"] = sb.ToString();
-                    //}
+                        TempData["WSPSummary"] = sb.ToString();
+                    }
                 }
+
+                if (model.Order != null && model.Order.idAffiliate != currentAffiliate.idUserAff)
+                {
+                    _logger.Warn("Details | Mismatched affiliates at exit!" + model.Order.idOrder + " model.Order.idAffiliate " + model.Order.idAffiliate + " != currentAffiliate.idUserAff " + currentAffiliate.idUserAff);
+
+                }
+
                 return View(model);
             }
             _logger.Error("Details Action invoked with null 'id' parameter");
 
             return RedirectToAction("allActive", new { eventsToShow = "upcoming" });
+        }
+
+
+        private IEnumerable<string> CheckAffiliateCookie(Affiliate sessionAffiliate)
+        {
+
+            //var result = "not found";
+            //foreach (HttpCookie requestCookie in Request.Cookies)
+            //{
+            //    if (requestCookie.Name.StartsWith(WebUiConstants.AffiliateSessionSource))
+            //    {
+            //        var affByCookie = requestCookie.Value.Split('|')[1];
+
+            //        if (affByCookie != null && affByCookie !=
+            //            _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString())
+            //        {
+            //            _logger.Warn("Cookie/Session mismatch: " + affByCookie + " | " + _stateService
+            //                             .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString());
+            //            return "Cookie/Session mismatch: " + affByCookie + " | " + _stateService
+            //                       .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString();
+            //        }
+            //        result = affByCookie;
+            //    }
+            //}
+            var cookieName = WebUiConstants.AffiliateSessionSource;
+            var matches = Request.Cookies.AllKeys
+                .Select((name, i) => new { name, i })
+                .Where(x => x.name == cookieName)
+                .Select(x => ParseAffSourceCookie(Request.Cookies[x.i]));
+            return matches;
+        }
+
+        private string ParseAffSourceCookie(HttpCookie requestCookie)
+        {
+            return "";
         }
 
         private bool BuildVMForAffiliate(int? id, ClaimsIdentity claimsIdentityOfAuthenticatedUser,
@@ -1009,15 +1074,13 @@ namespace CUWebinars.Web.Controllers
 
             Webinar webinar = new Webinar { idWebinar = 0 };
             if (icsWebinar.HasValue && icsWebinar > 0)
-                _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
+                webinar = _webinarControllerOrchestrator.GetWebinar(icsWebinar.Value);
             var descBuilder = new StringBuilder();
+
 
 
             if (order.idOrder > 0)
             {
-                webinar = _webinarControllerOrchestrator.GetWebinar(
-                    order.OrderRows.First(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar);
-
 
                 if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active)
                         .RegistrationType.ShowLiveNotifications.ToLower() != "yes")
@@ -1682,7 +1745,7 @@ namespace CUWebinars.Web.Controllers
 
             webinar = _webinarManagementService.GetWebinar(webinarId);
 
-            if (webinar.Title.StartsWith("Compliance Perspectives:"))
+            if (webinar != null && webinar.Title.StartsWith("Compliance Perspectives:"))
             {
                 ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
                 var currentUser = User.Identity.Name ?? "anon";

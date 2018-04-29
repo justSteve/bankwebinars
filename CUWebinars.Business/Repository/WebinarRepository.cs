@@ -352,7 +352,8 @@ namespace CUWebinars.Business.Repository
                 .Where(
                     w =>
                         w.Status == WebinarStatus.Scheduled || w.Status == WebinarStatus.Recorded ||
-                        w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress);
+                        w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress)
+                        .OrderByDescending(o => o.Date);
         }
 
         public IQueryable<Topic> GetAllTopics()

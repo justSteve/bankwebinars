@@ -4,6 +4,8 @@
 @model WebinarDetailsViewModel
 
 @{
+
+
     var byJoinCode = false;
     if (ViewBag.byJoinCode != null)
     {
@@ -36,7 +38,6 @@
             });
         </script>
     }
-
 }
 <style>
     .warnIE {
@@ -47,10 +48,13 @@
 </style>
 <script type="text/javascript">
     function ForwardToWSP() {
+        ViewBag.Title = Model.Webinar.Title;
         window.location = "/webinar/details/2520";
     }
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var addressVerified = @(Model.UserAddressVerified ? "true" : "false");
+
+
 </script>
 
 @section scripts{
@@ -209,10 +213,10 @@
                     </aside>*@
                 <!--close aside widget-->
             }
-            else
+            @*else
             {
                 <button role="button" class="btn btn-success btn-large" tabindex="-1" onclick="ForwardToWSP();" href="#">Learn More</button>
-            }
+            }*@
         </div>
         <!--close section tertiary-column sidebar span3-->
     </div>

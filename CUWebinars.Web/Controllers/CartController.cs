@@ -39,6 +39,7 @@ using Newtonsoft.Json.Linq;
 using Ninject.Extensions.Logging;
 using RestSharp;
 using ClaimTypes = CUWebinars.Business.Constants.ClaimTypes;
+using HttpCookie = System.Web.HttpCookie;
 
 namespace CUWebinars.Web.Controllers
 {
@@ -709,112 +710,84 @@ namespace CUWebinars.Web.Controllers
             return PartialView("Partials/CheckoutOptions", model);
         }
 
-        [HttpPost]
-        public ActionResult Logger(string level, string id, string obj)
-        {
-            var guid = Guid.NewGuid();
-            _logger.Warn("Guid: " + guid + ", level: " + level + ", id: " + id + ", ojb:" + obj + ", session: " + _appHelper.GetUserAuditInfo());
-            //var allCookies = new StringBuilder();
-            //var setAffCookie = "";
-            //bool foundStartOrderCookie = false;
-            //var startedCookie = "";
-            //for (var i = 0; i < Request.Cookies.Count; i++)
-            //{
-            //    System.Web.HttpCookie aCookie = Request.Cookies[i];
-
-            //    if (i > 0) allCookies.Append(", ");
-            //    if (aCookie != null && aCookie.Name.StartsWith("OrderStart"))
-            //    {
-            //        foundStartOrderCookie = true;
-            //        startedCookie = aCookie.Value;
-            //    }
-            //}
-
-            //var model = new CheckoutConfirmCookieModel
-            //{
-            //    InitialAffiliate = setAffCookie
-            //};
-            return Json(new
-            {
-                guid
-
-            }, JsonRequestBehavior.AllowGet);
-
-        }
 
         [HttpPost]
         public ActionResult CheckoutConfirmSetCookie(CheckoutOptionsViewModel formModel)
         {
-            var allCookies = new StringBuilder();
+            var result = "";
             var setAffCookie = "";
             bool foundStartOrderCookie = false;
             var startedCookie = "";
-            for (var i = 0; i < Request.Cookies.Count; i++)
-            {
-                System.Web.HttpCookie aCookie = Request.Cookies[i];
 
-                if (i > 0) allCookies.Append(", ");
-                if (aCookie != null && aCookie.Name.StartsWith("OrderStart"))
-                {
-                    foundStartOrderCookie = true;
-                    startedCookie = aCookie.Value;
-                }
-            }
-            if (!foundStartOrderCookie)
+            try
             {
-                try
+                foreach (HttpCookie requestCookie in Request.Cookies)
                 {
-                    _logger.Info("CheckoutConfirmSetCookie was not found");
-                    var initialAffiliate = _stateService.GetValue<string>("AffiliateSessionSource");
-                    if (initialAffiliate.Contains("QueryString"))
+                    if (requestCookie.Name.StartsWith(WebUiConstants.AffiliateSessionSource))
                     {
-                        var aff = _cartControllerOrchestrator.GetAffiliateById(
-                            Convert.ToInt32(initialAffiliate.Split('|')[1]));
+                        var affByCookie = requestCookie.Value.Split('|')[1];
 
-                        if (aff != null)
+                        if (affByCookie != null && affByCookie !=
+                            _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString())
                         {
-                            setAffCookie = "AffiliateId=" + aff.idUserAff + "&" + Request.Form.ToString();
+                            _logger.Warn("Cookie/Session mismatch: " + affByCookie + " | " + _stateService
+                                             .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString());
+                            if (_stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff == 19)
+                                _stateService.SetValue(WebUiConstants.CurrentAffiliate,
+                                    _cartControllerOrchestrator.GetAffiliateById(Convert.ToInt32(affByCookie)));
                         }
-                        else
+                        result = affByCookie;
+                    }
+                    if (requestCookie != null && requestCookie.Name.StartsWith("OrderStart"))
+                    {
+                        foundStartOrderCookie = true;
+                        startedCookie = requestCookie.Value;
+                    }
+                    if (!foundStartOrderCookie)
+                    {
+                        _logger.Info("CheckoutConfirmSetCookie was not found");
+                        var initialAffiliate = _stateService.GetValue<string>("AffiliateSessionSource");
+                        if (initialAffiliate.Contains("QueryString"))
                         {
-                            _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
+                            var aff = _cartControllerOrchestrator.GetAffiliateById(
+                                Convert.ToInt32(initialAffiliate.Split('|')[1]));
+
+                            if (aff != null)
+                            {
+                                setAffCookie = "AffiliateId=" + aff.idUserAff + "&form=" + Request.Form.ToString();
+                            }
+                            else
+                            {
+                                _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
+                            }
                         }
                     }
                 }
-                catch (Exception e)
+
+                _logger.Info("CheckoutConfirmSetCookie was found");
+                var initialValues = _stateService.GetValue<string>("AffiliateSessionSource");
+
+                if (initialValues.Contains("QueryString"))
                 {
-                    _logger.FatalException("SetCookie", e);
+                    var aff = _cartControllerOrchestrator.GetAffiliateById(
+                        Convert.ToInt32(initialValues.Split('|')[1]));
+
+                    if (aff != null)
+                    {
+                        setAffCookie = "QueryString|" + aff.idUserAff;
+                    }
+                    else
+                    {
+                        _logger.Warn("SetCookie did not find affiliate: " + initialValues);
+                    }
                 }
             }
-            else
+            catch (Exception e)
             {
-                try
-                {
-                    _logger.Info("CheckoutConfirmSetCookie was found");
-                    //var initialValues = (NameValueCollection)_stateService.GetValue<string>("AffiliateSessionSource");
-                    //if (initialAffiliate.Contains("QueryString"))
-                    //{
-                    //    var aff = _cartControllerOrchestrator.GetAffiliateById(
-                    //        Convert.ToInt32(initialAffiliate.Split('|')[1]));
-
-                    //    if (aff != null)
-                    //    {
-                    //        setAffCookie = "QueryString|" + aff.idUserAff;
-                    //    }
-                    //    else
-                    //    {
-                    //        _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
-                    //    }
-                    //}
-                }
-                catch (Exception e)
-                {
-                    _logger.FatalException("SetCookie", e);
-                }
+                _logger.FatalException("SetCookie", e);
             }
-        
 
-        var model = new CheckoutConfirmCookieModel
+            var model = new CheckoutConfirmCookieModel
             {
                 InitialAffiliate = setAffCookie
             };
@@ -880,6 +853,14 @@ namespace CUWebinars.Web.Controllers
                 if (model == null) throw new ArgumentNullException("model");
                 try
                 {
+                    var user = Request.RequestContext.HttpContext.User as ClaimsPrincipal;
+                    if (user == null) throw new ArgumentNullException("user null at CreateOrderByAffiliate");
+
+                    var currentAffByClaim = user.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Affiliate);
+                    var currentAffiliate = _stateService.GetValue<Affiliate>("CurrentAffiliate");
+                    if (currentAffByClaim != null && currentAffByClaim.Value != currentAffiliate.ttsDomain)
+                        throw new Exception("CurrentAffiliate Mismatched!!");
+
                     var order = _cartControllerOrchestrator.LoadOrder(ID.Value);
 
                     if (order.OrderStatus == OrderStatus.Error)
@@ -2744,37 +2725,47 @@ namespace CUWebinars.Web.Controllers
 
                     if (!multi)
                     {
-                        order.AdminComments = order.AdminComments.Replace("Single_OrderCheckout", "PaidByCC");
-
-                        order.OrderStatus = OrderStatus.Paid;
-                        order.TotalPaid = order.Total;
-
-                        _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,
-                            order.OrderRows.FirstOrDefault());
-
-                        _cartControllerOrchestrator.UpdateOrderPricing(order);
-                        _logger.Info("PayTrace: " + order.idOrder + " is Approved");
-
-                        //M4Gen
-                        _SendOrderConfirmation2(order.idOrder);
-
-                        if (row.Webinar.SeriesInfo.Contains("Children"))
-                            _cartControllerOrchestrator.CreateSeriesOrders(row);
-
-                        if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == 2520)
+                        try
                         {
-                            //is a WSP order
-                            _cartControllerOrchestrator.CreateWspCode(order);
+
+                            order.AdminComments = order.AdminComments.Replace("Single_OrderCheckout", "PaidByCC");
+
+                            order.OrderStatus = OrderStatus.Paid;
+                            order.TotalPaid = order.Total;
+
+                            _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,
+                                order.OrderRows.FirstOrDefault());
+
+                            _cartControllerOrchestrator.UpdateOrderPricing(order);
+                            _logger.Info("PayTrace: " + order.idOrder + " is Approved");
+
+                            //M4Gen
+                            _SendOrderConfirmation2(order.idOrder);
+
+                            if (row.Webinar.SeriesInfo.Contains("Children"))
+                                _cartControllerOrchestrator.CreateSeriesOrders(row);
+
+                            if (row.Webinar.idWebinar == 2520)
+                            {
+                                //is a WSP order
+                                _cartControllerOrchestrator.CreateWspCode(order);
+                            }
+
+                            if (row.Webinar.Title.Contains("Compliance Perspectives")
+                                //test if CP code needs to be created by ensuring it's not a trial
+                                && row.RowPrice > 200)
+                                _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
                         }
-
-                        if (row.Webinar.Title.Contains("Compliance Perspectives")
-                            //test if CP code needs to be created by ensuring it's not a trial
-                            && row.RowPrice > 200)
-                            _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
-
+                        catch (Exception e)
+                        {
+                            _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                "2afda898.ttstrain.com@amer.teams.ms" // Errors channel of teams
+                                , "PayTracePostback Error on: " + order.idOrder, "PaytracePostback hit error: " + e.Message);
+                        }
                     }
                     else
                     {
+                        var orderExcp = order.idOrder;
                         JObject o = JObject.Parse(order.AdminComments);
 
                         var nullChecked = o.Properties().FirstOrDefault(p => p.Name.StartsWith("Multi_OrderCheckout"));
@@ -2784,39 +2775,44 @@ namespace CUWebinars.Web.Controllers
                         {
                             try
                             {
-                                order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(odr.ToString()));
+                                var orderMulti = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(odr.ToString()));
+                                orderExcp = orderMulti.idOrder;
+                                var rowMulti = orderMulti.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
-                                _logger.Info("Paytrace: " + order.idOrder + "  Postback Multi-OrderCheckout loops: " + order.idOrder);
+                                _logger.Info("PaytracePostback: " + order.idOrder + "  Postback Multi-OrderCheckout loops: " + order.idOrder);
 
-                                order.OrderStatus = OrderStatus.Paid;
-                                order.TotalPaid = order.Total;
-                                order.AdminComments = order.AdminComments.Replace("Multi_OrderCheckout", "PaidByCC");
+                                orderMulti.OrderStatus = OrderStatus.Paid;
+                                orderMulti.TotalPaid = orderMulti.Total;
+                                orderMulti.AdminComments = orderMulti.AdminComments.Replace("Multi_OrderCheckout", "PaidByCC");
 
                                 _cartControllerOrchestrator.AddClaimForPostEventMaterials(order.BillingEmail,
-                                    order.OrderRows.FirstOrDefault());
+                                    orderMulti.OrderRows.FirstOrDefault());
 
-                                _cartControllerOrchestrator.UpdateOrderPricing(order);
+                                _cartControllerOrchestrator.UpdateOrderPricing(orderMulti);
 
-                                _SendOrderConfirmation2(order.idOrder);
+                                _SendOrderConfirmation2(orderMulti.idOrder);
                                 //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                                 if (row.Webinar.SeriesInfo.Contains("Children"))
                                     createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
 
-                                if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.idWebinar == 2520)
+                                if (rowMulti.Webinar.idWebinar == 2520)
                                 {
                                     //is a WSP order
-                                    _cartControllerOrchestrator.CreateWspCode(order);
+                                    _cartControllerOrchestrator.CreateWspCode(orderMulti);
                                 }
 
-
-                                if (row.Webinar.Title.Contains("Compliance Perspectives")
+                                if (rowMulti.Webinar.Title.Contains("Compliance Perspectives")
                                     //test if CP code needs to be created by ensuring it's not a trial
-                                    && row.RowPrice > 200)
-                                    _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
+                                    && rowMulti.RowPrice > 200)
+                                    _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(rowMulti);
 
                             }
                             catch (Exception ex)
                             {
+                                _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                                    "2afda898.ttstrain.com@amer.teams.ms" // Errors channel of teams
+                                    , "PayTracePostback Multi Error on: " + orderExcp, "PaytracePostback hit error: " + ex.Message);
+
                                 _logger.FatalException("Paytrace: " + order.idOrder + "  Multi-OrderCheckout", ex);
                                 throw;
                             }
@@ -2831,6 +2827,10 @@ namespace CUWebinars.Web.Controllers
             }
             catch (Exception exception)
             {
+                _cartControllerOrchestrator.FireMandrillNotificationEvent(
+                    "2afda898.ttstrain.com@amer.teams.ms" // Errors channel of teams
+                    , "PayTrace Error!!", "PaytracePostback hit error: " + exception.Message + " |submitted values:" + formFields.ToString());
+
                 ModelState.AddModelError(string.Empty,
                     "Connection Error #552. Please contact the administrator to complete transaction.");
                 _logger.ErrorException("PayTrace postback returned APPROVED but controller failed ", exception);

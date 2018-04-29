@@ -30,15 +30,15 @@
 <html class="no-js" lang="en" dir="ltr">
 <!--<![endif]-->
 <head>
-    <script type="text/javascript">
-        var appInsights=window.appInsights||function(a){
-            function b(a){c[a]=function(){var b=arguments;c.queue.push(function(){c[a].apply(c,b)})}}var c={config:a},d=document,e=window;setTimeout(function(){var b=d.createElement("script");b.src=a.url||"https://az416426.vo.msecnd.net/scripts/a/ai.0.js",d.getElementsByTagName("script")[0].parentNode.appendChild(b)});try{c.cookie=d.cookie}catch(a){}c.queue=[];for(var f=["Event","Exception","Metric","PageView","Trace","Dependency"];f.length;)b("track"+f.pop());if(b("setAuthenticatedUserContext"),b("clearAuthenticatedUserContext"),b("startTrackEvent"),b("stopTrackEvent"),b("startTrackPage"),b("stopTrackPage"),b("flush"),!a.disableExceptionTracking){f="onerror",b("_"+f);var g=e[f];e[f]=function(a,b,d,e,h){var i=g&&g(a,b,d,e,h);return!0!==i&&c["_"+f](a,b,d,e,h),i}}return c
+    @*<script type="text/javascript">
+        var appInsights = window.appInsights || function (a) {
+            function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c
         }({
-            instrumentationKey:"740ba977-f1a1-4c25-9819-cf6d01e7f1a2"
+            instrumentationKey: "740ba977-f1a1-4c25-9819-cf6d01e7f1a2"
         });
 
-        window.appInsights=appInsights,appInsights.queue&&0===appInsights.queue.length&&appInsights.trackPageView();
-    </script>
+        window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
+    </script>*@
     <script src="~/Scripts/js.cookie/js.cookie.js"></script>
 
     <script type="text/javascript">
@@ -49,12 +49,12 @@
 
     <title>@ViewBag.Title</title>
     <!-- Meta Data ================ -->
-    <meta charset="UTF-8"/>
-    <meta name="description" content="BankWebinars"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta charset="UTF-8" />
+    <meta name="description" content="BankWebinars" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <!-- CSS ================ -->
-    <link rel="stylesheet" href="~/Content/css/html-content-slider-flexslider.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="~/Content/css/html-content-slider-flexslider.css" type="text/css" media="screen" />
 
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
@@ -67,49 +67,49 @@
     <script type="text/javascript">
 
         window.$zopim ||
-        (function(d, s) {
-            var z = window.$zopim = function(c) {
+            (function (d, s) {
+                var z = window.$zopim = function (c) {
                     z._.push(c);
                 },
-                $ = z.s = d.createElement(s),
-                e = d.getElementsByTagName(s)[0];
+                    $ = z.s = d.createElement(s),
+                    e = d.getElementsByTagName(s)[0];
 
-            z.set = function(o) {
-                z.set._.push(o);
-            };
-            z._ = [];
-            z.set._ = [];
-            $.async = !0;
-            $.setAttribute("charset", "utf-8");
-            $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
-            z.t = +new Date;
-            $.type = "text/javascript";
-            e.parentNode.insertBefore($, e);
-        })(document, "script");
+                z.set = function (o) {
+                    z.set._.push(o);
+                };
+                z._ = [];
+                z.set._ = [];
+                $.async = !0;
+                $.setAttribute("charset", "utf-8");
+                $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
+                z.t = +new Date;
+                $.type = "text/javascript";
+                e.parentNode.insertBefore($, e);
+            })(document, "script");
     </script>
     <!--End of Zopim Live Chat Script-->
     <!-- Icons ================ -->
     <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-    <link rel="apple-touch-icon-precomposed" href="~/Content/images/BankWebinars/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon-precomposed" href="~/Content/images/BankWebinars/apple-touch-icon.png" />
     <!-- For first- and second-generation iPad: -->
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Content/images/BankWebinars/apple-touch-icon-72x72-precomposed.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Content/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
     <!-- For iPhone with high-resolution Retina display: -->
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Content/images/BankWebinars/apple-touch-icon-114x114-precomposed.png"/>
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Content/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
     <!-- For third-generation iPad with high-resolution Retina display: -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png"/>
-    <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico"/>
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
+    <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
     <!-- Open Graph for facebook
     http://graph.facebook.com/[UserName] replace [UserName]
     with yours and get your fb:admis content information where the XXXX goes.
     ================================================== -->
-    <meta property="og:title" content=""/>
-    <meta property="og:type" content=""/>
-    <meta property="og:url" content=""/>
-    <meta property="og:image" content=""/>
-    <meta property="og:site_name" content=""/>
-    <meta property="fb:admins" content="XXXXX"/>
-    <meta property="og:locale" content="en_us"/>
-    <meta property="og:description" content="CUWebinars is Webinars For Credit Unions."/>
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <meta property="og:site_name" content="" />
+    <meta property="fb:admins" content="XXXXX" />
+    <meta property="og:locale" content="en_us" />
+    <meta property="og:description" content="CUWebinars is Webinars For Credit Unions." />
 
     @RenderSection("Styles", required: false)
     <style>
@@ -221,13 +221,13 @@
                         </li>
                     </ul>
                 </nav>
-            <!-- close / #main_menu -->
+                <!-- close / #main_menu -->
             }
             else if (globalConfig.Tenant == "CCS")
             {
                 <nav id="main_menu" class="span8">
                     <ul class="primary_menu">
-                       
+
                         <li class="parent">
                             <a href="javascript:void(0)">Course Catalog<i></i></a>
                             <ul>@Html.Action("GetCcsModules", "Navigation")</ul>
@@ -242,7 +242,7 @@
                     </ul>
                 </nav>
             }
-            else 
+            else
             {
                 <nav id="main_menu" class="span8">
                     <ul class="primary_menu">

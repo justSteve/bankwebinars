@@ -674,7 +674,7 @@ namespace CUWebinars.Business.Repository
 
         public Order AssignWebUserToOrder(WebUser webUser, Order order)
         {
-            if (order == null) throw new ArgumentNullException("order");
+            if (order == null) throw new ArgumentNullException("order null at AssignWebUserToOrder");
 
             order.idUser = webUser.idUser;
 
@@ -707,24 +707,7 @@ namespace CUWebinars.Business.Repository
                     order.ShippingPhone = shippingAddress.Phone;
                     order.ShippingState = shippingAddress.State;
                     order.ShippingZip = shippingAddress.Zip;
-
-                    //if (user.SubscriptionDiscount != null)
-                    //{
-                    //    foreach (OrderRow row in order.Rows)
-                    //    {
-                    //        row.DiscountCode = user.SubscriptionDiscount.Code;
-                    //    }
-                    //}
-                    //try
-                    //{
-                    //    Save(order);
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    Logger.Instance.LogException(ex);
-                    //    Logger.Instance.LogMessage("ERROR: Failed to save user assigned to order: "+ user.Email + " order = " + order.ID);
-                    //    throw;
-                    //}
+                   
                 }
             }
             if (webUser.Institution != null)

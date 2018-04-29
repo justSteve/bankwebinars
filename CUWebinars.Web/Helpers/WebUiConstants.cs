@@ -35,6 +35,7 @@ namespace CUWebinars.Web.Helpers
 
         public const string AffiliateId = "idAff";
         public const string CurrentAffiliate = "CurrentAffiliate";
+        public const string AffiliateSessionSource = "AffiliateSessionSource";
         public const string CurrentUser = "CurrentUser";
         public const string DesSession = "false";
         public const string CcsSession = "false";
@@ -60,6 +61,7 @@ namespace CUWebinars.Web.Helpers
         public const string AnonUserEmail = "AnonUserEmail";
         public const string PayTraceSubmit = "PayTraceSubmit";
         public const string RemoteAddress = "RemoteAddress";
+        public const string HasWsp = "HasWsp";
         
     }
 }

@@ -107,6 +107,7 @@ namespace CUWebinars.Business.AccountService
         //string CreateUserOnLegacy(WebUser user);
         Presenter GetPresenter(int userIdUser);
 
-        bool UserHasWsp(int idUser);
+        string UserHasWsp(int idUser, string tenant);
+        string UserHasWspThatExpired(int idUser, string tenant);
     }
 }

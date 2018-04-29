@@ -152,11 +152,11 @@
             </div>
         </div>
         <div class=" row">
-            <div class="control-group span5">
+            <div class="control-group span12">
                 <div class="control-label">
                     @Html.LabelFor(m => m.Topics)
                 </div>
-                <div id="topicsPanel" class="controls">
+                <div  style="column-count: 3;"  id="topicsPanel" class="controls">
                     @Html.CheckBoxListFor(m => m.PostedTopics.TopicIds,
                         m => m.Topics,
                         m => m.idTopic,
@@ -165,11 +165,11 @@
                         Position.Vertical)
                 </div>
             </div>
-            <div class="control-group span5">
+            <div class="control-group span12">
                 <div class="control-label">
                     @Html.LabelFor(m => m.RegTypeGroups, "Options")
                 </div>
-                <div id="regTypeGroupsPanel" class="controls">
+                <div style="column-count: 3;" id="regTypeGroupsPanel" class="controls">
                     @Html.CheckBoxListFor(m => m.PostedRegTypeGroups.RegTypeGroupIds,
                         m => m.RegTypeGroups,
                         m => m.idRegTypeGroup,

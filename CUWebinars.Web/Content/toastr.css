@@ -1,4 +1,4 @@
-﻿.toast-title {
+.toast-title {
   font-weight: bold;
 }
 .toast-message {
@@ -86,6 +86,7 @@ button.toast-close-button {
   position: fixed;
   z-index: 999999;
   /*overrides*/
+
 }
 #toast-container * {
   -moz-box-sizing: border-box;
@@ -194,4 +195,3 @@ button.toast-close-button {
     width: 25em;
   }
 }
-/*# sourceMappingURL=toastr.css.map */
