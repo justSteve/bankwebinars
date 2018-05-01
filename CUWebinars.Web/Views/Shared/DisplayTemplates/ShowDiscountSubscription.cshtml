@@ -30,105 +30,76 @@ Model.TypeOfDiscount == DiscountType.Subscription
     )
 {
     <div class="row-fluid">
-        <div class="span4 offset1">
+        <div class="span10 offset1">
             <div>
-                @if (Model.CreditsRemain > 0)
-                {
-                    if (Model.DateValidTo > Model.DateValidFrom)
+                <p style="font-size: larger">
+                    Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> credits remaining.
+                </p>
+
+                <p style="font-size: larger">
+                    @if (Model.UsersOnWsp != null && Model.UsersOnWsp.Count() > 1)
                     {
-                        <p style="font-size: larger">
-                            Your subscription will expire on @Model.DateValidTo.ToShortDateString()
-                        </p>
+                        <div><b>The following users have access: </b></div>
+                        foreach (var webUser in @Model.UsersOnWsp.Distinct())
+                        {
+                            <div class="userOfWsp">@webUser.email</div>
+                        }
+                        @*<div><b>Need to add someone?</b> <input type="text" name="addUserToWSP" /></div>*@
                     }
-                    else
+                </p>
+                <p style="font-size: larger">
+                    @if (Model.WspUsageSum != null)
                     {
-                        if (Model.CreditsRemain < 1.1M)
-                        {
-                            <p style="font-size: larger">
-                                Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> credit remaining.
-                            </p>
-                        }
-                        else
-                        {
-                            <p style="font-size: larger">
-                                Your subscription (@Model.DiscountCode) has <b>@Model.CreditsRemain.ToString().Replace(".00", "")</b> credits remaining.
-                            </p>
+                        <div><b>The following orders have been paid for via this WSP:</b></div>
+                        //build table starts here
+                        <table width="90%">
+                            <tr><td>Order ID</td><td>Date</td><td>Email</td><td>Event Title - Date</td><td>Registration Type</td><td>Credits Used</td></tr>
+                            @foreach (var order in @Model.WspUsageSum.Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar != 2520)
+                                .OrderByDescending(o => o.OrderDate))
+                            {
+                                //these are the rows
+                                <tr>
+                                    <td>
+                                        <div class="orderByWsp">
+                                            @order.idOrder
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="orderByWsp">
+                                            @order.OrderDate.ToShortDateString()
+                                        </div>
+                                    </td>
 
-                            <p style="font-size: larger">
-                                @if (Model.UsersOnWsp != null && Model.UsersOnWsp.Count() > 1)
-                                {
-                                    <div><b>The following users have access: </b></div>
-                                    foreach (var webUser in @Model.UsersOnWsp.Distinct())
-                                    {
-                                        <div class="userOfWsp">@webUser.email</div>
-                                    }
-                                    @*<div><b>Need to add someone?</b> <input type="text" name="addUserToWSP" /></div>*@
-                                }
-                            </p>
-                            <p style="font-size: larger">
-                                @if (Model.WspUsageSum != null && Model.WspUsageSum
-                                    .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid).Count() > 1)
-                                {
-                                    <div><b>The following orders have been paid for via this WSP:</b></div>
-                                    //build table starts here
-                                    <table width="1000">
-                                        <tr><td>Order ID</td><td>Date</td><td>Email</td><td>Event Title - Date</td><td>Credits Used</td></tr>
-                                        @foreach (var order in @Model.WspUsageSum.Where(o => o.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idWebinar != 2520)
-                                            .OrderByDescending(o => o.OrderDate))
-                                        {
-                                            //these are the rows
-                                            <tr>
-                                                <td>
-                                                    <div class="orderByWsp">
-                                                        @order.idOrder
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="orderByWsp">
-                                                        @order.OrderDate.ToShortDateString()
-                                                    </div>
-                                                </td>
-
-                                                <td>
-                                                    <div class="orderByWsp">
-                                                        @order.BillingEmail
-                                                    </div>
-                                                </td>                                                <td>
-                                                    <div class="orderByWsp">
-                                                        @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title  (@order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date.ToShortDateString())
-                                                    </div>
-                                                </td>                                                <td>
-                                                    <div class="orderByWsp">
-                                                        @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.CreditCost
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </table>
-                                    @*<div>Have a question or comment?<input type="text" name="addQuestionFromWspUsageSum" /></div>*@
-                                }
-                            </p>
-                        }
+                                    <td>
+                                        <div class="orderByWsp">
+                                            @order.BillingEmail
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="orderByWsp">
+                                            @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Title  (@order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.Date.ToShortDateString())
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="orderByWsp">
+                                            @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.OptionLabel
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="orderByWsp">
+                                            @order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType.CreditCost
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                        @*<div>Have a question or comment?<input type="text" name="addQuestionFromWspUsageSum" /></div>*@
                     }
-                }
-                else
-                {
+                </p>
 
-                    <p style="font-size: larger; color: red;">
-                        Your subscription package has expired.
-                    </p>
-                }
-                @if (Model.DateValidTo > Model.DateValidFrom)
-                {
-                    <p style="font-size: larger">
-                        <a class="btn btn-success pull-right" href="javascript:void( window.location='https://www.bankwebinars.com/webinar/details/2520?renew=@Model.DiscountCode', 'blank')">Order Today!</a>
-                    </p>
-                }
-                else
-                {
-                    <div style="margin-top: 6px;">
-                        <a class="btn btn-success pull-right" href="javascript:void( window.location='https://www.bankwebinars.com/webinar/details/2520?renew=@Model.DiscountCode', 'blank')">Add More!</a>
-                    </div>}
+                <div style="margin-top: 6px;">
+                    <a class="btn btn-success pull-right" href="javascript:void( window.location='https://www.bankwebinars.com/webinar/details/2520?renew=@Model.DiscountCode', 'blank')">Add More!</a>
+                </div>
             </div>
             @*<div>@Html.RenderPartial("DisplayTemplates/ShowOrdersByDiscount", Model);</div>*@
         </div>
