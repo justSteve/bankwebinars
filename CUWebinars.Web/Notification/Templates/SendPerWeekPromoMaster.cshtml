@@ -10,6 +10,7 @@ TtsTemplateHelper TtsTemplateHelperObject = new TtsTemplateHelper();
 
 var thisWebinar = Model.Webinar;
 string TenantHead = TtsTemplateHelperObject.Tenant();
+    
 }
 [preview-@TenantHead] promo: @thisWebinar.Title
 </title>
@@ -18,30 +19,35 @@ string TenantHead = TtsTemplateHelperObject.Tenant();
 
 @{
 
-var webinar = Model.Webinar;
-//var aff = Model.Affiliate;
-//int currentUserID = UserFacade.Instance.GetCurrentUserID();
+    var webinar = Model.Webinar;
+    //var aff = Model.Affiliate;
+    //int currentUserID = UserFacade.Instance.GetCurrentUserID();
 
-var ceuStmt = "";
-var ceuShort = "";
+    var ceuStmt = "";
+    var ceuShort = "";
 
-if (String.IsNullOrEmpty(webinar.ceu) == false)
-{
-string[] ceu = webinar.ceu.Split('|');
-ceuShort = ceu[0];
-ceuStmt = ceu[1];
-}
+    if (String.IsNullOrEmpty(webinar.ceu) == false)
+    {
+        string[] ceu = webinar.ceu.Split('|');
+        ceuShort = ceu[0];
+        ceuStmt = ceu[1];
+    }
 
-USTimeZone tz = Model.TimeZone;
-string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, tz, true, webinar.Duration);
+    USTimeZone tz = Model.TimeZone;
+    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, tz, true, webinar.Duration);
 
-string Tenant = TtsTemplateHelperObject.Tenant();
-string TenantEmail = TtsTemplateHelperObject.TenantEmail();
-string TenantDomain = TtsTemplateHelperObject.TenantDomain();
-string TenantURL = TtsTemplateHelperObject.TenantURL();
-string TenantLogo = TtsTemplateHelperObject.TenantLogo();
-string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
-string TenantCom = TenantDomain + ".com";
+    string Tenant = TtsTemplateHelperObject.Tenant();
+    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+    string TenantURL = TtsTemplateHelperObject.TenantURL();
+    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
+    string TenantCom = TenantDomain + ".com";
+    var poweredByLogo = "https://ttsimages.blob.core.windows.net/images/email/logo_powered_by_bank_rv.png";
+    if (Tenant == "CUWebinars")
+    {
+        poweredByLogo = "https://ttsimages.blob.core.windows.net/images/email/logo_powered_by_cu_rv.png";
+    }
 }
 <head>
 <!-- NAME: RIGHT SIDEBAR -->
@@ -933,9 +939,15 @@ Would you and your colleagues like to attend webinars at a lower price?&nbsp; Wi
 OnDemand Webinars Available
 </h3>
 
-<p style="color: #f5f5f5">
-Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. <a href="@TenantURL/Webinar/Recorded?idaff={aff_idUserAff}&src=pwondemand" style="color: #ff0000; text-decoration: none; border-bottom: 1px dotted #ff0000; font-style: italic;">Click here to see all our OnDemand Recordings.</a>
-</p>
+    <p style="color: #f5f5f5">
+        Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. <a href="@TenantURL/Webinar/Recorded?idaff={aff_idUserAff}&src=pwondemand" style="color: #ff0000; text-decoration: none; border-bottom: 1px dotted #ff0000; font-style: italic;">Click here to see all our OnDemand Recordings.</a>
+    </p>
+    <p style="color: #f5f5f5"><br>
+
+    </p><p>
+    </p><p style="color: #f5f5f5" align="center">
+        <img src="@poweredByLogo" width="192px" height="148px">
+    </p>
 
 </td>
 </tr>

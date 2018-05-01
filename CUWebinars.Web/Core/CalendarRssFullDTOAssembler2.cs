@@ -45,11 +45,23 @@ namespace CUWebinars.Web.Core
                 string[] ceu = entity.ceu.Split('|');
                 ceuShort = "" + ceu[0];
                 ceuStatement = ceu[1];
+                if (ceuShort.Contains(" CE "))
+                {
+                    ceuShort = "{\"Type\": \"CE\", \"Amt\": " + ceuShort.Replace(" CE Credits", "") + ", \"Statement\": \"" + ceuStatement + "\"}";
+                }
+
+                if (ceuShort.Contains(" CRCM "))
+                {
+                    ceuShort = "{\"Type\": \"CRCM\", \"Amt\": " + ceuShort.Replace("  CRCM Credits", "") + ", \"Statement\": \"" + ceuStatement + "\"}";
+                }
             }
 
             var pricing = "";
             // to update pricing values run sproc
             // EXEC BuildRegTypesForJson @RegTypeGroup = 51
+            var dateStartEnd = "{\"start\": \"" + ToUnixTimespan(entity.Date) + "\", \"end\": \"" + ToUnixTimespan(entity.Date.AddHours((double)entity.Duration)) + "\"}"
+                ;
+
 
 
             if (entity.SeriesInfo.Contains("children"))
@@ -103,8 +115,11 @@ namespace CUWebinars.Web.Core
                           "<div id=\"presenter\"><b>Presenter: </b>" + sb.ToString() + "</div>" +
                           "<div id=\"learn\"><b>" + entity.LearnCaption + "</b>" + entity.LearnBody + "</div>" +
                           "<div id=\"whoattend\"><b>Who Should Attend: </b>" + entity.WhoAttend + "</div>" +
-                          "<div id=\"ceu\">" + ceuStatement + "</div>" +
-                          "<div style=\"display: none;\" id=\"pricing\">" + pricing.Replace(".0", "") + "</div>"
+                          "<div id=\"ceuStatement\">" + ceuStatement + "</div>" +
+                          "<div id=\"jsonData\"><div id=\"ceuJson\">" + ceuShort + "</div>" +
+                          "<div id=\"pricing\">" + pricing.Replace(".0", "") + "</div>" +
+                          "<div id=\"dateStartEndJson\">" + dateStartEnd + " </div></div>"
+
 
             };
 
