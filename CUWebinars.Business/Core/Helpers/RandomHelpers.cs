@@ -54,7 +54,7 @@ namespace CUWebinars.Business.Core.Helpers
             var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             var isUnique = dataOperations.CheckForUnique(result.ToString(), field);
 
-            if (isUnique != "isUnique")
+            if (isUnique != "0")
                 GetUniqueCode(4, field);
             return result.ToString();
         }
