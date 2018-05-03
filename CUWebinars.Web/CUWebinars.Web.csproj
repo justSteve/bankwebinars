@@ -178,8 +178,8 @@
     <Reference Include="LogMeIn.GoToWebinar.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LogMeIn.GoToWebinar.NET.1.0.0.0\lib\net40\LogMeIn.GoToWebinar.NET.dll</HintPath>
     </Reference>
-    <Reference Include="MailChimp.Net.V3, Version=2.0.0.0, Culture=neutral, PublicKeyToken=37d26d538413c581, processorArchitecture=MSIL">
-      <HintPath>..\packages\MailChimp.Net.V3.2.0.0.0\lib\net45\MailChimp.Net.V3.dll</HintPath>
+    <Reference Include="MailChimp.Net, Version=3.2.0.0, Culture=neutral, PublicKeyToken=37d26d538413c581, processorArchitecture=MSIL">
+      <HintPath>..\packages\MailChimp.Net.V3.3.2.0\lib\net451\MailChimp.Net.dll</HintPath>
     </Reference>
     <Reference Include="Mandrill.net, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Mandrill.net.4.1.0\lib\net45\Mandrill.net.dll</HintPath>
@@ -304,7 +304,7 @@
       <HintPath>..\packages\NameParserSharp.1.2.0.0\lib\NameParser.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json.Schema, Version=2.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.Schema.2.0.3\lib\net45\Newtonsoft.Json.Schema.dll</HintPath>
@@ -2151,7 +2151,7 @@
     <Content Include="Views\Shared\EditorTemplates\EditPresenter.cshtml" />
     <Content Include="Views\Order\AddBillingEmail.cshtml" />
     <Content Include="Views\Account\_FindLinkPartial.cshtml" />
-    <Content Include="Views\Admin\FindMailChimpListSegments.cshtml" />
+    <Content Include="Views\Admin\UpdateAffiliateMailChimpLists.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal2.cshtml" />
     <Content Include="Views\Shared\_LoginPartialDES.cshtml" />
     <Content Include="Views\Order\ChangeCC.cshtml" />

@@ -2464,7 +2464,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateInput(false)]
         [HttpGet]
         [HandleAjaxException]
-        public async Task<ActionResult> FindMailChimpListSegments()
+        public async Task<ActionResult> UpdateAffiliateMailChimpLists()
         {
             _logger.Info("GenerateMailChimpCampaign starting");
             var affiliates = _affiliateManagementService.GetAffiliates();
@@ -2476,52 +2476,76 @@ namespace CUWebinars.Web.Controllers.Admin
                 AffAndListSegments = new List<Dictionary<Affiliate, ListSegment>>()
             };
 
-            foreach (var affiliate in affiliates)
+            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+            List<string> tenants = new List<string>() { "BW", "CU" };
+            StringBuilder sb = new StringBuilder();
+            var list = await manager.Lists.GetAllAsync().ConfigureAwait(false);
+            foreach (var tenant in tenants)
             {
-                if (affiliate.idMailChimpList == null)
+                foreach (var affiliate in affiliates)
                 {
-                    model.NoList.Add(affiliate);
-                    continue;
-                }
-                try
-                {
-                    IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+                    var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
 
-                    List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
-                    _logger.Info("update affiliate");
-                    //var recp = new Recipient { ListId = affiliate.idMailChimpList };
-                    var segments =
-                        await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
-                    var _segment = segments.Where(s => s.Name == "General").FirstOrDefault();
-                    if (_segment != null)
+                    sb.AppendLine("Building Affiliate: " + listName);
+                    try
                     {
-                        //var segmentMembers =
-                        //    await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList,
-                        //        _segment.Id.ToString()).ConfigureAwait(false);
-                        _logger.Info("Segement found for: " + affiliate.ttsDomain);
-                        _logger.Info(affiliate.ttsDomain + " - " + JsonConvert.SerializeObject(_segment));
-                        //if (segmentMembers.Any())
-                        //    //_logger.Info("Create SegmentMembers: " + JsonConvert.DeserializeObject<IList<MailChimp.Net.Models.Member>>(segmentMembers.ToString()));
-                        model.HaveSegment.Add(affiliate);
-                        var dic = new Dictionary<Affiliate, ListSegment>();
-                        dic.Add(affiliate, _segment);
-                        model.AffAndListSegments.Add(dic);
+                        foreach (var mcList in list)
+                        {
+                            if (!mcList.Name.StartsWith(tenant))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                if (mcList.Name == listName)
+                                {
+                                    sb.Append("Found List: " + mcList.Id);
+                                    affiliate.idMailChimpList = mcList.Id;
+                                    _affiliateManagementService.SaveChanges(affiliate);
+                                    var segments =
+                                        await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
+                                    foreach (var listSegment in segments)
+                                    {
+                                        sb.Append(listSegment.Name + ", ");
+
+                                    }
+
+                                    var _segment = segments.Where(s => s.Name == "General").FirstOrDefault();
+                                    if (_segment != null)
+                                    {
+                                        //var segmentMembers =
+                                        //    await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList,
+                                        //        _segment.Id.ToString()).ConfigureAwait(false);
+                                        _logger.Info("General segement found for: " + affiliate.ttsDomain);
+                                        _logger.Info(affiliate.ttsDomain + " - " + JsonConvert.SerializeObject(_segment));
+                                        //if (segmentMembers.Any())
+                                        //    //_logger.Info("Create SegmentMembers: " + JsonConvert.DeserializeObject<IList<MailChimp.Net.Models.Member>>(segmentMembers.ToString()));
+                                        model.HaveSegment.Add(affiliate);
+                                        var dic = new Dictionary<Affiliate, ListSegment>();
+                                        dic.Add(affiliate, _segment);
+                                        model.AffAndListSegments.Add(dic);
+
+                                    }
+                                    else
+                                    {
+                                        model.HaveNoSegment.Add(affiliate);
+                                        _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
+                                    }
+                                }
+                            }
+                        }
+
+                        _logger.Info("update affiliate");
+                        //var recp = new Recipient { ListId = affiliate.idMailChimpList };
 
                     }
-                    else
+
+                    catch (Exception exception)
                     {
-                        model.HaveNoSegment.Add(affiliate);
-                        _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
+                        _logger.FatalException("GenerateMailChimpCampaign: ", exception);
+                        //return Json(new { Result = exception.Message });
+
                     }
-
-
-
-                }
-                catch (Exception exception)
-                {
-                    _logger.FatalException("GenerateMailChimpCampaign: ", exception);
-                    //return Json(new { Result = exception.Message });
-
                 }
             }
 
