@@ -1,0 +1,15 @@
+﻿@model AdhocNotificationViewModel
+
+<div class="control-group">
+    <label class="control-label" for="inputEmail">Webinars</label>
+    <div class="controls">
+        @Html.DropDownListFor(m => m.SelectedWebinarId, new SelectList(Model.Webinars, "Value", "Text"), "Choose an Upcoming Webinar", new { @class = "input-large" })
+    </div>
+</div>
+<div class="control-group">
+    <div class="controls">
+        <button id="FireSendConnInfoButton" class="btn">Fire Event</button>
+        <button id="ResetButton" class="btn">Reset</button>
+    </div>
+</div>
+

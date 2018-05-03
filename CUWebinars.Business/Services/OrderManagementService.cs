@@ -2461,27 +2461,35 @@ namespace CUWebinars.Business.Services
             if (!order.UserComments.Contains(JsonPropertyKeys.CarbonCopy))
                 return null;
 
-            var addresses = JToken.Parse(order.UserComments);
-            var isCC = "";
-            foreach (JProperty prop in addresses.Children<JObject>()
-                .SelectMany(content => content.Properties()
-                .Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
+            try
             {
-                isCC = prop.Value.ToString();
-            }
 
-            if (isCC != "")
-            {
-                ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(isCC);
-            }
-            else
-            {
-                var _addresses = JObject.Parse(order.UserComments)
-                    .GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
-                ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(_addresses);
-            }
+                var addresses = JToken.Parse(order.UserComments);
+                var isCC = "";
+                foreach (JProperty prop in addresses.Children<JObject>()
+                    .SelectMany(content => content.Properties()
+                    .Where(prop => prop.Name == JsonPropertyKeys.CarbonCopy)))
+                {
+                    isCC = prop.Value.ToString();
+                }
 
-            return string.Join(";", ccEmailAddresses);
+                if (isCC != "")
+                {
+                    ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(isCC);
+                }
+                else
+                {
+                    var _addresses = JObject.Parse(order.UserComments)
+                        .GetValue(JsonPropertyKeys.CarbonCopy).Value<string>();
+                    ccEmailAddresses = EventHandlerHelpers.GetCcEmailAddresses(_addresses);
+                }
+
+                return string.Join(";", ccEmailAddresses);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
 
 
 

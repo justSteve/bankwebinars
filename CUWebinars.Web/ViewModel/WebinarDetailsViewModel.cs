@@ -37,5 +37,6 @@ namespace CUWebinars.Web.ViewModel
         public object Testamoan { get; set; }
         public PromoLinks PromoLinks { get; set; }
         public IDictionary<RegType, bool> OptionsToDisplay { get; set; }
+        public MailchimpCampaignViewModel MailchimpCampaignViewModel { get; set; }
     }
 }
