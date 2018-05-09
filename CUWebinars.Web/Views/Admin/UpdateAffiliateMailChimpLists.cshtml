@@ -1,7 +1,7 @@
 ﻿@model ListSegmentsViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "MailChimp Lists By Affiliate";
     Layout = "/Views/Shared/_LayoutAdmin.cshtml";
 
 }
@@ -9,32 +9,29 @@
 <div id="MailchimpListContainer" class="container">
 
 
-    <h2>title</h2>
+    <h2>MailChimp Lists By Affiliate</h2>
     <div>
         @{
-            <h2>No List</h2>
-            foreach (var affiliate in Model.NoList)
+            <h1>SBAs</h1>
+            foreach (var affiliate in Model.SBA)
             {
-                <div>@affiliate.ttsDomain</div>
-
+                <h2>@affiliate.ttsDomain</h2>
+                <div>@Html.Raw(affiliate.idMailChimpList)</div>
             }
-            <h2>No Segment Found</h2>
-            foreach (var affiliate in Model.HaveNoSegment)
+            <h1>CFTs</h1>
+            foreach (var affiliate in Model.CFT)
             {
-                <div>@affiliate.ttsDomain</div>
-
+                <h2>@affiliate.ttsDomain</h2>
+                <div>@Html.Raw(affiliate.idMailChimpList)</div>
             }
-            <h2>No List</h2>
-            foreach (var affiliate in Model.NoList)
+            <h1>Other</h1>
+            foreach (var affiliate in Model.Other)
             {
-                <div>@affiliate.ttsDomain</div>
-                foreach (var modelAffAndListSegment in Model.AffAndListSegments)
-                {
-                    var a = 1;
-                    //if (modelAffAndListSegment.Keys)
-                }
+                <h2>@affiliate.ttsDomain</h2>
+                <div>@Html.Raw(affiliate.idMailChimpList)</div>
             }
-
+            <h1>NotFounds</h1>
+            @Html.Raw(Model.AffOutput)
         }
 
     </div>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
@@ -2470,85 +2471,156 @@ namespace CUWebinars.Web.Controllers.Admin
             var affiliates = _affiliateManagementService.GetAffiliates();
             var model = new ListSegmentsViewModel
             {
-                NoList = new List<Affiliate>(),
-                HaveNoSegment = new List<Affiliate>(),
-                HaveSegment = new List<Affiliate>(),
-                AffAndListSegments = new List<Dictionary<Affiliate, ListSegment>>()
+                CFT = new List<Affiliate>(),
+                SBA = new List<Affiliate>(),
+                Other = new List<Affiliate>()
             };
 
             IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
-            List<string> tenants = new List<string>() { "BW", "CU" };
+
             StringBuilder sb = new StringBuilder();
+            StringBuilder sbNoList = new StringBuilder();
             var list = await manager.Lists.GetAllAsync().ConfigureAwait(false);
-            foreach (var tenant in tenants)
+            var tenant = _globalConfig.TenantPrefix.Replace("-", "");
+            foreach (var mcList in list)
             {
-                foreach (var affiliate in affiliates)
+                if (!mcList.Name.StartsWith(tenant))
                 {
-                    var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
-
-                    sb.AppendLine("Building Affiliate: " + listName);
-                    try
+                    sbNoList.AppendLine("NonAffiliate List: " + mcList.Name + "<br>");
+                    continue;
+                }
+            }
+            foreach (var affiliate in affiliates)
+            {
+                var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
+                if (affiliate.ttsDomain.Contains("cft"))
+                {
+                    model.CFT.Add(affiliate);
+                }
+                else if (affiliate.ttsDomain.ToLower().EndsWith("ba"))
+                {
+                    model.SBA.Add(affiliate);
+                }
+                else
+                {
+                    model.Other.Add(affiliate);
+                }
+                sb.Clear();
+                sb.AppendLine("No List found for " + affiliate.ttsDomain + "<br>");
+                try
+                {
+                    foreach (var mcList in list)
                     {
-                        foreach (var mcList in list)
+                        var segments =
+                                   await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
+
+                        if (!mcList.Name.StartsWith(tenant))
                         {
-                            if (!mcList.Name.StartsWith(tenant))
+                            continue;
+                        }
+                        if (mcList.Name == listName)
+                        {
+                            //foreach (var segment in segments)
+                            //{
+                            //    await manager.ListSegments.DeleteAsync(mcList.Id, segment.Id.ToString());
+                            //}
+                            sb.Clear();
+                            sb.AppendLine("Found List: " + mcList.Id + "<br>");
+
+                            sb.AppendLine("" + "<br>");
+                            sb.AppendLine("" + "<br>");
+                            var groups = await manager.InterestCategories.GetAllAsync(mcList.Id)
+                                .ConfigureAwait(false);
+
+                            var groupId = "0";
+                            sb.AppendLine("Groups: " + "<br>");
+                            foreach (var group in groups)
                             {
-                                continue;
+                                sb.AppendLine("&nbsp;&nbsp;" + group.Title + ", " + "<br>");
                             }
-                            else
+
+                            foreach (var group in groups)
                             {
-                                if (mcList.Name == listName)
+                                try
                                 {
-                                    sb.Append("Found List: " + mcList.Id);
-                                    affiliate.idMailChimpList = mcList.Id;
-                                    _affiliateManagementService.SaveChanges(affiliate);
-                                    var segments =
-                                        await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
-                                    foreach (var listSegment in segments)
+                                    var interestTitle = "na";
+                                    var interests = await manager.Interests.GetAllAsync(mcList.Id, group.Id);
+                                    foreach (var interest in interests)
                                     {
-                                        sb.Append(listSegment.Name + ", ");
+                                        if (interest.Name.Contains("BankWebinars.com"))
+                                        {
+                                            interestTitle = "Webinars";
+                                        }
+                                        if (interest.Name.Contains("BankTrainers.com"))
+                                        {
+                                            interestTitle = "BTC";
+                                        }
+                                        if (interest.Name.Contains("ttsComplianceSuite.com"))
+                                        {
+                                            interestTitle = "CCS";
+                                        }
+                                        if (interest.Name.Contains("DirectorSeries.com"))
+                                        {
+                                            interestTitle = "DES";
+                                        }
 
-                                    }
+                                        //sbGroups.AppendLine("&nbsp;&nbsp;" + interestTitle + "<br>");
+                                        Condition sc = new Condition();
+                                        sc.Type = ConditionType.Interests;
+                                        sc.Operator = Operator.InterestContains;
+                                        string intid = interest.Id;
+                                        sc.Field = "interests-" + intid;
+                                        sc.Value = JArray.FromObject(new string[] { intid });
 
-                                    var _segment = segments.Where(s => s.Name == "General").FirstOrDefault();
-                                    if (_segment != null)
-                                    {
-                                        //var segmentMembers =
-                                        //    await manager.ListSegments.GetAllMembersAsync(affiliate.idMailChimpList,
-                                        //        _segment.Id.ToString()).ConfigureAwait(false);
-                                        _logger.Info("General segement found for: " + affiliate.ttsDomain);
-                                        _logger.Info(affiliate.ttsDomain + " - " + JsonConvert.SerializeObject(_segment));
-                                        //if (segmentMembers.Any())
-                                        //    //_logger.Info("Create SegmentMembers: " + JsonConvert.DeserializeObject<IList<MailChimp.Net.Models.Member>>(segmentMembers.ToString()));
-                                        model.HaveSegment.Add(affiliate);
-                                        var dic = new Dictionary<Affiliate, ListSegment>();
-                                        dic.Add(affiliate, _segment);
-                                        model.AffAndListSegments.Add(dic);
+                                        IEnumerable cons = new Condition[] { sc };
+                                        var con = (IEnumerable<Condition>)cons;
 
+                                        SegmentOptions so = new SegmentOptions();
+                                        so.Match = Match.Any;
+                                        so.Conditions = con;
+
+                                        var mySeg = new Segment
+                                        {
+                                            Options = so,
+                                            Name = interestTitle
+                                        };
+
+                                        var itExists = segments.Where(s => s.Name == interestTitle);
+                                        if (!itExists.Any())
+                                        {
+                                            await manager.ListSegments.AddAsync(mcList.Id, mySeg);
+
+                                        }
                                     }
-                                    else
-                                    {
-                                        model.HaveNoSegment.Add(affiliate);
-                                        _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
-                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    throw;
                                 }
                             }
                         }
-
-                        _logger.Info("update affiliate");
-                        //var recp = new Recipient { ListId = affiliate.idMailChimpList };
-
+                        foreach (var listSegment in segments)
+                        {
+                            sb.AppendLine("&nbsp;&nbsp;" + listSegment.Name);
+                        }
                     }
 
-                    catch (Exception exception)
-                    {
-                        _logger.FatalException("GenerateMailChimpCampaign: ", exception);
-                        //return Json(new { Result = exception.Message });
 
-                    }
+                    //var recp = new Recipient { ListId = affiliate.idMailChimpList };
+                    affiliate.idMailChimpList = sb.ToString();
+                    _affiliateManagementService.SaveChanges(affiliate);
+                }
+
+                catch (Exception exception)
+                {
+                    _logger.FatalException("GenerateMailChimpCampaign: ", exception);
+                    //return Json(new { Result = exception.Message });
+
                 }
             }
 
+            model.AffOutput = sbNoList.ToString();
             return View(model);
 
         }

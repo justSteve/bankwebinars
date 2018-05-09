@@ -6,10 +6,10 @@ namespace CUWebinars.Web.Models
 {
     public class ListSegmentsViewModel
     {
-        public IList<Affiliate> NoList { get; set; }
-        public IList<Affiliate> HaveSegment { get; set; }
-        public IList<Dictionary<Affiliate, ListSegment>> AffAndListSegments { get; set; }
-        public IList<Affiliate> HaveNoSegment { get; set; }
-        public IList<ListSegment> ListSegments { get; set; }
+        public IList<Affiliate> SBA { get; set; }
+        public IList<Affiliate> CFT { get; set; }
+        public IList<Affiliate> Other { get; set; }
+        public string AffOutput { get; set; }
+
     }
 }
