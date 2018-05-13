@@ -2482,23 +2482,53 @@ namespace CUWebinars.Web.Controllers.Admin
             StringBuilder sbNoList = new StringBuilder();
             var list = await manager.Lists.GetAllAsync().ConfigureAwait(false);
             var tenant = _globalConfig.TenantPrefix.Replace("-", "");
-            foreach (var mcList in list)
-            {
-                if (!mcList.Name.StartsWith(tenant))
-                {
-                    sbNoList.AppendLine("NonAffiliate List: " + mcList.Name + "<br>");
-                    continue;
-                }
-            }
+            //foreach (var mcList in list)
+            //{
+            //    if (!mcList.Name.StartsWith(tenant))
+            //    {
+            //        sbNoList.AppendLine("NonAffiliate List: " + mcList.Name + "<br>");
+            //        continue;
+            //    }
+            //}
+            var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
+            var masterTenantList = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
+
+            var masterSegment = await manager.ListSegments.GetAllAsync(masterTenantList.Id).ConfigureAwait(false);
+
             foreach (var affiliate in affiliates)
             {
+                var _segment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
+                if (_segment != null)
+                {
+                    _logger.Info("UAMPL seg found: " + _segment.Name);
+                    recp = new Recipient
+                    {
+                        ListId = _globalConfig.TenantMailChimpList,
+                        SegmentOptions =
+                            new SegmentOptions
+                            {
+                                SavedSegmentId = masterSegment.FirstOrDefault(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).Id
+                            }
+                    };
+                    MemberSearchRequest search = new MemberSearchRequest { };
+                    //var members = await manager.Members.SearchAsync()
+                }
+                else
+                {
+                    _logger.Warn("UAMPL No Segment Found for: " + affiliate.ttsDomain);
+
+                }
+
                 var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
+                var whyGetEmail = "TTS, producers of BankWebinars.com, is the nation's leading provider of financial institution webinars.";
                 if (affiliate.ttsDomain.Contains("cft"))
                 {
                     model.CFT.Add(affiliate);
                 }
                 else if (affiliate.ttsDomain.ToLower().EndsWith("ba"))
                 {
+                    whyGetEmail =
+                        "TTS, producers of BankWebinars.com, is the leading bank webinar provider for over 40 of the State Banking Associations, including the " + affiliate.DisplayTitle;
                     model.SBA.Add(affiliate);
                 }
                 else
@@ -2509,114 +2539,129 @@ namespace CUWebinars.Web.Controllers.Admin
                 sb.AppendLine("No List found for " + affiliate.ttsDomain + "<br>");
                 try
                 {
-                    foreach (var mcList in list)
+                    var mcList = list.FirstOrDefault(l => l.Name == listName);
+                    if (mcList == null)
                     {
-                        var segments =
-                                   await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
+                        continue;
+                    }
+                    mcList.PermissionReminder = "whyGetEmail";
+                    mcList.CampaignDefaults.FromEmail = affiliate.PromoSenderEmail;
+                    mcList.CampaignDefaults.FromName = affiliate.PromoSenderName;
 
-                        if (!mcList.Name.StartsWith(tenant))
-                        {
-                            continue;
-                        }
-                        if (mcList.Name == listName)
-                        {
-                            //foreach (var segment in segments)
-                            //{
-                            //    await manager.ListSegments.DeleteAsync(mcList.Id, segment.Id.ToString());
-                            //}
-                            sb.Clear();
-                            sb.AppendLine("Found List: " + mcList.Id + "<br>");
+                    var writeWhy = await manager.Lists.AddOrUpdateAsync(mcList);
+                    var _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
 
-                            sb.AppendLine("" + "<br>");
-                            sb.AppendLine("" + "<br>");
-                            var groups = await manager.InterestCategories.GetAllAsync(mcList.Id)
-                                .ConfigureAwait(false);
+                    var segments = _segments.ToList();
 
-                            var groupId = "0";
-                            sb.AppendLine("Groups: " + "<br>");
-                            foreach (var group in groups)
-                            {
-                                sb.AppendLine("&nbsp;&nbsp;" + group.Title + ", " + "<br>");
-                            }
+                    foreach (var tSegment in segments)
+                    {
+                        _logger.Info("UAMPL reset segments: " + tSegment.Name);
+                        await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString());
+                    }
+                    _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
+                    segments = _segments.ToList();
 
-                            foreach (var group in groups)
-                            {
-                                try
-                                {
-                                    var interestTitle = "na";
-                                    var interests = await manager.Interests.GetAllAsync(mcList.Id, group.Id);
-                                    foreach (var interest in interests)
-                                    {
-                                        if (interest.Name.Contains("BankWebinars.com"))
-                                        {
-                                            interestTitle = "Webinars";
-                                        }
-                                        if (interest.Name.Contains("BankTrainers.com"))
-                                        {
-                                            interestTitle = "BTC";
-                                        }
-                                        if (interest.Name.Contains("ttsComplianceSuite.com"))
-                                        {
-                                            interestTitle = "CCS";
-                                        }
-                                        if (interest.Name.Contains("DirectorSeries.com"))
-                                        {
-                                            interestTitle = "DES";
-                                        }
+                    sb.Clear();
+                    sb.AppendLine("Found List: " + mcList.Id + "<br>");
 
-                                        //sbGroups.AppendLine("&nbsp;&nbsp;" + interestTitle + "<br>");
-                                        Condition sc = new Condition();
-                                        sc.Type = ConditionType.Interests;
-                                        sc.Operator = Operator.InterestContains;
-                                        string intid = interest.Id;
-                                        sc.Field = "interests-" + intid;
-                                        sc.Value = JArray.FromObject(new string[] { intid });
-
-                                        IEnumerable cons = new Condition[] { sc };
-                                        var con = (IEnumerable<Condition>)cons;
-
-                                        SegmentOptions so = new SegmentOptions();
-                                        so.Match = Match.Any;
-                                        so.Conditions = con;
-
-                                        var mySeg = new Segment
-                                        {
-                                            Options = so,
-                                            Name = interestTitle
-                                        };
-
-                                        var itExists = segments.Where(s => s.Name == interestTitle);
-                                        if (!itExists.Any())
-                                        {
-                                            await manager.ListSegments.AddAsync(mcList.Id, mySeg);
-
-                                        }
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                    throw;
-                                }
-                            }
-                        }
-                        foreach (var listSegment in segments)
-                        {
-                            sb.AppendLine("&nbsp;&nbsp;" + listSegment.Name);
-                        }
+                    sb.AppendLine("" + "<br>");
+                    sb.AppendLine("" + "<br>");
+                    var _groups = await manager.InterestCategories.GetAllAsync(mcList.Id)
+                        .ConfigureAwait(false);
+                    var groups = _groups.ToList();
+                    var groupId = "0";
+                    sb.AppendLine("Groups: " + "<br>");
+                    foreach (var group in groups)
+                    {
+                        _logger.Info("UAMPL group lister: " + group.Title);
+                        sb.AppendLine("&nbsp;&nbsp;" + group.Title + ", " + "<br>");
                     }
 
+                    foreach (var group in groups)
+                    {
+                        try
+                        {
+                            var interestTitle = "na";
+                            var interests = await manager.Interests.GetAllAsync(mcList.Id, group.Id);
+                            foreach (var interest in interests)
+                            {
+                                if (interest.Name.Contains("BankWebinars.com"))
+                                {
+                                    interestTitle = "Webinars";
+                                }
+                                if (interest.Name.Contains("BankTrainers.com"))
+                                {
+                                    interestTitle = "BTC";
+                                }
+                                if (interest.Name.Contains("ttsComplianceSuite.com"))
+                                {
+                                    interestTitle = "CCS";
+                                }
+                                if (interest.Name.Contains("DirectorSeries.com"))
+                                {
+                                    interestTitle = "DES";
+                                }
+                                _logger.Info("UAMPL InterestTitle: " + interestTitle);
+                                //sbGroups.AppendLine("&nbsp;&nbsp;" + interestTitle + "<br>");
+                                Condition sc = new Condition();
+                                sc.Type = ConditionType.Interests;
+                                sc.Operator = Operator.InterestContains;
+                                string intid = interest.Id;
+                                sc.Field = "interests-" + intid;
+                                sc.Value = JArray.FromObject(new string[] { intid });
 
-                    //var recp = new Recipient { ListId = affiliate.idMailChimpList };
-                    affiliate.idMailChimpList = sb.ToString();
-                    _affiliateManagementService.SaveChanges(affiliate);
+                                IEnumerable cons = new Condition[] { sc };
+                                var con = (IEnumerable<Condition>)cons;
+
+                                SegmentOptions so = new SegmentOptions();
+                                so.Match = Match.Any;
+                                so.Conditions = con;
+
+                                var mySeg = new Segment
+                                {
+                                    Options = so,
+                                    Name = interestTitle
+                                };
+
+                                var itExists = segments.Where(s => s.Name == interestTitle);
+                                if (!itExists.Any())
+                                {
+                                    _logger.Info("UAMPL add Segment: " + mySeg.Name);
+                                    await manager.ListSegments.AddAsync(mcList.Id, mySeg);
+
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            throw;
+                        }
+                    }
+                    try
+                    {
+                        
+                        foreach (var listSegment in segments)
+                        {
+                            sb.AppendLine(JsonConvert.SerializeObject(listSegment));// listSegment.Name);
+                        }
+                        _logger.Info("UAMPL final: " + sb.ToString());
+                        //var recp = new Recipient { ListId = affiliate.idMailChimpList };
+                        affiliate.MailChimpValues = sb.ToString();
+                        affiliate.idMailChimpList = mcList.Id;
+                        _affiliateManagementService.SaveChanges(affiliate);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
                 }
 
                 catch (Exception exception)
                 {
-                    _logger.FatalException("GenerateMailChimpCampaign: ", exception);
+                    _logger.FatalException("UpdateAffMailChimpList: ", exception);
                     //return Json(new { Result = exception.Message });
-
                 }
             }
 

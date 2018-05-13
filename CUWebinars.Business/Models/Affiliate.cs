@@ -12,6 +12,7 @@ namespace CUWebinars.Business.Models
         }
 
         public int idUserAff { get; set; }
+        public string MailChimpValues { get; set; }
         public byte CommissionModel { get; set; }
         public string URL { get; set; }
         public string WebBanner { get; set; }
