@@ -68,6 +68,7 @@ using RazorEngine.Compilation.ImpromptuInterface;
 using Thinktecture.IdentityModel.Http.Cors;
 using Address = CUWebinars.Business.Models.Address;
 using Content = MailChimp.Net.Models.Content;
+using Member = MailChimp.Net.Models.Member;
 using Order = CUWebinars.Business.Models.Order;
 using PostEventClaim = CUWebinars.Business.Services.PostEventClaim;
 using TableRow = GemBox.Document.Tables.TableRow;
@@ -2497,21 +2498,22 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var affiliate in affiliates)
             {
+                if (affiliate.ttsDomain.ToLower() != "azba")
+                {
+                    continue;
+                }
+                IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
+                    
                 var _segment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
                 if (_segment != null)
                 {
                     _logger.Info("UAMPL seg found: " + _segment.Name);
-                    recp = new Recipient
-                    {
-                        ListId = _globalConfig.TenantMailChimpList,
-                        SegmentOptions =
-                            new SegmentOptions
-                            {
-                                SavedSegmentId = masterSegment.FirstOrDefault(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).Id
-                            }
-                    };
-                    MemberSearchRequest search = new MemberSearchRequest { };
-                    //var members = await manager.Members.SearchAsync()
+                    var affSegementId = masterSegment.FirstOrDefault(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper())
+                        .Id;
+                    //MemberSearchRequest search = new MemberSearchRequest {[""],["email"] };
+                    members = await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
+                        affSegementId.ToString()).ConfigureAwait(false);
+                    
                 }
                 else
                 {
@@ -2588,6 +2590,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                 if (interest.Name.Contains("BankWebinars.com"))
                                 {
                                     interestTitle = "Webinars";
+
                                 }
                                 if (interest.Name.Contains("BankTrainers.com"))
                                 {
@@ -2627,8 +2630,17 @@ namespace CUWebinars.Web.Controllers.Admin
                                 if (!itExists.Any())
                                 {
                                     _logger.Info("UAMPL add Segment: " + mySeg.Name);
-                                    await manager.ListSegments.AddAsync(mcList.Id, mySeg);
+                                    var newSeg = await manager.ListSegments.AddAsync(mcList.Id, mySeg);
+                                    if (affiliate.ttsDomain.ToLower() == "azba")
+                                    {
+                                        BatchSegmentMembersResponse bsmr = new BatchSegmentMembersResponse
+                                        {
+                                            MembersAdded = members.ToArray()
+                                        };
 
+                                        //var addMembers =
+                                        //    await manager.ListSegments.BatchMemberAsync(mcList.Id, newSeg.ListId, new BatchSegmentMembers{MembersToAdd = bsmr.MembersAdded} );
+                                    }
                                 }
                             }
                         }
