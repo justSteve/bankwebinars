@@ -606,9 +606,14 @@ namespace CUWebinars.Business.Repository
                 .Where(or => or.Discount.idDiscount == idDiscount)
                 .Where(o => o.Order.OrderStatus == OrderStatus.Paid
                     || o.Order.OrderStatus == OrderStatus.Billed
-                    || o.Order.OrderStatus == OrderStatus.Submitted || o.Order.OrderStatus == OrderStatus.OutstandingBalance)
+                    || o.Order.OrderStatus == OrderStatus.Submitted
+                    || o.Order.OrderStatus == OrderStatus.OutstandingBalance
+                    )
                 .Select(o => o.Order);
-            return GetLoadedEntitiesForOrder(orders);
+
+            return GetEntitiesForOrderDiscount(orders).Where(
+                r => r.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Discount.idDiscount == idDiscount).ToList();
+            //return GetLoadedEntitiesForOrder(orders);
         }
 
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
@@ -707,7 +712,7 @@ namespace CUWebinars.Business.Repository
                     order.ShippingPhone = shippingAddress.Phone;
                     order.ShippingState = shippingAddress.State;
                     order.ShippingZip = shippingAddress.Zip;
-                   
+
                 }
             }
             if (webUser.Institution != null)
@@ -956,6 +961,23 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
                 .Include(o => o.OrderRows.Select(or => or.Discount))
+                .ToList();
+        }
+        public virtual IList<Order> GetEntitiesForOrderDiscount(IQueryable<Order> orders)
+        {
+            return orders.Include(o => o.WebUser)
+                .Include(o => o.Affiliate)
+                //.Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                //.Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
+                //.Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+                //.Where(or => or.Discount.idDiscount == idDiscount)
+                .Where(o => o.OrderStatus == OrderStatus.Paid
+                            || o.OrderStatus == OrderStatus.Billed
+                            || o.OrderStatus == OrderStatus.Submitted
+                            || o.OrderStatus == OrderStatus.OutstandingBalance
+                )
                 .ToList();
         }
         public virtual Discount GetUserDiscount(int idUser)

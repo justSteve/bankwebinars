@@ -1572,7 +1572,7 @@ namespace CUWebinars.Web.Controllers
                 var additionalLocationsViewModel =
                     model.RegistrationSummaryViewModel.AdditionalLocationsViewModel;
                 var orderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                var order = orderRow.Order;
+                
 
 
                 if (!claimsIdentityOfAuthenticatedUser.HasClaim(
@@ -1585,7 +1585,7 @@ namespace CUWebinars.Web.Controllers
                     {
                         model.OptionsToDisplay =
                             _orderManagementService.GetOptionsAvailableToExistingOrder(model.Webinar.idWebinar, false,
-                                order);
+                                model.Order);
                     }
                     else
                     {
@@ -1609,25 +1609,25 @@ namespace CUWebinars.Web.Controllers
                 var shippingAddress = addresses.FirstOrDefault(a => a.AddressType == WebUiConstants.ShippingAddress);
                 //var CheckoutDiscount = orderRow.Discount == null ? string.Empty : _orderManagementService.GetDiscountByCode()
 
-                if (!ReferenceEquals(null, order))
+                if (!ReferenceEquals(null, model.Order))
                 {
                     //HeyGeorge: 'assign affiliate' routine is fired
-                    if (aff != null && aff.idUserAff == 19)
+                    if (aff != null && model.Order.idAffiliate == 19)
                     {
                         var _aff = _orderManagementService.DetermineAffiliateByAlternativeMeans(model.Order.idUser, 19);
                         if (_aff.idUserAff != 19)
                         {
                             //_stateService.SetValue(WebUiConstants.CurrentAffiliate, _aff);
                             aff = _aff;
-                            _orderManagementService.AssignAffiliateToOrder(aff.idUserAff, order);
-                            _logger.Warn("BuildConfirmOrder AffiliateOnOrderIsReassignedFrom19: " + order.idOrder +
+                            _orderManagementService.AssignAffiliateToOrder(aff.idUserAff, model.Order);
+                            _logger.Warn("BuildConfirmOrder AffiliateOnOrderIsReassignedFrom19: " + model.Order.idOrder +
                                          " to: " + aff.idUserAff);
                         }
                     }
 
 
                     //populate viewbag for expresscheckout viewmodel
-                    ViewBag.Order = order;
+                    ViewBag.Order = model.Order;
                     //order.OrderDate = DateTime.Now;
 
                     PricesAndDiscounts pricesAndDiscounts = default(PricesAndDiscounts);
@@ -1641,12 +1641,12 @@ namespace CUWebinars.Web.Controllers
 
 
                     try
-                    {
+                    { 
                         bool desCheckout = false;
-                        if (order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar.SeriesInfo == "DES")
+                        if (orderRow.Webinar.SeriesInfo == "DES")
                             desCheckout = true;
                         var ccAddresses = new List<string> { "" };
-                        var _ccAddresses = _orderManagementService.OrderHasCc(order);
+                        var _ccAddresses = _orderManagementService.OrderHasCc(model.Order);
                         if (_ccAddresses != null)
                             ccAddresses = _ccAddresses.Split(',').ToList();
                         bool sendHardcopy = !(orderRow.SendHardcopy.HasValue && orderRow.SendHardcopy.Value == false);
@@ -1655,7 +1655,7 @@ namespace CUWebinars.Web.Controllers
                             DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
 
-                            AdminComments = order.AdminComments,
+                            AdminComments = model.Order.AdminComments,
                             //AffiliateComments = model.Order.AffiliateComments,
                             //CCUserDetails = "",
                             CheckoutDiscountCode =
@@ -1709,13 +1709,13 @@ namespace CUWebinars.Web.Controllers
                                     NumberOfAdditionalLocations = additionalLocationsViewModel.Addresses.TrimEnd(',').Split(',').Length,
                                     TotalCostOfOptions = model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel.PricesAndDiscounts.TotalCostOfOptions,
                                     WebinarId = orderRow.Webinar.idWebinar,
-                                    idOrder = order.idOrder,
+                                    idOrder = model.Order.idOrder,
                                     idOrderRow = orderRow.idOrderRow
                                 }
                             },
                             OrderRowExists = true,
-                            OrderRowHasId = order.idOrder,
-                            OrderStatus = order.OrderStatus, //OrderStatus.InProcess,
+                            OrderRowHasId = model.Order.idOrder,
+                            OrderStatus = model.Order.OrderStatus, //OrderStatus.InProcess,
                             Origin = model.Order.Origin,
                             UserComments = model.Order.UserComments,
                             UserDetails = string.Concat("<span id='userFullnameLabel'>", userFullName,

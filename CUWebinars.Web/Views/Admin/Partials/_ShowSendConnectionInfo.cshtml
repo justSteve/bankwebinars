@@ -126,13 +126,26 @@
             });
         </script>
     }
+    //foreach (var modelOrder in Model.Orders)
+    //{
+    //    if (modelOrder.OrderRows == null)
+    //    {
+    //        Debug.WriteLine(modelOrder.idOrder);
 
+    //    }
+    //}
     var orders = Model.Orders.ToList();
     var withAddLoc = new List<Order>();
     var withCC = new List<Order>();
     var rowsToBeSent = new List<Order>();
     foreach (var order in orders)
     {
+
+        if (order.OrderRows == null)
+        {
+            Debug.WriteLine(order.idOrder);
+            continue;
+        }
         Debug.Assert(order.OrderRows != null, "order.OrderRows != null at showSendInfo");
 
         var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
@@ -157,7 +170,7 @@
     // AdminController/BuildConnInfoViewModel
     <div id="SenderSummary">
         <div id="OpeningMessage">
-            <textarea id="DefaultMessageText" value=""  style="width:400px; height: 100px;" name="DefaultMessageText"></textarea> 
+            <textarea id="DefaultMessageText" value="" style="width:400px; height: 100px;" name="DefaultMessageText"></textarea>
 
         </div>
         Total Orders to be notified: @allUsers.<br />

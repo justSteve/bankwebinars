@@ -2503,7 +2503,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     continue;
                 }
                 IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
-                    
+
                 var _segment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
                 if (_segment != null)
                 {
@@ -2513,7 +2513,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     //MemberSearchRequest search = new MemberSearchRequest {[""],["email"] };
                     members = await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
                         affSegementId.ToString()).ConfigureAwait(false);
-                    
+
                 }
                 else
                 {
@@ -2652,7 +2652,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
                     try
                     {
-                        
+
                         foreach (var listSegment in segments)
                         {
                             sb.AppendLine(JsonConvert.SerializeObject(listSegment));// listSegment.Name);
@@ -3412,29 +3412,29 @@ namespace CUWebinars.Web.Controllers.Admin
         }
 
 
-        public JsonResult getorderscompact(int? idWebinar)
-        {
-            string html = "";
+        //public JsonResult getorderscompact(int? idWebinar)
+        //{
+        //    string html = "";
 
-            try
-            {
-                var orders = _orderManagementService.GetOrdersByWebinar(idWebinar.Value);
+        //    try
+        //    {
+        //        var orders = _orderManagementService.GetOrdersByWebinar(idWebinar.Value);
 
-                SummaryOfOrdersPerWebinar model = new SummaryOfOrdersPerWebinar();
+        //        SummaryOfOrdersPerWebinar model = new SummaryOfOrdersPerWebinar();
 
-                html = ViewHelpers.RenderViewToString(ControllerContext,
-                    "~/Views/Shared/DisplayTemplates/DataTablesDisplayTemplates/GetOrders_Compact.cshtml",
-                    orders, true);
-            }
-            catch (Exception ex)
-            {
-                _logger.FatalException("GetOrderCompact error on " + idWebinar, ex);
-            }
+        //        html = ViewHelpers.RenderViewToString(ControllerContext,
+        //            "~/Views/Shared/DisplayTemplates/DataTablesDisplayTemplates/GetOrders_Compact.cshtml",
+        //            orders, true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.FatalException("GetOrderCompact error on " + idWebinar, ex);
+        //    }
 
-            return Json(new { html = html });
+        //    return Json(new { html = html });
 
 
-        }
+        //}
 
 
 

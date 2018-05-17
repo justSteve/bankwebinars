@@ -12,8 +12,6 @@ OCA.ordersForConnInfoSender = [];
 OCA.counterForConnInfoSender = 0;
 OCA.defaultMsg = "";
 
-
-
 function timeSince(date) {
 
     var seconds = Math.floor((new Date() - date) / 1000);
@@ -1075,7 +1073,7 @@ OCA.wireUpHandlers = function () {
                             $('#createNewUserButton').hide();
 
                             confirmationForAffiliateDiv.load('/cart/CheckoutConfirmForAffiliate/' + OCA.cartStateManager.getOrderId(), function (response, status, xhr) {
-
+                                alert("hit")
                                 if (status === 'error') {
                                     $(this).html('<div class="text-error">There has been an error at the server. Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.</div>');
 
@@ -1294,7 +1292,7 @@ OCA.wireUpHandlers = function () {
     OCA.displaySetAffiliateModal = function (link) {
 
         // permits Admin to choose which affiliate will be credited with order
-
+        alert("hit")
         var modalFormOptions = {
             keyboard: true,
             backdrop: 'static',

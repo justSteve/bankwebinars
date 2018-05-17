@@ -161,7 +161,7 @@
                     idOrder: OCA.cartStateManager.getOrderId()
                 };
                 var url = $('#frmChangeAffiliate_').attr('action');
-
+                console.log(payload);
                 $.ajax({
                     type: 'POST',
                     contentType: constants.JsonContentType,
