@@ -1,0 +1,26 @@
+﻿@model string
+@{
+    Layout = null;
+    var idSrvUrl = Model.Replace("://", "://id.");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <script src="/Scripts/jquery-1.11.1.js"></script>
+    <script>
+(function() {
+	function testConnectivity(imgUrl) {
+		$('<img>')
+			.on('load', function() { $.ajax({ url: '/connectivity/result/ok?url=' + encodeURI(imgUrl) }) })
+			.on('error', function() { $.ajax({ url: '/connectivity/result/fail?url=' + encodeURI(imgUrl) }) })
+			.attr("src", imgUrl);
+	}
+	setTimeout(testConnectivity('@idSrvUrl/applogo.png'), 3000);
+	setTimeout(testConnectivity('https://ttstrain.com/wp-content/uploads/2018/01/cropped-ttslogo-e1515600437216.png'), 5000);
+})();
+    </script>
+</body>
+</html>

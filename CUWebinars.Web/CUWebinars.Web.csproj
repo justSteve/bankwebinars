@@ -564,6 +564,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ConnectivityController.cs" />
     <Compile Include="Core\CalendarRssFullDTOAssembler2.cs" />
     <Compile Include="Models\WspModel.cs" />
     <Compile Include="Models\CheckoutConfirmCookie.cs" />
@@ -2237,6 +2238,7 @@
     <Content Include="Views\Webinar\Partials\PayTraceApproved.cshtml" />
     <Content Include="Views\Webinar\Partials\DisplayOptionsCcs.cshtml" />
     <Content Include="Views\Webinar\Partials\_CampaignDetails.cshtml" />
+    <Content Include="Views\Connectivity\Index.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
