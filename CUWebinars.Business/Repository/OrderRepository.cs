@@ -611,9 +611,9 @@ namespace CUWebinars.Business.Repository
                     )
                 .Select(o => o.Order);
 
-            return GetEntitiesForOrderDiscount(orders).Where(
-                r => r.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Discount.idDiscount == idDiscount).ToList();
-            //return GetLoadedEntitiesForOrder(orders);
+            //return GetEntitiesForOrderDiscount(orders).Where(
+            //    r => r.OrderRows.FirstOrDefault(or => or.RowStatus == OrderRowStatus.Active).Discount.idDiscount == idDiscount).ToList();
+            return GetLoadedEntitiesForOrder(orders);
         }
 
         public IList<Order> GetOrdersForRecordedEventNotifications(int idWebinar)
