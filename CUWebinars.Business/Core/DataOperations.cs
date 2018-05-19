@@ -25,6 +25,13 @@ namespace CUWebinars.Business.Core
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        ///    Ensure OnDemand and Join codes are unique.
+        /// </summary>
+        /// <sql>CheckForUnique</sql>    
+        /// <serves>
+        /// All
+        /// </serves>
 
         public string CheckForUnique(string code, string field)
         {
@@ -77,6 +84,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        /// <summary>
+        ///    RateWatch importer's RegType provider.
+        /// </summary>
+        /// <sql>text</sql>    
+        /// <serves>
+        /// All
+        /// </serves>
         public string FindRegTypeForRateWatch(string regTypeLable)
         {
             var returnLable = "";
@@ -119,6 +133,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        /// <summary>
+        ///    ACS importer's RegType provider.
+        /// </summary>
+        /// <sql>text</sql>    
+        /// <serves>
+        /// All
+        /// </serves>
         public string FindRegTypeForACS(string regTypeLable)
         {
             var returnLable = "";
@@ -165,6 +186,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+
+        /// <summary>
+        /// todo: refactor to populate all regtype values as AppVars.
+        /// </summary>
+        /// <sql>text</sql>    
+        /// <param name="idRegType"></param>
+        /// <returns></returns>
         public decimal GetCostOfRegtype(int idRegType)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -199,7 +227,7 @@ namespace CUWebinars.Business.Core
         /// </summary>
         /// <param name="idWebinar"></param>
         /// <param name="registrationType">Friendly Lable</param>
-
+        // todo: refactor to populate all regtype values as AppVars.
         public int GetRegTypeByLableAndWebinar(string registrationType, int idWebinar)
         {
             registrationType = registrationType.Replace(" (days)", "");
@@ -233,6 +261,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        /// <summary>
+        /// This method provides timezone based on users' zipcode.
+        /// Hits our very old yet servicable 'timezone/zipcode' db. 
+        /// There are more accurate alternatives -- should we migrate?
+        /// </summary>
+        /// <param name="idWebinar"></param>
+        /// <param name="registrationType">Friendly Lable</param>
         public USTimeZone GetTimeZoneByZipCode(string zip)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -279,6 +314,10 @@ namespace CUWebinars.Business.Core
             }
         }
 
+
+
+        //depricated but should consider replicating since this serves the 
+        // self healing feature
         public bool SetFieldsConsistantWithVerifiedUser(UserAccount userAccount)
         {
             int numRows = 0;
@@ -330,6 +369,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        //
+        /// <summary>
+        /// seems depricated 
+        /// </summary>
+        /// <sql>text</sql>    
+        /// <param name="idRegType"></param>
+        /// <returns></returns>
         public Double[] GetCostOfUpgrades(int idRegType)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -370,12 +416,8 @@ namespace CUWebinars.Business.Core
             throw new NotImplementedException();
         }
 
-        public void AddChangedOrder(Dictionary<string, string> buildChangedOrderRow)
-        {
-            // creates Record in 'Changed Orders that require change to Royalties paid' table
-            throw new NotImplementedException();
-        }
 
+        // adapt this for use by new auth system
         public string GetUserEmailByVerificationKey(string tenant, string key)
         {
             string email = "";
@@ -424,6 +466,7 @@ namespace CUWebinars.Business.Core
 
         }
 
+        //housekeeping
         public void RemoveImpersonatedClaimsByCurrentAdmin(string adminUserEmail)
         {
             int numRows = 0;
@@ -454,49 +497,51 @@ namespace CUWebinars.Business.Core
 
         }
 
-        private static OrderStatus SetOrderStatus(int mkStatus)
-        {
-            OrderStatus setStatus = OrderStatus.Abandoned;
-            // Error = 0, 
-            //InProcess = 1,
-            //Submitted = 2,
-            //Billed = 3,
-            //Paid = 4,
-            //Abandoned = 5,
-            //Canceled = 6,
-            //AwaitingVerification = 7,
-            //Unknown = 255
-            switch (mkStatus)
-            {
-                case 1:
-                    setStatus = OrderStatus.InProcess;
-                    break;
-                case 0:
-                    setStatus = OrderStatus.Error;
-                    break;
-                case 2:
-                    setStatus = OrderStatus.Submitted;
-                    break;
-                case 3:
-                    setStatus = OrderStatus.Billed;
-                    break;
-                case 4:
-                    setStatus = OrderStatus.Paid;
-                    break;
-                case 5:
-                    setStatus = OrderStatus.Abandoned;
-                    break;
-                case 6:
-                    setStatus = OrderStatus.Canceled;
-                    break;
-                case 7:
-                    setStatus = OrderStatus.AwaitingVerification;
-                    break;
-            }
-            return setStatus;
-        }
+        //test for breakage
+        //private static OrderStatus SetOrderStatus(int mkStatus)
+        //{
+        //    OrderStatus setStatus = OrderStatus.Abandoned;
+        //    // Error = 0, 
+        //    //InProcess = 1,
+        //    //Submitted = 2,
+        //    //Billed = 3,
+        //    //Paid = 4,
+        //    //Abandoned = 5,
+        //    //Canceled = 6,
+        //    //AwaitingVerification = 7,
+        //    //Unknown = 255
+        //    switch (mkStatus)
+        //    {
+        //        case 1:
+        //            setStatus = OrderStatus.InProcess;
+        //            break;
+        //        case 0:
+        //            setStatus = OrderStatus.Error;
+        //            break;
+        //        case 2:
+        //            setStatus = OrderStatus.Submitted;
+        //            break;
+        //        case 3:
+        //            setStatus = OrderStatus.Billed;
+        //            break;
+        //        case 4:
+        //            setStatus = OrderStatus.Paid;
+        //            break;
+        //        case 5:
+        //            setStatus = OrderStatus.Abandoned;
+        //            break;
+        //        case 6:
+        //            setStatus = OrderStatus.Canceled;
+        //            break;
+        //        case 7:
+        //            setStatus = OrderStatus.AwaitingVerification;
+        //            break;
+        //    }
+        //    return setStatus;
+        //}
 
-
+        //in current usage
+        // serves all tenants
         public PostEventClaim FindPostEventClaimByOnDemandCode(Order order)
         {
             var retValue = "";
@@ -557,6 +602,9 @@ namespace CUWebinars.Business.Core
         }
 
 
+        //in current usage
+        // serves all tenants
+        // could probably be replaced by EF Lambda.
         public PostEventClaim FindPostEventClaimByOrderId(Order order)
         {
             var retValue = false;
@@ -615,6 +663,9 @@ namespace CUWebinars.Business.Core
         }
 
 
+        //in current usage
+        // serves all tenants
+        // could probably be replaced by EF Lambda.
         public IList<PostEventClaim> FindAllPostEventClaims()
         {
             IList<PostEventClaim> retList = new List<PostEventClaim>();
@@ -662,6 +713,12 @@ namespace CUWebinars.Business.Core
             return retList;
         }
 
+
+
+
+        //in current usage
+        // serves all tenants
+        // could probably be replaced by EF Lambda.
         public IList<int> GetOrdersByDomain(string searchTerm)
         {
             IList<int> orderIds = new List<int>();
@@ -715,10 +772,19 @@ namespace CUWebinars.Business.Core
             return orderIds;
         }
 
-        public string CreateOnDemandClaimForMigratedOrder(OrderRow row, DateTime getExpiry)
-        {
-            return "";
-        }
+        //public string CreateOnDemandClaimForMigratedOrder(OrderRow row, DateTime getExpiry)
+        //{
+        //    return "";
+        //}
+
+
+        /// <summary>
+        ///    Provides OD code to BuildRecordingIsPostedMessage template 
+        /// </summary>
+        ///     GetOnDemandClaimById
+        /// <serves>
+        /// All
+        /// </serves>
 
         public string GetOnDemandClaimById(int idOrder)
         {
@@ -780,6 +846,14 @@ namespace CUWebinars.Business.Core
 
         }
 
+        /// <summary>
+        ///    Provides code to OD Playback page
+        /// </summary>
+        ///     GetOnDemandClaimById
+        /// <serves>
+        /// All
+        /// </serves>
+
         public string GetOnDemandClaimByCode(string onDemandCode)
         {
 
@@ -828,6 +902,8 @@ namespace CUWebinars.Business.Core
 
         }
 
+
+        // todo: refactor to populate all regtype values as AppVars.
         public List<int> FindAllPossibleRegTypesByWebinarId(int id)
         {
             List<int> regTypeIds = new List<int>();
@@ -883,6 +959,16 @@ namespace CUWebinars.Business.Core
 
         }
 
+        // 
+
+        /// <summary>
+        ///    shortcut to editing user email
+        /// </summary>
+        ///     UpdateUserEmail
+        /// <serves>
+        /// All
+        /// </serves>
+
         public void UpdateUserEmail(string oldEmail, string email)
         {
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
@@ -934,6 +1020,15 @@ namespace CUWebinars.Business.Core
             }
         }
 
+
+        /// <summary>
+        ///    Provides OD code to BuildRecordingIsPostedMessage template 
+        /// </summary>
+        ///     InsertOnDemandClaim
+        /// <serves>
+        /// All
+        /// </serves>
+
         public string InsertOnDemandClaim(int orderId)
         {
             var result = "failed on" + orderId;
@@ -978,6 +1073,14 @@ namespace CUWebinars.Business.Core
             return result;
         }
 
+
+        /// <summary>
+        ///    Prevents duplicate orders per user
+        /// </summary>
+        ///     CheckIfEmailAlreadyRegisteredForWebinar
+        /// <serves>
+        /// All
+        /// </serves>
         public int CheckIfEmailAlreadyRegisteredForWebinar(string orderEmail, int webinarId)
         {
             var result = "";
@@ -1033,6 +1136,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        /// <summary>
+        ///    Prevents duplicate orders per domain
+        /// </summary>
+        ///     CheckIfEmailAlreadyRegisteredForWebinarByDomain
+        /// <serves>
+        /// All
+        /// </serves>
         public int CheckIfEmailAlreadyRegisteredForWebinarByDomain(string orderEmail, int webinarId)
         {
             var result = "";
@@ -1088,6 +1198,14 @@ namespace CUWebinars.Business.Core
             }
         }
 
+
+        /// <summary>
+        ///    When existing order is edited this method provides original values
+        /// </summary>
+        /// <sql>text</sql>    
+        /// <serves>
+        /// All
+        /// </serves>
         public string GetPreSaveValues(int idOrder)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
@@ -1130,6 +1248,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        /// <summary>
+        ///    Generate Weekly Invoices
+        /// </summary>
+        ///     GetOrdersForWeeklyInvoiceByAffiliate
+        /// <serves>
+        /// All
+        /// </serves>
         public string CheckForAnyOrders(DateTime startDate, int idAffiliate)
         {
             SqlDataReader reader;
@@ -1232,6 +1357,14 @@ namespace CUWebinars.Business.Core
 
         }
 
+
+        /// <summary>
+        ///    Supports manual price adjustment
+        /// </summary>
+        ///     CreateDiscountCode
+        /// <serves>
+        /// All
+        /// </serves>
         public int CreateAdjustmentDiscount(string note, string amtToDiscount, int orderId)
         {
             var result = 0;
@@ -1317,6 +1450,14 @@ namespace CUWebinars.Business.Core
             }
         }
 
+
+        /// <summary>
+        ///    Update Affiliate's fields
+        /// </summary>
+        ///     UpdateAffiliate
+        /// <serves>
+        /// All
+        /// </serves>
         public object UpdateAffiliate(Affiliate affiliate)
         {
             var result = 0;
@@ -1392,6 +1533,15 @@ namespace CUWebinars.Business.Core
             }
         }
 
+
+
+        /// <summary>
+        ///    Update Presenter's fields
+        /// </summary>
+        ///     UpdateAffiliate
+        /// <serves>
+        /// All
+        /// </serves>
         public int UpdatePresenter(Presenter newPresenter)
         {
 
@@ -1449,55 +1599,15 @@ namespace CUWebinars.Business.Core
 
         }
 
-        //public string CreateCompliancePerspectivesSubscription(OrderRow _row, OrderRow row)
-        //{
-        //    var result = "";
 
-        //    using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
-        //    {
-        //        sqlConnection.Open();
-        //        using (
-        //            var createCpCode = new SqlCommand("CreateCPCode", sqlConnection))
-        //        {
-        //            try
-        //            {
-        //                createCpCode.Connection = sqlConnection;
-        //                createCpCode.CommandType = CommandType.StoredProcedure;
 
-        //                var idOrder = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@idOrder", Value = row.idOrder };
-        //                var _idOrder = new SqlParameter { SqlDbType = SqlDbType.Int, ParameterName = "@_idOrder", Value = _row.idOrder };
-        //                var StartDate = new SqlParameter { SqlDbType = SqlDbType.DateTime, ParameterName = "@StartDate", Value = row.Webinar.Date };
-
-        //                createCpCode.Parameters.Add(idOrder);
-        //                createCpCode.Parameters.Add(_idOrder);
-        //                createCpCode.Parameters.Add(StartDate);
-
-        //                result = createCpCode.ExecuteScalar().ToString();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                using (var errorLogger = new SqlCommand("logError", sqlConnection))
-        //                {
-
-        //                    errorLogger.CommandText =
-        //                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
-        //                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
-        //                    errorLogger.CommandText += "'CreateCPCode' ,";
-        //                    errorLogger.CommandText += "9 ,9 ,9 ,'CreateCPCode', 9 ,";
-        //                    errorLogger.CommandText += "'error at CreateCPCode " +
-        //                                               ex.Message.Replace("'", "|") + "')";
-
-        //                    errorLogger.ExecuteNonQuery();
-        //                }
-
-        //                throw;
-        //            }
-        //        }
-        //        return result.ToString();
-
-        //    }
-        //}
-
+        //Depricated
+        /// <summary>
+        ///    Was only used when LearnUpon was initialized
+        /// </summary>
+        ///     insertDESRegType
+        /// <serves>
+        ///     DES
         public void insertRegTypeId(int webinarIdWebinar)
         {
             var result = "";
@@ -1542,6 +1652,14 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        //used by FindRegTypesAvailableToExistingOrder
+        /// <summary>
+        ///    Determines which registration types to display
+        /// </summary>
+        ///     WebinarIsPast
+        /// <serves>
+        /// All
+        /// </serves>
         public bool WebinarIsPast(int id)
         {
             bool webinarIsPast = false;
@@ -1591,6 +1709,15 @@ namespace CUWebinars.Business.Core
             return webinarIsPast;
         }
 
+
+
+        /// <summary>
+        ///    Runs when error condition is triggered by missing user record
+        /// </summary>
+        ///     FixMissingUserAccount
+        /// <serves>
+        /// All
+        /// </serves>
         public string User_HealThySelf(string email, string tenant)
         {
             var reply = "";
@@ -1619,7 +1746,7 @@ namespace CUWebinars.Business.Core
                             Value = tenant
                         };
                         myConn.Parameters.Add(tenantParam);
-                        
+
                         using (var reader = myConn.ExecuteReader())
                         {
                             while (reader.Read())
@@ -1649,9 +1776,17 @@ namespace CUWebinars.Business.Core
             return reply;
         }
 
+
+
+
+        /// <summary>
+        ///    Moves webinar's status to 'recorded'.
+        /// </summary>
+        ///     updateRegGroups
+        /// <serves>
+        ///     varies by tenant
         public void WebinarIsSetToRecorded()
         {
-
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
             {
                 sqlConnection.Open();
@@ -1692,6 +1827,15 @@ namespace CUWebinars.Business.Core
             }
         }
 
+
+        //TODO: Refactor to account for malformed AuditNotes
+        /// <summary>
+        ///    Provides audit notes to admins
+        /// </summary>
+        ///     GetAuditNotes
+        /// <serves>
+        /// All
+        /// </serves>
         public string GetAuditNotes(Order order, string auditType)
         {
             List<AuditChangedRegTypeModel> result = new List<AuditChangedRegTypeModel>();
@@ -1787,6 +1931,13 @@ namespace CUWebinars.Business.Core
             return returnResult;
         }
 
+        /// <summary>
+        ///    Not currently used
+        /// </summary>
+        ///     BuildStampsLabel
+        /// <serves>
+        /// All
+        /// </serves>
         public void BuildStampsLabels(int orderIdOrder)
         {
 
@@ -1836,6 +1987,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        /// <summary>
+        ///    Housekeeping - deletes GhostInspector results
+        /// </summary>
+        ///     sql
+        /// <serves>
+        /// All
+        /// </serves>
         public void GI_DeleteExistingUser()
         {
             var returnLable = "";
@@ -1869,6 +2027,14 @@ namespace CUWebinars.Business.Core
             }
         }
 
+
+        /// <summary>
+        ///    Housekeeping - deletes GhostInspector results
+        /// </summary>
+        ///     sql
+        /// <serves>
+        /// All
+        /// </serves>
         public void GI_DeleteExistingDomain()
         {
             var returnLable = "";
@@ -1901,6 +2067,13 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        /// <summary>
+        ///    Housekeeping - GhostInspector 
+        /// </summary>
+        ///     sql
+        /// <serves>
+        /// All
+        /// </serves>
         public void GI_DeleteExistingOrder()
         {
 
@@ -1934,9 +2107,16 @@ namespace CUWebinars.Business.Core
             }
         }
 
+        /// <summary>
+        ///    Housekeeping - GhostInspector 
+        /// </summary>
+        ///     sql
+        /// <serves>
+        /// All
+        /// </serves>
         public void GI_SetExistingOrderToInProcess()
         {
-            
+
             var returnLable = "";
 
             using (var sqlConnection = new SqlConnection(_connectionString))

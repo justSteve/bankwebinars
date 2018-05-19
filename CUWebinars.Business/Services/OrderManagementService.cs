@@ -732,6 +732,7 @@ namespace CUWebinars.Business.Services
                 _logger.Warn("CalculateOrderCost did not find row when processing " + order.idOrder);
                 var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
+                // todo: refactor to populate all regtype values as AppVars.
                 var regTypePricing = dataOperations.GetCostOfRegtype(row.idRegType);
                 row.UnitPrice = regTypePricing;
 
