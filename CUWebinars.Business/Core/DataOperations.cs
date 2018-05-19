@@ -369,55 +369,62 @@ namespace CUWebinars.Business.Core
             }
         }
 
-        //
+        ////
+        ///// <summary>
+        ///// seems depricated 
+        ///// </summary>
+        ///// <sql>text</sql>    
+        ///// <param name="idRegType"></param>
+        ///// <returns></returns>
+        //public Double[] GetCostOfUpgrades(int idRegType)
+        //{
+        //    using (var sqlConnection = new SqlConnection(_connectionString))
+        //    {
+        //        sqlConnection.Open();
+
+        //        using (var getPricingsCommand = new SqlCommand())
+        //        {
+        //            var webinarIdParameter = new SqlParameter
+        //            {
+        //                SqlDbType = SqlDbType.Int,
+        //                ParameterName = "@idRegType",
+        //                Value = idRegType
+        //            };
+
+
+        //            getPricingsCommand.Connection = sqlConnection;
+        //            getPricingsCommand.CommandType = CommandType.Text;
+        //            getPricingsCommand.Parameters.Add(webinarIdParameter);
+        //            getPricingsCommand.CommandText =
+        //                "SELECT [base],[plus6],[premier] FROM [dbo].[UpgradePricing] WHERE  idRegType = @idRegType";
+
+        //            var aryReturn = new Double[3];
+
+        //            using (var reader = getPricingsCommand.ExecuteReader())
+        //            {
+        //                while (reader.Read())
+        //                {
+        //                    aryReturn[0] = reader.GetDouble(0);
+        //                    aryReturn[1] = reader.GetDouble(1);
+        //                    aryReturn[2] = reader.GetDouble(2);
+
+        //                }
+        //            }
+        //            return aryReturn;
+        //        }
+        //    }
+        //    throw new NotImplementedException();
+        //}
+
+
         /// <summary>
-        /// seems depricated 
+        /// adapt this for use by new auth system?
         /// </summary>
+        /// <param name="tenant"></param>
         /// <sql>text</sql>    
-        /// <param name="idRegType"></param>
+        /// <param name="key"></param>
         /// <returns></returns>
-        public Double[] GetCostOfUpgrades(int idRegType)
-        {
-            using (var sqlConnection = new SqlConnection(_connectionString))
-            {
-                sqlConnection.Open();
-
-                using (var getPricingsCommand = new SqlCommand())
-                {
-                    var webinarIdParameter = new SqlParameter
-                    {
-                        SqlDbType = SqlDbType.Int,
-                        ParameterName = "@idRegType",
-                        Value = idRegType
-                    };
-
-
-                    getPricingsCommand.Connection = sqlConnection;
-                    getPricingsCommand.CommandType = CommandType.Text;
-                    getPricingsCommand.Parameters.Add(webinarIdParameter);
-                    getPricingsCommand.CommandText =
-                        "SELECT [base],[plus6],[premier] FROM [dbo].[UpgradePricing] WHERE  idRegType = @idRegType";
-
-                    var aryReturn = new Double[3];
-
-                    using (var reader = getPricingsCommand.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            aryReturn[0] = reader.GetDouble(0);
-                            aryReturn[1] = reader.GetDouble(1);
-                            aryReturn[2] = reader.GetDouble(2);
-
-                        }
-                    }
-                    return aryReturn;
-                }
-            }
-            throw new NotImplementedException();
-        }
-
-
-        // adapt this for use by new auth system
+        // 
         public string GetUserEmailByVerificationKey(string tenant, string key)
         {
             string email = "";
@@ -466,7 +473,11 @@ namespace CUWebinars.Business.Core
 
         }
 
-        //housekeeping
+        /// <summary>
+        /// housekeeping - cleans up possible remants of impersonated sessions.
+        /// </summary>
+        /// <sql>text</sql>    
+        /// <param name="adminUserEmail"></param>
         public void RemoveImpersonatedClaimsByCurrentAdmin(string adminUserEmail)
         {
             int numRows = 0;
@@ -542,6 +553,12 @@ namespace CUWebinars.Business.Core
 
         //in current usage
         // serves all tenants
+
+        /// <summary>
+        /// FindPostEventClaimByOnDemandCode to build OD link
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns>PostEventClaim as string</returns>
         public PostEventClaim FindPostEventClaimByOnDemandCode(Order order)
         {
             var retValue = "";
@@ -602,9 +619,14 @@ namespace CUWebinars.Business.Core
         }
 
 
-        //in current usage
-        // serves all tenants
-        // could probably be replaced by EF Lambda.
+        /// <summary>
+        ///  in current usage
+        ///  serves all tenants
+        ///  could probably be replaced by EF Lambda.
+        /// FindPostEventClaimByOrderId
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns>PostEventClaim</returns>
         public PostEventClaim FindPostEventClaimByOrderId(Order order)
         {
             var retValue = false;
@@ -663,9 +685,15 @@ namespace CUWebinars.Business.Core
         }
 
 
-        //in current usage
-        // serves all tenants
-        // could probably be replaced by EF Lambda.
+
+        /// <summary>
+        ///  in current usage
+        ///  serves all tenants
+        ///  could probably be replaced by EF Lambda.
+        /// FindAllPostEventClaims
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns>List of PostEventClaim</returns>
         public IList<PostEventClaim> FindAllPostEventClaims()
         {
             IList<PostEventClaim> retList = new List<PostEventClaim>();
@@ -716,9 +744,14 @@ namespace CUWebinars.Business.Core
 
 
 
-        //in current usage
-        // serves all tenants
-        // could probably be replaced by EF Lambda.
+        /// <summary>
+        ///  in current usage
+        ///  serves all tenants
+        ///  could probably be replaced by EF Lambda.
+        /// GetOrdersByDomain
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns>PostEventClaim</returns>
         public IList<int> GetOrdersByDomain(string searchTerm)
         {
             IList<int> orderIds = new List<int>();
@@ -785,7 +818,6 @@ namespace CUWebinars.Business.Core
         /// <serves>
         /// All
         /// </serves>
-
         public string GetOnDemandClaimById(int idOrder)
         {
 
@@ -849,11 +881,10 @@ namespace CUWebinars.Business.Core
         /// <summary>
         ///    Provides code to OD Playback page
         /// </summary>
-        ///     GetOnDemandClaimById
+        ///     GetOnDemandClaimByCode
         /// <serves>
         /// All
         /// </serves>
-
         public string GetOnDemandClaimByCode(string onDemandCode)
         {
 
@@ -903,7 +934,13 @@ namespace CUWebinars.Business.Core
         }
 
 
-        // todo: refactor to populate all regtype values as AppVars.
+        // 
+        /// <summary>
+        /// todo: refactor to populate all regtype values as AppVars.
+        /// GetAllPossibleRegTypesPerWebinar
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public List<int> FindAllPossibleRegTypesByWebinarId(int id)
         {
             List<int> regTypeIds = new List<int>();
@@ -959,16 +996,18 @@ namespace CUWebinars.Business.Core
 
         }
 
-        // 
 
         /// <summary>
-        ///    shortcut to editing user email
+        /// 
+        /// HACK: stepping carefully around the API way of doing things
+        /// I've been unable to resovle the error tossed when updating email by the book:
+        ///  {"EmailIsUsername is enabled in SecuritySettings -- use ChangeEmail APIs instead."}
+        ///  https://gitter.im/brockallen/BrockAllen.MembershipReboot/archives/2015/10/22
         /// </summary>
         ///     UpdateUserEmail
         /// <serves>
         /// All
         /// </serves>
-
         public void UpdateUserEmail(string oldEmail, string email)
         {
             using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
@@ -1028,7 +1067,6 @@ namespace CUWebinars.Business.Core
         /// <serves>
         /// All
         /// </serves>
-
         public string InsertOnDemandClaim(int orderId)
         {
             var result = "failed on" + orderId;

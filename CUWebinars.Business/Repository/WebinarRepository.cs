@@ -322,13 +322,13 @@ namespace CUWebinars.Business.Repository
             return retVal;
         }
 
-        public Double[] GetCostOfUpgrades(int idRegType)
-        {
-            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+        //public Double[] GetCostOfUpgrades(int idRegType)
+        //{
+        //    var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
 
-            return dataOperations.GetCostOfUpgrades(idRegType);
+        //    return dataOperations.GetCostOfUpgrades(idRegType);
 
-        }
+        //}
 
         public Webinar GetWebinarByJoinCode(string joinCode)
         {

@@ -42,7 +42,7 @@ namespace CUWebinars.Business.Repository
         int SaveChanges();
         int GetRegTypeByRateWatch(string registrationType, int idWebinar);
         int GetRegTypeByACS(string registrationType, int idWebinar);
-        double[] GetCostOfUpgrades(int idWebinar);
+        //double[] GetCostOfUpgrades(int idWebinar);
         Webinar GetWebinarByJoinCode(string joinCode);
         IList<Webinar> GetSearchDTO(string searchTerm);
 
