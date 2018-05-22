@@ -36,6 +36,7 @@ namespace CUWebinars.Web.Helpers
         public const string AffiliateId = "idAff";
         public const string CurrentAffiliate = "CurrentAffiliate";
         public const string AffiliateSessionSource = "AffiliateSessionSource";
+        public const string MailChimpSource = "MailChimpSource";
         public const string CurrentUser = "CurrentUser";
         public const string DesSession = "false";
         public const string CcsSession = "false";

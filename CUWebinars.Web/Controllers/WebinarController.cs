@@ -1741,6 +1741,10 @@ namespace CUWebinars.Web.Controllers
             if (webinarId == 883)
             {
                 webinarId = _webinarManagementService.GetNextCompliancePerspectives() ?? -1;
+                if (webinarId == -1)
+                {
+                    RedirectPermanent("https://www.ttscompliancesuite.com/");
+                }
             }
 
             webinar = _webinarManagementService.GetWebinar(webinarId);

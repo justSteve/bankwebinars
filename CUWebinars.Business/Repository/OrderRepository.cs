@@ -251,7 +251,20 @@ namespace CUWebinars.Business.Repository
             return userOrder;
 
         }
-
+        public IEnumerable<Order> GetOrdersByIds(int[] ids)
+        {
+            return items
+                .Include(o => o.WebUser)
+                .Include(o => o.WebUser.Addresses)
+                .Include(o => o.Affiliate)
+                .Include(o => o.OrderRows)
+                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
+                .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
+                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                .Include(o => o.OrderRows.Select(or => or.Discount))
+                .Where(o => ids.Contains(o.idOrder));
+        }
 
         public IList<int> FindUserIdsByPartialId(int userId)
         {

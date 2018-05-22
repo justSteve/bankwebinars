@@ -170,11 +170,7 @@ $(function () {
     cartStateManager.setAddressVerified(addressVerified); // addressVerified is set in a script tag in razor view Details.cshtml
     cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
 
-
-    function eraseOrderStartCookie() {
-        window.Cookies.set("OrderStart", "", -1);
-    }
-
+    
     cartStateManager.SetCartState();
 
 
@@ -283,7 +279,7 @@ $(function () {
 
         $.post('/cart/checkoutConfirmSetCookie', data,
             function (response, status, xhr) {
-                //primary objective is to set cookie state according to inital button click.
+                //primary objective is to set cookie state according to initial button click.
                 window.Cookies.set('OrderStart', response.model);
             });
 
@@ -356,12 +352,9 @@ $(function () {
 
                         var cookieVals = getCookie("OrderStart");
 
-                        if (cookieVals == null) {
-                            var a = "holder";
-                        }
-                        else {
+                        if (cookieVals != null) {
                             cookieVals = cookieVals.replace("OrderId=", "Email=" + $('#loginEmail').val()+ "&OrderId=")
-                            window.Cookies.set('OrderStart', cookieVals);
+                            window.Cookies.set('OrderStart', cookieVals, );
                         }
 
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {

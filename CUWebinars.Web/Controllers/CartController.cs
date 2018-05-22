@@ -721,82 +721,85 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                foreach (HttpCookie requestCookie in Request.Cookies)
+                //int loop1, loop2;
+                HttpCookieCollection MyCookieColl;
+                //HttpCookie MyCookie;
+
+                MyCookieColl = Request.Cookies;
+
+                var cookieName = "StartOrder";
+                var removeStartOrderCookies = MyCookieColl.AllKeys
+                    .Select((name, i) => new { name, i })
+                    .Where(x => x.name == cookieName)
+                    .Select(x => ProcessStartOrder(MyCookieColl[x.i]));
+
+                cookieName = WebUiConstants.AffiliateSessionSource;
+                var checkAffSessionSourceCookie = MyCookieColl.AllKeys
+                    .Select((name, i) => new { name, i })
+                    .Where(x => x.name == cookieName)
+                    .Select(x => ProcessAffSessionSource(MyCookieColl[x.i]));
+
+                cookieName = WebUiConstants.MailChimpSource;
+                var checkMailChimpSourceCookie = MyCookieColl.AllKeys
+                    .Select((name, i) => new { name, i })
+                    .Where(x => x.name == cookieName)
+                    .Select(x => ProcessMailChimpSource(MyCookieColl[x.i]));
+
+                
+
+                var model = new CheckoutConfirmCookieModel
                 {
-                    if (requestCookie.Name.StartsWith(WebUiConstants.AffiliateSessionSource))
-                    {
-                        var affByCookie = requestCookie.Value.Split('|')[1];
-
-                        if (affByCookie != null && affByCookie !=
-                            _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString())
-                        {
-                            _logger.Warn("Cookie/Session mismatch: " + affByCookie + " | " + _stateService
-                                             .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString());
-                            if (_stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff == 19)
-                                _stateService.SetValue(WebUiConstants.CurrentAffiliate,
-                                    _cartControllerOrchestrator.GetAffiliateById(Convert.ToInt32(affByCookie)));
-                        }
-                        result = affByCookie;
-                    }
-                    if (requestCookie != null && requestCookie.Name.StartsWith("OrderStart"))
-                    {
-                        foundStartOrderCookie = true;
-                        startedCookie = requestCookie.Value;
-                    }
-                    if (!foundStartOrderCookie)
-                    {
-                        _logger.Info("CheckoutConfirmSetCookie was not found");
-                        var initialAffiliate = _stateService.GetValue<string>("AffiliateSessionSource");
-                        if (initialAffiliate.Contains("QueryString"))
-                        {
-                            var aff = _cartControllerOrchestrator.GetAffiliateById(
-                                Convert.ToInt32(initialAffiliate.Split('|')[1]));
-
-                            if (aff != null)
-                            {
-                                setAffCookie = "AffiliateId=" + aff.idUserAff + "&form=" + Request.Form.ToString();
-                            }
-                            else
-                            {
-                                _logger.Warn("SetCookie did not find affiliate: " + initialAffiliate);
-                            }
-                        }
-                    }
-                }
-
-                _logger.Info("CheckoutConfirmSetCookie was found");
-                var initialValues = _stateService.GetValue<string>("AffiliateSessionSource");
-
-                if (initialValues.Contains("QueryString"))
-                {
-                    var aff = _cartControllerOrchestrator.GetAffiliateById(
-                        Convert.ToInt32(initialValues.Split('|')[1]));
-
-                    if (aff != null)
-                    {
-                        setAffCookie = "QueryString|" + aff.idUserAff;
-                    }
-                    else
-                    {
-                        _logger.Warn("SetCookie did not find affiliate: " + initialValues);
-                    }
-                }
+                    InitialAffiliate = setAffCookie
+                };
+                return Json(new { model }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
                 _logger.FatalException("SetCookie", e);
+
+                return Json(new { error = e.Message }, JsonRequestBehavior.AllowGet);
             }
+        }
 
-            var model = new CheckoutConfirmCookieModel
+        private string ProcessMailChimpSource(HttpCookie httpCookie)
+        {
+
+            var mcCookie = httpCookie.Value.Split('|')[1];
+
+            if (mcCookie != null && mcCookie !=
+                _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString())
             {
-                InitialAffiliate = setAffCookie
-            };
-            return Json(new
+                _logger.Warn("Cookie/Session mismatch: " + mcCookie + " | " + _stateService
+                                 .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString());
+                if (_stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff == 19)
+                    _stateService.SetValue(WebUiConstants.CurrentAffiliate,
+                        _cartControllerOrchestrator.GetAffiliateById(Convert.ToInt32(mcCookie)));
+            }
+            return mcCookie;
+        }
+
+        private string ProcessAffSessionSource(HttpCookie httpCookie)
+        {
+            var affByCookie = httpCookie.Value.Split('|')[1];
+
+            if (affByCookie != null && affByCookie !=
+                _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString())
             {
-                model
+                _logger.Warn("Cookie/Session mismatch: " + affByCookie + " | " + _stateService
+                                 .GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff.ToString());
+                if (_stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate).idUserAff == 19)
+                    _stateService.SetValue(WebUiConstants.CurrentAffiliate,
+                        _cartControllerOrchestrator.GetAffiliateById(Convert.ToInt32(affByCookie)));
+            }
+            return affByCookie;
+        }
 
-            }, JsonRequestBehavior.AllowGet);
-
+        private string ProcessStartOrder(HttpCookie httpCookie)
+        {
+            //currently just removing cookie
+            httpCookie.Expires = DateTime.Now.AddDays(-1d);
+            Response.Cookies.Add(httpCookie);
+            return "";
         }
 
         public ActionResult CheckoutConfirm(int? ID = null)

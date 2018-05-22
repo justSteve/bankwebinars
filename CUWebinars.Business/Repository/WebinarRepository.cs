@@ -388,15 +388,21 @@ namespace CUWebinars.Business.Repository
 
         public int? GetNextCompliancePerspectives()
         {
+            try
+            {
+                var item = items.Where(w => w.Status == WebinarStatus.Scheduled
+                                               || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress)
+                                              .Where(w => w.Title.StartsWith("Compliance Perspectives"))
+                                              .Where(w => w.idWebinar != 883)
+                    .OrderBy(w => w.Date).First().idWebinar;
 
-            var item = items.Where(w => w.Status == WebinarStatus.Scheduled
-                                           || w.Status == WebinarStatus.Active || w.Status == WebinarStatus.InProgress)
-                                          .Where(w => w.Title.StartsWith("Compliance Perspectives"))
-                                          .Where(w => w.idWebinar != 883)
-                .OrderBy(w => w.Date).First().idWebinar;
-
-            return item;
-
+                return item;
+            }
+            catch (Exception e)
+            {
+                // Compliance Perspectives is replaced by CCS
+                return -1;
+            }
         }
 
         public IList<Webinar> GetWebinarsForWeeklyInvoice(DateTime startDate)
@@ -475,7 +481,7 @@ namespace CUWebinars.Business.Repository
 
             return webinars;
         }
-        
+
 
         public IQueryable<Order> GetOrdersByWebinarForInvoice(int webinarId)
         {
@@ -522,7 +528,7 @@ namespace CUWebinars.Business.Repository
                 .Include(o => o.OrderRows.Select(or => or.RegistrationType))
 
                 ;
-            
+
         }
 
         public IEnumerable<Order> GetOrdersByWebinarForPostEventClaims(int idWebinar)

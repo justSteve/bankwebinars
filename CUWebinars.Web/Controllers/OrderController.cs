@@ -414,83 +414,84 @@ namespace CUWebinars.Web.Controllers
 
         }
 
-        public void MigrateCompliancePerspectivesOrders()
-        {
-            IList<Order> orders =
-                _orderManagementService.GetOrdersByWebinar(842).Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.OutstandingBalance || o.OrderStatus == OrderStatus.Paid).ToList();
-            _logger.Info("CPMigrator found " + orders.Count + " orders to process.");
-            var nextCPId = _webinarManagementService.GetNextCompliancePerspectives();
+        //public void MigrateCompliancePerspectivesOrders()
+        //{
+        //    IList<Order> orders =
+        //        _orderManagementService.GetOrdersByWebinar(842).Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Submitted || o.OrderStatus == OrderStatus.OutstandingBalance || o.OrderStatus == OrderStatus.Paid).ToList();
+        //    _logger.Info("CPMigrator found " + orders.Count + " orders to process.");
+        //    var nextCPId = _webinarManagementService.GetNextCompliancePerspectives();
 
-            foreach (var o in orders)
-            {
-                _logger.Info("CPMigrator begins: " + o.BillingEmail);
-                var row = o.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
-                var addLocString = "";
-                if (row.AdditionalLocation != null)
-                {
-                    foreach (var addLoc in row.AdditionalLocation)
-                    {
-                        addLocString += addLoc.Email + ",";
-                    }
-                }
-                try
-                {
-                    var thisOrder = new MigrateOrderModel
-                    {
-                        idWebinar = nextCPId.Value,
-                        idAffiliate = o.idAffiliate,
-                        Email = o.BillingEmail,
-                        Title = o.WebUser.Title ?? "",
-                        Status = o.OrderStatus,
-                        AdditionalLocationsString = addLocString.TrimEnd(','),
-                        idOrderLegacy = 0,
-                        idRegType = row.idRegType,
-                        OrderDate = DateTime.Now,
-                        Total = o.Total,
-                        BillingAddress = new Address
-                        {
-                            StreetAddress = o.BillingAddress,
-                            StreetAddress2 = o.BillingAddress2,
-                            City = o.BillingCity,
-                            State = o.BillingState,
-                            AddressType = "0",
-                            Phone = o.BillingPhone,
-                            Name = o.WebUser.FullName,
-                            Zip = o.BillingZip
-                        },
-                        ShippingAddress = new Address
-                        {
-                            StreetAddress = o.ShippingAddress,
-                            StreetAddress2 = o.ShippingAddress2,
-                            City = o.ShippingCity,
-                            State = o.ShippingState,
-                            AddressType = "1",
-                            Phone = o.ShippingPhone,
-                            Name = o.WebUser.FullName,
-                            Zip = o.ShippingZip
-                        },
+        //    foreach (var o in orders)
+        //    {
+        //        _logger.Info("CPMigrator begins: " + o.BillingEmail);
+        //        var row = o.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active);
+        //        var addLocString = "";
+        //        if (row.AdditionalLocation != null)
+        //        {
+        //            foreach (var addLoc in row.AdditionalLocation)
+        //            {
+        //                addLocString += addLoc.Email + ",";
+        //            }
+        //        }
+        //        try
+        //        {
+        //            var thisOrder = new MigrateOrderModel
+        //            {
+        //                idWebinar = nextCPId.Value,
+        //                idAffiliate = o.idAffiliate,
+        //                Email = o.BillingEmail,
+        //                Title = o.WebUser.Title ?? "",
+        //                Status = o.OrderStatus,
+        //                AdditionalLocationsString = addLocString.TrimEnd(','),
+        //                idOrderLegacy = 0,
+        //                idRegType = row.idRegType,
+        //                OrderDate = DateTime.Now,
+        //                Total = o.Total,
+        //                BillingAddress = new Address
+        //                {
+        //                    StreetAddress = o.BillingAddress,
+        //                    StreetAddress2 = o.BillingAddress2,
+        //                    City = o.BillingCity,
+        //                    State = o.BillingState,
+        //                    AddressType = "0",
+        //                    Phone = o.BillingPhone,
+        //                    Name = o.WebUser.FullName,
+        //                    Zip = o.BillingZip
+        //                },
+        //                ShippingAddress = new Address
+        //                {
+        //                    StreetAddress = o.ShippingAddress,
+        //                    StreetAddress2 = o.ShippingAddress2,
+        //                    City = o.ShippingCity,
+        //                    State = o.ShippingState,
+        //                    AddressType = "1",
+        //                    Phone = o.ShippingPhone,
+        //                    Name = o.WebUser.FullName,
+        //                    Zip = o.ShippingZip
+        //                },
 
-                        Institution = o.Institution,
-                        DiscountCode = null,
-                        AdminComments = "",
-                        FirstName = o.FirstName,
-                        LastName = o.LastName,
-                        Origin = o.Origin,
-                        LegacyRegType = 0,
-                        SendNotification = false
-                    };
-                    thisOrder.DiscountCode = "CP_" + o.idOrder;
-                    var makeCPOrder = MigrateOrderCompPerspectivesPost(thisOrder);
-                    _logger.Info(makeCPOrder.ToString());
+        //                Institution = o.Institution,
+        //                DiscountCode = null,
+        //                AdminComments = "",
+        //                FirstName = o.FirstName,
+        //                LastName = o.LastName,
+        //                Origin = o.Origin,
+        //                LegacyRegType = 0,
+        //                SendNotification = false
+        //            };
+        //            thisOrder.DiscountCode = "CP_" + o.idOrder;
+        //            var makeCPOrder = MigrateOrderCompPerspectivesPost(thisOrder);
+        //            _logger.Info(makeCPOrder.ToString());
 
 
-                }
-                catch (Exception ex)
-                {
-                    _logger.FatalException("migrating CP failed on: " + o.idOrder + "  with: ", ex);
-                }
-            }
-        }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            _logger.FatalException("migrating CP failed on: " + o.idOrder + "  with: ", ex);
+        //        }
+        //    }
+        //}
+        
         /// <summary>
         /// Permits migration of legacy system.
         /// </summary>
