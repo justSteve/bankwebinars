@@ -209,6 +209,7 @@
     <Compile Include="Core\Helpers\IDomainHelper.cs" />
     <Compile Include="Core\Helpers\JsonHelpers.cs" />
     <Compile Include="Core\Helpers\RandomHelpers.cs" />
+    <Compile Include="Core\Helpers\SqlHelpers.cs" />
     <Compile Include="Core\Helpers\StringExtensions.cs" />
     <Compile Include="Core\Helpers\ValidationHelper.cs" />
     <Compile Include="Core\OrderGenesis.cs" />

@@ -12,7 +12,7 @@ namespace CUWebinars.Business.Models
         }
 
         public int idUser { get; set; }
-        public int idMailChimp { get; set; }
+        public string idMailChimp { get; set; }
         public int idMandrill { get; set; }
         public int idGoToWebinar { get; set; }
         public string MailChimpValues { get; set; }

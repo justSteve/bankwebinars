@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using CUWebinars.Business.Constants;
+using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Services;
 using Newtonsoft.Json;
 
@@ -76,6 +77,59 @@ namespace CUWebinars.Business.Core
                     catch (Exception ex)
                     {
                         LogError("CheckForUnique", "CheckForUnique: " + CheckForUnique.CommandText +
+                                                      " Exception.Message: " + ex.Message);
+                    }
+                    return returnVal;
+
+                }
+            }
+        }
+
+        /// <summary>
+        ///    Ensure MailChimp's id is unique.
+        /// </summary>
+        /// <sql>CheckForUnique</sql>    
+        /// <serves>
+        /// All
+        /// </serves>
+
+        public string CheckForUniqueLinkId(string code)
+        {
+
+            var returnVal = "";
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var CheckForUnique = new SqlCommand())
+                {
+                    var codeParameter = new SqlParameter
+                    {
+                        SqlDbType = SqlDbType.VarChar,
+                        ParameterName = "@code",
+                        Value = code
+                    };
+
+                    CheckForUnique.Parameters.Add(codeParameter);
+
+                    CheckForUnique.Connection = sqlConnection;
+                    CheckForUnique.CommandType = CommandType.StoredProcedure;
+                    CheckForUnique.CommandText = "CheckForUniqueLinkId";
+
+                    try
+                    {
+                        using (var sqlUpdateConnection = new SqlConnection(_connectionString))
+                        {
+                            sqlUpdateConnection.Open();
+
+                            returnVal = CheckForUnique.ExecuteScalar().ToString();
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError("CheckForUniqueLinkId", "CheckForUniqueLinkId: " + CheckForUnique.CommandText +
                                                       " Exception.Message: " + ex.Message);
                     }
                     return returnVal;
@@ -2186,6 +2240,165 @@ namespace CUWebinars.Business.Core
                 }
             }
         }
+
+        public List<MigrateMCUsers> UsersFromSheet()
+        {
+
+            SqlDataReader reader;
+
+            using (var sqlConnection = new SqlConnection(TtsConfig.DefaultConnectionString))
+            {
+                sqlConnection.Open();
+                using (
+                    var usersFromSheet = new SqlCommand())
+                {
+                    try
+                    {
+
+                        usersFromSheet.Connection = sqlConnection;
+                        usersFromSheet.CommandType = CommandType.Text;
+
+                        usersFromSheet.CommandText = "SELECT * FROM [dbo].[SampleMCImport] ";
+
+                        reader = usersFromSheet.ExecuteReader();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                        {
+                            errorLogger.CommandText =
+                                "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                            errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                            errorLogger.CommandText += "'usersFromSheet' ,";
+                            errorLogger.CommandText += "9 ,9 ,9 ,'usersFromSheet', 9 ,";
+                            errorLogger.CommandText += "'error at usersFromSheet " +
+                                                       ex.Message.Replace("'", "|") + "')";
+
+                            errorLogger.ExecuteNonQuery();
+                        }
+
+                        throw;
+                    }
+                }
+
+
+                StringBuilder sb = new StringBuilder();
+                List<MigrateMCUsers> users = new List<MigrateMCUsers>();
+                if (reader.HasRows)
+                {
+                    while (reader.HasRows)
+                    {
+
+                        while (reader.Read())
+                        {
+                            try
+                            {
+
+                                var user = new MigrateMCUsers
+                                {
+                                    Email_Address = reader.GetString(0),
+                                    First_Name = reader.SafeGetString(1),
+                                    Last_Name = reader.SafeGetString(2),
+                                    Source = reader.SafeGetString(3),
+                                    Welcome_Sequence_Complete_ = reader.SafeGetString(4),
+                                    Purchased = reader.SafeGetString(5),
+                                    Mailing_List = reader.SafeGetString(6),
+                                    Keep_Me_Informed_About_ = reader.SafeGetString(7)
+
+                                };
+
+                                users.Add(user);
+                            }
+                            catch (Exception e)
+                            {
+
+                                using (var errorLogger = new SqlCommand("logError", sqlConnection))
+                                {
+                                    errorLogger.CommandText =
+                                        "INSERT dbo.ErrorLog ( ErrorTime ,UserName ,ErrorNumber ,ErrorSeverity ,ErrorState ,ErrorProcedure ,ErrorLine ,ErrorMessage)VALUES  ('";
+                                    errorLogger.CommandText += DomainConstants.BuildUtcNowAsCts.ToShortTimeString() + "',";
+                                    errorLogger.CommandText += "'usersFromSheetReader' ,";
+                                    errorLogger.CommandText += "9 ,9 ,9 ,'usersFromSheetReader', 9 ,";
+                                    errorLogger.CommandText += "'error at usersFromSheetReader " +
+                                                               e.Message.Replace("'", "|") + "')";
+
+                                    errorLogger.ExecuteNonQuery();
+                                }
+
+                                throw;
+                            }
+                        }
+                        reader.NextResult();
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+
+                return users;
+            }
+
+        }
+
+        public void UpdateUserIdMailChimp(int ourUserIdUser, string ourUserIdMailChimp)
+        {
+            int numRows = 0;
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var updateUserIdMailChimp = new SqlCommand())
+                {
+                    try
+                    {
+
+                        var idParam = new SqlParameter
+                        {
+                            DbType = DbType.Int32,
+                            ParameterName = "@id",
+                            Value = ourUserIdUser
+                        };
+                        var idMCParam = new SqlParameter
+                        {
+                            DbType = DbType.String,
+                            ParameterName = "@idMC",
+                            Value = ourUserIdMailChimp
+                        };
+
+                        updateUserIdMailChimp.Connection = sqlConnection;
+                        updateUserIdMailChimp.CommandType = CommandType.Text;
+                        updateUserIdMailChimp.Parameters.Add(idParam);
+                        updateUserIdMailChimp.Parameters.Add(idMCParam);
+                        updateUserIdMailChimp.CommandText =
+                            "UPDATE dbo.WebUser SET idMailChimp = @idMC where idUser = @id";
+
+                        numRows = updateUserIdMailChimp.ExecuteNonQuery();
+
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
+                }
+            }
+
+
+        }
+    }
+
+    public class MigrateMCUsers
+    {
+        public string Email_Address { get; set; }
+        public string First_Name { get; set; }
+        public string Last_Name { get; set; }
+        public string Source { get; set; }
+        public string Welcome_Sequence_Complete_ { get; set; }
+        public string Purchased { get; set; }
+        public string Mailing_List { get; set; }
+        public string Keep_Me_Informed_About_ { get; set; }
     }
 
     public class AuditChangedRegTypeModel

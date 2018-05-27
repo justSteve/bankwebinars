@@ -1572,7 +1572,7 @@ namespace CUWebinars.Web.Controllers
                 var additionalLocationsViewModel =
                     model.RegistrationSummaryViewModel.AdditionalLocationsViewModel;
                 var orderRow = model.Order.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
-                
+
 
 
                 if (!claimsIdentityOfAuthenticatedUser.HasClaim(
@@ -1641,7 +1641,7 @@ namespace CUWebinars.Web.Controllers
 
 
                     try
-                    { 
+                    {
                         bool desCheckout = false;
                         if (orderRow.Webinar.SeriesInfo == "DES")
                             desCheckout = true;
@@ -2696,7 +2696,9 @@ namespace CUWebinars.Web.Controllers
 
             try
             {
-                var startTime = webinar.Date.ToUniversalTime().ToString("o"); ;
+                var startTime = TimeZoneInfo.ConvertTimeToUtc(webinar.Date, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
+
+                
                 var wReqUpdate = new WebinarReqUpdate
                 {
                     description = output,
@@ -2707,11 +2709,6 @@ namespace CUWebinars.Web.Controllers
                         startTime = Convert.ToDateTime(startTime),
                         endTime = Convert.ToDateTime(startTime).AddHours((double)webinar.Duration)
                     }
-                    //new DateTimeRange
-                    //{
-                    //    startTime = webinar.Date.ToUniversalTime(),
-                    //    endTime = webinar.Date.ToUniversalTime().AddHours((double)webinar.Duration)
-                    //}
                 },
                     timeZone = "America/Chicago",
                     locale = WebinarReqUpdate.LocaleEnum.en_US

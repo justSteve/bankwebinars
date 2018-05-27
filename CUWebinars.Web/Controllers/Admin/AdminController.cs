@@ -17,6 +17,7 @@ using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -64,6 +65,7 @@ using Formatting = Newtonsoft.Json.Formatting;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Newtonsoft.Json.Serialization;
 using RazorEngine.Compilation.ImpromptuInterface;
 using Thinktecture.IdentityModel.Http.Cors;
 using Address = CUWebinars.Business.Models.Address;
@@ -2466,7 +2468,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateInput(false)]
         [HttpGet]
         [HandleAjaxException]
-        public async Task<ActionResult> UpdateAffiliateMailChimpLists()
+        public async Task<ActionResult> MailChimpUpdateAffiliateLists()
         {
             _logger.Info("GenerateMailChimpCampaign starting");
             var affiliates = _affiliateManagementService.GetAffiliates();
@@ -2498,28 +2500,29 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var affiliate in affiliates)
             {
-                if (affiliate.ttsDomain.ToLower() != "azba")
+                if (affiliate.ttsDomain.ToLower() != "arba")
+                //if (affiliate.ttsDomain.ToLower() != "cft-ea")
                 {
                     continue;
                 }
                 IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
 
                 var _segment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
-                if (_segment != null)
-                {
-                    _logger.Info("UAMPL seg found: " + _segment.Name);
-                    var affSegementId = masterSegment.FirstOrDefault(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper())
-                        .Id;
-                    //MemberSearchRequest search = new MemberSearchRequest {[""],["email"] };
-                    members = await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
-                        affSegementId.ToString()).ConfigureAwait(false);
+                //if (_segment != null)
+                //{
+                //    _logger.Info("UAMPL seg found: " + _segment.Name);
+                //    var affSegementId = masterSegment.FirstOrDefault(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper())
+                //        .Id;
+                //    //MemberSearchRequest search = new MemberSearchRequest {[""],["email"] };
+                //    members = await manager.ListSegments.GetAllMembersAsync(_globalConfig.TenantMailChimpList,
+                //        affSegementId.ToString()).ConfigureAwait(false);
 
-                }
-                else
-                {
-                    _logger.Warn("UAMPL No Segment Found for: " + affiliate.ttsDomain);
+                //}
+                //else
+                //{
+                //    _logger.Warn("UAMPL No Segment Found for: " + affiliate.ttsDomain);
 
-                }
+                //}
 
                 var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
                 var whyGetEmail = "TTS, producers of BankWebinars.com, is the nation's leading provider of financial institution webinars.";
@@ -2669,7 +2672,6 @@ namespace CUWebinars.Web.Controllers.Admin
                         throw;
                     }
                 }
-
                 catch (Exception exception)
                 {
                     _logger.FatalException("UpdateAffMailChimpList: ", exception);
@@ -2680,6 +2682,256 @@ namespace CUWebinars.Web.Controllers.Admin
             model.AffOutput = sbNoList.ToString();
             return View(model);
 
+        }
+
+        [ValidateInput(false)]
+        [HttpGet]
+        [HandleAjaxException]
+        public async Task<ActionResult> MailChimpMigrateUsers(string aff)
+        {
+            _logger.Info("UpdateMailChimpUser starting");
+            var affiliates = _affiliateManagementService.GetAffiliates();
+            var model = new ListSegmentsViewModel
+            {
+                CFT = new List<Affiliate>(),
+                SBA = new List<Affiliate>(),
+                Other = new List<Affiliate>()
+            };
+
+            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sbNoList = new StringBuilder();
+            var lists = await manager.Lists.GetAllAsync().ConfigureAwait(false);
+            var tenant = _globalConfig.TenantPrefix.Replace("-", "");
+            //foreach (var mcList in list)
+            //{
+            //    if (!mcList.Name.StartsWith(tenant))
+            //    {
+            //        sbNoList.AppendLine("NonAffiliate List: " + mcList.Name + "<br>");
+            //        continue;
+            //    }
+            //}
+
+            var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
+            var masterTenantList = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
+
+            var masterSegment = await manager.ListSegments.GetAllAsync(masterTenantList.Id).ConfigureAwait(false);
+            var dataOperations =
+                new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+            var usersFromSheet =
+            dataOperations.UsersFromSheet();
+
+
+            foreach (var affiliate in affiliates)
+            {
+
+                if (aff != null)
+                {
+                    if (affiliate.ttsDomain != aff)
+                        continue;
+                }
+
+                if (affiliate.ttsDomain != "arba")
+                //if (affiliate.ttsDomain != "cft-ea")
+                    continue;
+
+                var oldSegment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
+
+                IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
+
+                var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
+
+                var usersFromSheetForAff = usersFromSheet.Where(m => m.Mailing_List == listName);
+
+                sb.Clear();
+                var mcList = lists.FirstOrDefault(l => l.Name == listName);
+                _logger.Warn("No List found for " + affiliate.ttsDomain + "<br>");
+                if (mcList == null)
+                {
+                    continue;
+                }
+
+                try
+                {
+
+                    var cats = new InterestCategoryRequest();
+                    var intCat = await manager.InterestCategories.GetAllAsync(mcList.Id).ConfigureAwait(false);
+                    var interestsId = intCat.FirstOrDefault(i => i.Title == "Keep me informed about:");
+                    var interests = await manager.Interests.GetAllAsync(mcList.Id, interestsId.Id).ConfigureAwait(false);
+
+                    var intDes = interests.SingleOrDefault(i => i.Name.Contains("DirectorSeries.com")).Id;
+                    var intCCS = interests.SingleOrDefault(i => i.Name.Contains("ttsComplianceSuite.com")).Id;
+                    var intTrainers = interests.SingleOrDefault(i => i.Name.Contains("BankTrainers.com")).Id;
+                    var intWebinars = interests.SingleOrDefault(i => i.Name.Contains("BankWebinars.com")).Id;
+
+
+                    foreach (var user in usersFromSheetForAff)
+                    {
+                        var generateIdMailChimp = "";
+                        WebUser ourUser = _membershipService.GetUserByEmail(user.Email_Address);
+                        if (ourUser != null)
+                        {
+                            generateIdMailChimp = ourUser.idMailChimp;
+                        }
+                        var newMember = new Member();
+                        var memInterests = new Dictionary<string, bool>();
+                        var memMergeFields = new Dictionary<string, object>();
+
+                        memInterests = BuildInterestsGroups(user, memInterests, intCCS, intTrainers, intDes, intWebinars, newMember, mcList);
+
+                        memMergeFields = BuildMergeFields(user, memMergeFields, generateIdMailChimp);
+
+                        newMember.EmailAddress = user.Email_Address;
+                        newMember.ListId = mcList.Id;
+                        newMember.Interests = memInterests;
+                        newMember.StatusIfNew = Status.Subscribed;
+                        newMember.MergeFields = memMergeFields;
+
+                        if (ourUser != null)
+                        {
+                            ourUser.idMailChimp = memMergeFields["LINKID"].ToString();
+                            dataOperations.UpdateUserIdMailChimp(ourUser.idUser, ourUser.idMailChimp);
+                        }
+                        var addMember = await manager.Members.AddOrUpdateAsync(mcList.Id, newMember).ConfigureAwait(false);
+                        if (addMember.Status == Status.Pending)
+                        {
+                            var a = addMember.Status;
+                        }
+                        var text = "";
+                        foreach (var field in memMergeFields)
+                        {
+                            text += string.Format("Name={0}, Value={1}", field.Key, field.Value);
+                        }
+                        var newMemToJson = JsonConvert.SerializeObject(newMember);
+                        _logger.Info("MigrateMailChimpUser Added: " + newMemToJson);
+                        Debug.WriteLine(newMember.EmailAddress + " - " + addMember.Status);
+
+                        //await manager.ListSegments.DeleteMemberAsync(masterTenantList.Id, oldSegment.ListId,
+                        //    addMember.EmailAddress);
+
+                    }
+                }
+                catch (Exception exception)
+                {
+                    _logger.FatalException("MigrateMailChimpUser: ", exception);
+                    //return Json(new { Result = exception.Message });
+                }
+                //removes users to avoid price increate
+
+//                var _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
+
+//                var segments = _segments.ToList();
+
+//                foreach (var tSegment in segments)
+//                {
+//                    foreach (var user in usersFromSheetForAff)
+//                    {
+//                        await manager.ListSegments.DeleteMemberAsync(mcList.Id, tSegment.ListId,
+//                            user.Email_Address);
+//                    }
+
+//                    _logger.Info("MigrateMailChimpUser reset segments: " + tSegment.Name);
+////                    await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString());
+//                }
+
+            }
+
+            model.AffOutput = sbNoList.ToString();
+            return View(model);
+
+        }
+
+        private static Dictionary<string, bool> BuildInterestsGroups(MigrateMCUsers user, Dictionary<string, bool> memInterests, string intCCS,
+            string intTrainers, string intDes, string intWebinars, Member newMember, List mcList)
+        {
+            if (user.Keep_Me_Informed_About_.Contains("ttsComplianceSuite.com"))
+            {
+                memInterests.Add(intCCS, true);
+            }
+            else
+            {
+                memInterests.Add(intCCS, false);
+            }
+
+            if (user.Keep_Me_Informed_About_.Contains("BankTrainers.com"))
+            {
+                memInterests.Add(intTrainers, true);
+            }
+            else
+            {
+                memInterests.Add(intTrainers, false);
+            }
+
+            if (user.Keep_Me_Informed_About_.Contains("DirectorSeries.com"))
+            {
+                memInterests.Add(intDes, true);
+            }
+            else
+            {
+                memInterests.Add(intDes, false);
+            }
+
+            if (user.Keep_Me_Informed_About_.Contains("BankWebinars.com"))
+            {
+                memInterests.Add(intWebinars, true);
+            }
+            else
+            {
+                memInterests.Add(intWebinars, false);
+            }
+            return memInterests;
+        }
+
+        private static Dictionary<string, object> BuildMergeFields(MigrateMCUsers user, Dictionary<string, object> memMergeFields, string generateIdMailChimp)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (generateIdMailChimp == "")
+            {
+                sb.Append(AppHelper.RandomUniqueMailChimp(6));
+
+                memMergeFields.Add("LINKID", sb.ToString());
+            }
+            else
+            {
+                sb.Append(generateIdMailChimp);
+                memMergeFields.Add("LINKID", sb.ToString());
+            }
+
+            if (!string.IsNullOrEmpty(user.Purchased))
+            {
+                memMergeFields.Add("BWATTENDEE", "Yes");
+            }
+            else { memMergeFields.Add("BWATTENDEE", "No"); }
+
+            if (!string.IsNullOrEmpty(user.First_Name))
+            {
+                memMergeFields.Add("FNAME", user.First_Name);
+            }
+            else { memMergeFields.Add("FNAME", ""); }
+
+            if (!string.IsNullOrEmpty(user.Last_Name))
+            {
+                memMergeFields.Add("LNAME", user.Last_Name);
+            }
+            else { memMergeFields.Add("LNAME", ""); }
+
+            if (!string.IsNullOrEmpty(user.Welcome_Sequence_Complete_))
+            {
+                memMergeFields.Add("MMERGE7", "Yes");
+            }
+            else
+            {
+                memMergeFields.Add("MMERGE7", "No");
+            }
+
+            if (!string.IsNullOrEmpty(user.Source))
+            {
+                memMergeFields.Add("MMERGE10", user.Source);
+            }
+            return memMergeFields;
         }
 
 
@@ -5320,6 +5572,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
     }
+
 
     public class InvoiceLog
     {
