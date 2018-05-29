@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -1676,6 +1677,44 @@ namespace CUWebinars.Web.Helpers
             return fixedArray;
         }
 
+        public static string RandomUniqueMailChimp(int maxSize)
+        {
+
+            Random random = new Random();
+
+            char[] chars = "abcdefghijkmnopqrstwvxyz234567890".ToCharArray();
+
+            byte[] data = null;
+
+            using (var crypto = new RNGCryptoServiceProvider())
+            {
+                data = new byte[random.Next(4, maxSize)];
+                crypto.GetNonZeroBytes(data);
+            }
+
+            var result = new StringBuilder(maxSize);
+
+            foreach (byte b in data)
+            {
+                result.Append(chars[b % (chars.Length)]);
+            }
+            var dataOperations = new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            //uses sproc to search for dupe. Would lamba be faster? https://stackoverflow.com/questions/18547354/c-sharp-linq-find-duplicates-in-list
+            // if so, probably have to pull the dupe check back out to the controller
+            // so as to have access to the db's context
+            var isUnique = dataOperations.CheckForUniqueLinkId(result.ToString());
+
+            if (isUnique != "0")
+            {
+                RandomUniqueMailChimp(maxSize);
+            }
+            return result.ToString();
+        }
+
+        private static string CheckForUniqueLinkId(string toString)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal class MapZenAddress

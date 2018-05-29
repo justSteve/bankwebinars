@@ -2734,7 +2734,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
 
                 if (affiliate.ttsDomain != "arba")
-                //if (affiliate.ttsDomain != "cft-ea")
+                    //if (affiliate.ttsDomain != "cft-ea")
                     continue;
 
                 var oldSegment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
@@ -2755,8 +2755,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 try
                 {
-
-                    var cats = new InterestCategoryRequest();
                     var intCat = await manager.InterestCategories.GetAllAsync(mcList.Id).ConfigureAwait(false);
                     var interestsId = intCat.FirstOrDefault(i => i.Title == "Keep me informed about:");
                     var interests = await manager.Interests.GetAllAsync(mcList.Id, interestsId.Id).ConfigureAwait(false);
@@ -2820,21 +2818,21 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
                 //removes users to avoid price increate
 
-//                var _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
+                //                var _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
 
-//                var segments = _segments.ToList();
+                //                var segments = _segments.ToList();
 
-//                foreach (var tSegment in segments)
-//                {
-//                    foreach (var user in usersFromSheetForAff)
-//                    {
-//                        await manager.ListSegments.DeleteMemberAsync(mcList.Id, tSegment.ListId,
-//                            user.Email_Address);
-//                    }
+                //                foreach (var tSegment in segments)
+                //                {
+                //                    foreach (var user in usersFromSheetForAff)
+                //                    {
+                //                        await manager.ListSegments.DeleteMemberAsync(mcList.Id, tSegment.ListId,
+                //                            user.Email_Address);
+                //                    }
 
-//                    _logger.Info("MigrateMailChimpUser reset segments: " + tSegment.Name);
-////                    await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString());
-//                }
+                //                    _logger.Info("MigrateMailChimpUser reset segments: " + tSegment.Name);
+                ////                    await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString());
+                //                }
 
             }
 

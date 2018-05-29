@@ -811,6 +811,8 @@
     <Content Include="Scripts\ai.0.22.19-build00125.js" />
     <Content Include="Scripts\ai.0.22.19-build00125.min.js" />
     <Content Include="Scripts\ai.js" />
+    <Content Include="Scripts\app\cart\details.js" />
+    <Content Include="Scripts\app\cart\register-during-checkout.js" />
     <Content Include="Scripts\js.cookie\js.cookie.js" />
     <Content Include="Scripts\SimpleAjaxUploader.min.js" />
     <Content Include="Web.config">
@@ -1476,8 +1478,6 @@
     <Content Include="Scripts\app\cart\update-recording.js" />
     <Content Include="Scripts\app\cart\update-webinar-files.js" />
     <Content Include="Scripts\app\cart\create-order-new.js" />
-    <Content Include="Scripts\app\cart\register-during-checkout.js" />
-    <Content Include="Scripts\app\cart\details.js" />
     <Content Include="Scripts\app\cart\register-user-in-cart.js" />
     <Content Include="Scripts\app\extensions.js" />
     <Content Include="Scripts\app\form-processor.js" />
