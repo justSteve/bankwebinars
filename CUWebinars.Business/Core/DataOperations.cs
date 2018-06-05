@@ -2258,7 +2258,7 @@ namespace CUWebinars.Business.Core
                         usersFromSheet.Connection = sqlConnection;
                         usersFromSheet.CommandType = CommandType.Text;
 
-                        usersFromSheet.CommandText = "SELECT * FROM [dbo].[SampleMCImport] ";
+                        usersFromSheet.CommandText = "SELECT * FROM [dbo].[importSheet] ";
 
                         reader = usersFromSheet.ExecuteReader();
                     }
@@ -2302,8 +2302,8 @@ namespace CUWebinars.Business.Core
                                     Source = reader.SafeGetString(3),
                                     Welcome_Sequence_Complete_ = reader.SafeGetString(4),
                                     Purchased = reader.SafeGetString(5),
-                                    Mailing_List = reader.SafeGetString(6),
-                                    Keep_Me_Informed_About_ = reader.SafeGetString(7)
+                                    Mailing_List = reader.SafeGetString(7),
+                                    Keep_Me_Informed_About_ = reader.SafeGetString(8)
 
                                 };
 

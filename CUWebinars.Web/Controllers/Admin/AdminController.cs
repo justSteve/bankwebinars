@@ -1803,7 +1803,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                         select
                                         "<p style=\"color: #f5f5f5; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
                                         _globalConfig.TenantURL + "/Webinar/Details/" +
-                                        w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
+                                        w.idWebinar + "?lid=*|LINKID|*&idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
                                         w.Date.ToLongDateString() + "</p>"
                 ).ToArray();
 
@@ -2281,7 +2281,213 @@ namespace CUWebinars.Web.Controllers.Admin
         [ValidateInput(false)]
         [HttpPost]
         [HandleAjaxException]
-        public async Task<JsonResult> GenerateMailChimpCampaign(int affiliateId, string messageBodyHtml, int webinarId,
+        public async Task<JsonResult> GenerateMailChimpCampaign
+            (int affiliateId, string messageBodyHtml, int webinarId,
+            string sendDate, string sendTime, string subject)
+        {
+            Affiliate aff = _affiliateManagementService.FindById(affiliateId);
+
+            _logger.Info("GenerateMailChimpCampaign starting");
+            Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
+            Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
+            TimeZone zone = TimeZone.CurrentTimeZone;
+
+            if (messageBodyHtml.Contains("{aff_EmailFooter}"))
+            {
+                messageBodyHtml = _appHelper.ReplaceMergeCodes(messageBodyHtml, aff);
+            }
+
+
+            string standard = zone.StandardName;
+            string daylight = zone.DaylightName;
+            bool flag = !zone.IsDaylightSavingTime(new DateTime());
+
+            var theTime = (int)affiliate.WebUser.timeZone;
+
+            if (messageBodyHtml.Contains("{timeString}"))
+            {
+                var timeString = _appHelper.ReplaceTimeString(webinar, affiliate.WebUser.timeZone);
+                messageBodyHtml = messageBodyHtml.Replace("{timeString}", timeString);
+            }
+            if (flag)
+            {
+                //adjust for Daylight Savings
+                theTime = (int)affiliate.WebUser.timeZone + 1;
+                //theTime = (int)affiliate.WebUser.timeZone;
+            }
+            if (sendDate.Contains("-"))
+            {
+                //2017-01-23
+                sendDate = sendDate.Split('-')[0] + "-" + sendDate.Split('-')[1] + "-" + sendDate.Split('-')[2] + "T" +
+                           sendTime + ":00:00" + theTime; //"T10:00:00-05:00";
+            }
+            else
+            {
+                sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T" +
+                           sendTime + ":00:00" + theTime; //"T10:00:00-05:00";
+            }
+            try
+            {
+                McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
+
+                IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
+
+                //List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+
+                var recp = new Recipient();
+
+                var segment = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+
+                try
+                {
+                    var savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "webinars").Id;
+                    if (_globalConfig.Tenant == "CCS")
+                    {
+                        savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "ccs").Id;
+                    }
+                    if (_globalConfig.Tenant == "DES")
+                    {
+                        savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "des").Id;
+                    }
+
+                    recp = new Recipient
+                    {
+                        ListId = affiliate.idMailChimpList,
+                        SegmentOptions =
+                            new SegmentOptions
+                            {
+                                SavedSegmentId = savedSegId
+                            }
+                    };
+                }
+                catch (Exception e)
+                {
+                    _logger.FatalException("No Segment Found for: " + affiliate.ttsDomain, e);
+
+                    return Json(new
+                    {
+                        WebUiConstants.Fail,
+                        campMsg = "No Segment Found for: " + affiliate.ttsDomain
+                    });
+                }
+
+                if (recp.ListId == null)
+                {
+                    _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
+
+                    return Json(new
+                    {
+                        WebUiConstants.Fail,
+                        campMsg = "No Segment Found for: " + affiliate.ttsDomain
+                    });
+                }
+
+                var affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
+                var affiliatePromoSenderName = affiliate.PromoSenderName;
+
+                var newCamp = new Campaign
+                {
+                    ContentType = "html",
+                    Type = CampaignType.Regular,
+                    Recipients = recp,
+
+                    Settings = new Setting
+                    {
+                        SubjectLine = subject,
+                        Title = affiliate.ttsDomain + "_" + subject,
+                        FolderId = "30aca5892b",
+                        InlineCss = true,
+                        Authenticate = true,
+                        AutoFooter = true,
+                        AutoTweet = false,
+                        ToName = "*|FNAME|* *|LNAME|* ",
+                        //FromName = "steve@ttstrain.com",
+                        //ReplyTo = "steve@ttstrain.com",
+                        FromName = affiliatePromoSenderName,
+                        ReplyTo = affiliatePromoSenderEmail,
+                        UseConversation = true,
+                    },
+                    Tracking = new Tracking
+                    {
+                        GoogleAnalytics = affiliate.idUserAff + "_" + webinar.idWebinar + "_" + sendDate,
+                        HtmlClicks = true,
+                        TextClicks = true,
+                        Opens = true
+                    }
+
+                };
+                var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
+                campaign.CampaignId = mkCamp.Id;
+                var content = new Content
+                {
+                    Html = messageBodyHtml
+                };
+
+                _logger.Info("CreateCampaign | mkCamp.Id: " + mkCamp.Id);
+                var putContent = await manager.Content.AddOrUpdateAsync(mkCamp.Id, new ContentRequest
+                {
+                    Html = messageBodyHtml
+                });
+
+
+                _logger.Info("CreateCampaign | SendChecklistAsync: " + mkCamp.Id);
+                var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
+
+                List<string> sendToEmails = new List<string>();
+
+                //sendToEmails.Add("steve@ttstrain.com");
+                sendToEmails.Add("all.of.us@ttstrain.com");
+                sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
+
+                CampaignTestRequest emails = new CampaignTestRequest
+                {
+                    EmailType = "html",
+                    Emails = sendToEmails.ToArray()
+                };
+
+                await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+                //foreach (var sendToEmail in sendToEmails)
+                //{
+                //    _orderManagementService.FireMandrillNotificationEvent(
+                //        sendToEmail
+                //        , "[Testing] " + subject, messageBodyHtml);
+                //}
+
+                _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
+                await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
+                {
+                    Timewarp = false,
+                    BatchDelivery = new BatchDelivery
+                    {
+                        Count = 2,
+                        Delay = 15
+                    },
+                    ScheduleTime = sendDate
+                });
+
+                var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign,
+                    JsonConvert.SerializeObject(campaign, Formatting.None));
+                _logger.Info("Webinar.Campaigns += " + campMsg);
+                webinar.Campaigns = JsonHelpers.ReplaceJsonWithStoredField(webinar.Campaigns, campMsg,
+                    "MailChimpCampaign");
+
+                _webinarManagementService.SaveChanges();
+
+                return Json(new { WebUiConstants.Success, campMsg });
+
+            }
+            catch (Exception exception)
+            {
+                _logger.FatalException("GenerateMailChimpCampaign: ", exception);
+                return Json(new { Result = exception.Message });
+            }
+        }
+
+        [ValidateInput(false)]
+        [HttpPost]
+        [HandleAjaxException]
+        public async Task<JsonResult> GenerateMailChimpCampaignOriginal
+            (int affiliateId, string messageBodyHtml, int webinarId,
             string sendDate, string sendTime, string subject)
         {
             Affiliate aff = _affiliateManagementService.FindById(affiliateId);
@@ -2465,6 +2671,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 return Json(new { Result = exception.Message });
             }
         }
+
         [ValidateInput(false)]
         [HttpGet]
         [HandleAjaxException]
@@ -2500,14 +2707,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var affiliate in affiliates)
             {
-                if (affiliate.ttsDomain.ToLower() != "arba")
-                //if (affiliate.ttsDomain.ToLower() != "cft-ea")
-                {
-                    continue;
-                }
-                IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
+                //if (affiliate.ttsDomain.ToLower() != "azba")
+                ////if (affiliate.ttsDomain.ToLower() != "cft-ea")
+                //{
+                //    continue;
+                //}
+                //IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
 
-                var _segment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
+                //var _segment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
                 //if (_segment != null)
                 //{
                 //    _logger.Info("UAMPL seg found: " + _segment.Name);
@@ -2553,15 +2760,14 @@ namespace CUWebinars.Web.Controllers.Admin
                     mcList.CampaignDefaults.FromEmail = affiliate.PromoSenderEmail;
                     mcList.CampaignDefaults.FromName = affiliate.PromoSenderName;
 
-                    var writeWhy = await manager.Lists.AddOrUpdateAsync(mcList);
+                    var writeWhy = await manager.Lists.AddOrUpdateAsync(mcList).ConfigureAwait(false);
                     var _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
 
                     var segments = _segments.ToList();
 
                     foreach (var tSegment in segments)
                     {
-                        _logger.Info("UAMPL reset segments: " + tSegment.Name);
-                        await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString());
+                        await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString()).ConfigureAwait(false);
                     }
                     _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
                     segments = _segments.ToList();
@@ -2574,13 +2780,6 @@ namespace CUWebinars.Web.Controllers.Admin
                     var _groups = await manager.InterestCategories.GetAllAsync(mcList.Id)
                         .ConfigureAwait(false);
                     var groups = _groups.ToList();
-                    var groupId = "0";
-                    sb.AppendLine("Groups: " + "<br>");
-                    foreach (var group in groups)
-                    {
-                        _logger.Info("UAMPL group lister: " + group.Title);
-                        sb.AppendLine("&nbsp;&nbsp;" + group.Title + ", " + "<br>");
-                    }
 
                     foreach (var group in groups)
                     {
@@ -2593,7 +2792,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                 if (interest.Name.Contains("BankWebinars.com"))
                                 {
                                     interestTitle = "Webinars";
-
                                 }
                                 if (interest.Name.Contains("BankTrainers.com"))
                                 {
@@ -2607,14 +2805,15 @@ namespace CUWebinars.Web.Controllers.Admin
                                 {
                                     interestTitle = "DES";
                                 }
-                                _logger.Info("UAMPL InterestTitle: " + interestTitle);
-                                //sbGroups.AppendLine("&nbsp;&nbsp;" + interestTitle + "<br>");
-                                Condition sc = new Condition();
-                                sc.Type = ConditionType.Interests;
-                                sc.Operator = Operator.InterestContains;
-                                string intid = interest.Id;
-                                sc.Field = "interests-" + intid;
-                                sc.Value = JArray.FromObject(new string[] { intid });
+
+                                Condition sc = new Condition
+                                {
+                                    Type = ConditionType.Interests,
+                                    Operator = Operator.InterestContains,
+                                    Field = "interests-" + group.Id,
+                                    Value = JArray.FromObject(new string[] { interest.Id })
+                                };
+
 
                                 IEnumerable cons = new Condition[] { sc };
                                 var con = (IEnumerable<Condition>)cons;
@@ -2626,36 +2825,49 @@ namespace CUWebinars.Web.Controllers.Admin
                                 var mySeg = new Segment
                                 {
                                     Options = so,
-                                    Name = interestTitle
+                                    Name = interestTitle,
+                                    //EmailAddresses = members.Select(m => m.EmailAddress).ToArray()
                                 };
 
                                 var itExists = segments.Where(s => s.Name == interestTitle);
                                 if (!itExists.Any())
                                 {
                                     _logger.Info("UAMPL add Segment: " + mySeg.Name);
-                                    var newSeg = await manager.ListSegments.AddAsync(mcList.Id, mySeg);
-                                    if (affiliate.ttsDomain.ToLower() == "azba")
-                                    {
-                                        BatchSegmentMembersResponse bsmr = new BatchSegmentMembersResponse
-                                        {
-                                            MembersAdded = members.ToArray()
-                                        };
+                                    var newSeg = await manager.ListSegments.AddAsync(mcList.Id, mySeg).ConfigureAwait(false);
+                                    //string[] addMem = members.Select(m => m.EmailAddress).ToArray();
 
-                                        //var addMembers =
-                                        //    await manager.ListSegments.BatchMemberAsync(mcList.Id, newSeg.ListId, new BatchSegmentMembers{MembersToAdd = bsmr.MembersAdded} );
-                                    }
+
+                                    //var addMembers =
+                                    //    await manager.ListSegments.BatchMemberAsync(mcList.Id
+                                    //    , newSeg.ListId, new BatchSegmentMembers
+                                    //    {
+                                    //        MembersToAdd = addMem
+                                    //    });
+
+
+
+                                    //var batchRequest = new BatchRequest
+                                    //{
+                                    //    Operations = members.Select(x => new Operation
+                                    //    {
+                                    //        Method = "PUT",
+                                    //        Path = $"/lists/{mcList.Id}/members/{manager.Members.Hash(x.EmailAddress.ToLower())}",
+                                    //        Body = JsonConvert.SerializeObject(x)
+                                    //    })
+                                    //};
+
+                                    //var batch = manager.Batches.AddAsync(batchRequest).Result;
+
                                 }
                             }
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e);
-                            throw;
+                            _logger.FatalException("MailChimpUpdateAffiliateLists interest groups: ", e);
                         }
                     }
                     try
                     {
-
                         foreach (var listSegment in segments)
                         {
                             sb.AppendLine(JsonConvert.SerializeObject(listSegment));// listSegment.Name);
@@ -2668,13 +2880,12 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
-                        throw;
+                        _logger.FatalException("MailChimpUpdateAffiliateLists inner: ", e);
                     }
                 }
                 catch (Exception exception)
                 {
-                    _logger.FatalException("UpdateAffMailChimpList: ", exception);
+                    _logger.FatalException("MailChimpUpdateAffiliateLists: ", exception);
                     //return Json(new { Result = exception.Message });
                 }
             }
@@ -2683,6 +2894,8 @@ namespace CUWebinars.Web.Controllers.Admin
             return View(model);
 
         }
+
+
 
         [ValidateInput(false)]
         [HttpGet]
@@ -2726,16 +2939,22 @@ namespace CUWebinars.Web.Controllers.Admin
 
             foreach (var affiliate in affiliates)
             {
+                Debug.WriteLine("aff: " + aff + " " + affiliate.ttsDomain.ToLower());
 
                 if (aff != null)
                 {
-                    if (affiliate.ttsDomain != aff)
+                    if (affiliate.ttsDomain.ToLower() != aff.ToLower())
                         continue;
                 }
 
-                if (affiliate.ttsDomain != "arba")
-                    //if (affiliate.ttsDomain != "cft-ea")
-                    continue;
+
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+
+
+                //if (affiliate.ttsDomain != "cft-ea")
+                //    //if (affiliate.ttsDomain != "cft-ea")
+                //    continue;
 
                 var oldSegment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
 
@@ -2743,18 +2962,21 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
 
-                var usersFromSheetForAff = usersFromSheet.Where(m => m.Mailing_List == listName);
-
-                sb.Clear();
-                var mcList = lists.FirstOrDefault(l => l.Name == listName);
-                _logger.Warn("No List found for " + affiliate.ttsDomain + "<br>");
-                if (mcList == null)
-                {
-                    continue;
-                }
-
                 try
                 {
+                    var usersFromSheetForAff = usersFromSheet.Where(m => m.Mailing_List == listName);
+
+                    sb.Clear();
+                    sb.Append("UpdateMailChimpUser starting: " + affiliate.ttsDomain.ToLower() + "<br>");
+                    sb.Append("Original segment user count: " + oldSegment.MemberCount + "<br>");
+
+                    var mcList = lists.FirstOrDefault(l => l.Name == listName);
+                    if (mcList == null)
+                    {
+                        _logger.Warn("No List found for " + affiliate.ttsDomain + "<br>");
+                        sb.Append("No List found for " + affiliate.ttsDomain + "<br>");
+                        continue;
+                    }
                     var intCat = await manager.InterestCategories.GetAllAsync(mcList.Id).ConfigureAwait(false);
                     var interestsId = intCat.FirstOrDefault(i => i.Title == "Keep me informed about:");
                     var interests = await manager.Interests.GetAllAsync(mcList.Id, interestsId.Id).ConfigureAwait(false);
@@ -2762,11 +2984,17 @@ namespace CUWebinars.Web.Controllers.Admin
                     var intDes = interests.SingleOrDefault(i => i.Name.Contains("DirectorSeries.com")).Id;
                     var intCCS = interests.SingleOrDefault(i => i.Name.Contains("ttsComplianceSuite.com")).Id;
                     var intTrainers = interests.SingleOrDefault(i => i.Name.Contains("BankTrainers.com")).Id;
-                    var intWebinars = interests.SingleOrDefault(i => i.Name.Contains("BankWebinars.com")).Id;
+                    var intWebinars = interests.SingleOrDefault(i => i.Name.Contains("ebinars.com")).Id;
 
-
+                    var totalCount = usersFromSheetForAff.Count();
+                    sb.Append("Total users to be imported: " + totalCount + "<br>");
+                    var iterator = 0;
+                    if (totalCount == 0)
+                        continue;
                     foreach (var user in usersFromSheetForAff)
                     {
+                        iterator++;
+                        Console.WriteLine("processing: " + user.Email_Address + iterator + " of " + totalCount);
                         var generateIdMailChimp = "";
                         WebUser ourUser = _membershipService.GetUserByEmail(user.Email_Address);
                         if (ourUser != null)
@@ -2792,10 +3020,20 @@ namespace CUWebinars.Web.Controllers.Admin
                             ourUser.idMailChimp = memMergeFields["LINKID"].ToString();
                             dataOperations.UpdateUserIdMailChimp(ourUser.idUser, ourUser.idMailChimp);
                         }
-                        var addMember = await manager.Members.AddOrUpdateAsync(mcList.Id, newMember).ConfigureAwait(false);
-                        if (addMember.Status == Status.Pending)
+                        try
                         {
-                            var a = addMember.Status;
+
+                            var addMember = await manager.Members.AddOrUpdateAsync(mcList.Id, newMember).ConfigureAwait(false);
+                            if (addMember.Status == Status.Pending)
+                            {
+                                sb.Append("Status=Pending on: " + user.Email_Address.ToLower());
+                                var a = addMember.Status;
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.FatalException("MigrateMailChimpUser: ", e);
                         }
                         var text = "";
                         foreach (var field in memMergeFields)
@@ -2804,12 +3042,13 @@ namespace CUWebinars.Web.Controllers.Admin
                         }
                         var newMemToJson = JsonConvert.SerializeObject(newMember);
                         _logger.Info("MigrateMailChimpUser Added: " + newMemToJson);
-                        Debug.WriteLine(newMember.EmailAddress + " - " + addMember.Status);
+                        //Debug.WriteLine(newMember.EmailAddress + " - " + addMember.Status);
 
                         //await manager.ListSegments.DeleteMemberAsync(masterTenantList.Id, oldSegment.ListId,
                         //    addMember.EmailAddress);
 
                     }
+                    sb.Append("Total imported: " + iterator);
                 }
                 catch (Exception exception)
                 {
@@ -2833,10 +3072,193 @@ namespace CUWebinars.Web.Controllers.Admin
                 //                    _logger.Info("MigrateMailChimpUser reset segments: " + tSegment.Name);
                 ////                    await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString());
                 //                }
+                stopWatch.Stop();
+                TimeSpan ts = stopWatch.Elapsed;
 
+                sb.Append("Time: " + ts);
+                _logger.Info("MigrateMailChimpUsers: ends" + sb.ToString());
             }
 
-            model.AffOutput = sbNoList.ToString();
+            model.AffOutput = sb.ToString();
+            return View(model);
+
+        }
+
+
+        [ValidateInput(false)]
+        [HttpGet]
+        [HandleAjaxException]
+        public async Task<ActionResult> MailChimpUpdateLinkId(string aff)
+        {
+            _logger.Info("MailChimpUpdateLinkId starting");
+            var affiliates = _affiliateManagementService.GetAffiliates();
+            var model = new ListSegmentsViewModel
+            {
+                CFT = new List<Affiliate>(),
+                SBA = new List<Affiliate>(),
+                Other = new List<Affiliate>()
+            };
+
+            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sbNoList = new StringBuilder();
+            var lists = await manager.Lists.GetAllAsync().ConfigureAwait(false);
+            var tenant = _globalConfig.TenantPrefix.Replace("-", "");
+            //foreach (var mcList in list)
+            //{
+            //    if (!mcList.Name.StartsWith(tenant))
+            //    {
+            //        sbNoList.AppendLine("NonAffiliate List: " + mcList.Name + "<br>");
+            //        continue;
+            //    }
+            //}
+
+            //var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
+            //var masterTenantList = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
+
+
+
+            foreach (var affiliate in affiliates)
+            {
+
+                if (aff != null)
+                {
+                    Debug.WriteLine("aff: " + aff + " " + affiliate.ttsDomain.ToLower());
+                    if (affiliate.ttsDomain.ToLower() != aff.ToLower())
+                        continue;
+                }
+
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+
+
+                //if (affiliate.ttsDomain != "cft-ea")
+                //    //if (affiliate.ttsDomain != "cft-ea")
+                //    continue;
+
+
+                IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
+
+                sb.Clear();
+                sb.Append("MailChimpUpdateLinkId starting: " + affiliate.ttsDomain.ToLower() + "<br>");
+
+                var mcList = lists.FirstOrDefault(l => l.Id == affiliate.idMailChimpList);
+                if (mcList == null)
+                {
+                    _logger.Warn("No List found for " + affiliate.ttsDomain + "<br>");
+                    sb.Append("No List found for " + affiliate.ttsDomain + "<br>");
+                    continue;
+                }
+
+                try
+                {
+                    members = await manager.Members.GetAllAsync(mcList.Id).ConfigureAwait(false);
+
+                    var iterator = 0;
+                    foreach (var user in members)
+                    {
+                        iterator++;
+
+                        //// See whether Dictionary contains this string.
+                        //if (dictionary.ContainsKey("apple"))
+                        //{
+                        //    int value = dictionary["apple"];
+                        //    Console.WriteLine(value);
+                        //}
+                        var linkVar = "";
+                        if (user.MergeFields.ContainsKey("LINKID"))
+                            if (user.MergeFields["LINKID"] != "")
+                                continue;
+                        StringBuilder sb1 = new StringBuilder();
+
+                        sb1.Append(AppHelper.RandomUniqueMailChimp(6));
+
+
+                        Debug.WriteLine("processing: " + user.EmailAddress + iterator + " of " + members.Count());
+                        var generateIdMailChimp = "";
+                        WebUser ourUser = _membershipService.GetUserByEmail(user.EmailAddress);
+                        if (ourUser != null)
+                        {
+                            generateIdMailChimp = ourUser.idMailChimp;
+                        }
+                        var newMember = new Member();
+
+                        var memMergeFields = new Dictionary<string, object>();
+                        memMergeFields.Add("LINKID", sb1.ToString());
+
+
+                        newMember.ListId = mcList.Id;
+
+                        newMember.MergeFields = memMergeFields;
+                        var dataOperations =
+                            new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+                        if (ourUser != null)
+                        {
+                            ourUser.idMailChimp = memMergeFields["LINKID"].ToString();
+                            dataOperations.UpdateUserIdMailChimp(ourUser.idUser, ourUser.idMailChimp);
+                        }
+                        try
+                        {
+
+                            var addMember = await manager.Members.AddOrUpdateAsync(mcList.Id, newMember).ConfigureAwait(false);
+                            if (addMember.Status == Status.Pending)
+                            {
+                                sb.Append("Status=Pending on: " + user.EmailAddress.ToLower());
+                                var a = addMember.Status;
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.FatalException("MigrateMailChimpUser: " + user.EmailAddress, e);
+                        }
+                        var text = "";
+                        foreach (var field in memMergeFields)
+                        {
+                            text += string.Format("Name={0}, Value={1}", field.Key, field.Value);
+                        }
+                        var newMemToJson = JsonConvert.SerializeObject(newMember);
+                        _logger.Info("MigrateMailChimpUser Added: " + newMemToJson);
+                        //Debug.WriteLine(newMember.EmailAddress + " - " + addMember.Status);
+
+                        //await manager.ListSegments.DeleteMemberAsync(masterTenantList.Id, oldSegment.ListId,
+                        //    addMember.EmailAddress);
+
+                    }
+                    sb.Append("Total imported: " + iterator);
+                }
+                catch (Exception exception)
+                {
+                    _logger.FatalException("MigrateMailChimpUser: ", exception);
+                    //return Json(new { Result = exception.Message });
+                }
+                //removes users to avoid price increate
+
+                //                var _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
+
+                //                var segments = _segments.ToList();
+
+                //                foreach (var tSegment in segments)
+                //                {
+                //                    foreach (var user in usersFromSheetForAff)
+                //                    {
+                //                        await manager.ListSegments.DeleteMemberAsync(mcList.Id, tSegment.ListId,
+                //                            user.Email_Address);
+                //                    }
+
+                //                    _logger.Info("MigrateMailChimpUser reset segments: " + tSegment.Name);
+                ////                    await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString());
+                //                }
+                stopWatch.Stop();
+                TimeSpan ts = stopWatch.Elapsed;
+
+                sb.Append("Time: " + ts);
+                _logger.Info("MigrateMailChimpUsers: ends" + sb.ToString());
+            }
+
+            model.AffOutput = sb.ToString();
             return View(model);
 
         }
@@ -2871,7 +3293,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 memInterests.Add(intDes, false);
             }
 
-            if (user.Keep_Me_Informed_About_.Contains("BankWebinars.com"))
+            if (user.Keep_Me_Informed_About_.Contains("ebinars.com"))
             {
                 memInterests.Add(intWebinars, true);
             }

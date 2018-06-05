@@ -2205,7 +2205,7 @@
     <Content Include="Views\Shared\EditorTemplates\EditPresenter.cshtml" />
     <Content Include="Views\Order\AddBillingEmail.cshtml" />
     <Content Include="Views\Account\_FindLinkPartial.cshtml" />
-    <Content Include="Views\Admin\UpdateAffiliateMailChimpLists.cshtml" />
+    <Content Include="Views\Admin\MailChimpUpdateAffiliateLists.cshtml" />
     <Content Include="Views\Webinar\Partials\_AdditionalLocationsModal2.cshtml" />
     <Content Include="Views\Shared\_LoginPartialDES.cshtml" />
     <Content Include="Views\Order\ChangeCC.cshtml" />
@@ -2238,6 +2238,7 @@
     <Content Include="Views\Webinar\Partials\DisplayOptionsCcs.cshtml" />
     <Content Include="Views\Webinar\Partials\_CampaignDetails.cshtml" />
     <Content Include="Views\Connectivity\Index.cshtml" />
+    <Content Include="Views\Admin\MailChimpMigrateUsers.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
