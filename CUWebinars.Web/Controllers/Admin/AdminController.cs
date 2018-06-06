@@ -2789,7 +2789,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             var interests = await manager.Interests.GetAllAsync(mcList.Id, group.Id);
                             foreach (var interest in interests)
                             {
-                                if (interest.Name.Contains("BankWebinars.com"))
+                                if (interest.Name.Contains("ebinars.com"))
                                 {
                                     interestTitle = "Webinars";
                                 }
