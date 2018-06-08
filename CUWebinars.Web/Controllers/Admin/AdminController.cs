@@ -2439,19 +2439,19 @@ namespace CUWebinars.Web.Controllers.Admin
                 sendToEmails.Add("all.of.us@ttstrain.com");
                 sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
 
-                CampaignTestRequest emails = new CampaignTestRequest
-                {
-                    EmailType = "html",
-                    Emails = sendToEmails.ToArray()
-                };
-
-                await manager.Campaigns.TestAsync(mkCamp.Id, emails);
-                //foreach (var sendToEmail in sendToEmails)
+                //CampaignTestRequest emails = new CampaignTestRequest
                 //{
-                //    _orderManagementService.FireMandrillNotificationEvent(
-                //        sendToEmail
-                //        , "[Testing] " + subject, messageBodyHtml);
-                //}
+                //    EmailType = "html",
+                //    Emails = sendToEmails.ToArray()
+                //};
+
+                //await manager.Campaigns.TestAsync(mkCamp.Id, emails);
+                foreach (var sendToEmail in sendToEmails)
+                {
+                    _orderManagementService.FireMandrillNotificationEvent(
+                        sendToEmail
+                        , "[Testing] " + subject, messageBodyHtml);
+                }
 
                 _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
                 await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
