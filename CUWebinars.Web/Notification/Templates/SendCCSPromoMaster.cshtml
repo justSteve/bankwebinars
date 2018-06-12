@@ -1,0 +1,1024 @@
+﻿@using CUWebinars.Business.Models
+@using CUWebinars.Business.Notification
+@model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+<title>
+@{
+TtsTemplateHelper TtsTemplateHelperObject = new TtsTemplateHelper();
+
+var thisWebinar = Model.Webinar;
+string TenantHead = TtsTemplateHelperObject.Tenant();
+}
+[preview-@TenantHead] promo: @thisWebinar.Title
+</title>
+
+
+
+@{
+
+var webinar = Model.Webinar;
+//var aff = Model.Affiliate;
+//int currentUserID = UserFacade.Instance.GetCurrentUserID();
+
+var ceuStmt = "";
+var ceuShort = "";
+
+if (String.IsNullOrEmpty(webinar.ceu) == false)
+{
+string[] ceu = webinar.ceu.Split('|');
+ceuShort = ceu[0];
+ceuStmt = ceu[1];
+}
+
+USTimeZone tz = Model.TimeZone;
+string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, tz, true, webinar.Duration);
+
+string Tenant = TtsTemplateHelperObject.Tenant();
+string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+string TenantURL = TtsTemplateHelperObject.TenantURL();
+string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
+string TenantCom = TenantDomain + ".com";
+}
+<head>
+<!-- NAME: RIGHT SIDEBAR -->
+<!--[if gte mso 15]>
+<xml>
+<o:OfficeDocumentSettings>
+<o:AllowPNG/>
+<o:PixelsPerInch>96</o:PixelsPerInch>
+</o:OfficeDocumentSettings>
+</xml>
+<![endif]-->
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>*|MC:SUBJECT|*</title>
+
+<style type="text/css">
+p {
+margin: 10px 0;
+padding: 0;
+}
+
+table {
+border-collapse: collapse;
+}
+
+h1, h2, h3, h4, h5, h6 {
+display: block;
+margin: 0;
+padding: 0;
+}
+
+img, a img {
+border: 0;
+height: auto;
+outline: none;
+text-decoration: none;
+}
+
+body, #bodyTable, #bodyCell {
+height: 100%;
+margin: 0;
+padding: 0;
+width: 100%;
+}
+
+#outlook a {
+padding: 0;
+}
+
+#AffiliateFooter {
+font-family: Helvetica;
+}
+
+img {
+-ms-interpolation-mode: bicubic;
+}
+
+table {
+mso-table-lspace: 0pt;
+mso-table-rspace: 0pt;
+}
+
+.ReadMsgBody {
+width: 100%;
+}
+
+.ExternalClass {
+width: 100%;
+}
+
+p, a, li, td, blockquote {
+mso-line-height-rule: exactly;
+}
+
+a[href^=tel], a[href^=sms] {
+color: inherit;
+cursor: default;
+text-decoration: none;
+}
+
+p, a, li, td, body, table, blockquote {
+-ms-text-size-adjust: 100%;
+-webkit-text-size-adjust: 100%;
+}
+
+.ExternalClass, .ExternalClass p, .ExternalClass td, .ExternalClass div, .ExternalClass span, .ExternalClass font {
+line-height: 100%;
+}
+
+a[x-apple-data-detectors] {
+color: inherit !important;
+text-decoration: none !important;
+font-size: inherit !important;
+font-family: inherit !important;
+font-weight: inherit !important;
+line-height: inherit !important;
+}
+
+#bodyCell {
+padding: 10px;
+}
+
+.templateContainer {
+max-width: 800px !important;
+}
+
+a.mcnButton {
+display: block;
+}
+
+.mcnImage {
+vertical-align: bottom;
+}
+
+
+.mcnTextContent img {
+height: auto !important;
+}
+
+.mcnDividerBlock {
+table-layout: fixed !important;
+}
+/*
+@@tab Page
+@@section Background Style
+@@tip Set the background color and top border for your email.
+*/
+body, #bodyTable {
+/*@@editable*/ background-color: #ffffff;
+}
+/*
+@@tab Page
+@@section Background Style
+@@tip Set the background color and top border for your email.
+*/
+#bodyCell {
+/*@@editable*/ border-top: 0;
+}
+/*
+@@tab Page
+@@section Email Border
+@@tip Set the border for your email.
+*/
+.templateContainer {
+/*@@editable*/ border: 0;
+}
+/*
+@@tab Page
+@@section Heading 1
+@@tip Set the styling for all first-level headings in your emails. These should be the largest of your headings.
+@@style heading 1
+*/
+h1 {
+/*@@editable*/ color: #202020;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 26px;
+/*@@editable*/ font-style: normal;
+/*@@editable*/ font-weight: bold;
+/*@@editable*/ line-height: 125%;
+/*@@editable*/ letter-spacing: normal;
+/*@@editable*/ text-align: left;
+}
+/*
+@@tab Page
+@@section Heading 2
+@@tip Set the styling for all second-level headings in your emails.
+@@style heading 2
+*/
+h2 {
+/*@@editable*/ color: #202020;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 22px;
+/*@@editable*/ font-style: normal;
+/*@@editable*/ font-weight: bold;
+/*@@editable*/ line-height: 125%;
+/*@@editable*/ letter-spacing: normal;
+/*@@editable*/ text-align: left;
+}
+/*
+@@tab Page
+@@section Heading 3
+@@tip Set the styling for all third-level headings in your emails.
+@@style heading 3
+*/
+h3 {
+/*@@editable*/ color: #202020;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 20px;
+/*@@editable*/ font-style: normal;
+/*@@editable*/ font-weight: bold;
+/*@@editable*/ line-height: 125%;
+/*@@editable*/ letter-spacing: normal;
+/*@@editable*/ text-align: left;
+}
+/*
+@@tab Page
+@@section Heading 4
+@@tip Set the styling for all fourth-level headings in your emails. These should be the smallest of your headings.
+@@style heading 4
+*/
+h4 {
+/*@@editable*/ color: #202020;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 18px;
+/*@@editable*/ font-style: normal;
+/*@@editable*/ font-weight: bold;
+/*@@editable*/ line-height: 125%;
+/*@@editable*/ letter-spacing: normal;
+/*@@editable*/ text-align: left;
+}
+/*
+@@tab Preheader
+@@section Preheader Style
+@@tip Set the background color and borders for your email's preheader area.
+*/
+#templatePreheader {
+/*@@editable*/ background-color: #FAFAFA;
+/*@@editable*/ border-top: 0;
+/*@@editable*/ border-bottom: 0;
+/*@@editable*/ padding-top: 0px;
+/*@@editable*/ padding-bottom: 0px;
+}
+/*
+@@tab Preheader
+@@section Preheader Text
+@@tip Set the styling for your email's preheader text.
+*/
+#templatePreheader .mcnTextContent, #templatePreheader .mcnTextContent p {
+/*@@editable*/ color: #656565;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 12px;
+/*@@editable*/ line-height: 115%;
+/*@@editable*/ text-align: left;
+}
+/*
+@@tab Preheader
+@@section Preheader Link
+@@tip Set the styling for your email's preheader links.
+*/
+#templatePreheader .mcnTextContent a, #templatePreheader .mcnTextContent p a {
+/*@@editable*/ color: #656565;
+/*@@editable*/ font-weight: normal;
+/*@@editable*/ text-decoration: underline;
+}
+/*
+@@tab Header
+@@section Header Style
+@@tip Set the background color and borders for your email's header area.
+*/
+#templateHeader {
+/*@@editable*/ background-color: #FFFFFF;
+/*@@editable*/ border-top: 0;
+/*@@editable*/ border-bottom: 0;
+/*@@editable*/ padding-top: 0;
+/*@@editable*/ padding-bottom: 0;
+}
+/*
+@@tab Header
+@@section Header Text
+@@tip Set the styling for your email's header text.
+*/
+#templateHeader .mcnTextContent, #templateHeader .mcnTextContent p {
+/*@@editable*/ color: #202020;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 16px;
+/*@@editable*/ line-height: 115%;
+/*@@editable*/ text-align: left;
+}
+/*
+@@tab Header
+@@section Header Link
+@@tip Set the styling for your email's header links.
+*/
+#templateHeader .mcnTextContent a, #templateHeader .mcnTextContent p a {
+/*@@editable*/ color: #2BAADF;
+/*@@editable*/ font-weight: normal;
+/*@@editable*/ text-decoration: underline;
+}
+/*
+@@tab Sidebar
+@@section Sidebar Style
+@@tip Set the background color and borders for your email's sidebar.
+*/
+#templateSidebar {
+/*@@editable background-color: #232b2e;*/
+/*@@editable*/ border-top: 0;
+/*@@editable*/ border-bottom: 0;
+/*@@editable*/ padding-top: 0;
+/*@@editable*/ padding-bottom: 9px;
+}
+/*
+@@tab Sidebar
+@@section Sidebar Text
+@@tip Set the styling for your email's sidebar text.
+*/
+#templateSidebar .mcnTextContent, #templateSidebar .mcnTextContent p {
+/*@@editable*/ color: #ffe4c4;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 13px;
+/*@@editable*/ line-height: 125%;
+/*@@editable*/ text-align: left;
+}
+/*
+@@tab Sidebar
+@@section Sidebar Link
+@@tip Set the styling for your email's sidebar links.
+*/
+#templateSidebar .mcnTextContent a, #templateSidebar .mcnTextContent p a {
+/*@@editable*/ color: #ffe4c4;
+/*@@editable*/ font-weight: normal;
+/*@@editable*/ text-decoration: underline;
+}
+/*
+@@tab Body
+@@section Body Style
+@@tip Set the background color and borders for your email's body.
+*/
+#templateBody, #templateColumns {
+/*@@editable background-color: #232b2e;*/
+/*@@editable*/ border-top: 0;
+/*@@editable*/ border-bottom: 0;
+/*@@editable*/ padding-top: 0;
+/*@@editable*/ padding-bottom: 9px;
+}
+/*
+@@tab Body
+@@section Body Text
+@@tip Set the styling for your email's body text.
+*/
+#templateBody .mcnTextContent, #templateBody .mcnTextContent p {
+/*@@editable*/ color: black;
+/*@@editable*/ background-color: #FAFAFA;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 16px;
+/*@@editable*/ line-height: 115%;
+/*@@editable*/ text-align: left;
+}
+/*
+@@tab Body
+@@section Body Link
+@@tip Set the styling for your email's body links.
+*/
+#templateBody .mcnTextContent a, #templateBody .mcnTextContent p a {
+/*@@editable*/ color: #2BAADF;
+/*@@editable*/ font-weight: normal;
+/*@@editable*/ text-decoration: underline;
+}
+/*
+@@tab Footer
+@@section Footer Style
+@@tip Set the background color and borders for your email's footer area.
+*/
+#templateFooter {
+/*@@editable*/ background-color: #FAFAFA;
+/*@@editable*/ border-top: 2px solid #EAEAEA;
+/*@@editable*/ border-bottom: 0;
+/*@@editable*/ padding-top: 9px;
+/*@@editable*/ padding-bottom: 9px;
+}
+/*
+@@tab Footer
+@@section Footer Text
+@@tip Set the styling for your email's footer text.
+*/
+#templateFooter .mcnTextContent, #templateFooter .mcnTextContent p {
+/*@@editable*/ color: #656565;
+/*@@editable*/ font-family: Helvetica;
+/*@@editable*/ font-size: 12px;
+/*@@editable*/ line-height: 115%;
+/*@@editable*/ text-align: center;
+}
+/*
+@@tab Footer
+@@section Footer Link
+@@tip Set the styling for your email's footer links.
+*/
+#templateFooter .mcnTextContent a, #templateFooter .mcnTextContent p a {
+/*@@editable*/ color: #656565;
+/*@@editable*/ font-weight: normal;
+/*@@editable*/ text-decoration: underline;
+}
+
+@@media only screen and (min-width: 768px) {
+.templateContainer {
+width: 800px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+body, table, td, p, a, li, blockquote {
+-webkit-text-size-adjust: none !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+body {
+width: 100% !important;
+min-width: 100% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+#bodyCell {
+padding-top: 10px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+#templateSidebar, #templateBody {
+max-width: 100% !important;
+width: 100% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnImage {
+width: 100% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnCaptionTopContent, .mcnCaptionBottomContent, .mcnTextContentContainer, .mcnBoxedTextContentContainer, .mcnImageGroupContentContainer, .mcnCaptionLeftTextContentContainer, .mcnCaptionRightTextContentContainer, .mcnCaptionLeftImageContentContainer, .mcnCaptionRightImageContentContainer, .mcnImageCardLeftTextContentContainer, .mcnImageCardRightTextContentContainer {
+max-width: 100% !important;
+width: 100% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnBoxedTextContentContainer {
+min-width: 100% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnImageGroupContent {
+padding: 9px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnCaptionLeftContentOuter .mcnTextContent, .mcnCaptionRightContentOuter .mcnTextContent {
+padding-top: 9px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnImageCardTopImageContent, .mcnCaptionBlockInner .mcnCaptionTopContent:last-child .mcnTextContent {
+padding-top: 18px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnImageCardBottomImageContent {
+padding-bottom: 9px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnImageGroupBlockInner {
+padding-top: 0 !important;
+padding-bottom: 0 !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnImageGroupBlockOuter {
+padding-top: 9px !important;
+padding-bottom: 9px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnTextContent, .mcnBoxedTextContentColumn {
+padding-right: 18px !important;
+padding-left: 18px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcnImageCardLeftImageContent, .mcnImageCardRightImageContent {
+padding-right: 18px !important;
+padding-bottom: 0 !important;
+padding-left: 18px !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+.mcpreview-image-uploader {
+display: none !important;
+width: 100% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Heading 1
+@@tip Make the first-level headings larger in size for better readability on small screens.
+*/
+h1 {
+/*@@editable*/ font-size: 22px !important;
+/*@@editable*/ line-height: 125% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Heading 2
+@@tip Make the second-level headings larger in size for better readability on small screens.
+*/
+h2 {
+/*@@editable*/ font-size: 20px !important;
+/*@@editable*/ line-height: 125% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Heading 3
+@@tip Make the third-level headings larger in size for better readability on small screens.
+*/
+h3 {
+/*@@editable*/ font-size: 18px !important;
+/*@@editable*/ line-height: 125% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Heading 4
+@@tip Make the fourth-level headings larger in size for better readability on small screens.
+*/
+h4 {
+/*@@editable*/ font-size: 16px !important;
+/*@@editable*/ line-height: 115% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Boxed Text
+@@tip Make the boxed text larger in size for better readability on small screens. We recommend a font size of at least 16px.
+*/
+.mcnBoxedTextContentContainer .mcnTextContent, .mcnBoxedTextContentContainer .mcnTextContent p {
+/*@@editable*/ font-size: 14px !important;
+/*@@editable*/ line-height: 115% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Preheader Visibility
+@@tip Set the visibility of the email's preheader on small screens. You can hide it to save space.
+*/
+#templatePreheader {
+/*@@editable*/ display: block !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Preheader Text
+@@tip Make the preheader text larger in size for better readability on small screens.
+*/
+#templatePreheader .mcnTextContent, #templatePreheader .mcnTextContent p {
+/*@@editable*/ font-size: 14px !important;
+/*@@editable*/ line-height: 115% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Header Text
+@@tip Make the header text larger in size for better readability on small screens.
+*/
+#templateHeader .mcnTextContent, #templateHeader .mcnTextContent p {
+/*@@editable*/ font-size: 16px !important;
+/*@@editable*/ line-height: 115% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Sidebar Text
+@@tip Make the sidebar text larger in size for better readability on small screens. We recommend a font size of at least 16px.
+*/
+#templateSidebar .mcnTextContent, #templateSidebar .mcnTextContent p {
+/*@@editable*/ font-size: 16px !important;
+/*@@editable*/ line-height: 115% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Body Text
+@@tip Make the body text larger in size for better readability on small screens. We recommend a font size of at least 16px.
+*/
+#templateBody .mcnTextContent, #templateBody .mcnTextContent p {
+/*@@editable*/ font-size: 16px !important;
+/*@@editable*/ line-height: 115% !important;
+}
+}
+
+@@media only screen and (max-width: 480px) {
+/*
+@@tab Mobile Styles
+@@section Footer Text
+@@tip Make the footer content text larger in size for better readability on small screens.
+*/
+#templateFooter .mcnTextContent, #templateFooter .mcnTextContent p {
+/*@@editable*/ font-size: 14px !important;
+/*@@editable*/ line-height: 115% !important;
+}
+}
+</style>
+</head>
+<body>
+<center>
+<table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
+<tr>
+<td align="center" valign="top" id="bodyCell">
+<!-- BEGIN TEMPLATE // -->
+<!--[if gte mso 9]>
+<table align="center" border="0" cellspacing="0" cellpadding="0" width="800" style="width: 800px;">
+<tr>
+<td align="center" valign="top" width="800" style="width: 800px;">
+<![endif]-->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer">
+<tr>
+<td valign="top" id="templatePreheader">
+<table class="mcnTextBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tbody class="mcnTextBlockOuter">
+<tr>
+<td class="mcnTextBlockInner" bgcolor="lightgrey" valign="top">
+<!--[if mso]>
+<table align="left" border="0" cellspacing="0" cellpadding="0" width="100%" style="width: 100%;">
+<tr>
+<![endif]-->
+<!--[if mso]>
+<td valign="top" width="800" style="width: 800px;">
+<![endif]-->
+<table width="100%" align="center" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td bgcolor="lightgrey" style=" font-size: 12px; text-align: center; color: #232B2E; font-family: Arial, Helvetica, sans-serif">
+Efficiently train your board with one simple solution.
+</td>
+<td width="280" align="center" bgcolor="#232B2E">
+<p style="font-size: 12px; color: #ffffff; font-weight: normal; font-family: Arial, Helvetica, sans-serif">
+    <a href="*|ARCHIVE|*" style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; color: #f5f5f5; font-weight: normal; text-decoration: none; text-align: right;" target="_blank">View this email in your browser</a>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<!--[if mso]>
+</td>
+<![endif]-->
+<!--[if mso]>
+</tr>
+</table>
+<![endif]-->
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td valign="top" id="templateHeader">
+<table class="mcnImageBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tbody class="mcnImageBlockOuter">
+<tr>
+<td style="padding: 0px" class="mcnImageBlockInner" valign="top">
+<table class="mcnImageContentContainer" style="min-width: 100%;" width="100%" align="left" border="0" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td class="mcnImageContent" bgcolor="#4c5966" style="background-color: #4c5966; padding-right: 0px; min-width: 100%; padding-left: 0px; padding-top: 0; padding-bottom: 0; text-align: center;" valign="top">
+{aff_EmailBanner}
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td bgcolor="#232b2e" valign="top">
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" id="templateColumns">
+<tr>
+<td valign="top">
+<!--[if gte mso 9]>
+<table align="center" border="0" cellspacing="0" cellpadding="0" width="800" style="width: 800px;">
+<tr>
+<td align="center" valign="top" width="520" style="width: 520px;">
+<![endif]-->
+<table align="left" bgcolor=" #FAFAFA" border="1" cellpadding="0" cellspacing="0" width="520" id="templateBody">
+<tr>
+<td>
+<table class="mcnTextBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tbody class="mcnTextBlockOuter">
+<tr>
+    <td class="mcnTextBlockInner" style="padding-top: 9px;" valign="top">
+        <!--[if mso]>
+        <table align="left" border="0" cellspacing="0" cellpadding="0" width="100%" style="width: 100%;">
+        <tr>
+        <![endif]-->
+        <!--[if mso]>
+        <td valign="top" width="520" style="width: 520px;">
+        <![endif]-->
+        <table style="max-width: 100%; min-width: 100%;" class="mcnTextContentContainer" width="100%" align="left" border="0" cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr>
+                    <td class="mcnTextContent" style="padding-top: 0; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;" valign="top">
+                        <p>The responsibility and liability of the Bank Director is ever increasing. It is critical your Directors stay current with the training to help them through the complexities of today's banking environment.</p>
+
+                        <p><strong>The Directors Education Series&trade;</strong><strong>&nbsp;</strong>is a Library of training modules focused on the role and expectations of the Bank Director's conduct, duties and liabilities. Our programs have been authored by a group of highly recognized, respected industry experts. Your subscription to this series will assist you with the responsibility you have to educate those who serve on your Board.</p>
+
+                        <p>Features of the&nbsp;<strong>The Directors Education Series&trade;</strong>&nbsp;include:</p>
+                        <ul>
+                            <li>60+ courses available 24/7
+                                <ul>
+                                    <li>12 new courses per year (one per month)</li>
+                                    <li>20-25 minutes in length (Perfect for Board Meetings)</li>
+                                    <li>Courses contain Audio, Video &amp; PowerPoint</li>
+                                    <li>Handouts and Discussion Questions available for download</li>
+                                    <li>Notification of release sent to users and managers each month</li>
+                                </ul>
+                            </li>
+                            <li>Group Managers can:
+                                <ul>
+                                    <li>Report on users, courses, dates of usage, etc.</li>
+                                    <li>Create, delete,&nbsp;and update users</li>
+                                    <li>Enroll/assign users in courses</li>
+                                </ul>
+                            </li>
+                            <li>Enables all board members and executives to have individual accounts
+                                <ul>
+                                    <li>Managers can create these or we can batch upload them for you!</li>
+                                </ul>
+                            </li>
+                            <li>All usage is tracked&nbsp;and can be reported on
+                                <ul>
+                                    <li>Users can generate their own usage reports</li>
+                                    <li>Users can generate their own certificates of completion</li>
+                                    <li>Users can enroll themselves in any course(s)</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div align="center">
+                            <a id="SignUp" href="https://www.directorseries.com/webinar/DetailsDes/2485?lid=*|LINKID|*&idAff={aff_idUserAff}"><img src="https://ttsimages.blob.core.windows.net:443/images/email/LearnMore.png" alt="" style="" width="118" height="48"></a>
+                            <p>&nbsp;<b>What our subscribers are saying:</b></p>
+                            <p><em>"We are loving the program for our Directors. Training has now become a more regular event and the format and timing of the training is just right for the BOD. They have found the information very helpful in understanding their roles as directors.</em> — Maureen Daehn, CFO, Maple Bank
+                            </p>
+                            <p><em>"After 42 years in Banking and now a Director, the series enables me to continue my knowledge in this ever changing industry! You're never too old to
+                                    learn, and being a Director it's our responsibility to continue to learn for the good of our organizations."</em> — Gerald Schmidt, Board Member, Stephenson National Bank and Trust
+                            </p>
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!--[if mso]>
+        </td>
+        <![endif]-->
+        <!--[if mso]>
+        </tr>
+        </table>
+        <![endif]-->
+    </td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</table>
+<!--[if gte mso 9]>
+</td>
+<td align="center" valign="top" width="280" style="width: 280px;">
+<![endif]-->
+
+<table id="templateSidebar" align="left" border="0" cellpadding="0" cellspacing="0" width="280" style="max-width: 280px;">
+<tr>
+<td valign="top">
+<table class="mcnTextBlock" style="min-width: 280px;" width="280" border="0" cellpadding="0" cellspacing="0">
+<tbody class="mcnTextBlockOuter">
+<tr>
+    <td class="mcnTextBlockInner" style="padding-top: 9px;" valign="top">
+        <!--[if mso]>
+        <table align="left" border="0" cellspacing="0" cellpadding="0" width="280" style="width: 280px;">
+        <tr>
+        <![endif]-->
+        <!--[if mso]>
+        <td valign="top" width="280" style="width: 280px;">
+        <![endif]-->
+        <table style="max-width: 280px; min-width: 280px;" class="mcnTextContentContainer" width="280" align="left" border="0" cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr>
+
+                    <td class="mcnTextContent" style="padding-top: 0; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;" valign="top">
+
+                        <h3 style="color: #f5f5f5">Recent Releases</h3>
+                        @Model.ListOfWebinarsUpcomingRendered
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!--[if mso]>
+        </td>
+        <![endif]-->
+        <!--[if mso]>
+        </tr>
+        </table>
+        <![endif]-->
+    </td>
+</tr>
+</tbody>
+</table>
+@*<table class="mcnDividerBlock" style="min-width: 280px;" width="280" border="0" cellpadding="0" cellspacing="0">
+<tbody class="mcnDividerBlockOuter">
+<tr>
+<td class="mcnDividerBlockInner" style="min-width: 280px; padding: 9px 18px;">
+<table class="mcnDividerContent" style="min-width: 280px; border-top: 2px solid #EAEAEA;" width="280" border="0" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td>
+<span></span>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>*@
+<table class="mcnTextBlock" style="min-width: 280px;" width="280" border="0" cellpadding="0" cellspacing="0">
+<tbody class="mcnTextBlockOuter">
+<tr>
+    <td class="mcnTextBlockInner" style="padding-top: 9px;" valign="top">
+        <!--[if mso]>
+        <table align="left" border="0" cellspacing="0" cellpadding="0" width="280" style="width: 280px;">
+        <tr>
+        <![endif]-->
+        <!--[if mso]>
+        <td valign="top" width="200" style="width: 200px;">
+        <![endif]-->
+        <!--[if mso]>
+        </td>
+        <![endif]-->
+        <!--[if mso]>
+        </tr>
+        </table>
+        <![endif]-->
+    </td>
+</tr>
+</tbody>
+</table>
+@*<table class="mcnDividerBlock" style="min-width: 280px;" width="280" border="0" cellpadding="0" cellspacing="0">
+<tbody class="mcnDividerBlockOuter">
+<tr>
+<td class="mcnDividerBlockInner" style="min-width: 280px; padding: 9px 18px;">
+<table class="mcnDividerContent" style="min-width: 280px; border-top: 2px solid #EAEAEA;" width="280" border="0" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td>
+<span></span>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>*@
+<table class="mcnTextBlock" style="min-width: 280px;" width="280" border="0" cellpadding="0" cellspacing="0">
+<tbody class="mcnTextBlockOuter">
+<tr>
+    <td class="mcnTextBlockInner" style="padding-top: 9px;" valign="top">
+        <!--[if mso]>
+        <table align="left" border="0" cellspacing="0" cellpadding="0" width="280" style="width: 280px;">
+        <tr>
+        <![endif]-->
+        <!--[if mso]>
+        <td valign="top" width="200" style="width: 200px;">
+        <![endif]-->
+        <table style="max-width: 280px; min-width: 280px;" class="mcnTextContentContainer" width="280" align="left" border="0" cellpadding="0" cellspacing="0">
+            <tbody>
+                <tr>
+
+                    <td class="mcnTextContent" style="padding-top: 0; padding-right: 18px; padding-bottom: 9px; padding-left: 18px;" valign="top">
+
+                        <p style="color: #f5f5f5" align="center">
+                            <img height="185px" width="240px" src="https://ttsimages.blob.core.windows.net:443/dirseries/CompassHand240x158.png">
+                                                                                            
+                        </p><p align="center">An annual subscription provides all members of your board access to our entire module library.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!--[if mso]>
+        </td>
+        <![endif]-->
+        <!--[if mso]>
+        </tr>
+        </table>
+        <![endif]-->
+    </td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</table>
+<!--[if gte mso 9]>
+</td>
+</tr>
+</table>
+<![endif]-->
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td valign="top" id="templateFooter">
+
+<table id="AffiliateFooter" class="footerBlock" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tbody class="footerBlockOuter">
+<tr>
+<td style="padding: 9px" class="footerBlockInner" valign="top" align="center">
+<table class="footerContentContainer" style="min-width: 100%;" width="100%" border="0" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td style="padding-left: 9px; padding-right: 9px;" align="center">
+<table style="min-width: 100%;" class="footerContent" width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+        <tr>
+            <td class="mcnTextContent" style="padding-top: 9px; padding-right: 9px; padding-left: 9px;" valign="top" align="center">
+                {aff_EmailFooter}
+            </td>
+        </tr>
+    </tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</table>
+<!--[if gte mso 9]>
+</td>
+</tr>
+</table>
+<![endif]-->
+<!-- // END TEMPLATE -->
+</td>
+</tr>
+</table>
+</center>
+</body>
+</html>

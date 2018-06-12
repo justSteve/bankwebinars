@@ -1757,7 +1757,6 @@ namespace CUWebinars.Web.Controllers.Admin
 
             if (model.TemplateType == "DES")
             {
-
                 model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
                 model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
                 ViewBag.SubjectForCampaign = "Webinar: " + model.Webinar.Title;
@@ -1820,6 +1819,74 @@ namespace CUWebinars.Web.Controllers.Admin
                 model.EventBody =
                     HttpUtility.HtmlDecode(
                         _generalFormatter.FormatV2(model, "~/Notification/Templates/SendDESPromoMaster.cshtml").Body);
+                // get Template with new method
+
+                return Json(new { masterText = model.EventBody });
+            }
+            if (model.TemplateType == "CCS")
+            {
+                model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
+                model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
+                ViewBag.SubjectForCampaign = "Webinar: " + model.Webinar.Title;
+                if (model.Affiliate.idUserAff != null && model.Affiliate.idUserAff > 0)
+                {
+                    model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
+                    model.TimeZone = model.Affiliate.WebUser.timeZone;
+
+                }
+
+
+                // populate the dropdown selector (not currently implemented)
+                TempData["ListOfWebinarsForUpcoming"] =
+                    _webinarManagementService.GetAllActive().OrderByDescending(w => w.Date).Take(10).ToList();
+
+
+                if (model.ListOfWebinarsForUpcoming == null)
+                {
+                    model.ListOfWebinarsForUpcoming =
+                        _webinarManagementService.GetAllActive()
+                            .OrderByDescending(w => w.Date)
+                            .Take(10)
+                            .Select(w => w.idWebinar)
+                            .ToArray();
+                }
+
+                var _upcoming =
+                    _webinarManagementService.GetAllActive()
+                        .Where(w => w.idWebinar != model.Webinar.idWebinar)
+                        .OrderByDescending(w => w.Date)
+                        .Take(7);
+
+
+                var doc = new HtmlDocument();
+                doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
+
+                var root = doc.DocumentNode;
+                root.SelectSingleNode("(//img)[1]").Remove();
+
+                model.PresenterW_OutPic = root.InnerHtml;
+
+                var upcomingWebinars = (from w in _upcoming
+                                        select
+                                        "<p style=\"color: #f5f5f5; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
+                                        _globalConfig.TenantURL + "/Webinar/Details/" +
+                                        w.idWebinar + "?lid=*|LINKID|*&idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
+                                        w.Date.ToLongDateString() + "</p>"
+                ).ToArray();
+
+                if (upcomingWebinars.Count() > 0)
+                    model.ListOfWebinarsUpcomingRendered = String.Join("\r\n", upcomingWebinars);
+
+                model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
+                                          " - " +
+                                          DateTimeHelper.FormatTime(
+                                              model.Webinar.Date.AddHours((double)model.Webinar.Duration),
+                                              model.TimeZone,
+                                              true) + "<br /></i>";
+
+                model.EventBody =
+                    HttpUtility.HtmlDecode(
+                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendCCSPromoMaster.cshtml").Body);
                 // get Template with new method
 
                 return Json(new { masterText = model.EventBody });
@@ -2345,7 +2412,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "ccs").Id;
                     }
-                    if (_globalConfig.Tenant == "DES")
+                    if (_globalConfig.Tenant == "DirectorSeries")
                     {
                         savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "des").Id;
                     }
