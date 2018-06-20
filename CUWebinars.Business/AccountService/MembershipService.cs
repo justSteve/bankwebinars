@@ -658,15 +658,15 @@ namespace CUWebinars.Business.AccountService
             {
                 UserAccount userAccount = GetUserAccountByWebUserId(tenant, idUser);
                 if (userAccount.Claims.Where(claim => claim.Type == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp)
-                        .SingleOrDefault() != null)
+                        .FirstOrDefault() != null)
                 {
                     return userAccount.Claims.Where(c => c.Type == ClaimTypes.UserHasWsp).FirstOrDefault().Value;
                 }
             }
             catch (Exception e)
             {
-                _logger.FatalException("UserHasWsp: ", e);
-                
+                _logger.FatalException("UserHasWsp: " + idUser, e);
+
             }
             return null;
         }
@@ -682,7 +682,7 @@ namespace CUWebinars.Business.AccountService
             }
             catch (Exception e)
             {
-                _logger.FatalException("UserHasWsp: ", e);
+                _logger.FatalException("UserHasWspThatExpired: ", e);
                 return null;
             }
         }

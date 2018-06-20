@@ -560,84 +560,118 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 try
                 {
-                    var order = _orderManagementService.GetOrderById(model.Id);
+                    var originalOrder = _orderManagementService.GetOrderById(model.Id);
 
 
                     if ((model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Billed ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Submitted)
 
-                        && (order.OrderStatus == OrderStatus.AwaitingVerification
-                        || order.OrderStatus == OrderStatus.InProcess)
-                        )
+                        && (originalOrder.OrderStatus == OrderStatus.AwaitingVerification
+                            || originalOrder.OrderStatus == OrderStatus.InProcess)
+                    )
                     {
+                        _logger.Info("UpdateOrderStatus from: " + originalOrder.OrderStatus + " original Date: " +
+                                     originalOrder.OrderDate);
 
                         var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
 
-                        if (order.OrderStatus == OrderStatus.InProcess)
-                            order.OrderDate = DateTime.Now;
+                        if (originalOrder.OrderStatus == OrderStatus.InProcess)
+                            originalOrder.OrderDate = DateTime.Now;
 
-                        if (order.idAffiliate == 62)
+                        if (originalOrder.idAffiliate == 62)
                         {
 
-                            FireOrderSubmittedEvent(order, false, false);
-                            JProperty pendingAcsOrderIsApproved = new JProperty(JsonPropertyKeys.PendingACSOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
-                            order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
-                            order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
+                            FireOrderSubmittedEvent(originalOrder, false, false);
+                            JProperty pendingAcsOrderIsApproved = new JProperty(
+                                JsonPropertyKeys.PendingACSOrderIsApproved,
+                                "OrderDate changed from " + originalOrder.OrderDate + " to " + newDate + " by: " +
+                                User.Identity.Name + ". ");
+                            originalOrder.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(originalOrder.AffiliateComments,
+                                pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
+                            originalOrder.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(originalOrder.AffiliateComments,
+                                pendingAcsOrderIsApproved, "PendingACSOrderIsApproved");
 
                         }
                         else
                         {
-                            JProperty incompleteOrderIsApproved = new JProperty(JsonPropertyKeys.IncompleteOrderIsApproved, "OrderDate changed from " + order.OrderDate + " to " + newDate + " by: " + User.Identity.Name + ". ");
-                            order.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, incompleteOrderIsApproved, "IncompleteOrderIsApproved");
-                            order.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(order.AffiliateComments, incompleteOrderIsApproved, "IncompleteOrderIsApproved");
+                            JProperty incompleteOrderIsApproved = new JProperty(
+                                JsonPropertyKeys.IncompleteOrderIsApproved,
+                                "OrderDate changed from " + originalOrder.OrderDate + " to " + newDate + " by: " +
+                                User.Identity.Name + ". ");
+                            originalOrder.AffiliateComments = JsonHelpers.ReplaceJsonWithStoredField(originalOrder.AffiliateComments,
+                                incompleteOrderIsApproved, "IncompleteOrderIsApproved");
+                            originalOrder.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(originalOrder.AffiliateComments,
+                                incompleteOrderIsApproved, "IncompleteOrderIsApproved");
                         }
                     }
 
-                    _logger.Info("Updating OrderStatus " + order.idOrder
-                                 + " from: " + order.OrderStatus + " to: " + model.DisplayRowPriceViewModel.OrderStatus +
+                    _logger.Info("Updating OrderStatus " + originalOrder.idOrder
+                                 + " from: " + originalOrder.OrderStatus + " to: " +
+                                 model.DisplayRowPriceViewModel.OrderStatus +
                                  " note: " + note + " by: " + _appHelper.GetUserAuditInfo());
 
-                    order.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
+                    originalOrder.OrderStatus = model.DisplayRowPriceViewModel.OrderStatus;
                     if (model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid)
                     {
-                        order.TotalPaid = order.Total;
+                        originalOrder.TotalPaid = originalOrder.Total;
                     }
-                    _orderManagementService.UpdateOrderByAdmin(order);
-                    if (!string.IsNullOrEmpty(order.InvoiceDetail) &&
-                        order.OrderStatus == OrderStatus.Canceled)
+                    _orderManagementService.UpdateOrderByAdmin(originalOrder);
+                    if (!string.IsNullOrEmpty(originalOrder.InvoiceDetail))
                     {
-                        try
+                        if (originalOrder.OrderStatus == OrderStatus.Canceled)
                         {
-                            var newJson4Invoice = _invoiceHelper.OrderIsCanceled(model.Order, order);
+                            try
+                            {
+                                var newJson4Invoice = _invoiceHelper.OrderIsCanceled(model.Order, originalOrder);
 
-                            if (newJson4Invoice == null)
-                                throw new NullReferenceException();
+                                if (newJson4Invoice == null)
+                                    throw new NullReferenceException();
 
-                            order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(order.InvoiceDetail, newJson4Invoice, "OrderIsInvoiced");
-                            _orderManagementService.UpdateOrderByAdmin(order);
+                                originalOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(originalOrder.InvoiceDetail,
+                                    newJson4Invoice, "OrderIsInvoiced");
+                                _orderManagementService.UpdateOrderByAdmin(originalOrder);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
+                                return null;
+                            }
                         }
-                        catch (Exception ex)
+                        
+                        if (originalOrder.OrderStatus != OrderStatus.Canceled)
                         {
-                            _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
-                            return null;
+                            try
+                            {
+                                var newJson4Invoice = _invoiceHelper.OrderIsCanceled(model.Order, originalOrder);
+
+                                if (newJson4Invoice == null)
+                                    throw new NullReferenceException();
+
+                                originalOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(originalOrder.InvoiceDetail,
+                                    newJson4Invoice, "OrderIsInvoiced");
+                                _orderManagementService.UpdateOrderByAdmin(originalOrder);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
+                                return null;
+                            }
                         }
                     }
 
-                    return
-                        Json(
-                            new
-                            {
-                                Result = WebUiConstants.Success,
-                                orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString(),
-                                msgFromLegacy = "not currently implemented"
-                            });
+                    return Json(new
+                    {
+                        Result = WebUiConstants.Success,
+                        orderStatus = model.DisplayRowPriceViewModel.OrderStatus.ToString(),
+                        msgFromLegacy = "not currently implemented"
+                    });
                 }
                 catch (Exception exception)
                 {
                     _logger.ErrorException("In UpdateOrderStatus Action: ", exception);
                     ErrorSignal.FromCurrentContext().Raise(exception);
-                    throw;
+
                 }
             }
             return this.ModelStateJson(ModelState);
@@ -3969,12 +4003,8 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     StringBuilder sb = new StringBuilder();
 
-                    //sb.Append(order.idOrder + " was first invoiced on " + thisInvoice.First()["InvoiceId"] +
-                    //          " as type '" + regTypeShortened + "' for $" +
-                    //          preSaveValues.Split(',')[0].ToString().Replace(".0000", "").Replace(".00", "") +
-                    //          ") ");
-                    sb.Append(" but was canceled " +
-                              TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
+                    sb.Append(order.idOrder + " was first invoiced on " + thisInvoice.First()["InvoiceId"] +
+                              " but had additional location(s) updated " + TtsConfig.UtcNowAsCts.ToString(DomainConstants.DateTimeShortFormat) + ". ");
 
                     var adustmentAmount = 0 - (decimal)thisInvoice.First()["AmountOfRoyalty"];
 
@@ -4445,7 +4475,10 @@ namespace CUWebinars.Web.Controllers.Admin
                 else
                 {
                     var listOrdersAdjusted =
-                        affiliateHasAnyOrders.Split(':')[3].TrimEnd(',').TrimStart(' ').Replace(TenantConstant.ToString() + ",", "");
+                        affiliateHasAnyOrders.Split(':')[3].Replace(" IncompleteOrders", "").TrimEnd(',').TrimStart(' ').Replace(TenantConstant.ToString() + ",", "");
+
+                    var listIncompleteOrders =
+                                            affiliateHasAnyOrders.Split(':')[4].TrimEnd(',').TrimStart(' ').Replace(TenantConstant.ToString() + ",", "");
 
                     var listOrdersPostEvent =
                         affiliateHasAnyOrders.Split(':')[2].Replace(" AjustedOrders", "")
@@ -4457,8 +4490,8 @@ namespace CUWebinars.Web.Controllers.Admin
                                  affiliateHasAnyOrders.Replace(TenantConstant + ",", ""));
 
                     List<InvoiceExceptions> invoiceExceptionsByAff = new List<InvoiceExceptions>();
-                    List<InvoiceExceptions> postEventByAff = new List<InvoiceExceptions>();
-                    if (listOrdersPostEvent != null && listOrdersPostEvent != "")
+
+                    if (listOrdersPostEvent != "")
                     {
                         foreach (var orderId in listOrdersPostEvent.Split(',').ToArray())
                         {
@@ -4471,13 +4504,14 @@ namespace CUWebinars.Web.Controllers.Admin
                             invoiceExceptionsByAff.Add(invoiceExceptions);
 
 
-                            order.AdminComments = JsonHelpers.AddObjectToJsonArray(order.AdminComments, "PostEventOrder",
-                                invoiceExceptions);
-                            _orderManagementService.SaveOrderChanges(order, null, null,
-                                OrderGenesis.ImportedForACSExistingUser);
+                            //order.AdminComments = JsonHelpers.AddObjectToJsonArray(order.AdminComments, "PostEventOrder",
+                            //    invoiceExceptions);
+                            //_orderManagementService.SaveOrderChanges(order, null, null,
+                            //    OrderGenesis.ImportedForACSExistingUser);
 
                         }
                         StoreInvoiceLog(JsonConvert.SerializeObject(invoiceExceptionsByAff), invoiceId + "-PostEvent");
+
                     }
 
                     if (listOrdersAdjusted != null && listOrdersAdjusted != "")
@@ -4493,10 +4527,10 @@ namespace CUWebinars.Web.Controllers.Admin
                             invoiceExceptions.Affiliate = affiliate.ttsDomain;
                             invoiceExceptionsByAff.Add(invoiceExceptions);
 
-                            order.AdminComments = JsonHelpers.AddObjectToJsonArray(order.AdminComments, "AdjustedOrder",
-                                invoiceExceptions);
-                            _orderManagementService.SaveOrderChanges(order, null, null,
-                                OrderGenesis.ImportedForACSExistingUser);
+                            //order.AdminComments = JsonHelpers.AddObjectToJsonArray(order.AdminComments, "AdjustedOrder",
+                            //    invoiceExceptions);
+                            //_orderManagementService.SaveOrderChanges(order, null, null,
+                            //    OrderGenesis.ImportedForACSExistingUser);
                         }
                         StoreInvoiceLog(JsonConvert.SerializeObject(invoiceExceptionsByAff), invoiceId + "-Adjusted");
                     }
@@ -4548,9 +4582,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     List<InvoiceLog> invoiceLogsByAff = new List<InvoiceLog>();
 
+
+                    //invoice webinars that happened last week
                     foreach (var webinar in webinars)
                     {
-
                         AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
                         {
                             Affiliate = affiliate,
@@ -4752,6 +4787,58 @@ namespace CUWebinars.Web.Controllers.Admin
                             _logger.ErrorException("GenerateWeeklyInvoicesEvent", ex);
                         }
                     }
+
+                    //Incomplete Orders
+                    try
+                    {
+                        List<Order> _incompleteOrders = new List<Order>();
+
+                        foreach (var id in listIncompleteOrders.Split(','))
+                        {
+                            //for why the test against static ID see DataOperations | 
+                            if (id != TenantConstant.ToString())
+                            {
+                                int variable = 0;
+                                int.TryParse(id, out variable);
+                                if (variable > 0)
+                                    _incompleteOrders.Add(_orderManagementService.GetOrderById(Convert.ToInt32(id)));
+                            }
+                        }
+
+                        if (_incompleteOrders.Any())
+                        {
+                            _logger.Info("GenerateWeeklyInvoices found Incomplete Orders " + _incompleteOrders.Count +
+                                         "  for " +
+                                         idAffiliate);
+                            foreach (var incOrder in _incompleteOrders)
+                            {
+                                _logger.Info("GenerateWeeklyInvoices | Incomplete  order " + incOrder.idOrder +
+                                             " for " + idAffiliate);
+                                _logger.Info("GenInv:   UPDATE dbo.[Order] SET InvoiceDetail = '" +
+                                             incOrder.InvoiceDetail + "' where idOrder =" + incOrder.idOrder);
+
+                                incOrder.InvoiceDetail = null;
+                            }
+
+
+                            AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
+                            {
+                                Affiliate = affiliate,
+                                InvoiceID = weekNumber + "-" + affiliate.idUserAff,
+                                RoyaltyTier = affiliate.CommissionModel
+                            };
+                            invoice = _affiliateManagementService.BuildAffiliateInvoiceForIncompleteOrders(invoice,
+                                _incompleteOrders, thisAffiliate);
+                            int rowNumber = 0;
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.ErrorException("GenerateWeeklyInvoicesEvent | PostEventOrders: " + idAffiliate, ex);
+                    }
+
+
 
                     //Post Event Orders
                     try

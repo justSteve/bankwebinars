@@ -1405,6 +1405,7 @@ namespace CUWebinars.Business.Core
                 StringBuilder sbWO = new StringBuilder();
                 StringBuilder sbPEO = new StringBuilder();
                 StringBuilder sbADJ = new StringBuilder();
+                StringBuilder sbInc = new StringBuilder();
                 sb.Append(idAffiliate + Environment.NewLine);
                 if (reader.HasRows)
                 {
@@ -1434,6 +1435,10 @@ namespace CUWebinars.Business.Core
                             {
                                 sbADJ.Append(reader.GetInt32(0) + ",");
                             }
+                            if (reader.GetName(0) == "IncompleteOrders")
+                            {
+                                sbInc.Append(reader.GetInt32(0) + ",");
+                            }
                         }
 
                         reader.NextResult();
@@ -1444,7 +1449,7 @@ namespace CUWebinars.Business.Core
                     return "none found: " + idAffiliate;
                 }
 
-                return sb.ToString() + " WebinarOrders: " + sbWO.ToString().TrimEnd(',') + " PostEventOrders: " + sbPEO + " AjustedOrders: " + sbADJ;
+                return sb.ToString() + " WebinarOrders: " + sbWO.ToString().TrimEnd(',') + " PostEventOrders: " + sbPEO + " AjustedOrders: " + sbADJ + " IncompleteOrders: " + sbInc;
             }
 
         }

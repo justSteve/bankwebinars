@@ -575,7 +575,7 @@ namespace CUWebinars.Business.Services
 
                     order.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(order.InvoiceDetail, newJson, "OrderIsInvoiced");
                     _logger.Info("GenerateWeeklyInvoicesEvent | StoreInvoiceDetail on idOrder: " + order.idOrder);
-                    
+
 
                 }
             }
@@ -687,7 +687,64 @@ namespace CUWebinars.Business.Services
             return ComputeRoyaltyForAdjustedOrders(invoice, theseOrders, thisAffiliate, true);
 
         }
+        public AffiliateInvoiceDTO BuildAffiliateInvoiceForIncompleteOrders(AffiliateInvoiceDTO invoice, List<Order> theseOrders,
+            int thisAffiliate)
+        {
+            return ComputeRoyaltyForIncomplete(invoice, theseOrders, thisAffiliate, true);
 
+        }
+
+        private AffiliateInvoiceDTO ComputeRoyaltyForIncomplete(AffiliateInvoiceDTO invoice, List<Order> orders, int idAffiliate, bool b)
+        {
+            invoice.Affiliate = FindById(idAffiliate);
+            decimal totalBilledRevenue = 0M;
+            decimal totalBilledRoyalty = 0M;
+            decimal totalPaidRoyalty = 0M;
+
+            foreach (Order order in orders.OrderBy(o => o.OrderDate))
+            {
+                try
+                {
+                    decimal commissionPercent = 0.0M;
+
+                    var row = IniInvoice(order, invoice);
+                    //row.Royalty = order.Total * commissionPercent;
+                    row.Royalty = 0;
+                    row.PercentPaid = commissionPercent;
+                    invoice.TotalRoyalties = invoice.TotalRoyalties + 0;
+
+                    if (order.OrderStatus == OrderStatus.Paid)
+                    {
+                        totalPaidRoyalty += 0;
+                    }
+                    else
+                    {
+                        totalBilledRevenue += 0;
+                        totalBilledRoyalty += 0;
+                    }
+
+                    StoreInvoiceDetail(order, invoice);
+                }
+                catch (Exception ex)
+                {
+                    _logger.FatalException("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
+                }
+
+            }
+
+            if (invoice.Affiliate.BillingModel.Trim(' ') == "aff")
+            {
+                invoice.TotalNetDue = (invoice.TotalOnBilled + invoice.TotalOnPaid - invoice.TotalDiscounts) - invoice.TotalRoyalties;
+            }
+            if (invoice.Affiliate.BillingModel.Trim(' ') == "billed")
+            {
+                invoice.TotalNetDue = totalBilledRevenue - totalBilledRoyalty - totalPaidRoyalty;
+            }
+
+            return invoice;
+        }
+
+        
 
         //public AffiliateInvoiceDTO GetAffiliateInvoice(int idWebinar, string aff)
         //{
@@ -765,8 +822,8 @@ namespace CUWebinars.Business.Services
             if (idUserAff != 19)
             {
                 var theseDiscounts = _context.Discounts
-                    .Where(d => (d.DiscountType == DiscountType.Subscription 
-                    || d.DiscountType == DiscountType.ComplianceSeries) 
+                    .Where(d => (d.DiscountType == DiscountType.Subscription
+                    || d.DiscountType == DiscountType.ComplianceSeries)
                     && d.idAffiliate == idUserAff).ToList();
 
                 foreach (var discount in theseDiscounts)
@@ -854,7 +911,7 @@ namespace CUWebinars.Business.Services
             if (tenant == "BankWebinars") urlBase = "https://storeforbw.blob.core.windows.net/invoicesprivate/";
 
             var firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/1/2018");
-            
+
             if (year == "2018")
             {
                 for (var _week = 55; _week >= 0; _week--)
@@ -898,7 +955,7 @@ namespace CUWebinars.Business.Services
 
             if (year == "2017")
             {
-                 firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/2/2017");
+                firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/2/2017");
 
                 for (var _week = 55; _week >= 0; _week--)
                 {
@@ -941,7 +998,7 @@ namespace CUWebinars.Business.Services
 
             if (year == "2016")
             {
-                 firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/4/2016");
+                firstMonday = Core.Extensions.DateTimeExtensions.ToDateTime("1/4/2016");
 
                 for (var _week = 55; _week >= 0; _week--)
                 {
