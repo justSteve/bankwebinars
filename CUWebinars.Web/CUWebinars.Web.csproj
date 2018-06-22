@@ -2240,6 +2240,8 @@
     <Content Include="Views\Webinar\Partials\_CampaignDetails.cshtml" />
     <Content Include="Views\Connectivity\Index.cshtml" />
     <Content Include="Views\Admin\MailChimpMigrateUsers.cshtml" />
+    <Content Include="Views\Admin\MailChimpUnsubUsers.cshtml" />
+    <Content Include="Views\Admin\MailChimpCountUsers.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

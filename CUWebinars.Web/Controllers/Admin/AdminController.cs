@@ -2996,12 +2996,10 @@ namespace CUWebinars.Web.Controllers.Admin
 
         }
 
-
-
         [ValidateInput(false)]
         [HttpGet]
         [HandleAjaxException]
-        public async Task<ActionResult> MailChimpMigrateUsers(string aff)
+        public async Task<ActionResult> MailChimpCountUsers(string aff)
         {
             _logger.Info("UpdateMailChimpUser starting");
             var affiliates = _affiliateManagementService.GetAffiliates();
@@ -3028,6 +3026,84 @@ namespace CUWebinars.Web.Controllers.Admin
             //}
 
             var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
+            //var masterTenantList = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
+
+            //var masterSegment = await manager.ListSegments.GetAllAsync(masterTenantList.Id).ConfigureAwait(false);
+            var dataOperations =
+                new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
+
+            var usersFromSheet =
+            dataOperations.UsersFromSheet();
+
+
+            foreach (var affiliate in affiliates)
+            {
+                Debug.WriteLine("aff: " + aff + " " + affiliate.ttsDomain.ToLower());
+
+                if (aff != null)
+                {
+                    if (affiliate.ttsDomain.ToLower() != aff.ToLower())
+                        continue;
+                }
+
+
+                IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
+
+                var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
+
+                try
+                {
+
+                    var mcList = lists.FirstOrDefault(l => l.Name == listName);
+                    if (mcList == null)
+                    {
+                        _logger.Warn("No List found for " + affiliate.ttsDomain + "<br>");
+                        sb.Append("No List found for " + affiliate.ttsDomain + "<br>");
+                        continue;
+                    }
+                    
+                    var unSubCount = mcList.Stats.UnsubscribeCount;
+                    var SubCount = mcList.Stats.MemberCount;
+                    sb.Append("Total members: " + SubCount + "<br>");
+                    sb.Append("Total unsubscribed: " + unSubCount + "<br>");
+
+                }
+                catch (Exception exception)
+                {
+                    _logger.FatalException("countMailChimpUser: ", exception);
+                    //return Json(new { Result = exception.Message });
+                }
+                _logger.Info("MigrateMailChimpUsers: ends" + sb.ToString());
+            }
+
+            model.AffOutput = sb.ToString();
+            return View(model);
+
+        }
+
+
+        [ValidateInput(false)]
+        [HttpGet]
+        [HandleAjaxException]
+        public async Task<ActionResult> MailChimpMigrateUsers(string aff)
+        {
+            _logger.Info("UpdateMailChimpUser starting");
+            var affiliates = _affiliateManagementService.GetAffiliates();
+            var model = new ListSegmentsViewModel
+            {
+                CFT = new List<Affiliate>(),
+                SBA = new List<Affiliate>(),
+                Other = new List<Affiliate>()
+            };
+
+            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sbNoList = new StringBuilder();
+            var lists = await manager.Lists.GetAllAsync().ConfigureAwait(false);
+            var tenant = _globalConfig.TenantPrefix.Replace("-", "");
+            
+            var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
             var masterTenantList = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
 
             var masterSegment = await manager.ListSegments.GetAllAsync(masterTenantList.Id).ConfigureAwait(false);
@@ -3048,14 +3124,8 @@ namespace CUWebinars.Web.Controllers.Admin
                         continue;
                 }
 
-
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
-
-
-                //if (affiliate.ttsDomain != "cft-ea")
-                //    //if (affiliate.ttsDomain != "cft-ea")
-                //    continue;
 
                 var oldSegment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
 
@@ -3123,14 +3193,12 @@ namespace CUWebinars.Web.Controllers.Admin
                         }
                         try
                         {
-
                             var addMember = await manager.Members.AddOrUpdateAsync(mcList.Id, newMember).ConfigureAwait(false);
                             if (addMember.Status == Status.Pending)
                             {
                                 sb.Append("Status=Pending on: " + user.Email_Address.ToLower());
                                 var a = addMember.Status;
                             }
-
                         }
                         catch (Exception e)
                         {
@@ -3143,11 +3211,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         }
                         var newMemToJson = JsonConvert.SerializeObject(newMember);
                         _logger.Info("MigrateMailChimpUser Added: " + newMemToJson);
-                        //Debug.WriteLine(newMember.EmailAddress + " - " + addMember.Status);
-
-                        //await manager.ListSegments.DeleteMemberAsync(masterTenantList.Id, oldSegment.ListId,
-                        //    addMember.EmailAddress);
-
+                        
                     }
                     sb.Append("Total imported: " + iterator);
                 }
@@ -3156,23 +3220,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     _logger.FatalException("MigrateMailChimpUser: ", exception);
                     //return Json(new { Result = exception.Message });
                 }
-                //removes users to avoid price increate
 
-                //                var _segments = await manager.ListSegments.GetAllAsync(mcList.Id).ConfigureAwait(false);
-
-                //                var segments = _segments.ToList();
-
-                //                foreach (var tSegment in segments)
-                //                {
-                //                    foreach (var user in usersFromSheetForAff)
-                //                    {
-                //                        await manager.ListSegments.DeleteMemberAsync(mcList.Id, tSegment.ListId,
-                //                            user.Email_Address);
-                //                    }
-
-                //                    _logger.Info("MigrateMailChimpUser reset segments: " + tSegment.Name);
-                ////                    await manager.ListSegments.DeleteAsync(mcList.Id, tSegment.Id.ToString());
-                //                }
                 stopWatch.Stop();
                 TimeSpan ts = stopWatch.Elapsed;
 

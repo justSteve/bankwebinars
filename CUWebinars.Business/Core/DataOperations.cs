@@ -2301,9 +2301,9 @@ namespace CUWebinars.Business.Core
 
                                 var user = new MigrateMCUsers
                                 {
-                                    Email_Address = reader.GetString(0),
-                                    First_Name = reader.SafeGetString(1),
-                                    Last_Name = reader.SafeGetString(2),
+                                    Email_Address = reader.GetString(2),
+                                    First_Name = reader.SafeGetString(0),
+                                    Last_Name = reader.SafeGetString(1),
                                     Source = reader.SafeGetString(3),
                                     Welcome_Sequence_Complete_ = reader.SafeGetString(4),
                                     Purchased = reader.SafeGetString(5),
