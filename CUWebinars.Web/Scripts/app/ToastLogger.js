@@ -7,7 +7,7 @@ var Common;
             var _this = this;
             this.getLogFn = function (moduleId, fnName) {
                 fnName = fnName || 'log';
-                switch (fnName.toLowerCase()) {
+                switch (fnName.toLowerCase()) { // convert aliases
                     case 'success':
                         fnName = 'logSuccess';
                         break;

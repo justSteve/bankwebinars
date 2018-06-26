@@ -440,12 +440,12 @@ namespace CUWebinars.Web
 
                                     // authenticated end-user
 
-                                    if (claimsIdentityOfAuthenticatedUser.HasClaim(
-                                        (claim) => claim.Type == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp))
-                                    {
-                                        StateService.SetValue(WebUiConstants.HasWsp,
-                                            claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Value == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp));
-                                    }
+                                    //if (claimsIdentityOfAuthenticatedUser.HasClaim(
+                                    //    (claim) => claim.Type == Business.Constants.ClaimTypes.UserHasWsp))
+                                    //{
+                                    //    StateService.SetValue(WebUiConstants.HasWsp,
+                                    //        claimsIdentityOfAuthenticatedUser.Claims.Where(c => c.Value == CUWebinars.Business.Constants.ClaimTypes.UserHasWsp));
+                                    //}
                                     if (findAff != null)
                                     {
                                         //

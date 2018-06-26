@@ -1215,7 +1215,8 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             //initialize Date value
             webinarEditModel.LivePlusFive = webinarEditModel.Date.AddDays(7);
-
+            if (webinarEditModel.SeriesInfo == null)
+                webinarEditModel.SeriesInfo = "";
             var webinar = new Webinar
             {
                 Title = webinarEditModel.Title,
