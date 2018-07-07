@@ -2077,7 +2077,6 @@ namespace CUWebinars.Business.Services
             };
             try
             {
-
                 row.Discount = wspDiscount;
                 SaveOrderChanges(order, null, null);
 

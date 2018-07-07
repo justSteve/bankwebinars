@@ -1,5 +1,10 @@
 ﻿{
   "$schema": "http://schemastore.org/schemas/json/webjob-publish-settings.json",
   "webJobName": "LogMaintenance",
-  "runMode": "Continuous"
+  "runMode": "Scheduled",
+  "interval": 1,
+  "jobRecurrenceFrequency": "Hour",
+  "startTime": "01/01/2018 12:00am",
+  "endTime": "01/01/2028 12:00am"
+
 }

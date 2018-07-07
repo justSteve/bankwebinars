@@ -117,14 +117,14 @@ namespace LogMaintenance
                             }
                         }
                         getUnParsedLogs.CommandType = CommandType.Text;
-                        getUnParsedLogs.CommandText = "update dbo.Log4Net set Logger = Replace(Logger, \' _+ \', \'~\') WHERE Logger LIKE \'%|%\'";
+                        getUnParsedLogs.CommandText = "update dbo.Log4Net set Logger = Replace(Logger, \'|\', \'~\') WHERE Logger LIKE \'%|%\'";
                         getUnParsedLogs.ExecuteNonQuery();
 
                     }
                     catch (Exception ex)
                     {
-                        returnLable = "error on UploadLog4Net: " +  ex.Message;
-                        //throw;
+                        Console.Error.WriteLine("error on UploadLog4Net: " + ex.Message);
+                        throw;
                     }
                     return returnLable;
                 }
@@ -291,24 +291,34 @@ namespace LogMaintenance
                                     {
                                         foreach (var cookie in i)
                                         {
-                                            if (cookie.Length > 0 && cookie != "...")
+                                            try
                                             {
-                                                var name = cookie.Split('=')[0];
-                                                var value = cookie.Split('=')[1];
 
-                                                if (!uniqueCookie.ToString().Contains(name))
+                                                if (cookie.Length > 0 && cookie != "...")
                                                 {
-                                                    uniqueCookie.AppendLine(name);
-                                                }
-                                                if (name == "ASP.NET_SessionId")
-                                                    sessionId = value;
+                                                    var name = cookie.Split('=')[0];
+                                                    var value = cookie.Split('=')[1];
 
-                                                var insertCookie = InsertUserSessionCookies(name, value, Id);
-                                                if (insertCookie != "")
-                                                {
-                                                    returnLable.AppendLine("on inserting Cookie: " + insertCookie);
+                                                    if (!uniqueCookie.ToString().Contains(name))
+                                                    {
+                                                        uniqueCookie.AppendLine(name);
+                                                    }
+                                                    if (name == "ASP.NET_SessionId")
+                                                        sessionId = value;
+
+                                                    var insertCookie = InsertUserSessionCookies(name, value, Id);
+                                                    if (insertCookie != "")
+                                                    {
+                                                        returnLable.AppendLine("on inserting Cookie: " + insertCookie);
+                                                    }
                                                 }
                                             }
+                                            catch (Exception e)
+                                            {
+                                                Console.Error.WriteLine("InsertCookie" + e.Message);
+                                                ;
+                                            }
+
                                         }
                                     }
                                     updateSiteLog =
@@ -329,7 +339,7 @@ namespace LogMaintenance
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Console.Error.WriteLine(e.Message);
                         returnLable.AppendLine("on parsing: " + e.Message);
                     }
                 }
@@ -352,6 +362,7 @@ namespace LogMaintenance
                     }
                     catch (Exception ex)
                     {
+                        Console.Error.WriteLine(ex.Message);
                         returnLable.AppendLine("on inserting: " + ex.Message);
                     }
                 }
@@ -383,6 +394,7 @@ namespace LogMaintenance
             }
             catch (Exception e)
             {
+                Console.Error.WriteLine("InsertUserSessionCookies: " + e.Message);
                 returnLable = e.Message;
             }
             return returnLable;
@@ -412,6 +424,7 @@ namespace LogMaintenance
                     }
                     catch (Exception ex)
                     {
+                        Console.Error.WriteLine("InsertUserSessionRecord: " + ex.Message);
                         returnLable = ("on inserting: " + ex.Message);
                     }
                 }

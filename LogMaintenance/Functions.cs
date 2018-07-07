@@ -25,9 +25,9 @@ namespace LogMaintenance
         public static String MapUtcToHour;
         private static readonly ILogger _logger;
         public static string db =
-            "Driver={ODBC Driver 13 for SQL Server};Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=BW33;Uid=TTSOp@nt2j4x3hvq;Pwd=HXm88WIX;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;";
+            "Driver={ODBC Driver 13 for SQL Server};Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=BW33;Uid=TTSOp@nt2j4x3hvq;Pwd=HXm88WIX;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=0;";
         public static string dbNative =
-            "Server = tcp:nt2j4x3hvq.database.windows.net,1433; Database = BW33; User ID = TTSOp@nt2j4x3hvq; Password = HXm88WIX; Trusted_Connection = False; Encrypt = True; Connection Timeout = 30; ";
+            "Server=tcp:nt2j4x3hvq.database.windows.net,1433;Database=BW33;User ID=TTSOp@nt2j4x3hvq;Password=HXm88WIX;Trusted_Connection=False;Encrypt=True;Connection Timeout=5000; ";
 
 
 
@@ -36,39 +36,28 @@ namespace LogMaintenance
         {
             MapBase = "BankWebinars";
 
-            //GetLog4Net();
+            GetLog4Net();
 
             //GetIISLogsAll();
             DownloadIISLog();
 
-            //UploadIIS();
-            //while (true) // Loop indefinitely
-            //{
-            //    Console.WriteLine("Enter input:"); // Prompt
-            //    string line = Console.ReadLine(); // Get string from user
-            //    if (line == "exit") // Check string
-            //    {
-            //        break;
-            //    }
-            //    if (line == "log4net")
-            //        GetLog4Net();
-            //    if (line == "iis")
-            //        DownloadIISLog();
-            //    if (line == "upload")
-            //        Upload();
-            //}
 
         }
 
         private static void UploadLog4Net()
         {
-            var dataOperations = new DataOperations(dbNative);
-            var uploadLog4Net = dataOperations.UploadLog4Net();
-            var myTimeStamp = DateTime.Now.ToShortDateString() + "_"
-                              + DateTime.Now.ToShortTimeString();
+            try
+            {
+                var dataOperations = new DataOperations(dbNative);
+                dataOperations.UploadLog4Net();
+                Console.Out.WriteLine("Updated Log4NetParsed");
+            }
+            catch (Exception e)
+            {
 
-            var outputFile = @"d:\home\logfiles\" + MapBase + "\\UploadLog4Net_" + myTimeStamp.ToString().Replace(" / ", "_").Replace(":", "_") + ".txt";
-            File.WriteAllText(outputFile, uploadLog4Net, Encoding.ASCII);
+                Console.Error.WriteLine("Updated Log4NetParsed: " + e.Message);
+            }
+
         }
 
         private static void UploadIIS()
@@ -79,6 +68,11 @@ namespace LogMaintenance
                 + DateTime.Now.ToShortTimeString();
 
             var outputFile = @"d:\home\logfiles\processed\" + MapBase + "\\UploadIIS.txt";
+
+#if DEBUG
+            outputFile = @"C:\Users\steve\Desktop\logfiles\" + MapBase + "\\UploadIIS.txt";
+
+#endif
             File.WriteAllText(outputFile, updateIIS, Encoding.ASCII);
         }
 
@@ -110,47 +104,60 @@ namespace LogMaintenance
             if (thisHour.Hour < 10)
                 MapUtcToHour = "0" + thisHour.Hour.ToString();
 
-            SessionOptions sessionOptions = new SessionOptions();
-            Session session = new Session();
-            sessionOptions.Protocol = Protocol.Ftp;
-            sessionOptions.HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net";
-            sessionOptions.PortNumber = 21;
+            //            SessionOptions sessionOptions = new SessionOptions();
+            //            Session session = new Session();
+            //            sessionOptions.Protocol = Protocol.Ftp;
+            //            sessionOptions.HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net";
+            //            sessionOptions.PortNumber = 21;
 
-            if (MapBase == "BankWebinars")
-            {
-                sessionOptions.UserName = @"BankWebinars33\$BankWebinars33";
-                sessionOptions.Password = "4q4YMhgci87z8HRYq58Y5YrCvBZaexJGrgFNsTxwanLnaxbDlLnuTeTrSaAF";
-            }
+            //            if (MapBase == "BankWebinars")
+            //            {
+            //                sessionOptions.UserName = @"BankWebinars33\$BankWebinars33";
+            //                sessionOptions.Password = "4q4YMhgci87z8HRYq58Y5YrCvBZaexJGrgFNsTxwanLnaxbDlLnuTeTrSaAF";
+            //            }
 
-            if (MapBase == "CUWebinars")
-            {
-                sessionOptions.UserName = @"CUWebinars33\$CUWebinars33";
-                sessionOptions.Password = "nZvMRHXwuxkPwsygWmpfwwHiEWTak2Dpw6FXdef6sii1Pxo35i17mDzXNdpX";
-            }
+            //            if (MapBase == "CUWebinars")
+            //            {
+            //                sessionOptions.UserName = @"CUWebinars33\$CUWebinars33";
+            //                sessionOptions.Password = "nZvMRHXwuxkPwsygWmpfwwHiEWTak2Dpw6FXdef6sii1Pxo35i17mDzXNdpX";
+            //            }
 
-            if (MapBase == "ttsCCS")
-            {
-                sessionOptions.UserName = @"ttsCCS\$ttsCCS";
-                sessionOptions.Password = "1BBwKErM6pYYDgcxSKaESTNiGdp7iwN7yNBbXFCaDuKt1LwgaQfEhfCciPTH";
-            }
+            //            if (MapBase == "ttsCCS")
+            //            {
+            //                sessionOptions.UserName = @"ttsCCS\$ttsCCS";
+            //                sessionOptions.Password = "1BBwKErM6pYYDgcxSKaESTNiGdp7iwN7yNBbXFCaDuKt1LwgaQfEhfCciPTH";
+            //            }
 
-            if (MapBase == "DES33")
-            {
-                sessionOptions.UserName = @"DES33\$DES33";
-                sessionOptions.Password = "ihoFmRdWATPt5YYlFoHDSawWHhk1MkwAjWfgoc0Pl2idD9vtoBejJyxah2l8";
-            }
-            using (session)
-            {
-                // Connect
-                session.Open(sessionOptions);
-                string timeStamp = DateTime.Now.ToString("MM_dd_yy_h_mm");
-                session.MoveFile("/logfiles/log4netCSV.log", "/logfiles/log4netCSV." + timeStamp + ".log");
-                session.GetFiles("/logfiles/log4netCSV." + timeStamp + ".log", @"d:\home\logfiles\processed\" + MapBase + "\\*").Check();
-            }
+            //            if (MapBase == "DES33")
+            //            {
+            //                sessionOptions.UserName = @"DES33\$DES33";
+            //                sessionOptions.Password = "ihoFmRdWATPt5YYlFoHDSawWHhk1MkwAjWfgoc0Pl2idD9vtoBejJyxah2l8";
+            //            }
+            //            using (session)
+            //            {
+            //                // Connect
+            //                session.Open(sessionOptions);
+            //                string timeStamp = DateTime.Now.ToString("MM_dd_yy_h_mm");
+            //                session.MoveFile("/logfiles/log4netCSV.log", "/logfiles/log4netCSV." + timeStamp + ".log");
 
-            string[] files = Directory.GetFiles("d:\\home\\logfiles\\processed\\" + MapBase, "*.log",
+
+            //#if DEBUG
+            //                session.GetFiles("/logfiles/log4netCSV." + timeStamp + ".log", @"C:\Users\steve\Desktop\logfiles\" + MapBase + "\\processed\\*").Check();
+            //#else
+            //                session.GetFiles(" / logfiles/log4netCSV." + timeStamp + ".log", @"d:\home\logfiles\processed\" + MapBase + "\\*").Check();
+            //#endif
+
+            //            }
+
+            string[] files = new string[0];
+
+#if DEBUG
+            files = Directory.GetFiles("C:\\Users\\steve\\Desktop\\logfiles\\" + MapBase, "*.log",
                 SearchOption.AllDirectories);
-
+#else
+            files = Directory.GetFiles("d:\\home\\logfiles\\processed\\" + MapBase, "*.log",
+                  SearchOption.AllDirectories);
+#endif
             // Display all the files.
             foreach (string file in files)
             {
@@ -165,10 +172,19 @@ namespace LogMaintenance
                 Regex regex = new Regex(pattern);
                 string result = regex.Replace(str, substitution);
                 var outputFile = @"d:\home\logfiles\processed\" + MapBase + "\\output.txt";
+
+#if DEBUG
+                outputFile = "C:\\Users\\steve\\Desktop\\logfiles\\" + MapBase + "\\output.txt";
+#endif
+
                 File.WriteAllText(outputFile, "DateTime,Thread,Level,Logger,Message,Exception\r\n", Encoding.ASCII);
                 File.WriteAllText(outputFile, result, Encoding.ASCII);
-                var lpOutput = RunCmd("logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception  into Log4Net FROM '" + outputFile + "\"' -i:CSV -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"");
-                //File.Delete(outputFile);
+                var lpOutput = "";
+#if DEBUG
+                lpOutput = RunCmd("logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception  into Log4Net FROM '" + outputFile + "\"' -i:CSV -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"");
+#else
+                lpOutput = RunCmd("d:\\home\\logfiles\\logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception  into Log4Net FROM '" + outputFile + "\"' -i:CSV -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"");
+#endif               //File.Delete(outputFile);
 
                 if (lpOutput.ToLower().Contains("aborted"))
                 {
@@ -255,10 +271,22 @@ namespace LogMaintenance
 
             var myTimeStamp = DateTime.Now.ToShortTimeString();
             var outputFile = @"d:\home\logfiles\processed\" + MapBase + "\\outputIIS.log";
+
+#if DEBUG
+            outputFile = "C:\\Users\\steve\\Desktop\\logfiles\\" + MapBase + "\\outputIIS.log";
+#endif
+
             File.WriteAllText(outputFile, text, Encoding.ASCII);
 
-            var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken],1  into SiteLog FROM '" +
+            var lpOutput = "";
+#if DEBUG
+            lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken],1  into SiteLog FROM '" +
                                       outputFile + "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
+#else
+            lpOutput = RunCmd("d:\\home\\logfiles\\logparser  \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken],1  into SiteLog FROM '" +
+                   outputFile + "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
+
+#endif
             UploadIIS();
             Debug.WriteLine(lpOutput);
         }
@@ -271,9 +299,18 @@ namespace LogMaintenance
             // Display all the files.
             foreach (string file in files)
             {
-                var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
+                var lpOutput = "";
+
+#if DEBUG
+                lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
                                       file +
                                       "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
+#else
+                lpOutput = RunCmd("d:\\home\\logfiles\\logparser  \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
+                       file +
+                       "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
+
+#endif
                 Debug.WriteLine(lpOutput);
 
                 File.Move(file, file.ToString().Replace(".log", ".done"));
@@ -290,9 +327,16 @@ namespace LogMaintenance
             // Display all the files.
             foreach (string file in files)
             {
-                var lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
-                                      file +
-                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
+
+                var lpOutput = "";
+#if DEBUG
+                lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
+                                      file + "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
+#else
+                lpOutput = RunCmd("d:\\home\\logfiles\\logparser  \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
+                       file + "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
+
+#endif
                 Debug.WriteLine(lpOutput);
 
                 File.Move(file, file.ToString().Replace(".log", ".done"));

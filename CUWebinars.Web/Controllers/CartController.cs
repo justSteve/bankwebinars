@@ -2710,11 +2710,16 @@ namespace CUWebinars.Web.Controllers
                 }
                 var order = _cartControllerOrchestrator.LoadOrder(Convert.ToInt32(payTraceModel.Orderid));
 
-                if (order == null) throw new ArgumentNullException("orderAtPaytracePostback");
+                if (order == null)
+                {
+                    _logger.Fatal("orderAtPaytracePostback");
+                    throw new ArgumentNullException("orderAtPaytracePostback");
+                }
                 order.AdminComments = order.AdminComments.Replace("\"PendingPaytraceResponse\"", JsonConvert.SerializeObject(payTraceModel));
 
                 if (payTraceModel.Appmsg.StartsWith("Your TEST transaction was successfully processed.") ||
-                    payTraceModel.Appmsg.Contains("Approv") || payTraceModel.CartType.ToLower() == "check")
+                    payTraceModel.Appmsg.Contains("Approv") 
+                    || payTraceModel.CartType.ToLower() == "check")
                 {
 
                     bool multi = order.AdminComments != null
@@ -2722,7 +2727,11 @@ namespace CUWebinars.Web.Controllers
 
                     var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 
-                    if (row == null) throw new ArgumentNullException("rowAtPaytracePostback");
+                    if (row == null)
+                    {
+                        _logger.Fatal("rowAtPaytracePostback is null");
+                        throw new ArgumentNullException("rowAtPaytracePostback");
+                    }
 
                     var createdSeriesOrders = "";
 
