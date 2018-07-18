@@ -221,7 +221,7 @@ namespace LogMaintenance
                     }
                     catch (Exception ex)
                     {
-                        throw;
+                        Console.Error.WriteLine("Error inserting row: " + dateTime + " ex: " + ex.Message);
                     }
                     return returnLable;
 
@@ -244,7 +244,10 @@ namespace LogMaintenance
                     getUnParsedLogs.Connection = sqlConnection;
                     getUnParsedLogs.CommandType = CommandType.Text;
                     getUnParsedLogs.CommandText =
-                        " SELECT * FROM dbo.SiteLog WHERE [s-Sitename] = 'BANKWEBINARS33'  ";
+                        "  SELECT * FROM dbo.SiteLog WHERE [s-Sitename] != 'parsed'  " +
+                        "AND [s-Sitename] NOT LIKE '~%' " +
+                        "AND [cs-Uri-Query] NOT LIKE '/bundles%' " +
+                        "AND [cs-Uri-Query] NOT LIKE '/Content%'";
                     try
                     {
                         using (var reader = getUnParsedLogs.ExecuteReader())
@@ -293,7 +296,6 @@ namespace LogMaintenance
                                         {
                                             try
                                             {
-
                                                 if (cookie.Length > 0 && cookie != "...")
                                                 {
                                                     var name = cookie.Split('=')[0];
@@ -315,7 +317,7 @@ namespace LogMaintenance
                                             }
                                             catch (Exception e)
                                             {
-                                                Console.Error.WriteLine("InsertCookie" + e.Message);
+                                                Console.Error.WriteLine("InsertCookie " + e.Message);
                                                 ;
                                             }
 
@@ -339,7 +341,7 @@ namespace LogMaintenance
                     }
                     catch (Exception e)
                     {
-                        Console.Error.WriteLine(e.Message);
+                        Console.Error.WriteLine("error: " + updateSiteLog + " msg: " + e.Message);
                         returnLable.AppendLine("on parsing: " + e.Message);
                     }
                 }
@@ -350,7 +352,7 @@ namespace LogMaintenance
                     insertParsedLogs.Connection = sqlConnection;
                     insertParsedLogs.CommandType = CommandType.Text;
                     insertParsedLogs.CommandText =
-                        " update dbo.SiteLog set [s-Sitename] = 'parsed' ";
+                        " update dbo.SiteLog set [s-Sitename] = 'parsed' where [s-Sitename] != 'parsed'  ";
 
                     try
                     {

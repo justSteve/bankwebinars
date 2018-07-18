@@ -2243,6 +2243,7 @@
     <Content Include="Views\Admin\MailChimpMigrateUsers.cshtml" />
     <Content Include="Views\Admin\MailChimpUnsubUsers.cshtml" />
     <Content Include="Views\Admin\MailChimpCountUsers.cshtml" />
+    <Content Include="Views\Account\RecordingsAccessed.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

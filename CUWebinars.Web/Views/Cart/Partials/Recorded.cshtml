@@ -91,16 +91,26 @@
                             </div>
                         </div>
                         <div class="span3 offset1 " id="orderSum-@row.idWebinar">
-                            
+
                             @Html.Partial("~/Views/Shared/Partials/_OrderSumUser3.cshtml", recorded)
                         </div>
                     </div>
 
-                    <div class="span2 pull-right">
-                        <form method="GET" action="/Account/MyCertificate">
-                            <input type="hidden" name="orderID" value="@row.idOrder" />
-                            <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success pull-right btn-mini pull-left" />
-                        </form>
+                    <div style="margin-top: 0" class="span2 pull-right">
+                        <div>
+                            <form method="GET" action="/Account/MyCertificate">
+                                <input type="hidden" name="orderID" value="@row.idOrder" />
+                                <input type="submit" value="My Certificate" id="ShowCertificate" class="btn btn-success pull-right btn-mini pull-left" />
+                            </form>
+                        </div>
+                        @*<div>
+                            <p style="margin-top: 10px;">&nbsp;</p>
+                                <form method="GET" action="/Account/RecordingsAccessed">
+                                    <input type="hidden" name="idOrder" value="@row.idOrder" />
+                                    <input type="submit" value="List Of Views" id="ShowRecordingAccessed" class="btn btn-success pull-right btn-mini pull-left" />
+                                </form>
+                            
+                        </div>*@
                     </div>
                     <div class="container-fluid">
                         @if (showMedia)

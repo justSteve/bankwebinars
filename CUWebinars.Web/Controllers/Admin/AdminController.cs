@@ -3127,7 +3127,7 @@ namespace CUWebinars.Web.Controllers.Admin
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
 
-                var oldSegment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
+                //var oldSegment = masterSegment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
 
                 IEnumerable<MailChimp.Net.Models.Member> members = new List<Member>();
 
@@ -3139,7 +3139,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     sb.Clear();
                     sb.Append("UpdateMailChimpUser starting: " + affiliate.ttsDomain.ToLower() + "<br>");
-                    sb.Append("Original segment user count: " + oldSegment.MemberCount + "<br>");
+                    //sb.Append("Original segment user count: " + oldSegment.MemberCount + "<br>");
 
                     var mcList = lists.FirstOrDefault(l => l.Name == listName);
                     if (mcList == null)
@@ -4543,6 +4543,9 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         foreach (var orderId in listOrdersPostEvent.Split(',').ToArray())
                         {
+                            if (TenantConstant == Convert.ToInt32(orderId))
+                                continue;
+                            
                             InvoiceExceptions invoiceExceptions = new InvoiceExceptions();
                             var order = _orderManagementService.GetOrderById(Convert.ToInt32(orderId));
                             invoiceExceptions.PostEvent = order.idOrder;
@@ -4566,6 +4569,9 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         foreach (var orderId in listOrdersAdjusted.Split(',').ToArray())
                         {
+                            if (TenantConstant == Convert.ToInt32(orderId))
+                                continue;
+
                             InvoiceExceptions invoiceExceptions = new InvoiceExceptions();
 
                             var order = _orderManagementService.GetOrderById(Convert.ToInt32(orderId));

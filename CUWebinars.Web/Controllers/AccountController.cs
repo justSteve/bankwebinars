@@ -7,6 +7,7 @@ using System.Data.Entity.Validation;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Web;
@@ -1106,6 +1107,123 @@ namespace CUWebinars.Web.Controllers
             }
 
             return editModel;
+        }
+
+
+        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult RecordingsAccessed(int idOrder)
+        {
+            var order = _orderManagementService.GetOrderById(idOrder);
+
+            if (order == null) throw new NullReferenceException("order");
+            var user = _accountControllerOrchestrator.GetWebUserById(order.idUser);
+            if (user == null) throw new NullReferenceException("user");
+            var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            if (row == null) throw new NullReferenceException("orderRow");
+
+            var userAccount = _membershipService.GetUserAccountByEmail(_globalConfig.Tenant, order.BillingEmail);
+
+            if (ReferenceEquals(userAccount, null))
+                return PartialView("~/Views/Admin/Partials/_ServerError.cshtml",
+                    string.Format("There's no User in the system with the email {0}", order.BillingEmail)
+                );
+
+            var claims = userAccount.Claims
+                .Where(c => c.Type == ClaimTypes.PostEventMaterialsWereAccessed &&
+                c.Value.Contains(order.idOrder.ToString())).ToArray();
+
+            var model = new List<PostEventMaterialsWereAccessed>();
+
+            foreach (var claim in claims)
+            {
+                var log = JsonConvert.DeserializeObject<PostEventMaterialsWereAccessed>(claim.Value);
+                model.Add(log);
+            }
+
+
+            return View("RecordingsAccessed", model);
+        }
+        [System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.AllowAnonymous]
+        public ActionResult GetPostEventMaterialsWereAccessed(int idOrder)
+        {
+            var order = _orderManagementService.GetOrderById(idOrder);
+
+            if (order == null) throw new NullReferenceException("order");
+            var user = _accountControllerOrchestrator.GetWebUserById(order.idUser);
+            if (user == null) throw new NullReferenceException("user");
+            //var row = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
+            //if (row == null) throw new NullReferenceException("orderRow");
+
+            dynamic jsonObject = "idOrder:" + idOrder;
+            try
+            {
+                if (order.UserComments == null) order.UserComments = "";
+
+                if (order.UserComments.Contains("PostEventMaterialsWereAccessed"))
+                {
+                    var isValid = JObject.Parse(order.UserComments);
+
+                    var accesses = isValid.SelectToken("PostEventMaterialsWereAccessed");
+                    List<PostEventMaterialsWereAccessed> listOfAccesses = new List<PostEventMaterialsWereAccessed>();
+
+
+                    var isAccessesValid =
+                        JsonConvert.DeserializeObject<List<PostEventMaterialsWereAccessed>>(accesses.ToString());
+                    var error = false;
+                    foreach (var access in isAccessesValid)
+                    {
+                        try
+                        {
+                            var addToClaim = new PostEventMaterialsWereAccessed
+                            {
+                                DateAdded = access.DateAdded.Split('T')[0],
+                                UserEmail = access.UserEmail,
+                                OnDemandCode = access.OnDemandCode
+                            };
+
+                            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+                            var InsertViewTrackerClaim = dataOperations.InsertViewTrackerClaim(JsonConvert.SerializeObject(addToClaim), user.email);
+
+                            var results = Json(new { Result = WebUiConstants.Success });
+                            if (InsertViewTrackerClaim.Contains("error"))
+                                results = Json(new { Result = WebUiConstants.Fail });
+
+                            //_membershipService.AddClaim(
+                            //    _membershipService.GetUserAccountByWebUserId(_globalConfig.Tenant, order.idUser),
+                            //    ClaimTypes.PostEventMaterialsWereAccessed, JsonConvert.SerializeObject(addToClaim));
+                        }
+                        catch (Exception e)
+                        {
+                            error = true;
+                            _logger.FatalException("FailedAddingClaim: " + access.OnDemandCode, e);
+                        }
+
+                    }
+                    if (!error)
+                    {
+                        order.UserComments =
+                            JsonHelpers.RemoveJObject(order.UserComments, "PostEventMaterialsWereAccessed");
+                        _orderManagementService.SaveOrderChanges(order, null, null);
+
+                        return Content(jsonObject);
+                    }
+                    else
+                    {
+
+                        return Content("Error: " + jsonObject);
+                    }
+                }
+
+                return null;
+
+            }
+            catch (Exception e)
+            {
+                jsonObject = "Failed: " + idOrder + " " + e.Message;
+                return Content(jsonObject);
+            }
         }
 
         private string GetAdminComments(Order order)

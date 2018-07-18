@@ -2304,11 +2304,11 @@ namespace CUWebinars.Business.Core
                                     Email_Address = reader.GetString(2),
                                     First_Name = reader.SafeGetString(0),
                                     Last_Name = reader.SafeGetString(1),
-                                    Source = reader.SafeGetString(3),
+                                    //Source = reader.SafeGetString(3),
                                     Welcome_Sequence_Complete_ = reader.SafeGetString(4),
-                                    Purchased = reader.SafeGetString(5),
-                                    Mailing_List = reader.SafeGetString(7),
-                                    Keep_Me_Informed_About_ = reader.SafeGetString(8)
+                                    Purchased = reader.SafeGetString(4),
+                                    Mailing_List = reader.SafeGetString(3),
+                                    Keep_Me_Informed_About_ = reader.SafeGetString(5)
 
                                 };
 
@@ -2391,6 +2391,55 @@ namespace CUWebinars.Business.Core
             }
 
 
+        }
+
+        public string InsertViewTrackerClaim(string addToClaim, string userEmail)
+        {
+            int numRows = 0;
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var insertViewTrackerClaim = new SqlCommand())
+                {
+                    try
+                    {
+
+                        var idParam = new SqlParameter
+                        {
+                            DbType = DbType.String,
+                            ParameterName = "@value",
+                            Value = addToClaim
+                        };
+                        var idMCParam = new SqlParameter
+                        {
+                            DbType = DbType.String,
+                            ParameterName = "@email",
+                            Value = userEmail
+                        };
+
+                        insertViewTrackerClaim.Connection = sqlConnection;
+                        insertViewTrackerClaim.CommandType = CommandType.Text;
+                        insertViewTrackerClaim.Parameters.Add(idParam);
+                        insertViewTrackerClaim.Parameters.Add(idMCParam);
+                        insertViewTrackerClaim.CommandText =
+                            "INSERT dbo.UserClaims ( ParentKey, Type, Value ) VALUES " +
+                            " (   (SELECT [Key] FROM dbo.UserAccounts " +
+                            " WHERE Email = @email),   N'http://ttstrain.com/ws/2014/01/identity/claims/PostEventMaterialsWereAccessed', @value  )";
+
+                        numRows = insertViewTrackerClaim.ExecuteNonQuery();
+
+                    }
+                    catch (Exception e)
+                    {
+                        LogError("InsertViewTrackerClaim", "InsertViewTrackerClaim: " + insertViewTrackerClaim.CommandText +
+                                                   " Exception.Message: " + e.Message);
+                        return "error: " + e.Message;
+                    }
+                }
+            }
+            return numRows.ToString();
         }
     }
 

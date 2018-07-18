@@ -289,24 +289,22 @@ namespace CUWebinars.Web.Core.Orchestrators
             var order = _orderManagementService.GetOrderById(id);
             if (order == null) throw new NullReferenceException("order");
 
-            var fieldsToComments = new PostEventMaterialsWereAccessed
+            var addToClaim = new PostEventMaterialsWereAccessed
             {
-                DateAdded = TtsConfig.UtcNowAsCts,
+                DateAdded = TtsConfig.UtcNowAsCts.ToShortDateString(),
                 OnDemandCode = identifyModel.OnDemandCode,
-                UserEmail = identifyModel.Email,
-                UserName = identifyModel.FullName,
-                UserAudit = _appHelper.GetUserAuditInfo()
+                UserEmail = identifyModel.Email
             };
 
             try
             {
-
-                string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
-                   order.UserComments,
-                   JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
-                   fieldsToComments
-                   );
-                order.UserComments = updatedUserComments;
+                _membershipService.AddClaim(_membershipService.GetUserAccountByWebUserId(_globalConfig.Tenant, order.idUser), ClaimTypes.PostEventMaterialsWereAccessed, JsonConvert.SerializeObject(addToClaim));
+                //string updatedUserComments = JsonHelpers.AddObjectToJsonArray(
+                //   order.UserComments,
+                //   JsonPropertyKeys.PostEventMaterialsWereAccessedKey,
+                //   fieldsToComments
+                //   );
+                //order.UserComments = updatedUserComments;
 
             }
             catch (Exception ex)

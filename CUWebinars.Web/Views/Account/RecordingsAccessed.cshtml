@@ -1,0 +1,46 @@
+﻿@using System.Configuration
+@using System.Linq
+@using System.Web.Mvc.Html
+@using CUWebinars.Business.Models
+@using CUWebinars.Web.Core
+@using CUWebinars.Web.Models.JsonModels
+
+@model List<PostEventMaterialsWereAccessed>
+    
+<div class="container">
+    <p style="font-size: larger">
+
+        <div>
+            <b>
+                The following is a list of users who have visited the page with the event's recording & handouts:
+            </b>
+        </div>
+
+        <table   width="50%">
+            <tr><td>&nbsp;</td><td>Email</td><td>Date Accessed</td></tr>
+            @{var i = 0;
+                foreach (var log in @Model)
+                {
+                    i++;
+                    <tr>
+                        <td style="border-spacing: 1px; border-color: gray; border-style: solid;">
+                            <div>
+                                @i:
+                            </div>
+                        </td>
+                        <td style="border-spacing: 1px; border-color: gray; border-style: solid;">
+                            <div>
+                                @log.UserEmail
+                            </div>
+                        </td>
+                        <td style="border-spacing: 1px; border-color: gray; border-style: solid;">
+                            <div>
+                                @log.DateAdded.Split('T')[0]
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </p>
+</div>

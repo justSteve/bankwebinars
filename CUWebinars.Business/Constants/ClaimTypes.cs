@@ -18,6 +18,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string ShouldSeeCopyOfConnectionInfo = "http://ttstrain.com/ws/2014/01/identity/claims/ShouldSeeCopyOfConnectionInfo";
         public static readonly string ShouldNotSeeCopyOfConnectionInfo = "http://ttstrain.com/ws/2014/01/identity/claims/ShouldNotSeeCopyOfConnectionInfo";
         public static readonly string OrderNote = "http://ttstrain.com/ws/2014/01/identity/claims/OrderNote";
+        public static readonly string PostEventMaterialsWereAccessed = "http://ttstrain.com/ws/2014/01/identity/claims/PostEventMaterialsWereAccessed";
         public static readonly string CommentAdmin = "http://ttstrain.com/ws/2014/01/identity/claims/CommentAdmin";
         public static readonly string CommentAff = "http://ttstrain.com/ws/2014/01/identity/claims/CommentAff";
         public static readonly string CommentUser = "http://ttstrain.com/ws/2014/01/identity/claims/CommentUser";

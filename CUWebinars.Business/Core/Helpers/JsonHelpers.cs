@@ -280,6 +280,7 @@ namespace CUWebinars.Business.Core.Helpers
             JObject jPropHost;
             JObject jPropRemove;
             // convert object to a json object
+            string objToReturn = "";
             try
             {
                 jPropHost = JObject.Parse(hostObject);
@@ -299,7 +300,15 @@ namespace CUWebinars.Business.Core.Helpers
             }
             catch (Exception ex)
             {
-                return "failed to parse objToRemove: " + ex;
+
+                foreach (var item in jPropHost)
+                {
+                    if (item.Key != objToRemove)
+                    {
+                        objToReturn += item;
+                    }
+                }
+                return objToReturn;
             }
 
             // 1st, see if valid json is stored at all

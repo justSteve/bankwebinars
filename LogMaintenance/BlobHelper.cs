@@ -169,6 +169,7 @@ namespace LogMaintenance
 
         public static object FindLogFile(string containerName, string path)
         {
+            Console.WriteLine("Finding File: " + containerName + "|" + path );
             var blobContainer = GetBlobContainer(containerName);
             //if (!BlobExistsOnCloud(containerName, path, blobName))
             //    return null;
@@ -177,9 +178,12 @@ namespace LogMaintenance
             List<IListBlobItem> blobs = blobDirectory.ListBlobs().ToList();
 
             CloudBlockBlob blob = null;
+            Console.WriteLine(blobs.Count);
             foreach (var item in blobs)
             {
                 blob = (CloudBlockBlob)item;
+                Console.WriteLine("Counting: " + blob.Name);
+                Console.WriteLine("Counting: " + blob.Uri.AbsolutePath);
             }
 
             return blob.Uri.AbsolutePath.Replace(blob.Container.Uri.AbsolutePath + "/", "").Replace("%20", " ");

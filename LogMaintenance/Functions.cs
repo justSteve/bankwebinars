@@ -34,18 +34,18 @@ namespace LogMaintenance
 
         public static void RunLogMaint()
         {
+            Console.Out.WriteLine("*********************BEGINNING RUN*******************");
             MapBase = "BankWebinars";
 
-            GetLog4Net();
+            //GetLog4Net();
 
-            //GetIISLogsAll();
+            GetIISLogsAll();
             DownloadIISLog();
-
-
         }
 
         private static void UploadLog4Net()
         {
+            Console.Out.WriteLine("********************* UploadLog4Net*******************");
             try
             {
                 var dataOperations = new DataOperations(dbNative);
@@ -62,6 +62,8 @@ namespace LogMaintenance
 
         private static void UploadIIS()
         {
+            Console.Out.WriteLine("********************* UploadIIS*******************");
+
             var dataOperations = new DataOperations(dbNative);
             var updateIIS = dataOperations.UploadIIS();
             var myTimeStamp = DateTime.Now.ToShortDateString() + "_"
@@ -76,21 +78,6 @@ namespace LogMaintenance
             File.WriteAllText(outputFile, updateIIS, Encoding.ASCII);
         }
 
-
-        static long CountLinesInFile(string f)
-        {
-            long count = 0;
-            using (StreamReader r = new StreamReader(f))
-            {
-                string line;
-                while ((line = r.ReadLine()) != null)
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
-
         private static void GetLog4Net()
         {
             DateTime thisHour = DateTime.UtcNow.AddHours(-1);
@@ -98,56 +85,60 @@ namespace LogMaintenance
             MapUtcToMonth = thisHour.Month.ToString();
             if (thisHour.Month < 10)
                 MapUtcToMonth = "0" + MapUtcToMonth;
-
+Console.Out.WriteLine("********************* GetLog4Net*******************");
+Console.Out.WriteLine("********************* " + thisHour.Date + " " + thisHour.Hour + " " + thisHour.Minute + "*******************");
+            
             MapUtcToDay = thisHour.Date.ToString("dd");
             MapUtcToHour = thisHour.Hour.ToString();
             if (thisHour.Hour < 10)
                 MapUtcToHour = "0" + thisHour.Hour.ToString();
 
-            //            SessionOptions sessionOptions = new SessionOptions();
-            //            Session session = new Session();
-            //            sessionOptions.Protocol = Protocol.Ftp;
-            //            sessionOptions.HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net";
-            //            sessionOptions.PortNumber = 21;
+            SessionOptions sessionOptions = new SessionOptions();
+            Session session = new Session();
+            sessionOptions.Protocol = Protocol.Ftp;
+            sessionOptions.HostName = "waws-prod-ch1-005.ftp.azurewebsites.windows.net";
+            sessionOptions.PortNumber = 21;
 
-            //            if (MapBase == "BankWebinars")
-            //            {
-            //                sessionOptions.UserName = @"BankWebinars33\$BankWebinars33";
-            //                sessionOptions.Password = "4q4YMhgci87z8HRYq58Y5YrCvBZaexJGrgFNsTxwanLnaxbDlLnuTeTrSaAF";
-            //            }
+            if (MapBase == "BankWebinars")
+            {
+                sessionOptions.UserName = @"BankWebinars33\$BankWebinars33";
+                sessionOptions.Password = "4q4YMhgci87z8HRYq58Y5YrCvBZaexJGrgFNsTxwanLnaxbDlLnuTeTrSaAF";
+            }
 
-            //            if (MapBase == "CUWebinars")
-            //            {
-            //                sessionOptions.UserName = @"CUWebinars33\$CUWebinars33";
-            //                sessionOptions.Password = "nZvMRHXwuxkPwsygWmpfwwHiEWTak2Dpw6FXdef6sii1Pxo35i17mDzXNdpX";
-            //            }
+            if (MapBase == "CUWebinars")
+            {
+                sessionOptions.UserName = @"CUWebinars33\$CUWebinars33";
+                sessionOptions.Password = "nZvMRHXwuxkPwsygWmpfwwHiEWTak2Dpw6FXdef6sii1Pxo35i17mDzXNdpX";
+            }
 
-            //            if (MapBase == "ttsCCS")
-            //            {
-            //                sessionOptions.UserName = @"ttsCCS\$ttsCCS";
-            //                sessionOptions.Password = "1BBwKErM6pYYDgcxSKaESTNiGdp7iwN7yNBbXFCaDuKt1LwgaQfEhfCciPTH";
-            //            }
+            if (MapBase == "ttsCCS")
+            {
+                sessionOptions.UserName = @"ttsCCS\$ttsCCS";
+                sessionOptions.Password = "1BBwKErM6pYYDgcxSKaESTNiGdp7iwN7yNBbXFCaDuKt1LwgaQfEhfCciPTH";
+            }
 
-            //            if (MapBase == "DES33")
-            //            {
-            //                sessionOptions.UserName = @"DES33\$DES33";
-            //                sessionOptions.Password = "ihoFmRdWATPt5YYlFoHDSawWHhk1MkwAjWfgoc0Pl2idD9vtoBejJyxah2l8";
-            //            }
-            //            using (session)
-            //            {
-            //                // Connect
-            //                session.Open(sessionOptions);
-            //                string timeStamp = DateTime.Now.ToString("MM_dd_yy_h_mm");
-            //                session.MoveFile("/logfiles/log4netCSV.log", "/logfiles/log4netCSV." + timeStamp + ".log");
+            if (MapBase == "DES33")
+            {
+                sessionOptions.UserName = @"DES33\$DES33";
+                sessionOptions.Password = "ihoFmRdWATPt5YYlFoHDSawWHhk1MkwAjWfgoc0Pl2idD9vtoBejJyxah2l8";
+            }
+            using (session)
+            {
+                // Connect
+                session.Open(sessionOptions);
+                string timeStamp = DateTime.Now.ToString("MM_dd_yy_HH_mm");
+                Console.Out.WriteLine("Moving: " + timeStamp);
 
+                session.MoveFile("/logfiles/log4netCSV.log", "/logfiles/log4netCSV." + timeStamp + ".log");
+                Console.Out.WriteLine("Moved");
 
-            //#if DEBUG
-            //                session.GetFiles("/logfiles/log4netCSV." + timeStamp + ".log", @"C:\Users\steve\Desktop\logfiles\" + MapBase + "\\processed\\*").Check();
-            //#else
-            //                session.GetFiles(" / logfiles/log4netCSV." + timeStamp + ".log", @"d:\home\logfiles\processed\" + MapBase + "\\*").Check();
-            //#endif
+#if DEBUG
+                session.GetFiles("/logfiles/log4netCSV." + timeStamp + ".log", @"C:\Users\steve\Desktop\logfiles\" + MapBase + "\\processed\\*").Check();
+#else
+                session.GetFiles("/logfiles/log4netCSV." + timeStamp + ".log", @"d:\home\logfiles\processed\").Check();
+#endif
 
-            //            }
+            }
 
             string[] files = new string[0];
 
@@ -155,7 +146,7 @@ namespace LogMaintenance
             files = Directory.GetFiles("C:\\Users\\steve\\Desktop\\logfiles\\" + MapBase, "*.log",
                 SearchOption.AllDirectories);
 #else
-            files = Directory.GetFiles("d:\\home\\logfiles\\processed\\" + MapBase, "*.log",
+            files = Directory.GetFiles("d:\\home\\logfiles\\processed\\", "*.log",
                   SearchOption.AllDirectories);
 #endif
             // Display all the files.
@@ -166,17 +157,19 @@ namespace LogMaintenance
                 str += File.ReadAllText(file, Encoding.ASCII);
 
 
-                string pattern = @"(?m)\r?\n^(?!""2018)";
+                string pattern = @"(?m)\r?\n^(?!""201)";
                 string substitution = @"";
 
                 Regex regex = new Regex(pattern);
                 string result = regex.Replace(str, substitution);
                 var outputFile = @"d:\home\logfiles\processed\" + MapBase + "\\output.txt";
 
+
 #if DEBUG
                 outputFile = "C:\\Users\\steve\\Desktop\\logfiles\\" + MapBase + "\\output.txt";
 #endif
 
+                File.Delete(outputFile);
                 File.WriteAllText(outputFile, "DateTime,Thread,Level,Logger,Message,Exception\r\n", Encoding.ASCII);
                 File.WriteAllText(outputFile, result, Encoding.ASCII);
                 var lpOutput = "";
@@ -184,22 +177,25 @@ namespace LogMaintenance
                 lpOutput = RunCmd("logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception  into Log4Net FROM '" + outputFile + "\"' -i:CSV -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"");
 #else
                 lpOutput = RunCmd("d:\\home\\logfiles\\logparser \"SELECT DateTime,Thread,Level,Logger,Message,Exception  into Log4Net FROM '" + outputFile + "\"' -i:CSV -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"");
-#endif               //File.Delete(outputFile);
-
+#endif               //
+                Console.Out.WriteLine("LogParser output: " + lpOutput);
                 if (lpOutput.ToLower().Contains("aborted"))
                 {
                     var a = 1;
                 }
+                var fileToDelete = file.ToString().Replace(".log", ".done");
+
+                File.Delete(fileToDelete);
+                Console.Out.WriteLine("Moving file: " + file);
                 File.Move(file, file.ToString().Replace(".log", ".done"));
 
-                Debug.WriteLine(lpOutput);
                 UploadLog4Net();
             }
         }
 
         private static void DownloadIISLog()
         {
-
+            Console.Out.WriteLine("********************* DownloadIISLog*******************");
             DateTime thisHour = DateTime.UtcNow.AddHours(-1);
             MapUtcToYear = thisHour.Year.ToString();
             MapUtcToMonth = thisHour.Month.ToString();
@@ -209,7 +205,7 @@ namespace LogMaintenance
             MapUtcToDay = thisHour.Date.ToString("dd");
 
             //subtract an hour to prevent downloading partial logs
-            MapUtcToHour = thisHour.AddHours(-1).Hour.ToString();
+            MapUtcToHour = thisHour.Hour.ToString();
             if (thisHour.Hour < 10)
                 MapUtcToHour = "0" + thisHour.Hour.ToString();
 
@@ -268,14 +264,16 @@ namespace LogMaintenance
 
         private static void GetIISLog(string text)
         {
-
+            Console.Out.WriteLine("********************* GetIISLog*******************");
             var myTimeStamp = DateTime.Now.ToShortTimeString();
             var outputFile = @"d:\home\logfiles\processed\" + MapBase + "\\outputIIS.log";
+            Console.Out.WriteLine("Deleting: " + outputFile);
 
 #if DEBUG
             outputFile = "C:\\Users\\steve\\Desktop\\logfiles\\" + MapBase + "\\outputIIS.log";
 #endif
-
+             File.Delete(outputFile);
+            Console.Out.WriteLine("Deleted: " + outputFile);
             File.WriteAllText(outputFile, text, Encoding.ASCII);
 
             var lpOutput = "";
@@ -287,12 +285,12 @@ namespace LogMaintenance
                    outputFile + "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
 
 #endif
-            UploadIIS();
             Debug.WriteLine(lpOutput);
+            UploadIIS();
         }
         private static void GetIISLogsAll()
         {
-            string[] files = Directory.GetFiles("C:\\Users\\steve\\Desktop\\logfiles\\BANKWEBINARS33\\2018\\03\\",
+            string[] files = Directory.GetFiles("C:\\Users\\steve\\Desktop\\logfiles\\BANKWEBINARS33\\2018\\07\\",
                 "*.log",
                 SearchOption.AllDirectories);
 
@@ -302,11 +300,13 @@ namespace LogMaintenance
                 var lpOutput = "";
 
 #if DEBUG
-                lpOutput = RunCmd("logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
-                                      file +
-                                      "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
+                lpOutput = RunCmd(
+                    "logparser \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
+                    file +
+                    "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
 #else
-                lpOutput = RunCmd("d:\\home\\logfiles\\logparser  \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
+                lpOutput =
+RunCmd("d:\\home\\logfiles\\logparser  \"select TO_TIMESTAMP(date, time), [time] ,[s-Sitename] ,[cs-Method] ,[cs-Uri-Stem] ,[cs-Uri-Query] ,[s-Port] ,[cs-Username] ,[c-Ip] ,[cs(User-Agent)] ,[cs(Cookie)] ,[cs(Referer)] ,[cs-Host] ,[sc-Status] ,[sc-Substatus] ,[sc-Win32-Status] ,[sc-Bytes] ,[cs-Bytes] ,[time-Taken], 1  into SiteLog FROM '" +
                        file +
                        "'\" -i:W3C -e:1 -o:SQL -createTable:ON -oConnString:\"" + db + "\"", "");
 
@@ -314,8 +314,9 @@ namespace LogMaintenance
                 Debug.WriteLine(lpOutput);
 
                 File.Move(file, file.ToString().Replace(".log", ".done"));
+
+                UploadIIS();
             }
-            UploadIIS();
         }
 
         private static void GetIISLogs(string userEnteredDay)
@@ -373,31 +374,6 @@ namespace LogMaintenance
             return returnvalue;
         }
 
-        public async Task<string> BuildMCList(string messageBody, string name)
-        {
-
-            _logger.Info("BuildMCList starting");
-
-            try
-            {
-
-                IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
-                var lists =
-                await manager.Lists.GetAllAsync().ConfigureAwait(false);
-
-                //var list = 
-
-                //.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
-
-                return "";
-
-            }
-            catch (Exception exception)
-            {
-                _logger.FatalException("GenerateMailChimpCampaign: ", exception);
-                return exception.Message;
-            }
-        }
     }
 }
 
