@@ -3103,10 +3103,10 @@ namespace CUWebinars.Web.Controllers.Admin
             var lists = await manager.Lists.GetAllAsync().ConfigureAwait(false);
             var tenant = _globalConfig.TenantPrefix.Replace("-", "");
             
-            var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
-            var masterTenantList = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
+            //var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
+            //var masterTenantList = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
 
-            var masterSegment = await manager.ListSegments.GetAllAsync(masterTenantList.Id).ConfigureAwait(false);
+            //var masterSegment = await manager.ListSegments.GetAllAsync(masterTenantList.Id).ConfigureAwait(false);
             var dataOperations =
                 new DataOperations(ConfigurationManager.ConnectionStrings["MembershipReboot"].ConnectionString);
 
@@ -3114,7 +3114,7 @@ namespace CUWebinars.Web.Controllers.Admin
             dataOperations.UsersFromSheet();
 
 
-            foreach (var affiliate in affiliates)
+            foreach (var affiliate in affiliates.OrderBy(a => a.ttsDomain))
             {
                 Debug.WriteLine("aff: " + aff + " " + affiliate.ttsDomain.ToLower());
 
@@ -3140,7 +3140,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     sb.Clear();
                     sb.Append("UpdateMailChimpUser starting: " + affiliate.ttsDomain.ToLower() + "<br>");
                     //sb.Append("Original segment user count: " + oldSegment.MemberCount + "<br>");
-
+                    Console.Out.WriteLine(affiliate.ttsDomain + " found: " + usersFromSheetForAff.Count());
                     var mcList = lists.FirstOrDefault(l => l.Name == listName);
                     if (mcList == null)
                     {

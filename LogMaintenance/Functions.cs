@@ -36,11 +36,11 @@ namespace LogMaintenance
         {
             Console.Out.WriteLine("*********************BEGINNING RUN*******************");
             MapBase = "BankWebinars";
-
-            //GetLog4Net();
-
-            GetIISLogsAll();
             DownloadIISLog();
+            GetLog4Net();
+
+            //GetIISLogsAll();
+            
         }
 
         private static void UploadLog4Net()

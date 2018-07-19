@@ -337,8 +337,6 @@ namespace CUWebinars.Web.Controllers
                     //is a WSP order
                     _cartControllerOrchestrator.CreateWspCode(model.Order);
                 }
-                _cartControllerOrchestrator.SaveOrder(model.Order);
-                _SendOrderConfirmation2(model.Order.idOrder);
 
                 if (model.Webinar.SeriesInfo.Contains("Children"))
                     if (model.Order.OrderRows != null)
@@ -346,15 +344,6 @@ namespace CUWebinars.Web.Controllers
                             _cartControllerOrchestrator.CreateSeriesOrders(
                                 model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
 
-
-                if (model.Webinar.Title.Contains("Compliance Perspectives")
-                    //test if CP code needs to be created by ensuring it's not a trial
-                    && row.RowPrice > 200)
-                    if (model.Order.OrderRows != null)
-                    {
-                        _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(
-                            model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active));
-                    }
 
                 if (_globalConfig.Tenant == "DirectorSeries")
                 {
@@ -403,8 +392,7 @@ namespace CUWebinars.Web.Controllers
                     row.Discount = ccsSub;
                 }
                 _cartControllerOrchestrator.SaveOrder(model.Order);
-
-                //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
+                _SendOrderConfirmation2(model.Order.idOrder);
             }
             catch (Exception exception)
             {
@@ -473,7 +461,7 @@ namespace CUWebinars.Web.Controllers
 
         private void _SendOrderConfirmation2(int idOrder)
         {
-
+            _logger.Info("_SendOrderConfirmation2 begins: " + idOrder);
             var order = _cartControllerOrchestrator.GetOrderById(idOrder);
             if (order == null)
                 throw new NullReferenceException();
@@ -745,7 +733,7 @@ namespace CUWebinars.Web.Controllers
                     .Where(x => x.name == cookieName)
                     .Select(x => ProcessMailChimpSource(MyCookieColl[x.i]));
 
-                
+
 
                 var model = new CheckoutConfirmCookieModel
                 {
@@ -2715,12 +2703,12 @@ namespace CUWebinars.Web.Controllers
                     _logger.Fatal("orderAtPaytracePostback");
                     throw new ArgumentNullException("orderAtPaytracePostback");
                 }
-                order.AdminComments = order.AdminComments.Replace("\"PendingPaytraceResponse\"", JsonConvert.SerializeObject(payTraceModel));
 
                 if (payTraceModel.Appmsg.StartsWith("Your TEST transaction was successfully processed.") ||
-                    payTraceModel.Appmsg.Contains("Approv") 
+                    payTraceModel.Appmsg.Contains("Approv")
                     || payTraceModel.CartType.ToLower() == "check")
                 {
+                    order.AdminComments = order.AdminComments.Replace("\"PendingPaytraceResponse\"", JsonConvert.SerializeObject(payTraceModel));
 
                     bool multi = order.AdminComments != null
                         && order.AdminComments.Contains("Multi_OrderCheckout");
@@ -2752,7 +2740,6 @@ namespace CUWebinars.Web.Controllers
                             _logger.Info("PayTrace: " + order.idOrder + " is Approved");
 
                             //M4Gen
-                            _SendOrderConfirmation2(order.idOrder);
 
                             if (row.Webinar.SeriesInfo.Contains("Children"))
                                 _cartControllerOrchestrator.CreateSeriesOrders(row);
@@ -2767,6 +2754,9 @@ namespace CUWebinars.Web.Controllers
                                 //test if CP code needs to be created by ensuring it's not a trial
                                 && row.RowPrice > 200)
                                 _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(row);
+
+                            _SendOrderConfirmation2(order.idOrder);
+
                         }
                         catch (Exception e)
                         {
@@ -2802,7 +2792,6 @@ namespace CUWebinars.Web.Controllers
 
                                 _cartControllerOrchestrator.UpdateOrderPricing(orderMulti);
 
-                                _SendOrderConfirmation2(orderMulti.idOrder);
                                 //_cartControllerOrchestrator.FireOrderSubmittedNotification(order, userCreatedInCart: false);
                                 if (row.Webinar.SeriesInfo.Contains("Children"))
                                     createdSeriesOrders = _cartControllerOrchestrator.CreateSeriesOrders(row);
@@ -2817,6 +2806,8 @@ namespace CUWebinars.Web.Controllers
                                     //test if CP code needs to be created by ensuring it's not a trial
                                     && rowMulti.RowPrice > 200)
                                     _cartControllerOrchestrator.CreateCompliancePerspectivesSubscription(rowMulti);
+
+                                _SendOrderConfirmation2(orderMulti.idOrder);
 
                             }
                             catch (Exception ex)
