@@ -9,16 +9,18 @@
     {
         byJoinCode = true;
     }
-    if (ViewBag.DiscountSurcharge == "A $50 surcharge is added for shipping & handling")
+    if (Model.CheckoutConfirmViewModel != null && Model.CheckoutConfirmViewModel.DisplayOptionsInDropDownViewModel != null &&
+        Model.CheckoutConfirmViewModel.DisplayOptionsInDropDownViewModel.OrderRowId > 0)
+
     {
         <script language="javascript" type="text/javascript">
-            var DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
+            var orderRowId = @Model.CheckoutConfirmViewModel.DisplayOptionsInDropDownViewModel.OrderRowId;
         </script>
     }
     else
     {
         <script language="javascript" type="text/javascript">
-            var DiscountSurcharge = "";
+            var orderRowId = 0;
         </script>
 
     }
@@ -34,8 +36,7 @@
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
-    //var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
-    var orderRowId = @Model.CheckoutConfirmViewModel.DisplayOptionsInDropDownViewModel.OrderRowId;
+
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
 
@@ -95,7 +96,7 @@
                                     <div class="tab-pane" id="contactInfo"></div>
                                     <div class="tab-pane" id="confirmation"></div>
                                 }
-                                else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Billed || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted || Model.Order.OrderStatus == OrderStatus.Paid|| Model.Order.OrderStatus == OrderStatus.OutstandingBalance)
+                                else if (Model.Order.OrderStatus == OrderStatus.AwaitingVerification || Model.Order.OrderStatus == OrderStatus.InProcess || Model.Order.OrderStatus == OrderStatus.Billed || Model.Order.OrderStatus == OrderStatus.Canceled || Model.Order.OrderStatus == OrderStatus.Submitted || Model.Order.OrderStatus == OrderStatus.Paid || Model.Order.OrderStatus == OrderStatus.OutstandingBalance)
                                 {
                                     if (Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/getaddtocartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
                                     {
@@ -116,7 +117,7 @@
                             <!-- The following forms are positioned here so that they are not nested in the form in the CheckoutOptions View. -->
                             @using (Html.BeginForm("SignInFromCart", "Account", null, FormMethod.Post, new { id = "frmSignIn", name = "signIn" }))
                             {
-                                
+
                                 @Html.AntiForgeryToken()
 
                                 <input id="loginEmail" name="Email" type="hidden" value="">
