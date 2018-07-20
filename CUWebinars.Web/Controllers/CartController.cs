@@ -332,6 +332,8 @@ namespace CUWebinars.Web.Controllers
                     model.Order.TotalPaid = model.Order.Total;
                 }
 
+                _cartControllerOrchestrator.SaveOrder(model.Order);
+
                 if (model.Webinar.idWebinar == 2520)
                 {
                     //is a WSP order
@@ -612,6 +614,7 @@ namespace CUWebinars.Web.Controllers
                         _stateService.SetValue<EditUserModel>("editUserModel", null);
                     }
 
+                    _cartControllerOrchestrator.SaveOrder(model.Order);
                     if (model.Webinar.idWebinar == 2520)
                     {
                         //is a WSP order

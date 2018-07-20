@@ -107,7 +107,7 @@
                 <ul id="showCampaign" class="nav nav-pills nav-stacked" style="display: none; margin: 0; padding: 0;">
                     <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
 
-                    @foreach (var aff in Model.Affiliates.Where(a => a.idMailChimpList != null))
+                    @foreach (var aff in Model.Affiliates.Where(a => a.idMailChimpList != null && a.idMailChimpList != ""))
                     {
                         <li id="li_@aff.idUserAff"><input type="checkbox" class="removeCamp" id="r_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
                     }

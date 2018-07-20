@@ -12,6 +12,10 @@
     {
         DNPButtonText = "Event is NOT being promoted";
     }
+
+    var recordingLink =
+        "<a href='" + GlobalConfig.GlobalConfigSingleton.WMVRepository + Model.Webinar.RecordingUrl +
+        "' target=_blank />Recording</a>";
 }
 
 <script type="text/javascript">
@@ -69,18 +73,6 @@
                 }
 
             </div>
-            @if (Model.Webinar.Status == WebinarStatus.Recorded)
-            {
-                <div class="pull-right small">
-                    Recorded on<br /><b>@Html.DisplayDate(Model.Webinar.Date)</b>.
-                </div>
-            }
-            else
-            {
-                <div class="pull-right small">
-                    <b>@Html.DisplayDate(Model.Webinar.Date)</b> - <span>@Html.Raw(Model.TimeFormatDisplay)</span>
-                </div>
-            }
         </div>
     </div>
 </div>
@@ -142,7 +134,7 @@
                                     <div class="tab-pane" id="confirmationForAffiliate"></div>
                                 </div>
                             }
-                            else 
+                            else
                             {
                                 <div class="tab-content">
                                     <div class="tab-pane " id="findUserForAffiliate">
@@ -192,6 +184,18 @@
 
             @Html.Partial("Partials/_RegistrationSummary", Model.RegistrationSummaryViewModel ?? new RegistrationSummaryViewModel())
 
+            @if (Model.Webinar.Status == WebinarStatus.Recorded)
+            {
+                <div class="center">
+                    Recorded on<br /><b>@Html.DisplayDate(Model.Webinar.Date)</b>
+                </div>
+            }
+            else
+            {
+                <div class="pull-right small">
+                    <b>@Html.DisplayDate(Model.Webinar.Date)</b> - <span>@Html.Raw(Model.TimeFormatDisplay)</span>
+                </div>
+            }
             <aside class="widget">
                 <h5 class="short_headline">
                     <span>Topics</span>
@@ -206,25 +210,35 @@
                 </ul>
             </aside>
             <div>
-                <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn">Daily Promotional Email</a>
+                <p>
+                    <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn">Daily Promotional Email</a>
+                </p>
+                @if (Model.ShowOrdersViewModel.Affiliate.idUserAff == 32175)
+                {
+                    <p>
+                        @Html.Raw(recordingLink)
+                        @{Html.RenderPartial("DisplayTemplates/HandoutsListing", Model.Webinar);}
+                    </p>
+                }
+
                 @*<a id="doNotPromoteButton" href="#" class="btn">@DNPButtonText</a>
-    <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>*@
+            <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>*@
             </div>
 
             @*<div id="ListOfEvents" class="collapse out">
-                    @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
-                    {
-                        <div>
-                            <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
-                            <input type="text" name="sListOfWebinarsForWeekly" />
-                            @Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })
+            @using (Html.BeginForm("perweekpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
+            {
+                <div>
+                    <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
+                    <input type="text" name="sListOfWebinarsForWeekly" />
+                    @Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })
 
 
-                            <br />
-                            <input type="submit" value="submit" />
-                        </div>
-                    }
-                </div>*@
+                    <br />
+                    <input type="submit" value="submit" />
+                </div>
+            }
+        </div>*@
 
 
         </div>
