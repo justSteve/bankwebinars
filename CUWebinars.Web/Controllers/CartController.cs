@@ -2285,6 +2285,7 @@ namespace CUWebinars.Web.Controllers
                     order.Origin = DomainConstants.OriginResume;
 
                     _logger.Info("Resume idOrder: " + id + " by: " + User.Identity.Name);
+                    _cartControllerOrchestrator.SaveOrder(order);
 
                     return RedirectToAction("Details", "Webinar", new
                     {

@@ -9,34 +9,16 @@
     {
         byJoinCode = true;
     }
-    if (Model.CheckoutConfirmViewModel != null && Model.CheckoutConfirmViewModel.DisplayOptionsInDropDownViewModel != null &&
-        Model.CheckoutConfirmViewModel.DisplayOptionsInDropDownViewModel.OrderRowId > 0)
-
-    {
-        <script language="javascript" type="text/javascript">
-            var orderRowId = @Model.CheckoutConfirmViewModel.DisplayOptionsInDropDownViewModel.OrderRowId;
-        </script>
-    }
-    else
-    {
-        <script language="javascript" type="text/javascript">
-            var orderRowId = 0;
-        </script>
-
-    }
 }
 
 <script language="javascript" type="text/javascript">
-    $(function () {
-        // could initialize JS if needed
 
-    });
 
     var checkoutInProcess = @(Model.CheckoutInProcess ? "true" : "false");
     var isUserLoggedIn = @(@Model.UserIsLoggedIn ? "true" : "false");
     var webinarId = @(@Model.Webinar.idWebinar);
     var notificationsTesting = @(GlobalConfig.GlobalConfigSingleton.NotificationsTesting ? "true" : "false");
-
+    var orderRowId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).idOrderRow : 0);
     var orderId = @(Model.CheckoutOptionsViewModel.OrderExists ? Model.Order.idOrder : 0);
     var addressVerified = @(@Model.UserAddressVerified ? "true" : "false");
 

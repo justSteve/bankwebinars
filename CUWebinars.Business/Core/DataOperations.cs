@@ -2304,11 +2304,11 @@ namespace CUWebinars.Business.Core
                                     Email_Address = reader.GetString(2),
                                     First_Name = reader.SafeGetString(0),
                                     Last_Name = reader.SafeGetString(1),
-                                    //Source = reader.SafeGetString(3),
-                                    Welcome_Sequence_Complete_ = reader.SafeGetString(4),
+                                    Source = reader.SafeGetString(5),
+                                    //Welcome_Sequence_Complete_ = reader.SafeGetString(4),
                                     Purchased = reader.SafeGetString(4),
                                     Mailing_List = reader.SafeGetString(3),
-                                    Keep_Me_Informed_About_ = reader.SafeGetString(5)
+                                    Keep_Me_Informed_About_ = reader.SafeGetString(6)
 
                                 };
 
