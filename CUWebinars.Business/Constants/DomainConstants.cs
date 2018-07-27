@@ -51,6 +51,7 @@ namespace CUWebinars.Business.Constants
         public const string CCS = "CCS";
         // ReSharper disable once InconsistentNaming
         public const string CUWebinars = "CUWebinars";
+        public const string MortgageWebinars = "MortgageWebinars";
         public const string ClaimDateFormatText = "yyyy-MM-dd";
         public const string UtcNowAsCts = "yyyy-MM-dd";
 
@@ -62,7 +63,7 @@ namespace CUWebinars.Business.Constants
                 return TimeZoneInfo.ConvertTimeFromUtc(timeUtc, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time"));
             }
         }
-
+        
 
 
         public const string CreationModeImported = "imported";

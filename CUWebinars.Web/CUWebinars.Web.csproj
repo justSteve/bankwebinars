@@ -794,6 +794,13 @@
     <Content Include="Content\mobile\Startup\vendor\swiper\swiper.min.js" />
     <Content Include="Content\mobile\Startup\vendor\typist\typist.js" />
     <Content Include="Content\toastr.min.css" />
+    <Content Include="Infrastructure\LogConfigs\MWLog4net.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Infrastructure\LogConfigs\MWLocal.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Infrastructure\LogConfigs\CCSLocal.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -1922,6 +1929,7 @@
     <None Include="Properties\PublishProfiles\DES33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\devtts - Web Deploy.pubxml" />
     <Content Include="Scripts\DataTables\pdfmake.min.js.map" />
+    <None Include="Properties\PublishProfiles\MortgageWebinars - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\ttsCCS - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.11.1.intellisense.js" />
     <Content Include="Scripts\app\webinar\manage-webinar-from-details.js" />

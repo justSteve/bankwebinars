@@ -100,6 +100,21 @@ namespace CUWebinars.Web
             switch (GlobalConfig.GlobalConfigSingleton.Tenant)
             //switch ("Dave")
             {
+                case DomainConstants.MortgageWebinars:
+                    if (!Debugger.IsAttached)
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                                "BWLog4net.xml")));
+                        //"BWLocal.xml")));
+                    }
+                    else
+                    {
+                        log4net.Config.XmlConfigurator.Configure(
+                           new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
+                               "BWLocal.xml")));
+                    }
+                    break;
                 case DomainConstants.BankWebinars:
                     if (!Debugger.IsAttached)
                     {
