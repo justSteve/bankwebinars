@@ -754,7 +754,10 @@
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_PreEventSeries.docx" />
     <Content Include="App_Data\mergeTemplates\WebinarPromo.docx" />
     <Content Include="App_Data\mergeTemplates\WebinarPromoStandalone.docx" />
+    <Content Include="Content\css\bootstrapOverridesMW.css" />
     <Content Include="Content\css\formCss.css" />
+    <Content Include="Content\css\header-1MW.css" />
+    <Content Include="Content\css\styleCrispMW.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
     <Content Include="Content\images\compass.png" />
     <Content Include="Content\images\presenters\nesbitt.jpg" />
