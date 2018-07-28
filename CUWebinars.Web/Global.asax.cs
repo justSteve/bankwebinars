@@ -105,14 +105,13 @@ namespace CUWebinars.Web
                     {
                         log4net.Config.XmlConfigurator.Configure(
                             new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
-                                "BWLog4net.xml")));
-                        //"BWLocal.xml")));
+                                "MWLog4net.xml")));
                     }
                     else
                     {
                         log4net.Config.XmlConfigurator.Configure(
                            new FileInfo(Path.Combine(HttpRuntime.AppDomainAppPath, infrastructureLogconfigs,
-                               "BWLocal.xml")));
+                               "MWLocal.xml")));
                     }
                     break;
                 case DomainConstants.BankWebinars:

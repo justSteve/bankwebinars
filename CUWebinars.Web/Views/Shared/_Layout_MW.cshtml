@@ -1,0 +1,575 @@
+﻿@using System.Configuration
+@using System.Runtime.InteropServices
+@using System.Text
+@using System.Web
+@using CUWebinars.Business.Constants
+@using CUWebinars.Web.Core
+@{
+    var PageStyleType = ViewBag.PageStyleType;
+    IStateService stateService = new StateService();
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    string currentUrl = Request.Url.AbsoluteUri;
+
+    if (currentUrl.ToLower().Contains("complianceperspectives") && !currentUrl.Contains("883"))
+    {
+        <script type="text/javascript">
+            window.location.href = "https://www.complianceperspectives.com/883/compliance-perspectives-a-monthly-update";
+        </script>
+    }
+
+    var currentAffiliate = stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+    var currentUser = stateService.GetValue<WebUser>(WebUiConstants.CurrentUser);
+    string currentUserAffiliateFullName = string.Empty;
+    if (currentAffiliate != null)
+    {
+        //currentUserAffiliateFullName = currentAffiliate.WebUser.FullName;
+        ViewBag.currentAffiliateId = currentAffiliate.idUserAff;
+    }
+    else
+    {
+        //CUWebinars.Business.Core.Tracing.Tracer.Warning("CurrentAffiliate should always have a value. Session | {0}", new AppHelper(Request, stateService).GetUserAuditInfo());
+        Debug.Assert(currentAffiliate != null, "CurrentAffiliate should always have a value.");
+
+    }
+    var footAddress = "";
+    var footSocial = "";
+
+    try
+    {
+        footAddress = currentAffiliate.WebFooter.Split('~')[0];
+        footSocial = "";
+        if (currentAffiliate.WebFooter.Split('~').Length > 1)
+        {
+            footSocial = currentAffiliate.WebFooter.Split('~')[1];
+        }
+
+    }
+    catch (Exception e)
+    {
+        var a = "holder";
+    }
+    //var footAddress = currentAffiliate.WebFooter.Split('~')[0];
+    //var footSocial = "";
+    //if (currentAffiliate.WebFooter.Split('~').Length > 1)
+    //{
+    //    footSocial = currentAffiliate.WebFooter.Split('~')[1];
+    //}
+
+    var firstPage = stateService.GetValue<string>("FirstPage");
+    var sessionID = stateService.GetValue<string>(WebUiConstants.SessionId);
+    var affiliateSessionSource = stateService.GetValue<string>("AffiliateSessionSource");
+}
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" dir="ltr"> <![endif]-->
+<!--[if IE 7 ]> <html class="no-js lt-ie9 lt-ie8" lang="en" dir="ltr"> <![endif]-->
+<!--[if IE 8 ]> <html class="no-js lt-ie9" lang="en" dir="ltr"> <![endif]-->
+<!--[if IE 9 ]> <html class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html class="no-js" lang="en" dir="ltr">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="msvalidate.01" content="EC4039EF0FA485B010F4E9AA1E51FF9C" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <!--Start of Zopim Live Chat Script-->
+    <script type="text/javascript">
+
+        window.$zopim || (function (d, s) {
+            var z = window.$zopim = function (c) {
+                z._.push(c);
+            },
+                $ = z.s = d.createElement(s),
+                e = d.getElementsByTagName(s)[0];
+
+            z.set = function (o) {
+                z.set._.push(o);
+            };
+            z._ = [];
+            z.set._ = [];
+            $.async = !0;
+            $.setAttribute("charset", "utf-8");
+            $.src = "//v2.zopim.com/?1BDmmaRbQeFUryIji8yLVYKv2lpVZeqU";
+            z.t = +new Date;
+            $.type = "text/javascript";
+            e.parentNode.insertBefore($, e);
+        })(document, "script");
+    </script>
+    <!--End of Zopim Live Chat Script-->
+
+    <script src="~/Scripts/js.cookie/js.cookie.js"></script>
+    @{
+        try
+        {
+
+            <script type="text/javascript">
+                var offset = new Date().getTimezoneOffset();
+                offset = offset / 60 * -1;
+                Cookies.set('timezoneoffset', offset);
+
+                var firstPage = "@firstPage";
+                var sessionID = "@sessionID";
+                var affiliateSessionSource = "@affiliateSessionSource";
+                var currentAffiliate = "@currentAffiliate.idUserAff";
+
+
+            </script>
+        }
+        catch (Exception e)
+        {
+
+            CUWebinars.Business.Core.Tracing.Tracer.Warning("LayoutPublic: {0} | Session: {1}",
+                e.Message, sessionID);
+            <script type="text/javascript">
+
+
+                var offset = new Date().getTimezoneOffset();
+                offset = offset / 60 * -1;
+                Cookies.set('timezoneoffset', offset);
+
+                var firstPage = "@firstPage";
+                var sessionID = "@sessionID";
+                var affiliateSessionSource = "error: " + @e.Message;
+                var currentAffiliate = "19";
+
+                $zopim(function () {
+                    $zopim.livechat.addTags("error: " + @e.Message);
+                });
+            </script>
+        }
+
+    }
+
+    <title>@ViewBag.Title</title>
+    @{
+        <script type="text/javascript">
+
+            var currentAffiliateId = "@currentAffiliate.idUserAff";
+            var currentAffiliateDisplayTitle = "@currentAffiliate.DisplayTitle";
+        </script>
+        if (globalConfig.Tenant == DomainConstants.CUWebinars)
+        {
+
+            <script>
+                function earlyIEExpress(idWebinar) {
+                    window.location = "/cart/ExpressCheckout";
+                }
+                //Rollbar Placeholder
+
+                (function (i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                ga('create', 'UA-44361719-1', 'auto');
+                ga('send', 'pageview');
+
+            </script>
+        }
+        if (globalConfig.Tenant == DomainConstants.BankWebinars)
+        {
+            <script>
+
+                function earlyIEExpress(idWebinar) {
+                    window.location = "/cart/ExpressCheckout";
+                }
+
+                //Rollbar Placeholder
+
+                (function (i, s, o, g, r, a, m) {
+                    i['GoogleAnalyticsObject'] = r;
+                    i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                    a = s.createElement(o),
+                        m = s.getElementsByTagName(o)[0];
+                    a.async = 1;
+                    a.src = g;
+                    m.parentNode.insertBefore(a, m)
+                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+                ga('create', 'UA-1443899-1', 'auto');
+                ga('send', 'pageview');
+            </script>
+        }
+
+
+
+    }
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/CommonModules")
+    @Scripts.Render("~/bundles/myApp")
+    @Scripts.Render("~/bundles/app-processing-manage")
+    @Styles.Render("~/Content/CrispCSS")
+    @Styles.Render("~/Content/common-styles")
+
+    <!-- Icons ================ -->
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon-precomposed" href="~/Content/images/BankWebinars/apple-touch-icon.png" />
+    <!-- For first- and second-generation iPad: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Content/images/BankWebinars/apple-touch-icon-72x72-precomposed.png" />
+    <!-- For iPhone with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Content/images/BankWebinars/apple-touch-icon-114x114-precomposed.png" />
+    <!-- For third-generation iPad with high-resolution Retina display: -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="~/Content/images/BankWebinars/apple-touch-icon-144x144-precomposed.png" />
+
+    <link rel="shortcut icon" href="~/Content/images/BankWebinars/favicon.ico" />
+    <meta property="og:description" content="@GlobalConfig.GlobalConfigSingleton.Tenant is Webinars for the financial industry." />
+
+
+    <style>
+        table td {
+            border: none;
+            text-align: center;
+        }
+
+        #shoppingCartInHeader {
+            margin-left: 20px;
+        }
+
+        #preheaderIcon {
+            padding-top: 5px;
+            margin-top: 5px;
+        }
+
+        .hero-unit {
+            padding-top: 20px;
+            padding-bottom: 0px;
+        }
+
+        .preheader {
+            background-color: black;
+            width: 100%;
+            padding-left: 25px;
+        }
+
+        .affFooter {
+            color: white;
+        }
+    </style>
+
+    <script>
+        //to accomodate IE  http://stackoverflow.com/questions/5522164/input-placeholders-for-internet-explorer -- Jonathan Tonge
+        var placeholder = 'placeholder' in document.createElement('input');
+        if (!placeholder) {
+            $.getScript("/Scripts/placeholder.js", function () {
+                $(":input").each(function () {   // this will work for all input fields
+                    $(this).placeHolder();
+                });
+            });
+        }
+    </script>
+    @{
+        if (User.Identity.IsAuthenticated)
+        {
+            <script>
+                window.$zopim(function () {
+                    window.$zopim.livechat.setName("@User.Identity.Name.ToString().Replace("@", "_")");
+
+                });
+            </script>
+        }
+    }
+    <!--
+    To collect end-user usage analytics about your application,
+    insert the following script into each page you want to track.
+    Place this code immediately before the closing </head> tag,
+    and before any other scripts. Your first data will appear
+    automatically in just a few seconds.
+    -->
+    <script type="text/javascript">
+        var appInsights = window.appInsights || function (a) {
+            function b(a) { c[a] = function () { var b = arguments; c.queue.push(function () { c[a].apply(c, b) }) } } var c = { config: a }, d = document, e = window; setTimeout(function () { var b = d.createElement("script"); b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b) }); try { c.cookie = d.cookie } catch (a) { } c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) { f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) { var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i } } return c
+        }({
+            instrumentationKey: "740ba977-f1a1-4c25-9819-cf6d01e7f1a2"
+        });
+
+        window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
+    </script>
+
+</head>
+<body class="@PageStyleType">
+    <!-- begin accesibility skip to nav skip content -->
+    <ul class="visuallyhidden" id="top">
+        <li><a href="#nav" title="Skip to navigation" accesskey="n">Skip to navigation</a></li>
+        <li><a href="#page" title="Skip to content" accesskey="c">Skip to content</a></li>
+    </ul>
+    <!-- end /.visuallyhidden accesibility-->
+    <!-- mobile navigation trigger-->
+    <h5 class="mobile_nav"><a href="javascript:void(0)">&nbsp;<span></span></a></h5>
+    <!--end mobile navigation trigger-->
+    <section class="preheader">
+        <section class="container">
+
+            <!--this is the login for the user-->
+            <div id="loginContainer">
+                @Html.Partial("_LoginPartial")
+            </div>
+
+            <!--this is the msgBox for the user-->
+            <div id="msgBoxContainer">
+                @Html.Partial("_MessagesPartial")
+            </div>
+
+
+            <ul class="social">
+                <li><span id="preheaderIcon"><a href="http://www.ttstrain.com?from=tenant" target="_blank" data-placement="bottom" title="A TTS Production"><img src="~/Content/images/TTS-logoPreHeaderReverse.png" /></a></span></li>
+                <li><a class="socicon small facebook" href="https://www.facebook.com/home.php#!/pages/Total-Training-Solutions/300546163412" target="_blank" data-placement="bottom" title="Follow us on Facebook"></a></li>
+                <li><a class="socicon small twitterbird" href="https://twitter.com/#!/ttstrain" target="_blank" data-placement="bottom" title="Follow us on Twitter"></a></li>
+                <li><a class="socicon small linkedin" href="https://www.linkedin.com/company/bankwebinars-com" target="_blank" data-placement="bottom" title="Follow us on LinkedIn"></a></li>
+                <li>
+                    <div id="search-wrapper" class="search-wrapper">
+                        <form class="search" method="post" action="/webinar/search">
+                            <ul>
+                                <li><i class="icon-search"></i></li>
+                                <input id="search-box" name="searchTerm" type="text" placeholder="Search for?">
+                            </ul>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </section>
+    </section>
+
+    <!-- begin .header-->
+    <header class="header  clearfix" style="margin-bottom: 0px; padding-bottom: 0; ">
+        <div class="container">
+            <div class="row-fluid">
+                <!-- begin #logo-->
+                <a href="/">
+                    <div id="logo" class="span3" style='background: url("@currentAffiliate.Logo") no-repeat scroll 0 0 rgba(0, 0, 0, 0)'></div>
+                </a>
+                <!-- end #logo -->
+                <!-- begin #main_menu -->
+                <nav id="main_menu" class="span8">
+                    <ul class="primary_menu">
+                        <li class="parent"><a href="/webinar/calendar">calendar</a></li>
+                        @*<li class="parent">
+                            <a href="javascript:void(0)">topics<i></i></a>
+                            @if (globalConfig.Tenant == "BankWebinars")
+                            {
+                                <ul>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/30">BSA</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/25">Computer Skills</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/31">Deposit Accounts</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/32">Executive</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRAs</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/33">Management/Employee Development</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/34">Reporting</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/26">Risk Management/Legal</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/36">Safe Deposit</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/37">TRID</a></li>
+                                </ul>
+                            }
+                            @if (globalConfig.Tenant == "CUWebinars")
+                            {
+                                <ul>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/30">BSA</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/15">Compliance</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/31">Deposit Accounts</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/23">Human Resources</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/16">IRAs</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/22">Lending</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/34">Management/Employee Development</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/35">Risk Management/Legal</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/ListByTopic/21">Sales</a></li>
+                                </ul>
+                            }*@
+
+                        
+                        <li class="parent">
+                            <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
+
+                            <ul>@Html.Action("UpComingWebinarMenu", "Navigation")</ul>
+                        </li>
+                        <li class="parent">
+                            <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
+                            <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)">About Us<i></i></a>
+                            <ul>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Webinar/details/2520">Learn About Our Webinar Subscription Packages!</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/contactus">Contact Us</a></li>
+                            </ul>
+                        </li>
+                        @if (Request.IsAuthenticated)
+                        {
+                            <li><a href="/Cart/MyWebinars">My Webinars</a></li>
+                        }
+                    </ul>
+                </nav>
+                <!-- close / #main_menu -->
+            </div>
+        </div>
+        <!-- close / .container-->
+    </header>
+    <!-- close /.header -->
+    <div id="page">
+        @RenderBody()
+    </div>
+    <!--begin footer -->
+    <footer id="footer" class="clearfix">
+        <div class="container">
+            <!--footer container-->
+            <!--footer container-->
+            <div class="row-fluid">
+                <div class="span4">
+                    <section>
+                        <h4>Stay Updated</h4>
+                        @{Html.RenderPartial("Partials/_AddToMailingBox");}
+                    </section>
+                </div>
+                <!-- close .span4 -->
+                <div class="span4">
+                    <section>
+                        <h4>Contact Us</h4>
+                        <div class="affFooter">   @Html.Raw(footAddress)</div>
+                    </section>
+                    <!--close section-->
+                </div>
+                <!-- close .span4 -->
+                <div class="span4">
+                    <section>
+                        <h4>Follow Us</h4>
+                        @Html.Raw(footSocial)
+
+                        @{
+                            if (currentAffiliate.idUserAff > 19)
+                            {
+                                if (@currentAffiliate.DisplayTitle == "Total Training Solutions")
+                                {
+                                    <p style="margin-top: 10px;" align="center">This site is brought to you by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
+                                }
+                                else
+                                {
+                                    <p style="margin-top: 10px;" align="center">This site is managed for @currentAffiliate.DisplayTitle by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
+                                }
+                            }
+                        }
+                    </section>
+
+                </div>
+                <!-- close .span4 -->
+            </div>
+            <!-- close .row-fluid-->
+        </div>
+        <!-- close footer .container-->
+        <section class="footerCredits">
+            <div class="container">
+                <ul class="clearfix">
+                    <li style="text-align: right;">@globalConfig.TenantDomain is © 2017 & All Rights Reserved By Total Training Solutions. <br /></li>
+                    <li style="text-align: left;"><a href="/home/privacystatement">Privacy Statement</a><br />For financial institution training visit<a href="http://www.ttstrain.com/?s=cuwebinars" target="_new"> TTSTrain.com </a></li>
+                </ul>
+            </div>
+            <!--footerCredits container-->
+        </section>
+        <!--close section-->
+    </footer>
+    <!--/.footer-->
+    @*<span class="backToTop"><a href="#top">back to top</a></span>*@
+    <!-- close #page-->
+    @using (Html.BeginForm("ICalOrder", "Webinar", FormMethod.Get, new { name = "frmAddIcs", id = "frmAddIcs" }))
+    {
+        <input type="hidden" id="icsWebinar" name="icsWebinar" />
+        <input type="hidden" id="icsOrder" name="icsOrder" />
+
+    }
+    @using (Html.BeginForm("ICalOrder", "Webinar", FormMethod.Post, new { name = "frmAddGmail", id = "frmAddGmail" }))
+    {
+        <input type="hidden" id="glWebinar" name="glWebinar" />
+        <input type="hidden" id="glOrder" name="glOrder" />
+    }
+    <div class="modal hide fade in" id="DisplayErrorModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="CreateUserHeader">Error Condition Detected</h3>
+        </div>
+        <div id="DisplayErrorBody" class="modal-body">
+            <div id="ErrorBody"></div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="ErrorSubmitter" class="btn btn-primary">Continue</a>
+        </div>
+    </div>
+    <div id="PayByCCModal" class="modal hide fade">
+
+        <input type="hidden" name="id" />
+
+        <div class="modal-header">
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="PayByCCModalOrderDetails" class="modal-body">
+            <div>
+                <div class="legendImitator">
+                    Credit Card Processing Redirect
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    We will now redirect your browser to our credit card processor - https://www.paytrace.com - for entry of credit card information.
+                </div>
+
+                <div class="pull-right">
+
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btn btn-success" name="btnSubmitCCForm" id="btnSubmitCCForm">Continue</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="PayByCCIsOfflineModal" class="modal hide fade">
+
+        <input type="hidden" name="id" />
+
+        <div class="modal-header">
+            <h3 id="confirmCaption"></h3>
+        </div>
+        <div id="PayByCCModalOrderDetails" class="modal-body">
+            <div>
+                <div class="legendImitator">
+                    Credit Card Processing Is Currently Offline
+                </div>
+
+                <div style="margin-bottom: 10px;">
+                    @*<b>The store is currently in test mode. Submissions require a valid credit card number but no transactions will occur. Transactions will alternately be act as if approved and declined to provide a mix of response messages.
+                        </b>*@
+                    <p>
+                        Direct credit card processing is temporarily offline. We apologize for the inconvenience. Please choose the 'Bill Me' option. If you leave your email address we will notify you when service is restored.<br /><br />
+                        <input type="text" name="SubmitCCIsOffline" placeholder="Email to Notify" />
+                    </p>
+                </div>
+
+                <div class="pull-right">
+
+                    <button class="btn btn-success" data-dismiss="modal" name="btnSubmitCCIsOfflineForm" id="btnSubmitCCIsOfflineForm">Continue</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/CrispApp")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+        });
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

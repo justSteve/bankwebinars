@@ -2252,6 +2252,8 @@
     <Content Include="Views\Admin\MailChimpUnsubUsers.cshtml" />
     <Content Include="Views\Admin\MailChimpCountUsers.cshtml" />
     <Content Include="Views\Account\RecordingsAccessed.cshtml" />
+    <Content Include="Views\Home\IndexMW.cshtml" />
+    <Content Include="Views\Shared\_Layout_MW.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

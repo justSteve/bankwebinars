@@ -215,6 +215,15 @@ namespace CUWebinars.Web.Controllers
 
                 return View("~/Views/Home/IndexCcs.cshtml", lWebinars);
             }
+            else if (_globalConfig.Tenant == "MortgageWebinars")
+            {
+                _stateService.SetValue(WebUiConstants.CcsSession, "true");
+
+
+                var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
+
+                return View("~/Views/Home/IndexMW.cshtml", lWebinars);
+            }
 
             else
             {
