@@ -286,19 +286,36 @@ namespace CUWebinars.Web.App_Start
             bundles.Add(new StyleBundle("~/Content/register-user-styles").Include(
                 "~/Content/css/create-user-form.css"
                 ));
-
-            bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
-                "~/Content/css/styleCrisp.css",
-                "~/Content/css/header-1.css",
-                "~/Content/css/bootstrap.css",
-                "~/Content/css/bootstrap-responsive.css",
-                "~/Content/css/html-content-slider-flexslider.css",
-                "~/Content/css/bootstrapOverrides.css",
-                "~/Scripts/AutoComplete/css/styles.css",
-                "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
-                //"~/Content/mobile/Startup/vendor/font-awesome/css/font-awesome.min.css",
-                "~/Content/validation.css"
+            if (globalConfig.Tenant == "MortgageWebinars")
+            {
+                bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
+                    "~/Content/css/styleCrispMW.css",
+                    "~/Content/css/header-1MW.css",
+                    "~/Content/css/bootstrap.css",
+                    "~/Content/css/bootstrap-responsive.css",
+                    "~/Content/css/html-content-slider-flexslider.css",
+                    "~/Content/css/bootstrapOverridesMW.css",
+                    "~/Scripts/AutoComplete/css/styles.css",
+                    "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
+                    //"~/Content/mobile/Startup/vendor/font-awesome/css/font-awesome.min.css",
+                    "~/Content/validation.css"
                 ));
+            }
+            else
+            {
+                bundles.Add(new StyleBundle("~/Content/CrispCSS").Include(
+                    "~/Content/css/styleCrisp.css",
+                    "~/Content/css/header-1.css",
+                    "~/Content/css/bootstrap.css",
+                    "~/Content/css/bootstrap-responsive.css",
+                    "~/Content/css/html-content-slider-flexslider.css",
+                    "~/Content/css/bootstrapOverrides.css",
+                    "~/Scripts/AutoComplete/css/styles.css",
+                    "~/Scripts/AutoComplete/css/styles.css/ui-lightness/jquery-ui-1.10.3.custom.css",
+                    //"~/Content/mobile/Startup/vendor/font-awesome/css/font-awesome.min.css",
+                    "~/Content/validation.css"
+                ));
+            }
 
             bundles.Add(new StyleBundle("~/Content/quiz-bootstrap").Include(
                 "~/Content/css/bootstrap.css",

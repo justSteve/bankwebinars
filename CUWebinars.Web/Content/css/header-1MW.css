@@ -21,7 +21,7 @@ nav.user {
 		/*float: left;*/
 		/*padding: 0 5px;
 		margin-right: 5px;*/
-		color: #758694;
+		color: #49a33f;
 	}
 
 		nav.user a:hover {
@@ -75,7 +75,7 @@ body.tall-logo nav.user {
 	position: relative;
 	clear: both;
 	padding: 0;
-	background: #4c5966;
+	background: #4693af;
 	/*ie 7*/
 	z-index: 999;
 }
@@ -147,7 +147,7 @@ body.tall-logo nav.user {
 }
 
 	.preheader .phone a, .preheader .phone {
-		color: #758694;
+		color: #49a33f;
 	}
 
 
@@ -182,7 +182,7 @@ body.tall-logo nav.user {
 }
 
 .preheader .social a {
-	color: #758694;
+	color: #49a33f;
 	top: 2px;
 	position: relative;
 	text-decoration: none;
@@ -279,7 +279,7 @@ body.tall-logo nav.user {
 		margin: 0 0 0 2px;
 		padding: 0;
 		position: relative;
-		background: #4c5966;
+		background: #4693af;
 		text-transform: lowercase;
 	}
 
@@ -300,7 +300,7 @@ body.tall-logo nav.user {
 		}
 
 		.primary_menu li ul li {
-			background: #758694;
+			background: #49a33f;
 			float: none;
 			left: auto;
 			margin: 0;
@@ -309,7 +309,7 @@ body.tall-logo nav.user {
 		}
 
 			.primary_menu li ul li ul li {
-				background: #758694;
+				background: #49a33f;
 			}
 
 		.primary_menu li li {
@@ -605,7 +605,7 @@ body.tall-logo nav.user {
 
 	.primary_menu {
 		margin: 0;
-		background: #4c5966;
+		background: #4693af;
 		padding: 10px 0;
 	}
 
@@ -633,7 +633,7 @@ body.tall-logo nav.user {
 				height: auto;
 				width: auto;
 				line-height: auto;
-				background: #4c5966;
+				background: #4693af;
 				padding: 8px 0 5px 20px;
 			}
 

@@ -59,7 +59,7 @@ body, html, a {
 }
 
 h1, h2, h3, h4, h5, h6, .slide-to-top .trigger {
-	color: #758694;
+	color: #49a33f;
 }
 
 	h1 a, h2 a, h3 a, h5 a, h4 a {
@@ -126,17 +126,17 @@ recognise a selector it discards the whole ruleset.
 By using vendor selectors in one ruleset you guarentee 
 nothing will be applied */
 ::-webkit-selection {
-	background-color: #758694;
+	background-color: #49a33f;
 	color: #fff;
 }
 
 ::-moz-selection {
-	background-color: #758694;
+	background-color: #49a33f;
 	color: #fff;
 }
 
 ::selection {
-	background-color: #758694;
+	background-color: #49a33f;
 	color: #fff;
 }
 
@@ -381,7 +381,7 @@ q {
 
 .dropcap {
 	display: block;
-	color: #758694;
+	color: #49a33f;
 	float: left;
 	font-size: 45px;
 	line-height: 45px;
@@ -915,7 +915,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 		height: 50px;
 		text-indent: -9999px;
 		display: block;
-		background: #4c5966 url(/Content/images/sliderarrows.png) -80px 50% no-repeat;
+		background: #4693af url(/Content/images/sliderarrows.png) -80px 50% no-repeat;
 	}
 
 	.image-slider.flexslider .flex-direction-nav .flex-prev {
@@ -1079,7 +1079,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 	background: #d8dfe5;
 	padding: 0 8px;
 	margin: 0 3px 3px 0;
-	color: #758694;
+	color: #49a33f;
 	font-size: 85%;
 }
 
@@ -1185,7 +1185,7 @@ ul.navigation {
 /* ***** sidebar widget fancy date ******/
 ul.blogposts span.date {
 	background: #d8dfe5;
-	color: #758694;
+	color: #49a33f;
 	-webkit-border-radius: 60px;
 	border-radius: 60px;
 	display: block;
@@ -1304,7 +1304,7 @@ a.thumbnail:hover {
 ================================================== */
 #footer {
 	clear: both;
-	background: #4c5966;
+	background: #4693af;
 	border-top: 3px solid #6d767e;
 	padding: 2% 0 0 0; /* added */
 }
@@ -1558,7 +1558,7 @@ ul.image-widget {
 	border: none;
 	text-indent: -9999px;
 	display: block;
-	background: #758694 url(/Content/images/sliderarrows.png) -280px 50% no-repeat;
+	background: #49a33f url(/Content/images/sliderarrows.png) -280px 50% no-repeat;
 }
 
 .clientlogos .flex-direction-nav .flex-prev {
@@ -1688,7 +1688,7 @@ ul.image-widget {
 }
 
 	.testimonial-gallery li.highlight {
-		background-color: #758694;
+		background-color: #49a33f;
 		background-image: none;
 		color: #fff;
 	}
@@ -1712,7 +1712,7 @@ ul.image-widget {
 	}
 
 		.rotating-testimonials .tabs li {
-			background: #4c5966;
+			background: #4693af;
 			border: none;
 			display: inline-block;
 			*display: inline;
