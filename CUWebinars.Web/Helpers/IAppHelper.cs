@@ -47,5 +47,6 @@ namespace CUWebinars.Web.Helpers
         string ParsePhone(string address);
         string FindChangedRegTypes(Order order);
         string FindChangedOrderStatus(Order order);
+        void ConvertCfteaOrders();
     }
 }

@@ -175,8 +175,8 @@
     <Reference Include="LogMeIn.GoToCoreLib.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\LogMeIn.GoToCoreLib.NET.1.0.0.0\lib\net40\LogMeIn.GoToCoreLib.NET.dll</HintPath>
     </Reference>
-    <Reference Include="LogMeIn.GoToWebinar.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LogMeIn.GoToWebinar.NET.1.0.0.0\lib\net40\LogMeIn.GoToWebinar.NET.dll</HintPath>
+    <Reference Include="LogMeIn.GoToWebinar.NET, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LogMeIn.GoToWebinar.NET.2.0.0.0\lib\net40\LogMeIn.GoToWebinar.NET.dll</HintPath>
     </Reference>
     <Reference Include="MailChimp.Net, Version=3.2.0.0, Culture=neutral, PublicKeyToken=37d26d538413c581, processorArchitecture=MSIL">
       <HintPath>..\packages\MailChimp.Net.V3.3.2.0\lib\net451\MailChimp.Net.dll</HintPath>

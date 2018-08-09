@@ -4450,7 +4450,8 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             //Stopwatch openingCall = new Stopwatch();
             //openingCall.Start();
-
+            if (_idAffiliate == 11464)
+                _appHelper.ConvertCfteaOrders();
             int TenantConstant = 4985;
 
             if (_globalConfig.Tenant == "BankWebinars")
@@ -4724,7 +4725,6 @@ namespace CUWebinars.Web.Controllers.Admin
                                 {
                                     try
                                     {
-
                                         var row =
                                             order.OrderRows.FirstOrDefault(r => r.RowStatus == OrderRowStatus.Active);
 

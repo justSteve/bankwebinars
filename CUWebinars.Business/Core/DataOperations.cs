@@ -2441,6 +2441,37 @@ namespace CUWebinars.Business.Core
             }
             return numRows.ToString();
         }
+
+        public string ConvertCfteaOrders()
+        {
+            int numRows = 0;
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var mySqlCmd = new SqlCommand())
+                {
+                    try
+                    {
+                        mySqlCmd.Connection = sqlConnection;
+                        mySqlCmd.CommandType = CommandType.Text;
+                        mySqlCmd.CommandText =
+                            "UPDATE dbo.[Order] SET idAffiliate = 377 WHERE idAffiliate = 11464 AND  OrderStatus = 4 ";
+
+                        numRows = mySqlCmd.ExecuteNonQuery();
+
+                    }
+                    catch (Exception e)
+                    {
+                        LogError("InsertViewTrackerClaim", "InsertViewTrackerClaim: " + mySqlCmd.CommandText +
+                                                   " Exception.Message: " + e.Message);
+                        return "error: " + e.Message;
+                    }
+                }
+            }
+            return numRows.ToString();
+        }
     }
 
     public class MigrateMCUsers
