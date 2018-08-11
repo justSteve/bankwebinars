@@ -321,7 +321,7 @@ namespace CUWebinars.Web.Controllers
 
                 model.Order.OrderStatus = OrderStatus.Submitted;
 
-                if (model.Order.TotalPaid < model.Order.Total)
+                if (model.Order.TotalPaid < model.Order.Total && model.Order.TotalPaid > 0)
                 {
                     model.Order.OrderStatus = OrderStatus.OutstandingBalance;
                 }
@@ -1792,6 +1792,10 @@ namespace CUWebinars.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                if (_globalConfig.Tenant == "CCS" && formModel.idWebinar != 2485)
+                {
+                    return RedirectToAction("Details", "Webinar");
+                }
                 //telemetry.Initialize();
                 _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
 

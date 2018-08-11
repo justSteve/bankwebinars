@@ -276,11 +276,13 @@ $(function () {
         shippingAddressRequired = isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = signUpForm.serialize();
-
+        
         $.post('/cart/checkoutConfirmSetCookie', data,
             function (response, status, xhr) {
-                //primary objective is to set cookie state according to initial button click.
-                window.Cookies.set('OrderStart', response.model);
+                console.log(response);
+                    //primary objective is to set cookie state according to initial button click.
+                    window.Cookies.set('OrderStart', response.model);
+                
             });
 
         var spinner = $('#signUpSpinner');
