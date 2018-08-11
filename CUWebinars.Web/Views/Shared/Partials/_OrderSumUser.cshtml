@@ -2,14 +2,14 @@
 @using CUWebinars.Web.Core
 @model Order
 @functions {
-        private const string CurrencyFormatToken = "c";
-        private const string DotAndTwoDecimals = ".00";
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
 }
 @{
-    //hack: This partical is a confusing reduncdancy when compared against 
+    //hack: This partical is a confusing reduncdancy when compared against
     //DisplayTemplates/OrderSumUser", Model
     // tofix: instantiate a well-formed RegistrationSummaryViewModel
-    
+
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;
@@ -23,9 +23,10 @@
 <div id="odrSum-@Model.idOrder" style="width: 290px;">
 
     <div style="font-size: small; " class="well well-small">
-        <i>Order ID:</i> @globalConfig.TenantPrefix@Model.idOrder<br />
+        <span id="OrderSumUserOrderId"><i>Order ID:</i> @globalConfig.TenantPrefix@Model.idOrder<br /></span>
         <i>Date Ordered:</i> @Model.OrderDate.ToShortDateString()<br />
-        <i>Type:</i> @myRow.RegistrationType.OptionLabel<br />
+        <span id="OrderSumRegType"><i>Type:</i> @myRow.RegistrationType.OptionLabel<br /></span>
+
         @if (!ReferenceEquals(myRow.AdditionalLocation, null) && myRow.AdditionalLocation.Count > 0)
         {
             <i>Additional Locations:</i>
@@ -39,7 +40,7 @@
             decimal amtToReduce = myRow.UnitPrice - Model.Total;
             //decimal amtToReduce = myRow.UnitPrice * ((myRow.Discount.PercentOff) / 100);
             <i>Amt. of Discount:</i>
-            <span style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span><br />
+            <span id="OrderSumUserDiscountAmt" style="color: red;">@amtToReduce.ToString(CurrencyFormatToken).Replace(".00", "")</span><br />
         }
         @if (!ReferenceEquals(myRow.Discount, null) && myRow.Discount.FlatOff > 0)
         {
@@ -51,8 +52,9 @@
         {
             <text>This order shipped on:<b>@Html.DisplayDate(myRow.ShipmentDate.Value)</b></text>
         }
-        <i>Total Cost:</i> @Model.Total.ToString("C", nfi)<br/>
-        <i>Status: </i>@Model.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Order.OrderStatus
+        <span id="OrderSumUserCost"><i>Total Cost:</i> @Model.Total.ToString("C", nfi)<br /></span>
+        <span id="OrderSumUserStatus"><i>Status: </i>@Model.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Order.OrderStatus.ToString().Replace("OutstandingBalance", "Outstanding Balance")</span>
+
     </div>
 
 </div>

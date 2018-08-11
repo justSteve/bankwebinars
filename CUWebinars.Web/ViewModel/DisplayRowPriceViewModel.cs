@@ -18,6 +18,7 @@ namespace CUWebinars.Web.ViewModel
         public RegType  RegistrationType { get; set; }
         public bool SendHardcopy { get; set; }
         public string Origin { get; set; }
+        public bool WebinarIsPast { get; set; }
 
         //public decimal RowPrice { get; set; }
     }

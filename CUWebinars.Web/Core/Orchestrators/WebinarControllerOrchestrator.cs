@@ -949,8 +949,12 @@ namespace CUWebinars.Web.Core.Orchestrators
 
                     }
 
+                    bool webinarIsPast = false;
+                    if (orderRow.Webinar.Status == WebinarStatus.Recorded)
+                        webinarIsPast = true;
                     var displayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
+                        WebinarIsPast = webinarIsPast,
                         Origin = orderRow.Order.Origin,
                         NumberOfAdditionalLocations = orderRow.AdditionalLocation.Count(),
                         AddressesForAdditionalLocations = addressesForAdditionalLocations,
@@ -961,7 +965,8 @@ namespace CUWebinars.Web.Core.Orchestrators
                         //RowPrice = orderRow.RowPrice,
                         RegistrationType = orderRow.RegistrationType,
                         SendHardcopy = orderRow.SendHardcopy != null && orderRow.SendHardcopy.Value,
-                        idOrder = orderRow.idOrder
+                        idOrder = orderRow.idOrder,
+                        OrderStatus = orderRow.Order.OrderStatus
                     };
 
                     _logger.Info("Returning BuildDisplayRowPriceViewModel price for " + orderRow.Order.idOrder);

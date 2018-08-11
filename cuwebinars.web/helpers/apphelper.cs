@@ -1664,6 +1664,13 @@ namespace CUWebinars.Web.Helpers
             return changedOrderStatus;
         }
 
+        public void ConvertCfteaOrders()
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            dataOperations.ConvertCfteaOrders();
+
+        }
+
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {
             if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");

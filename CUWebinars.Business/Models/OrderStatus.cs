@@ -12,6 +12,8 @@ namespace CUWebinars.Business.Models
         Canceled = 6, //cancelled
         AwaitingVerification = 7,
         OutstandingBalance = 8,
+        Editing = 9,
+        EditingPaid = 10,
         Unknown = 255 //cancelled
     }
 }

@@ -34,6 +34,8 @@ namespace CUWebinars.Web.ViewModel
         public string UserFullname { get; set; }
         public UserType UserType { get; set; }
         public bool SendHardcopy { get; set; }
+
+        public bool WebinarIsPast { get; set; }
         //public Order Order { get; set; }
 
     }

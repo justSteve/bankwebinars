@@ -1,7 +1,10 @@
 ﻿@using CUWebinars.Business.Core.Helpers
 @using OpenQA.Selenium
 @model DisplayRowPriceViewModel
+@{
+    var hidePaymentButtons = false;
 
+}
 @functions {
     private const string CurrencyFormatToken = "c";
     private const string DotAndTwoDecimals = ".00";
@@ -59,50 +62,63 @@
     {
         var statusLabelSpan = new TagBuilder("span");
 
-        statusLabelSpan.GenerateId("orderStatusLabel");
-        statusLabelSpan.AddCssClass("label");
 
-        switch (orderStatus)
+        if (Model.Origin == "Resume")
         {
-            case OrderStatus.InProcess:
-                statusLabelSpan.AddCssClass("label-warning");
-                statusLabelSpan.SetInnerText(OrderStatus.InProcess.ToString());
-                break;
+            statusLabelSpan.GenerateId("orderStatusLabelEditing");
 
-            case OrderStatus.Error:
-                statusLabelSpan.AddCssClass("label-warning");
-                statusLabelSpan.SetInnerText(OrderStatus.InProcess.ToString());
-                break;
+            statusLabelSpan.AddCssClass("label label-danger");
 
-            case OrderStatus.Submitted:
-                statusLabelSpan.AddCssClass("label-info");
-                statusLabelSpan.SetInnerText(@OrderStatus.Submitted.ToString());
-                break;
+            statusLabelSpan.SetInnerText("Editing");
+        }
+        else
+        {
+            statusLabelSpan.GenerateId("orderStatusLabel");
+            statusLabelSpan.AddCssClass("label");
 
-            case OrderStatus.Paid:
-                statusLabelSpan.AddCssClass("label-success");
-                statusLabelSpan.SetInnerText(@OrderStatus.Paid.ToString());
-                break;
+            switch (orderStatus)
+            {
+                case OrderStatus.InProcess:
+                    statusLabelSpan.AddCssClass("label-warning");
+                    statusLabelSpan.SetInnerText(OrderStatus.InProcess.ToString());
+                    break;
 
-            case OrderStatus.AwaitingVerification:
-                statusLabelSpan.AddCssClass("label-warning");
-                statusLabelSpan.SetInnerText(@OrderStatus.AwaitingVerification.ToString());
-                break;
+                case OrderStatus.Error:
+                    statusLabelSpan.AddCssClass("label-warning");
+                    statusLabelSpan.SetInnerText(OrderStatus.InProcess.ToString());
+                    break;
 
-            case OrderStatus.Canceled:
-                statusLabelSpan.AddCssClass("label-warning");
-                statusLabelSpan.SetInnerText(@OrderStatus.Canceled.ToString());
-                break;
+                case OrderStatus.Submitted:
+                    statusLabelSpan.AddCssClass("label-info");
+                    statusLabelSpan.SetInnerText(@OrderStatus.Submitted.ToString());
+                    break;
 
-            case OrderStatus.Billed:
-                statusLabelSpan.AddCssClass("label-success");
-                statusLabelSpan.SetInnerText(@OrderStatus.Billed.ToString());
-                break;
+                case OrderStatus.Paid:
+                    statusLabelSpan.AddCssClass("label-success");
+                    statusLabelSpan.SetInnerText(@OrderStatus.Paid.ToString());
+                    break;
 
-            case OrderStatus.OutstandingBalance:
-                statusLabelSpan.AddCssClass("label-important");
-                statusLabelSpan.SetInnerText("Outstanding Balance");
-                break;
+                case OrderStatus.AwaitingVerification:
+                    statusLabelSpan.AddCssClass("label-warning");
+                    statusLabelSpan.SetInnerText(@OrderStatus.AwaitingVerification.ToString());
+                    break;
+
+                case OrderStatus.Canceled:
+                    statusLabelSpan.AddCssClass("label-warning");
+                    statusLabelSpan.SetInnerText(@OrderStatus.Canceled.ToString());
+                    break;
+
+                case OrderStatus.Billed:
+                    statusLabelSpan.AddCssClass("label-success");
+                    statusLabelSpan.SetInnerText(@OrderStatus.Billed.ToString());
+                    break;
+
+                case OrderStatus.OutstandingBalance:
+                    statusLabelSpan.AddCssClass("label-important");
+                    statusLabelSpan.SetInnerText("Outstanding Balance");
+                    break;
+            }
+
         }
 
         return statusLabelSpan.ToString(TagRenderMode.Normal);
@@ -148,8 +164,8 @@
         }
 
         rowAmount.Append("<button id='revealOptions' class='btn btn-mini btn-default'> change?</button> <span id='optionLabel'>"
-+ Model.RegistrationType.OptionLabel + "</span>: <span id='baseCost'>"
-+ Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
+            + Model.RegistrationType.OptionLabel + "</span>: <span id='baseCost'>"
+            + Model.PricesAndDiscounts.UnitPrice.ToString(CurrencyFormatToken) + "</span><br />");
 
         if (Model.PricesAndDiscounts.Discount == null)
         {
@@ -181,8 +197,10 @@
 
             }
         }
-        rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'>share or add location?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
-
+        if (!Model.WebinarIsPast)
+        {
+            rowAmount.Append("<button id='revealAddLocsPanel' class='btn btn-mini btn-default'>share or add location?</button> " + GetAdditionalLocationsTextSpan() + "<br>");
+        }
         if (Model.PricesAndDiscounts.TaxAmount > 0)
         {
             rowAmount.Append("<span  id='showTax'>Tax: <span id='taxAmt'>" + Model.PricesAndDiscounts.TaxAmount.ToString(CurrencyFormatToken) + "<br></span></span><br />");
@@ -204,6 +222,7 @@
             }
             else
             {
+                hidePaymentButtons = true;
                 rowAmount.Append("<br><span  style='color: Green;' id='showOutstandingBalance'>Due: <span id='outstandingBalance'>" + Model.PricesAndDiscounts.TotalOrderPrice.ToString(CurrencyFormatToken) + "</span></span>");
             }
 
@@ -212,6 +231,12 @@
         {
             <script language="javascript" type="text/javascript">
                 $(function () {
+                    @{
+                        if (hidePaymentButtons)
+                        {
+
+                        }
+                    }
                     //$('#revealOptions').hide();
                     //$('#revealAddLocsPanel').hide();
                     //$('#Canceller').html(
@@ -219,7 +244,7 @@
 
                      $('#ConfirmRegistrationBillMe').on('click',
                          function(e) {
-                             
+
                              e.preventDefault();
                              var confirmOrderForm = $('#confirmOrder');
 
@@ -259,7 +284,7 @@
                     @if (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed)
                     {
                         <span>
-                            @if (User.Identity.IsAuthenticated)
+                            @if (User.Identity.IsAuthenticated && Model.Origin != "Resume")
                             {
                                 <button class="btn btn-success" data-toggle="modal" role="button" data-target="#ContinueShoppingModal" id="ContinueShoppingButton">Continue Shopping</button>
                             }
@@ -284,17 +309,36 @@
                             <button role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
                         </span>
                     }
-
-                    <div class="pull-right">
-                        <br />
-                        <div class="label label-warning large" role="button" id="Canceller">
-                            <span style="color: black"> &nbsp;&nbsp;Place cart on-hold or<br /> <i>Cancel</i> this checkout &nbsp;&nbsp;</span>
+                    @if (Model.Origin != "Resume" && (Model.OrderStatus != OrderStatus.Paid || Model.OrderStatus != OrderStatus.Submitted || Model.OrderStatus != OrderStatus.Billed))
+                    {
+                        <div class="pull-right">
+                            <br />
+                            <div class="label label-warning large" role="button" id="Canceller">
+                                <span style="color: black"> &nbsp;&nbsp;Place cart on-hold or<br /> <i>Cancel</i> this checkout &nbsp;&nbsp;</span>
+                            </div>
                         </div>
-                    </div>
+                    }
 
                 </div>
             }
         </div>
+    }
+
+    if (hidePaymentButtons)
+    {
+        <script language="javascript" type="text/javascript">
+            $(function () {
+                $("#ShowPayByCCModal").hide();
+            });
+        </script>
+    }
+    else
+    {
+        <script language="javascript" type="text/javascript">
+            $(function () {
+                $("#ShowPayByCCModal").show();
+            });
+        </script>
     }
     <script type="text/javascript" language="javascript">
 
@@ -345,4 +389,9 @@
             $('#SendHardcopy').on('click', applySendHardcopy);
         });
     </script>
+    <style>
+        #orderStatusLabelEditing {
+            background-color: red;
+        }
+    </style>
 }

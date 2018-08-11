@@ -313,8 +313,19 @@ namespace CUWebinars.Web.Controllers
                     || model.Order.OrderStatus == OrderStatus.Canceled
                     || model.Order.OrderStatus == OrderStatus.AwaitingVerification
                 )
+                {
+                    _logger.Warn("Confirming order changed OrderDate: " + model.Order.idOrder + " orginal date: " +
+                                 model.Order.OrderDate);
                     model.Order.OrderDate = DateTime.Now;
+                }
+
                 model.Order.OrderStatus = OrderStatus.Submitted;
+
+                if (model.Order.TotalPaid < model.Order.Total)
+                {
+                    model.Order.OrderStatus = OrderStatus.OutstandingBalance;
+                }
+
                 _cartControllerOrchestrator.AddClaimForPostEventMaterials(model.WebUser.email, row);
             }
             catch (Exception exception)
@@ -2049,6 +2060,7 @@ namespace CUWebinars.Web.Controllers
             int orderIDTracker = 0;
             if (idOrderRow.HasValue && idRegType.HasValue)
             {
+
                 try
                 {
                     var regType = _cartControllerOrchestrator.GetRegTypeById(idRegType.Value);
@@ -2067,7 +2079,6 @@ namespace CUWebinars.Web.Controllers
                     if (model.Order.Total != model.Order.TotalPaid)
                     {
                         model.Order.OrderStatus = OrderStatus.OutstandingBalance;
-
                     }
                     else
                     {

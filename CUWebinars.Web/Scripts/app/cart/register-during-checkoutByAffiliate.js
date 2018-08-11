@@ -580,63 +580,63 @@ function hookUpChangeTypeLogic(dropDown) {
 
 // This function's purpose is to update pricing details where the RegType DropDown has its selected value changed.
 // It also displays the Shipping Details modal form where the RegType chosen has a shipping address requirement.
-function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
+//function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
 
-    registerDuringCheckout.gatherPricingData();
+//    registerDuringCheckout.gatherPricingData();
 
-    var url = '/Cart/UpdateOrderDetails';
+//    var url = '/Cart/UpdateOrderDetails';
 
-    var payLoad = {
-        idOrderRow: $('input[name="ID"]').val(),
-        idRegType: registrationTypeId
-    };
+//    var payLoad = {
+//        idOrderRow: $('input[name="ID"]').val(),
+//        idRegType: registrationTypeId
+//    };
 
-    $.ajax({
-        type: 'POST',
-        contentType: constants.JsonContentType,
-        cache: false,
-        url: url,
-        dataType: constants.JsonDataType,
-        data: JSON.stringify(payLoad)
-    }).done(function (data) {
+//    $.ajax({
+//        type: 'POST',
+//        contentType: constants.JsonContentType,
+//        cache: false,
+//        url: url,
+//        dataType: constants.JsonDataType,
+//        data: JSON.stringify(payLoad)
+//    }).done(function (data) {
         
-        if (data) {
-            if (data.Tax > 0) {
-                $('#showTax').removeClass("hidden");
-            } else {
-                $('#showTax').addClass("hidden");
-            }
-            console.log(data);
-            var alertCaption = data.UpdateSuccessCaption;
-            $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
-            $('#discountCaption').html(data.DiscountCaption);
-            $('#optionLabel').html(data.regTypeShort);
+//        if (data) {
+//            if (data.Tax > 0) {
+//                $('#showTax').removeClass("hidden");
+//            } else {
+//                $('#showTax').addClass("hidden");
+//            }
+//            console.log(data);
+//            var alertCaption = data.UpdateSuccessCaption;
+//            $('#flyUpdateSuccessFlag').html(data.UpdateSuccessCaption).show();
+//            $('#discountCaption').html(data.DiscountCaption);
+//            $('#optionLabel').html(data.regTypeShort);
 
-            $('#baseCost').html('$' + data.BasePrice + '');
-            $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
-            $('#taxAmt').html(data.Tax + '');
-            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
-            //if (data.OrderStatusCaption !== "") {
-            $('#orderStatusLabel').html(data.OrderStatusCaption);
-            //    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
-            //}
-            $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
-            if (data.TotalPaid !== 0) {
-                if (data.OutstandingBalance > 0) {
-                    $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
+//            $('#baseCost').html('$' + data.BasePrice + '');
+//            $('#totalDiscount').html('<span id="showDiscount">$' + data.Discount + '');
+//            $('#taxAmt').html(data.Tax + '');
+//            $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
+//            //if (data.OrderStatusCaption !== "") {
+//            $('#orderStatusLabel').html(data.OrderStatusCaption);
+//            //    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
+//            //}
+//            $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
+//            if (data.TotalPaid !== 0) {
+//                if (data.OutstandingBalance > 0) {
+//                    $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
 
-                } else {
-                    $("#ShowPayByCCModal").hide();
-                }
-            }
-        }
-        alert(alertCaption);
-        dropDown.removeAttr('disabled');
-        $('#discountSpinner').remove();
+//                } else {
+//                    $("#ShowPayByCCModal").hide();
+//                }
+//            }
+//        }
+//        alert(alertCaption);
+//        dropDown.removeAttr('disabled');
+//        $('#discountSpinner').remove();
 
-        ShowModalForShippingDetails();
-    }).fail(commonFuncs.failCallBack);
-}
+//        ShowModalForShippingDetails();
+//    }).fail(commonFuncs.failCallBack);
+//}
 
 function ShowModalForShippingDetails(shippingDetailsRqrd) {
 

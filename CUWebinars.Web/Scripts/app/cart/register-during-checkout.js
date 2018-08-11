@@ -50,7 +50,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
     $('body').on('click', 'input:button', (function (e, data) {
 
-        console.log("onBody click");
+        //
 
         if (e.currentTarget.value === 'Create New Account?') // called directly in the razor partial view
             return false;
@@ -901,7 +901,7 @@ function hookUpModal(modalForm) {
 }
 
 function hookUpChangeTypeLogic(dropDown) {
-
+    //alert("Hit");
     var changeTypeConfirmModal = $('#changeTypeConfirmModal');
     var chosenRegTypeLabel = $('#chosenRegType');
     var position,
@@ -1213,20 +1213,28 @@ function updatePriceOnNewSelection(registrationTypeId, totalPrice, dropDown) {
             $('#totalAdLocsPrice').html('$' + data.OptionsPrice + '');
             //if (data.OrderStatusCaption !== "") {
             $('#orderStatusLabel').html(data.OrderStatusCaption);
+
+
+
+            $('#OrderSumRegType').html("<span id=\"OrderSumRegType\"><i>Type: </i>" + data.regTypeShort + "</span>");
+            $('#OrderSumUserStatus').html("<span id=\"OrderSumUserStatus\"><i>Status: </i>" + data.OrderStatusCaption + "</span>");
+            $('#OrderSumUserCost').html("<span id=\"OrderSumUserCost\"><i>Total Cost:</i>" + data.Total + "</span>");
             //    alertCaption += " This previously paid order now has a balance due: $" + data.OutstandingBalance;
             //}
             $('#totalPrice').html('<span id="totalPrice">$' + data.Total + '</span>');
             if (data.TotalPaid !== 0) {
+                console.log(data.TotalPaid);
                 if (data.OutstandingBalance > 0) {
                     $('#showOutstandingBalance').html('<span style=\"color: red;\"  id="outstandingBalance">Due: $' + data.OutstandingBalance + '</span>');
 
                 } else {
+
                     $("#ShowPayByCCModal").hide();
                 }
             }
         }
         alert(alertCaption);
-
+        location.reload();
         dropDown.removeAttr('disabled');
         $('#discountSpinner').remove();
 

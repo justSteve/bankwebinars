@@ -1001,8 +1001,12 @@ namespace CUWebinars.Web.Controllers
             {
                 discount = _accountControllerOrchestrator.BuildCPSubscriptionModel(orderRow.Discount, order.idUser);
             }
+            bool webinarIsPast = false;
+            if (orderRow.Webinar.Status == WebinarStatus.Recorded)
+                webinarIsPast = true;
             var editModel = new EditOrderInfoModel
             {
+
                 EditFields = new EditOrderModel
                 {
                     AuditInfo = GetFirstPageOrigin(order),
@@ -1019,6 +1023,7 @@ namespace CUWebinars.Web.Controllers
 
                     DisplayRowPriceViewModel = new DisplayRowPriceViewModel
                     {
+                        WebinarIsPast = webinarIsPast,
                         NumberOfAdditionalLocations = additionalLocationsCount,
                         //OrderStatus = order.OrderStatus,
                         //Price = Convert.ToDecimal(orderRow.RegistrationType.Price),

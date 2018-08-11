@@ -1655,11 +1655,14 @@ namespace CUWebinars.Web.Controllers
                         if (_ccAddresses != null)
                             ccAddresses = _ccAddresses.Split(',').ToList();
                         bool sendHardcopy = !(orderRow.SendHardcopy.HasValue && orderRow.SendHardcopy.Value == false);
+                        bool webinarIsPast = false;
+                        if (orderRow.Webinar.Status == WebinarStatus.Recorded)
+                            webinarIsPast = true;
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
                             DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
-
+                            WebinarIsPast = webinarIsPast,
                             AdminComments = model.Order.AdminComments,
                             //AffiliateComments = model.Order.AffiliateComments,
                             //CCUserDetails = "",
@@ -1933,11 +1936,14 @@ namespace CUWebinars.Web.Controllers
 
             //_orderManagementService.GetCostOfAdditionalLocations(orderRowForOrder.AdditionalLocation,
             //    webinar.idWebinar);
-
+            bool webinarIsPast = false;
+            if (model.Webinar.Status == WebinarStatus.Recorded)
+                webinarIsPast = true;
             // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
             model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                 new DisplayRowPriceViewModel
                 {
+                    WebinarIsPast = webinarIsPast,
                     //Discount = row.Discount,
                     NumberOfAdditionalLocations = orderRowForOrder.AdditionalLocation.Count(),
                     OrderStatus = orderRowForOrder.Order.OrderStatus,
@@ -2089,9 +2095,14 @@ namespace CUWebinars.Web.Controllers
                     //            .ToList();
                     //}
                     // populate DisplayRowPriceViewModel of DisplayOptionsViewModel
+
+                    bool webinarIsPast = false;
+                    if (model.Webinar.Status == WebinarStatus.Recorded)
+                        webinarIsPast = true;
                     model.CheckoutOptionsViewModel.DisplayOptionsViewModel.DisplayRowPriceViewModel =
                         new DisplayRowPriceViewModel
                         {
+                            WebinarIsPast = webinarIsPast,
                             //Discount = row.Discount,
                             NumberOfAdditionalLocations = row.AdditionalLocation.Count(),
                             OrderStatus = row.Order.OrderStatus,
