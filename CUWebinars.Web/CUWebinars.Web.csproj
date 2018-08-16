@@ -1920,6 +1920,7 @@
     <Content Include="Content\toastr.less" />
     <Content Include="Notification\Templates\SendCCSPromoMaster.cshtml" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_WSPRenewal.docx" />
+    <Content Include="App_Data\mergeTemplates\OrderSubmittedCCS.docx" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />

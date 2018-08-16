@@ -277,13 +277,13 @@ $(function () {
 
         var data = signUpForm.serialize();
         
-        $.post('/cart/checkoutConfirmSetCookie', data,
-            function (response, status, xhr) {
-                console.log(response);
-                    //primary objective is to set cookie state according to initial button click.
-                    window.Cookies.set('OrderStart', response.model);
+        //$.post('/cart/checkoutConfirmSetCookie', data,
+        //    function (response, status, xhr) {
+        //        //console.log(response);
+        //            //primary objective is to set cookie state according to initial button click.
+        //            window.Cookies.set('OrderStart', response.model);
                 
-            });
+        //    });
 
         var spinner = $('#signUpSpinner');
         $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
@@ -356,7 +356,7 @@ $(function () {
 
                         if (cookieVals != null) {
                             cookieVals = cookieVals.replace("OrderId=", "Email=" + $('#loginEmail').val()+ "&OrderId=")
-                            window.Cookies.set('OrderStart', cookieVals, );
+                            window.Cookies.set('OrderStart', cookieVals );
                         }
 
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
