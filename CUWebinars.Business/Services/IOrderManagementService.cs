@@ -173,5 +173,7 @@ namespace CUWebinars.Business.Services
         string RemoveDiscountCode(string code, OrderRow row);
         //string CreateCompliancePerspectivesSubscription(OrderRow row, OrderRow row);
         Discount CreateWspCode(Order modelOrder);
+
+        IList<WebUser> GetWspUsers(int idDiscount);
     }
 }

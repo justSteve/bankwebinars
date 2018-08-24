@@ -27,7 +27,7 @@ namespace CUWebinars.Web.Mapping.Configuration
                 , discount => discount.MapFrom(d => d.DiscountType));
 
             Profile.CreateMap<Discount, DiscountDTO>()
-                                .ForMember(d => d.CreditsUsed, s => s.Ignore())
+                .ForMember(d => d.CreditsUsed, s => s.Ignore())
                 .ForMember(d => d.CreditsRemain, s => s.Ignore())
                 .ForMember(d => d.UserEmail, s => s.Ignore())
                 .ForMember(d => d.WpsUsers, s => s.Ignore())

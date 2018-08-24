@@ -2095,6 +2095,12 @@ namespace CUWebinars.Business.Services
             }
         }
 
+        public IList<WebUser> GetWspUsers(int idDiscount)
+        {
+
+            return _webUserRepository.GetWspUsers(idDiscount);
+        }
+
         //public IList<RegType> GetAllPossibleRegTypesByWebinarId(int idWebinar)
         //{
 
@@ -2390,7 +2396,7 @@ namespace CUWebinars.Business.Services
 
         public decimal CalculateCreditsUsed(Discount userDiscount)
         {
-
+            
             // this and the CalculateCreditRemain method
             // are copy/paste replicates of the OrderRepository versions
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)

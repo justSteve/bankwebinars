@@ -326,6 +326,39 @@ namespace CUWebinars.Business.Services
                         }
                     }
                     break;
+                case 6: // CommissionModel.Flat30
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        try
+                        {
+                            decimal commissionPercent = 0.3M;
+
+                            var row = IniInvoice(order, invoice);
+                            row.Royalty = row.RowPrice * commissionPercent;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties += row.Royalty;
+
+
+                            StoreInvoiceDetail(order, invoice);
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                            _logger.FatalException("ComputRoyaltyForPostEventOrders Flat30 " + order.idOrder, ex);
+                        }
+                    }
+                    break;
 
                 default:
                     throw new TTSException("Invalid commission model ");
@@ -531,6 +564,38 @@ namespace CUWebinars.Business.Services
                         catch (Exception ex)
                         {
                             _logger.FatalException("ComputRoyalty Sliding4TierNoCCBreak " + order.idOrder, ex);
+                        }
+                    }
+                    break;
+
+                case 6: // CommissionModel.Flat30
+                    foreach (Order order in orders.OrderBy(o => o.OrderDate))
+                    {
+                        try
+                        {
+                            decimal commissionPercent = 0.3M;
+
+                            var row = IniInvoice(order, invoice);
+                            //row.Royalty = order.Total * commissionPercent;
+                            row.Royalty = row.RowPrice * commissionPercent;
+                            row.PercentPaid = commissionPercent;
+                            invoice.TotalRoyalties = invoice.TotalRoyalties + row.Royalty;
+
+                            if (order.OrderStatus == OrderStatus.Paid)
+                            {
+                                totalPaidRoyalty += row.Royalty;
+                            }
+                            else
+                            {
+                                totalBilledRevenue += row.RowPrice;
+                                totalBilledRoyalty += row.Royalty;
+                            }
+
+                            StoreInvoiceDetail(order, invoice);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.FatalException("ComputeRoyalty Flat30 " + order.idOrder, ex);
                         }
                     }
                     break;
@@ -863,7 +928,7 @@ namespace CUWebinars.Business.Services
                 var theseDiscounts = _context.Discounts
                     .Where(d => (d.DiscountType == DiscountType.Subscription || d.DiscountType == DiscountType.ComplianceSeries)
                     ).ToList();
-
+                
                 foreach (var discount in theseDiscounts)
                 {
                     IList<WebUser> wpsUsers = _context.WebUsers.Where(u => u.idSubscriptionDiscount == discount.idDiscount)

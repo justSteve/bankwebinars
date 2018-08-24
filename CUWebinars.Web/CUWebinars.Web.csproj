@@ -760,6 +760,7 @@
     <Content Include="Content\css\styleCrispMW.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
     <Content Include="Content\images\compass.png" />
+    <Content Include="Content\images\logo_mortgagewebinars.png" />
     <Content Include="Content\images\presenters\nesbitt.jpg" />
     <Content Include="Content\mobile\Documentation\assets\css\documenter_style.css" />
     <Content Include="Content\mobile\Documentation\assets\css\img\info.png" />

@@ -42,11 +42,16 @@
                 {
                     var rowCount = 0;
                     <table  id='ShowWSP'>
-                        <tr style="background-color: black; color: gray"><td>&nbsp;</td><td>Code</td><td>Email</td><td>Remaining</td><td>Status</td></tr>
+                        <tr style="background-color: black; color: gray"><td>&nbsp;</td><td>Code</td><td>AffId</td><td>Email</td><td>Remaining</td><td>Status</td></tr>
                         @foreach (var discount in Model.Discounts.OrderBy(d => d.DateValidTo).Where(d => d.DiscountType == DiscountType.Subscription))
                         {
                             rowCount++;
                             var users = "";
+                            var usersWithOrders = "";
+                            foreach (var user in discount.WpsUsersWithOrders.OrderBy(d => d.AcctStatus))
+                            {
+                                usersWithOrders += user.email + ", ";
+                            }
                             foreach (var user in discount.WpsUsers.OrderBy(d => d.AcctStatus))
                             {
                                 users += user.email + ", ";

@@ -1792,10 +1792,12 @@ namespace CUWebinars.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                formModel.idWebinar = 2485;
-
-                    //telemetry.Initialize();
-                                _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
+                if (_globalConfig.Tenant == "CCS")
+                {
+                    formModel.idWebinar = 2485;
+                }
+                //telemetry.Initialize();
+                _logger.Info("Signup2 Enters: " + _appHelper.GetUserAuditInfo());
 
                 try
                 {

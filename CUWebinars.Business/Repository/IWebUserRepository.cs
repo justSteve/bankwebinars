@@ -36,5 +36,6 @@ namespace CUWebinars.Business.Repository
         int? GetUserIdByFirstNameLastName(string fullName);
         //bool UserHasWsp(int idUser);
         //bool UserHasWspThatExpired(int idUser);
+        IList<WebUser> GetWspUsers(int idDiscount);
     }
 }

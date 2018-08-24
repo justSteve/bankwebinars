@@ -213,7 +213,11 @@
                 <p>
                     <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn">Daily Promotional Email</a>
                 </p>
-                @if (Model.ShowOrdersViewModel.Affiliate.idUserAff == 32175 || Model.ShowOrdersViewModel.Affiliate.idUserAff == 26276)
+                @if (Model.ShowOrdersViewModel.Affiliate.idUserAff == 32175
+                    || Model.ShowOrdersViewModel.Affiliate.idUserAff == 26276
+                    || Model.ShowOrdersViewModel.Affiliate.idUserAff == 17146
+
+                    )
                 {
                     <p>
                         @Html.Raw(recordingLink)

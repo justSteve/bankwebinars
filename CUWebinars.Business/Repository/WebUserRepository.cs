@@ -216,7 +216,14 @@ namespace CUWebinars.Business.Repository
                 .Where(p => p.FirstName == firstName && p.LastName == lastName).Select(p => p.idUser).FirstOrDefault();
             return userId;
         }
-        
+
+        public IList<WebUser> GetWspUsers(int idDiscount)
+        {
+            return ((TTSWebinarsContext)db).WebUsers
+                .Where(p => p.idSubscriptionDiscount == idDiscount).ToList();
+
+        }
+
         public int? GetWebUserIdByEmail(string email)
         {
             return items.Where(w => w.email == email).Select(w => w.idUser).SingleOrDefault();

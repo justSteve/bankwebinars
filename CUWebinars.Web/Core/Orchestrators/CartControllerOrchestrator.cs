@@ -1931,8 +1931,9 @@ namespace CUWebinars.Web.Core.Orchestrators
 
             if (discountModel.TypeOfDiscount == DiscountType.Subscription)
             {
-                discountModel.UsersOnWsp = _orderManagementService.GetOrdersByDiscount(discountModel.idDiscount)
-                    .Select(u => u.WebUser).ToList();
+                discountModel.UsersOnWsp = _orderManagementService.GetWspUsers(discountModel.idDiscount);
+                    
+                
                 discountModel.WspUsageSum = _orderManagementService.GetOrdersByDiscount(discountModel.idDiscount)
                                     .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid).ToList();
 
