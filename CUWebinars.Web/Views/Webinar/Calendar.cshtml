@@ -1,23 +1,35 @@
-﻿@using System.Linq
+﻿
+@using CUWebinars.Web.Core
+@using System.Linq
 @using CUWebinars.Web.Helpers
 @using CUWebinars.Business.Models
 
 
 @{
     ViewBag.Title = "Calendar";
-    Layout = "/Views/Shared/_LayoutPublic.cshtml";
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
 
     var identity = ((ClaimsIdentity)User.Identity)
-        .Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
+.Claims.FirstOrDefault(c => c.Type == CUWebinars.Business.Constants.ClaimTypes.FullName);
 
     if (!ReferenceEquals(null, identity))
     {
         //ViewBag.LoggedInUserIdentity = identity;
-        
+
 
     }
-    
-    
+
+
 }
 
 <script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>

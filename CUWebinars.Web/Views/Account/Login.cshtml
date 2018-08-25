@@ -1,4 +1,21 @@
-﻿@model LoginModel
+﻿@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+
+
+@model LoginModel
+@{
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
+
+}
 
 <div id="LogInContainer" class="container">
 
@@ -10,8 +27,8 @@
         @Html.Partial("_FindLinkPartial", Model.FindLinkModel)
     </div>
     @*<div style="margin-left: 200px;" id="accountInfoPartial" class="initialHide">
-        @Html.Partial("_AccountInfoPartial", Model.AccountInfoModel)
-    </div>*@
+            @Html.Partial("_AccountInfoPartial", Model.AccountInfoModel)
+        </div>*@
     <div id="register" class="initialHide">
         @Html.Partial("_CreateUserForm", Model.Register)
     </div>

@@ -5,12 +5,19 @@
 
 
 @{
-    ViewBag.Title = "My Webinars";
-    Layout = "/Views/Shared/_LayoutPublic.cshtml";
-
 
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+    ViewBag.Title = "My Webinars";
+    if (_globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
     WebUser currentUser = Model.WebUser;
     var EditResult = "<span>&nbsp;</span>";
     //var userSubscription = new DiscountDetailsModel() { Discount = Model.Package, UserId = currentUser.idUser };

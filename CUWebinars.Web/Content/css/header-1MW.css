@@ -21,7 +21,7 @@ nav.user {
 		/*float: left;*/
 		/*padding: 0 5px;
 		margin-right: 5px;*/
-		color: #49a33f;
+		color: #3E67B1;
 	}
 
 		nav.user a:hover {
@@ -36,7 +36,7 @@ body.tall-logo nav.user {
 ================================================== */
 
 #logo, #logo img {
-	width: 350px;
+	width: 400px;
 	/* width and height of logo desktop NON retina - this is the regular size logo */
 	height: 95px;
 }
@@ -75,7 +75,7 @@ body.tall-logo nav.user {
 	position: relative;
 	clear: both;
 	padding: 0;
-	background: #4693af;
+	background: #ffffff;
 	/*ie 7*/
 	z-index: 999;
 }
@@ -147,7 +147,7 @@ body.tall-logo nav.user {
 }
 
 	.preheader .phone a, .preheader .phone {
-		color: #49a33f;
+		color: #3E67B1;
 	}
 
 
@@ -182,7 +182,7 @@ body.tall-logo nav.user {
 }
 
 .preheader .social a {
-	color: #49a33f;
+	color: #3E67B1;
 	top: 2px;
 	position: relative;
 	text-decoration: none;
@@ -204,8 +204,8 @@ body.tall-logo nav.user {
 .primary_menu > li > a:focus,
 .primary_menu > .active > a,
 .primary_menu > li > a.selected {
-	color: #fff;
-	background: #53a3b7;
+    color: #fff;
+    background: #3E67B1;
 }
 
 /* colors second level */
@@ -279,28 +279,28 @@ body.tall-logo nav.user {
 		margin: 0 0 0 2px;
 		padding: 0;
 		position: relative;
-		background: #4693af;
+		background: #ffffff;
 		text-transform: lowercase;
 	}
 
-		.primary_menu li a {
-			border: none;
-			color: #d8dfe5;
-			display: block;
-			/*height: 95px;*/
-			line-height: 90px;
-			margin: 0 !important;
-			padding: 0 12px;
-			text-decoration: none;
-			font-size: 110%;
-		}
+        .primary_menu li a {
+            border: none;
+            color: #3E67B1;
+            display: block;
+            /*height: 95px;*/
+            line-height: 90px;
+            margin: 0 !important;
+            padding: 0 12px;
+            text-decoration: none;
+            font-size: 110%;
+        }
 
 		.primary_menu li ul li a, .lt-ie9 .primary_menu li ul li a {
 			font-size: 100%;
 		}
 
 		.primary_menu li ul li {
-			background: #49a33f;
+			background: #3E67B1;
 			float: none;
 			left: auto;
 			margin: 0;
@@ -309,7 +309,7 @@ body.tall-logo nav.user {
 		}
 
 			.primary_menu li ul li ul li {
-				background: #49a33f;
+				background: #3E67B1;
 			}
 
 		.primary_menu li li {
@@ -326,14 +326,14 @@ body.tall-logo nav.user {
 			color: #fff;
 		}
 
-		.primary_menu li ul {
-			background: #6d767e;
-			left: 0;
-			padding: 0;
-			position: absolute;
-			top: 95px;
-			z-index: 100;
-		}
+        .primary_menu li ul {
+            background: #3E67B1;
+            left: 0;
+            padding: 0;
+            position: absolute;
+            top: 95px;
+            z-index: 100;
+        }
 
 			.primary_menu li ul ul {
 				border-top: 0px;

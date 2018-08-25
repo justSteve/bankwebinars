@@ -22,6 +22,8 @@
     padding: 10px 0;
     margin: 0;
     margin-bottom: 15px;
+    background-color: #3E67B1;
+    color: #ffffff;
 }
 
 .dataTables_length {
