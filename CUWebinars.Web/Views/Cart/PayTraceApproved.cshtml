@@ -2,11 +2,20 @@
 @model PayTraceResponse
 
 @{
+
     ViewBag.Title = "Payment Successful";
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    
 
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
-    
+    if (_globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
     <div id="LogInContainer" class="container">
         <div id="reset">
 

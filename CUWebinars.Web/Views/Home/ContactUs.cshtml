@@ -3,8 +3,17 @@
 @using CUWebinars.Web.Core
 @{
     ViewBag.Title = "Contact Us";
-    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
 }
 
 <div id="page">
@@ -22,10 +31,15 @@
 
         <div class="container clearfix" id="main-content">
             <div class="row-fluid reverse-order contact-page">
-                @globalConfig.Tenant
+                
                 @if (globalConfig.Tenant == "BankWebinars" || globalConfig.Tenant == "DirectorSeries" || globalConfig.Tenant == "CCS" )
                 {
                     <script type="text/javascript" src="https://form.jotform.com/jsform/43462160046952"></script>
+
+                }
+                @if (globalConfig.Tenant == "MortgageWebinars"  )
+                {
+                    <script type="text/javascript" src="https://form.jotform.com/jsform/82373285174966"></script>
 
                 }
 

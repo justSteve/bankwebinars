@@ -1,8 +1,21 @@
-﻿@using System.Configuration
+﻿@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+
+@using System.Configuration
 @{
     ViewBag.Title = "Common Questions About " + ConfigurationManager.AppSettings["Tenant"] + ".com";
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
 
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (_globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
 }
 
 <style>

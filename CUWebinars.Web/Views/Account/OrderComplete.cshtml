@@ -2,8 +2,17 @@
 @using CUWebinars.Web.Core
 @model Order
 @{
-    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (_globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
     var myRow = Model.OrderRows.Single(or => or.RowStatus == OrderRowStatus.Active);
     var newUserMsg = "<div class='span7'><p>" +
                     "An order confirmation email has been dispatched to <b>" + Model.BillingEmail + "</b> and includes " +
@@ -27,7 +36,7 @@
     {
         //{"CheckoutMessage":"Child Orders are 153339,153340,153341"}
         var _temp = myRow.Order.UserComments.Replace("{ \"CheckoutMessage\":\"Child Orders are ", "");
-            
+
         var _createdSeriesOrders = _temp.Split(',');
         createdSeriesOrders = " This order for a " + _createdSeriesOrders.Length + "-part series has created orders for each of the episodes: <br>";
         var i = "";

@@ -1,7 +1,20 @@
 ﻿@using System.Configuration
+@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+
 @{
     ViewBag.Title = "Detailed Connection Instructions";
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (_globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
 
 }
 

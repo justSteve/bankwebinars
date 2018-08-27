@@ -1,12 +1,21 @@
 ﻿@using CUWebinars.Web.Core
 
 @{
-    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
 
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (_globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
 
     var newUserMsg = "<div class='span7'><p>" +
-                    "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
-                     "complete details of your registration. </p></div>";
+            "An order confirmation email has been dispatched to " + Model.BillingEmail + " and includes " +
+             "complete details of your registration. </p></div>";
 }
 <div id="LogInContainer" class="container">
     <div id="reset">
