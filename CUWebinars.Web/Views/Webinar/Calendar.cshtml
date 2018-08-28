@@ -34,28 +34,34 @@
 
 <script src="/Scripts/fullcalendar/fullcalendar.js" type="text/javascript"></script>
 <link href="/Scripts/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
-<div class="container">
-    <h2>
-        TTS Event Calendar
-    </h2>
+<div id="page">
+    <div class="container">
+        <div class="hero-unit">
+            <div class="container">
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#calendar').fullCalendar({
-                events: "/Webinar/CalendarData",
-                timeFormat: 'h(:mm)t ',
-                allDayDefault: false,
-                weekends: false,
-                loading: function (bool) {
-                    if (bool) $('#veil').show();
-                    else $('#veil').hide();
-                }
+                <h1>TTS Events Calendar</h1>
+            </div>
+            <!--close container-->
+        </div>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#calendar').fullCalendar({
+                    events: "/Webinar/CalendarData",
+                    timeFormat: 'h(:mm)t ',
+                    allDayDefault: false,
+                    weekends: false,
+                    loading: function (bool) {
+                        if (bool) $('#veil').show();
+                        else $('#veil').hide();
+                    }
+
+                });
+
 
             });
-
-
-        });
-    </script>
-    <div id="calendar">
+        </script>
+        <div id="calendar">
+        </div>
     </div>
 </div>

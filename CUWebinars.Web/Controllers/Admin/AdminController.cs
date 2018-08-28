@@ -638,7 +638,7 @@ namespace CUWebinars.Web.Controllers.Admin
                                 return null;
                             }
                         }
-                        
+
                         if (originalOrder.OrderStatus != OrderStatus.Canceled)
                         {
                             try
@@ -3061,7 +3061,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         sb.Append("No List found for " + affiliate.ttsDomain + "<br>");
                         continue;
                     }
-                    
+
                     var unSubCount = mcList.Stats.UnsubscribeCount;
                     var SubCount = mcList.Stats.MemberCount;
                     sb.Append("Total members: " + SubCount + "<br>");
@@ -3102,7 +3102,7 @@ namespace CUWebinars.Web.Controllers.Admin
             StringBuilder sbNoList = new StringBuilder();
             var lists = await manager.Lists.GetAllAsync().ConfigureAwait(false);
             var tenant = _globalConfig.TenantPrefix.Replace("-", "");
-            
+
             //var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
             //var masterTenantList = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
 
@@ -3211,7 +3211,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         }
                         var newMemToJson = JsonConvert.SerializeObject(newMember);
                         _logger.Info("MigrateMailChimpUser Added: " + newMemToJson);
-                        
+
                     }
                     sb.Append("Total imported: " + iterator);
                 }
@@ -4546,7 +4546,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         {
                             if (TenantConstant == Convert.ToInt32(orderId))
                                 continue;
-                            
+
                             InvoiceExceptions invoiceExceptions = new InvoiceExceptions();
                             var order = _orderManagementService.GetOrderById(Convert.ToInt32(orderId));
                             invoiceExceptions.PostEvent = order.idOrder;
@@ -4861,6 +4861,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         if (_incompleteOrders.Any())
                         {
+
                             _logger.Info("GenerateWeeklyInvoices found Incomplete Orders " + _incompleteOrders.Count +
                                          "  for " +
                                          idAffiliate);
@@ -5303,7 +5304,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         if (hadWOrder || hadPOrder || hadUOrder)
                         {
-                            _logger.Info("begins write to file: " + InvoiceID);
+                            //_logger.Info("begins write to file: " + InvoiceID);
 
                             //// SAVE LOCALLY if needed for easier testing
                             //document.Save(
@@ -5317,6 +5318,14 @@ namespace CUWebinars.Web.Controllers.Admin
 
                             // Retrieve reference to a previously created container.
                             CloudBlobContainer container = blobClient.GetContainerReference("affiliateinvoices");
+#if DEBUG
+                            container = blobClient.GetContainerReference("affiliateinvoices_TESTING");
+                            document.Save(
+                                Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".pdf"), SaveOptions.PdfDefault);
+
+
+#endif
+
                             container.CreateIfNotExists();
                             CloudBlobContainer containerSheets = blobClient.GetContainerReference("invoices-affiliate");
                             containerSheets.CreateIfNotExists();
@@ -5542,17 +5551,30 @@ namespace CUWebinars.Web.Controllers.Admin
         private string CheckForExistingInvoice(string startDate, string weekNumber, int idAffiliate)
         {
             string blob = null;
+#if DEBUG
 
+            return null;
+
+#endif
             try
             {
                 var blobTest = BlobHelper.GetBlob("affiliateinvoices/", startDate, weekNumber + "-" + idAffiliate + ".pdf");
                 if (blobTest != null)
+                {
+                    _logger.Info("GenerateWeeklyInvoices found stored invoice: " + idAffiliate);
                     blob = blobTest.BlobUri;
+                }
+                else
+                {
+                    _logger.Info("GenerateWeeklyInvoices FAILED TO FIND stored invoice: " + idAffiliate);
+
+                }
             }
             catch (Exception ex)
             {
                 _logger.FatalException("CheckForExistingInvoice: ", ex);
             }
+
             return blob;
         }
 

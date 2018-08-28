@@ -14,10 +14,38 @@
     Layout = "~/Views/Shared/_Layout_MW.cshtml";
 }
 
-
+<style>
+    .buttonBucket {
+        padding: 10px 15px;
+        background-color: #ffffff;
+        border-radius: 3px;
+        display: inline-block;
+        margin: 0, auto;
+        margin-left: 30px;
+        min-width: 200px;
+        font-weight: 600;
+        border: none;
+    }
+</style>
 <div class="clearfix">
-
-    <img width="100%" src="~/Content/images/MortgageWebinarsHomeScreen.png" />
+    <div style="background-position: center; background-size: cover; margin-top: 0px; width: 100%; height: 500px; background-repeat: no-repeat; background-image: url('https://mortgagewebinars.azurewebsites.net/content/images/MortgageWebinarsHomeScreen.png');">
+        <p class="clearfix" style="display: block;">&nbsp;</p>
+        <div style="margin-top: 100px;">
+            <h1 style="color: white; text-shadow: 1px 1px #808080; text-align: center;">Welcome!</h1>
+            <div style="color: white; text-align: center;">
+                <p style="font-size: 24px; text-shadow: 1px 2px #000000; ">The text that shows here will make you feel really welcome.</p>
+                <div id="box1" class="buttonBucket">
+                    <a href="/Webinar/allActive?eventsToShow=upcoming">Upcoming<br />Upcoming Webinars are coming up!</a>
+                </div>
+                <div id="box2" class="buttonBucket">
+                    <a href="/Webinar/Details/2520"><span>Webinar Subscription Packages<br />Webinar Subscription Packages (WSP) are awesome!</span></a>
+                </div>
+                <div id="box3" class="buttonBucket">
+                    <a href="/Webinar/allActive?eventsToShow=recorded"><span>Recorded<br />Recorded Webinars are awesome!</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
