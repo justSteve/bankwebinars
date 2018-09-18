@@ -1077,7 +1077,8 @@ namespace CUWebinars.Web.Controllers
                     {
 
                         _orderManagementService.FireMandrillNotificationEvent(
-                            "e6a68209.ttstrain.com@amer.teams.ms",
+                            //"e6a68209.ttstrain.com@amer.teams.ms",
+                            "all.of.us@ttstrain.com",
                             "Reply to a notification", "From: " + mandrillEvent.msg.from_email + " (" + mandrillEvent.msg.from_name + ")<br>" + mandrillEvent.msg.text);
                     }
                 }

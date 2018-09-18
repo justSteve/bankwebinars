@@ -24,9 +24,9 @@ nav.user {
 		color: #3E67B1;
 	}
 
-		nav.user a:hover {
-			color: #53a3b7;
-		}
+        nav.user a:hover {
+            color: #86BE48;
+        }
 
 body.tall-logo nav.user {
 	margin-left: 180px;
@@ -92,7 +92,7 @@ body.tall-logo nav.user {
 	margin-top: 0;
 	padding: 0;
 	top: -47px;
-	background-image: url('~/Content/images/tall-logo-desktop.png');
+	background-image: url('/Content/images/tall-logo-desktop.png');
 	background-color: transparent;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
@@ -214,8 +214,8 @@ body.tall-logo nav.user {
 .primary_menu ul .active > a,
 .primary_menu ul a.selected,
 .primary_menu .parent > .active {
-	color: #fff;
-	background: #53a3b7;
+    color: #fff;
+    background: #86BE48;
 }
 
 
@@ -237,7 +237,7 @@ body.tall-logo nav.user {
 
 /* arrow background images */
 .primary_menu li.parent i {
-	background: url('/Content/images/menu_arrow.png') 0 0 no-repeat;
+	background: url('/Content/images/menu_arrowRev.png') 0 0 no-repeat;
 	display: inline-block;
 	width: 5px;
 	margin-left: 8px;
@@ -288,7 +288,7 @@ body.tall-logo nav.user {
             color: #3E67B1;
             display: block;
             /*height: 95px;*/
-            line-height: 90px;
+            /*line-height: 90px;*/
             margin: 0 !important;
             padding: 0 12px;
             text-decoration: none;
@@ -554,17 +554,17 @@ body.tall-logo nav.user {
 		display: none;
 	}
 
-	.mobile_nav {
-		margin: 0;
-		display: block;
-		position: absolute;
-		top: 5px;
-		left: 5px;
-		height: 40px;
-		width: 40px;
-		background: #53a3b7;
-		z-index: 1;
-	}
+    .mobile_nav {
+        margin: 0;
+        display: block;
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        height: 40px;
+        width: 40px;
+        background: #86BE48;
+        z-index: 1;
+    }
 
 		.mobile_nav a span {
 			display: block;
@@ -574,7 +574,7 @@ body.tall-logo nav.user {
 			position: absolute;
 			left: 10px;
 			top: 0px;
-			background: url(~/Content/images/BankWebinars/navtriggerbg.png) -20px 50% no-repeat;
+			background: url(/Content/images/BankWebinars/navtriggerbg.png) -20px 50% no-repeat;
 		}
 
 		.mobile_nav a.active span {
@@ -693,7 +693,7 @@ body.tall-logo nav.user {
 	}
 
 	body.tall-logo #logo {
-		background-image: url(~/Content/images/tall-logo-mobile.png);
+		background-image: url(/Content/images/tall-logo-mobile.png);
 		/*notice that this image changes on mobile */
 		background-color: transparent !important;
 		background-position: 0 0;
@@ -749,7 +749,7 @@ body.tall-logo nav.user {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 3/2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
 	#logo {
-		background-image: url(~/Content/images/BankWebinars/retina/logo_@2x.png);
+		background-image: url(/Content/images/BankWebinars/retina/logo_@2x.png);
 		-moz-background-size: 140px 59px;
 		/*w & h of total ORIGINAL 72dpi image*/
 		-ie-background-size: 140px 59px;
@@ -759,7 +759,7 @@ body.tall-logo nav.user {
 	}
 
 	.tall-logo #logo {
-		background-image: url(~/Content/images/BankWebinars/retina/tall-logo-mobile_@2x.png);
+		background-image: url(/Content/images/BankWebinars/retina/tall-logo-mobile_@2x.png);
 		-moz-background-size: 170px 185px;
 		/*w & h of total image 72dpi image*/
 		-ie-background-size: 170px 185px;
@@ -769,7 +769,7 @@ body.tall-logo nav.user {
 	}
 
 	.search #search-trigger {
-		background-image: url(~/Content/images/BankWebinars/retina/search_@2x.png);
+		background-image: url(/Content/images/BankWebinars/retina/search_@2x.png);
 		-moz-background-size: 60px 30px;
 		/*w & h of total ORIGINAL 72dpi image*/
 		-ie-background-size: 60px 30px;
@@ -779,7 +779,7 @@ body.tall-logo nav.user {
 	}
 
 	#main_menu li.parent i {
-		background-image: url(~/Content/images/BankWebinars/retina/menu_arrow_@2x.png);
+		background-image: url(/Content/images/BankWebinars/retina/menu_arrow_@2x.png);
 		-moz-background-size: 20px 5px;
 		/*w & h of total ORIGINAL 72dpi image*/
 		-ie-background-size: 20px 5px;
@@ -799,7 +799,7 @@ body.tall-logo nav.user {
 
 @media only screen and (max-width: 767px) and (-webkit-min-device-pixel-ratio: 2), only screen and (max-width: 767px) and (-o-min-device-pixel-ratio: 3/2), only screen and (max-width: 767px) and (min--moz-device-pixel-ratio: 2), only screen and (max-width: 767px) and (min-device-pixel-ratio: 2) {
 	.tall-logo #logo {
-		background-image: url(~/Content/images/BankWebinars/retina/tall-logo-mobile_@2x.png);
+		background-image: url(/Content/images/BankWebinars/retina/tall-logo-mobile_@2x.png);
 		-moz-background-size: 78px 85px;
 		/*w & h of total image 72dpi image*/
 		-ie-background-size: 78px 85px;
@@ -809,7 +809,7 @@ body.tall-logo nav.user {
 	}
 
 	.mobile_nav a span {
-		background-image: url(~/Content/images/BankWebinars/retina/navtriggerbg_@2x.png);
+		background-image: url(/Content/images/BankWebinars/retina/navtriggerbg_@2x.png);
 		-moz-background-size: 80px 40px;
 		/*w & h of total sprite 72dpi image*/
 		-ie-background-size: 80px 40px;

@@ -70,6 +70,7 @@
 <!--<![endif]-->
 <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="msvalidate.01" content="EC4039EF0FA485B010F4E9AA1E51FF9C" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -385,7 +386,7 @@
                                 </ul>
                             }*@
 
-                        
+
                         <li class="parent">
                             <a href="javascript:void(0)">Upcoming Webinars<i></i></a>
 
@@ -395,7 +396,7 @@
                             <a href="javascript:void(0)">OnDemand Webinars<i></i></a>
                             <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
                         </li>
-                        <li>
+                        <li class="parent">
                             <a href="javascript:void(0)">About Us<i></i></a>
                             <ul>
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
@@ -443,20 +444,21 @@
                 <!-- close .span4 -->
                 <div class="span4">
                     <section>
-                        <h4>Follow Us</h4>
-                        @Html.Raw(footSocial)
-
+                        <h4>Powered By</h4>
+                        @*@Html.Raw(footSocial)*@
+                        <p align="left">
+                            <a href="/Home/TTS_OCL">
+                                <img style="float: none;"  src="~/Content/images/TTS-OCLFS_Knockout.png" />
+                            </a>
+                        </p>
                         @{
-                            if (currentAffiliate.idUserAff > 19)
+                            if (@currentAffiliate.DisplayTitle == "Unassigned")
                             {
-                                if (@currentAffiliate.DisplayTitle == "Total Training Solutions")
-                                {
-                                    <p style="margin-top: 10px;" align="center">This site is brought to you by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
-                                }
-                                else
-                                {
-                                    <p style="margin-top: 10px;" align="center">This site is managed for @currentAffiliate.DisplayTitle by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
-                                }
+                                <p align="left">This site is brought to you by Total Training Solutions - TTSTrain.com.</p>
+                            }
+                            else
+                            {
+                                <p align="left">This site is managed for @currentAffiliate.DisplayTitle by @globalConfig.TenantDomain and Total Training Solutions - TTSTrain.com.</p>
                             }
                         }
                     </section>

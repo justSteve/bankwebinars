@@ -43,6 +43,12 @@ namespace CUWebinars.Web.Controllers
             return View();
         }
 
+        public ActionResult TTS_OCL()
+        {
+            //            ViewBag.PageStyleType = "two-columns-right-sidebar";
+            return View();
+        }
+
         public ActionResult PrivacyStatement()
         {
             ViewBag.PageStyleType = "two-columns-right-sidebar";
@@ -217,8 +223,7 @@ namespace CUWebinars.Web.Controllers
             }
             else if (_globalConfig.Tenant == "MortgageWebinars")
             {
-                _stateService.SetValue(WebUiConstants.CcsSession, "true");
-
+                //_stateService.SetValue(WebUiConstants.CcsSession, "true");
 
                 var lWebinars = _webinarRepository.GetUpcoming().OrderByDescending(w => w.Date).Take(15).ToList();
 

@@ -7,6 +7,15 @@
 
 @{
     GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (_globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
     var webinars = Model;
     IStateService stateService = new StateService();
 
@@ -16,13 +25,18 @@
 }
 <div class="hero-unit">
     <div class="container">
-        <h1>@ViewBag.Title</h1>
+        <h1>@ViewBag.Title </h1>
     </div>
     <!--close container-->
 </div>
 
 <div class="container ">
     @{
+        var tenantMaxLength = 200;
+        if (_globalConfig.Tenant == "MortgageWebinars")
+        {
+            tenantMaxLength = 8000;
+        }
         foreach (var webinar in webinars)
         {
             var numDaysLeft = (webinar.Date.AddMonths(6) - DateTime.Now).Days;
@@ -43,8 +57,8 @@
 
             string title = "<a href='/Webinar/Details/" +
                                      webinar.idWebinar + "' target='_blank'>" + webinar.Title + "</a>";
-            var desc = webinar.Description.Length > 200
-                ? webinar.Description.Substring(0, 200) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
+            var desc = webinar.Description.Length > tenantMaxLength
+                ? webinar.Description.Substring(0, tenantMaxLength) + "... <a class=\"btn  btn-primary btn-small\" href='/Webinar/Details/" + webinar.idWebinar + "'>More →</a></p>"
                 : webinar.Description;
 
             var relatedTopics = "Related Topics: <b><i>" + string.Join(", ", allTopics) + "</i></b>";

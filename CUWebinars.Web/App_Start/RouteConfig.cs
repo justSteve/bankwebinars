@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
+using CUWebinars.Web.Core;
 using CUWebinars.Web.Helpers;
 
 namespace CUWebinars.Web.App_Start
@@ -48,8 +49,33 @@ namespace CUWebinars.Web.App_Start
                 name: "ResumeCheckout",
                 url: "Resume/{id}",
                defaults: new { controller = "Cart", action = "Resume", id = 0 }
-
             );
+
+            routes.MapRoute(
+                name: "WSP",
+                url: "WSP",
+               defaults: new { controller = "Webinar", action = "Details", id = 2520 }
+            );
+            if (GlobalConfig.GlobalConfigSingleton.Tenant == "CUWebinars")
+            {
+
+            }
+
+            if (GlobalConfig.GlobalConfigSingleton.Tenant == "BankWebinars")
+            {
+                routes.MapRoute(
+                    name: "topicDeposit",
+                    url: "DepositAccounts",
+                   defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                );
+
+                routes.MapRoute(
+                    name: "topicManagementEmployeeDevelopment",
+                    url: "DepositAccounts",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                );
+
+            }
             routes.MapRoute(
                 name: "UpdateAffiliate",
                 url: "UpdateAffiliate",

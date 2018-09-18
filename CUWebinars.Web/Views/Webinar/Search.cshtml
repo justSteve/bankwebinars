@@ -1,8 +1,22 @@
-﻿@using System.Linq
+﻿@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+@using Newtonsoft.Json
+
+@using System.Linq
 @model IEnumerable<Webinar>
 
 @{
-    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
     var webinars = Model;
     var rowsData = new List<object>();
 }
@@ -69,26 +83,29 @@
             <!-- close span9 primary-column-->
 
             <section class="span3 sidebar secondary-column" id="secondary-nav">
-                <aside class="widget">
+                @if (globalConfig.Tenant != "MortgageWebinars")
+                {
+                    <aside class="widget">
 
-                    <div class="rotating-testimonials">
-                        <!--"rotating-testimonials" is a required class-->
-                        <h5 class="short_headline"><span>Testimonials</span></h5>
-                        <div class="panels">
+                        <div class="rotating-testimonials">
+                            <!--"rotating-testimonials" is a required class-->
+                            <h5 class="short_headline"><span>Testimonials</span></h5>
+                            <div class="panels">
 
-                            <div id="t1">
-                                <blockquote>
-                                    <p>We are loving the program for our Directors. Training has now become a more regular event and the format and timing of the training is just right for the BOD. They have found the information very helpful in understanding their roles as directors.</p>
-                                    <footer>Maureen Daehn, Maple Bank</footer>
-                                </blockquote>
+                                <div id="t1">
+                                    <blockquote>
+                                        <p>We are loving the program for our Directors. Training has now become a more regular event and the format and timing of the training is just right for the BOD. They have found the information very helpful in understanding their roles as directors.</p>
+                                        <footer>Maureen Daehn, Maple Bank</footer>
+                                    </blockquote>
+                                </div>
+                                <!--close #t5 -->
                             </div>
-                            <!--close #t5 -->
+                            <!--close panels-->
                         </div>
-                        <!--close panels-->
-                    </div>
 
-                    <!--close rotating-testimonials-->
-                </aside>
+                        <!--close rotating-testimonials-->
+                    </aside>
+                }
                 <aside class="widget">
                     <h5 class="short_headline"><span>Stay Updated</span></h5>
                     @{Html.RenderPartial("Partials/_AddToMailingBox");}

@@ -34,6 +34,7 @@ namespace CUWebinars.Web.Core
         public string StorageAccessKey { get; private set; }
         public string StorageAccountName { get; private set; }
         public string Tenant { get; private set; }
+        public string TenantDisplayTitle { get; private set; }
         public string TenantMailChimpList { get; private set; }
         public string TenantEmail { get; private set; }
         public string TenantDomain { get; private set; }
@@ -84,6 +85,7 @@ namespace CUWebinars.Web.Core
                 UniqueInstance.StorageAccessKey = ApplicationSettingsSection["StorageAccessKey"];
                 UniqueInstance.StorageAccountName = ApplicationSettingsSection["StorageAccountName"];
                 UniqueInstance.Tenant = ApplicationSettingsSection["Tenant"];
+                UniqueInstance.TenantDisplayTitle = ApplicationSettingsSection["TenantDisplayTitle"];
                 UniqueInstance.TenantMailChimpList = ApplicationSettingsSection["TenantMailChimpList"];
                 UniqueInstance.TenantDomain = ApplicationSettingsSection["TenantDomain"];
                 UniqueInstance.TenantEmail = ApplicationSettingsSection["TenantEmail"];

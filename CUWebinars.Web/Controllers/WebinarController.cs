@@ -315,7 +315,7 @@ namespace CUWebinars.Web.Controllers
 
         public ActionResult AllActive(string eventsToShow, int? idAff)
         {
-            var webinars = _webinarManagementService.GetAllActive();
+            var webinars = _webinarManagementService.GetAllActive().Where(w => w.idWebinar != 2520);
             ViewBag.TopicCaption = " ";
             ViewBag.Title = "All Listed Events for " + _globalConfig.Tenant;
 
@@ -323,12 +323,22 @@ namespace CUWebinars.Web.Controllers
             {
                 webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date);
                 ViewBag.Title = "All Upcoming Events for " + _globalConfig.Tenant;
+                if (_globalConfig.Tenant == "MortgageWebinars")
+                {
+                    ViewBag.Title = "Upcoming Mortgage Webinars";
+                }
+
             }
 
             if (eventsToShow == "recorded")
             {
                 webinars = _webinarManagementService.GetRecordedWebinars().OrderByDescending(w => w.Date);
                 ViewBag.Title = "All Recorded Events for " + _globalConfig.Tenant;
+                if (_globalConfig.Tenant == "MortgageWebinars")
+                {
+                    ViewBag.Title = "All Recorded Mortgage Webinars";
+                }
+
             }
 
             if (eventsToShow == "des")

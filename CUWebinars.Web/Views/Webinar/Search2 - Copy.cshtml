@@ -7,10 +7,10 @@
 
 @{
     var SearchTerm = ViewBag.SearchTerm.ToString().Replace("title:", "");
-@section scripts{
-    @Scripts.Render("~/bundles/display-webinars")
-    @Scripts.Render("~/bundles/dataTables")
-}
+    @section scripts{
+        @Scripts.Render("~/bundles/display-webinars")
+        @Scripts.Render("~/bundles/dataTables")
+    }
     @Styles.Render("~/Content/data-tables")
     GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
     if (globalConfig.Tenant == "MortgageWebinars")

@@ -685,7 +685,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 ASCIIEncoding encoding = new ASCIIEncoding();
                 byte[] bytes = encoding.GetBytes(parameter_list);
-
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_globalConfig.TenantURL + "/Cart/SendOrderConfirmation2");
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";

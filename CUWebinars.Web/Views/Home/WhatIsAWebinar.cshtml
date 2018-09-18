@@ -69,6 +69,8 @@
             <!-- close span9 primary-column-->
 
             <section class="span3 sidebar secondary-column" id="secondary-nav">
+            @if (_globalConfig.Tenant != "MortgageWebinars")
+            {
                 <aside class="widget">
                     <div class="rotating-testimonials">
                         <!--"rotating-testimonials" is a required class-->
@@ -77,7 +79,7 @@
 
                             <div id="t1">
                                 <blockquote>
-                                    <p>We are loving the program for our Directors.  Training has now become a more regular event and the format and timing of the training is just right for the BOD.  They have found the information very helpful in understanding their roles as directors.</p>
+                                    <p>We are loving the program for our Directors. Training has now become a more regular event and the format and timing of the training is just right for the BOD. They have found the information very helpful in understanding their roles as directors.</p>
                                     <footer>Maureen Daehn, Maple Bank</footer>
                                 </blockquote>
                             </div>
@@ -88,18 +90,19 @@
 
                     <!--close rotating-testimonials-->
                 </aside>
+            }
                 <aside class="widget">
                     <h5 class="short_headline"><span>Stay Updated</span></h5>
                     @{Html.RenderPartial("Partials/_AddToMailingBox");}
                 </aside>
                 <!--close aside .widget -->
 
-                <aside class="widget">
+                @*<aside class="widget">
                     <h5 class="short_headline"><span>Search</span></h5>
                     <form class="searchform" method="get">
                         <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
                     </form>
-                </aside>
+                </aside>*@
                 <!--close aside widget-->
             </section>
             <!--close aside .widget-->

@@ -759,10 +759,19 @@
     <Content Include="Content\css\header-1MW.css" />
     <Content Include="Content\css\styleCrispMW.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
+    <Content Include="Content\images\BankWebinars\menu_arrow.png" />
+    <Content Include="Content\images\logo_mortgagewebinarsNoti.png" />
+    <Content Include="Content\images\menu_arrowRev.png" />
     <Content Include="Content\images\compass.png" />
     <Content Include="Content\images\logo_mortgagewebinars.png" />
     <Content Include="Content\images\MortgageWebinarsHomeScreen.png" />
+    <Content Include="Content\images\Hero1260x500.jpg" />
+    <Content Include="Content\images\Hero1260x700.jpg" />
+    <Content Include="Content\images\OCLFSLogo_Color.png" />
     <Content Include="Content\images\presenters\nesbitt.jpg" />
+    <Content Include="Content\images\TTS-OCLFS_Color.png" />
+    <Content Include="Content\images\TTS-OCLFS_Knockout.png" />
+    <Content Include="Content\images\TTSLogoWOCLColors.png" />
     <Content Include="Content\mobile\Documentation\assets\css\documenter_style.css" />
     <Content Include="Content\mobile\Documentation\assets\css\img\info.png" />
     <Content Include="Content\mobile\Documentation\assets\css\img\warning.png" />
@@ -978,7 +987,6 @@
     <Content Include="Content\images\BankWebinars\menu\Sales.jpg" />
     <Content Include="Content\images\BankWebinars\menu\Security.jpg" />
     <Content Include="Content\images\BankWebinars\menu\Teller.jpg" />
-    <Content Include="Content\images\BankWebinars\menu_arrow.png" />
     <Content Include="Content\images\BankWebinars\navtriggerbg.png" />
     <Content Include="Content\images\BankWebinars\open-quote-white.png" />
     <Content Include="Content\images\BankWebinars\open-quote.png" />
@@ -2260,6 +2268,9 @@
     <Content Include="Views\Account\RecordingsAccessed.cshtml" />
     <Content Include="Views\Home\IndexMW.cshtml" />
     <Content Include="Views\Shared\_Layout_MW.cshtml" />
+    <Content Include="Views\Webinar\Search2 - Copy.cshtml" />
+    <Content Include="Views\Home\Search2.cshtml" />
+    <Content Include="Views\Home\TTS_OCL.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

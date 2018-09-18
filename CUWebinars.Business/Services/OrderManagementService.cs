@@ -1515,7 +1515,8 @@ namespace CUWebinars.Business.Services
         {
             List<Order> orders =
                 GetOrdersByEmail(order.BillingEmail, 19)
-                    .Where(o => o.idOrder != order.idOrder)
+                    .Where(o => o.idOrder != order.idOrder
+                                )
                     .ToList();
             IList<int> iDsToRemove = new List<int>();
 
@@ -1523,6 +1524,8 @@ namespace CUWebinars.Business.Services
                     orders
                         .SelectMany(o => o.OrderRows
                         .Where(r => r.RowStatus == OrderRowStatus.Active))
+                        // next where clause is attempt to fix the 'Paid switched to Canceled' bug
+                        .Where(o => o.Order.OrderStatus != OrderStatus.Paid || o.Order.OrderStatus != OrderStatus.Billed)
                         .OrderBy(o => o.Order.OrderDate)
                         .GroupBy(y => y.idWebinar)
                         .Where(g => g.Skip(1).Any())
@@ -1739,7 +1742,7 @@ namespace CUWebinars.Business.Services
         public List<Order> GetOrdersByWebinar(int idWebinar)
         {
             var orderIds = _webinarRepository.GetV3OrdersIdsByWebinar(idWebinar);
-            
+
             return _orderRepository.GetOrdersByIds(orderIds.ToArray()).ToList();
             //List<Order> orders = new List<Order>();
             //foreach (var orderId in orderIds)
@@ -2396,7 +2399,7 @@ namespace CUWebinars.Business.Services
 
         public decimal CalculateCreditsUsed(Discount userDiscount)
         {
-            
+
             // this and the CalculateCreditRemain method
             // are copy/paste replicates of the OrderRepository versions
             var ordersWithDiscount = GetOrdersByDiscount(userDiscount.idDiscount)

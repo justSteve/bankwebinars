@@ -102,20 +102,22 @@
                     }
                     else
                     {
-
-                        <aside class="widget">
-                            <h5 class="short_headline">
-                                <span>Topics</span>
-                            </h5>
-                            <ul>
-                                @foreach (var webinarTopic in Model.Topics)
-                                {
-                                    <li>
-                                        @webinarTopic.topicDesc
-                                    </li>
-                                }
-                            </ul>
-                        </aside>
+                        if (globalConfig.Tenant != "MortgageWebinars")
+                        {
+                            <aside class="widget">
+                                <h5 class="short_headline">
+                                    <span>Topics</span>
+                                </h5>
+                                <ul>
+                                    @foreach (var webinarTopic in Model.Topics)
+                                    {
+                                        <li>
+                                            @webinarTopic.topicDesc
+                                        </li>
+                                    }
+                                </ul>
+                            </aside>
+                        }
                     }
                 }
             </aside>
@@ -226,9 +228,9 @@
                 <!--close aside widget-->
             }
             @*else
-            {
-                <button role="button" class="btn btn-success btn-large" tabindex="-1" onclick="ForwardToWSP();" href="#">Learn More</button>
-            }*@
+                {
+                    <button role="button" class="btn btn-success btn-large" tabindex="-1" onclick="ForwardToWSP();" href="#">Learn More</button>
+                }*@
         </div>
         <!--close section tertiary-column sidebar span3-->
     </div>

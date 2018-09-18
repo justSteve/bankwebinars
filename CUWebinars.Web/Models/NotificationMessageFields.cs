@@ -51,5 +51,6 @@ namespace CUWebinars.Web.Models
         public string ClickToJoinAddLocLink { get; set; }
         public string UpdateOrderPage { get; set; }
         public string Total { get; set; }
+        public string WebinarDate { get; set; }
     }
 }

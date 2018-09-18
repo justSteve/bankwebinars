@@ -24,6 +24,7 @@
     margin-bottom: 15px;
     background-color: #3E67B1;
     color: #ffffff;
+    border-radius: 0px;
 }
 
 .dataTables_length {
@@ -205,6 +206,7 @@ table.dataTable thead .sorting_desc_disabled {
 .primary_menu li a {
     font-size: 100%;
     padding: 0 10px;
+    padding-top: 40px;
     text-transform: none;
 }
 

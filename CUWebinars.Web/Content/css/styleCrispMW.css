@@ -422,7 +422,7 @@ q {
 .short_headline {
 	border-bottom: 1px solid #d8dfe5;
 	margin: 0 0 1em 0;
-	text-transform: lowercase;
+	/*text-transform: lowercase;*/
 	padding-bottom: 9px;
 	line-height: normal;
 }
@@ -801,7 +801,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 	.hero-unit h1,
 	.hero-unit h2 {
 		margin: 0;
-		background: url(/Content/images/hr.png) 0 100% repeat-x;
+		/*background: url(/Content/images/hr.png) 0 100% repeat-x;*/
 		padding-bottom: 20px;
 		font-size: 200%;
 		font-weight: 300;
@@ -1009,7 +1009,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /******  contemporary 3 columns layout ******/
 .contemp-three-cols {
-	background-image: url(/Content/images/rule.png), url(/Content/images/rule.png);
+	background-image: url(/Content/images/rule.png);
 	background-position: 50.75% 0, 76% 0;
 	background-repeat: repeat-y;
 }
@@ -1041,7 +1041,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 }
 
 .holy-grail {
-	background-image: url(/Content/images/rule.png), url(/Content/images/rule.png);
+	background-image: url(/Content/images/rule.png);
 	background-position: 23.5% 0, 76.5% 0;
 	background-repeat: repeat-y;
 }
@@ -1107,15 +1107,15 @@ ul.navigation {
 			display: block;
 		}
 
-		ul.navigation li.active a,
-		ul.navigation a:hover {
-			color: #53a3b7;
-		}
+        ul.navigation li.active a,
+        ul.navigation a:hover {
+            color: #86BE48;
+        }
 
-			ul.navigation li.active a:before,
-			ul.navigation li:hover a:before {
-				color: #53a3b7;
-			}
+            ul.navigation li.active a:before,
+            ul.navigation li:hover a:before {
+                color: #86BE48;
+            }
 
 	ul.navigation ul {
 		margin-left: 10px;
@@ -1213,7 +1213,7 @@ ul.blogposts span.date .month {
 	font-size: 10px;
 	display: block;
 	position: relative;
-	text-transform: lowercase;
+	/*text-transform: lowercase;*/
 }
 
 ul.blogposts span.date .year {
@@ -1321,7 +1321,7 @@ a.thumbnail:hover {
 	#footer h4 {
 		margin-bottom: 10px;
 		padding: 0 0 5px 0;
-		border-bottom: 1px solid #6d767e;
+	    border-bottom: 1px solid white;
 	}
 
 	#footer p,
@@ -2420,7 +2420,7 @@ html[xmlns] .slides, .no-js .slides > li:first-child {
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 3/2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
 
 	hr, figcaption, .hero-unit h1, .hero-unit h2, .image-slider.flexslider .caption {
-		background-image: url(/content/images/retina/hr_@2x.png);
+		/*background-image: url(/content/images/retina/hr_@2x.png);*/
 		-moz-background-size: 3px 3px;
 		/*w & h of total ORIGINAL 72dpi image*/
 		-ie-background-size: 3px 3px;

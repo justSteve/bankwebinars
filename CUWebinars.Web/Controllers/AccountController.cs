@@ -1647,9 +1647,14 @@ namespace CUWebinars.Web.Controllers
         public ActionResult Login(string returnUrl)
         {
             if (_globalConfig.Tenant == "DirectorSeries")
-                return Redirect("http://my.directorseries.com/users/sign_in");
+                return Redirect("http://directorseries.ttstrain.com");
             if (_globalConfig.Tenant == "CCS")
-                return Redirect("http://my.ttscompliancesuite.com/users/sign_in");
+                return Redirect("http://ttscompliancesuite.ttstrain.com");
+
+            //if (_globalConfig.Tenant == "DirectorSeries")
+            //    return Redirect("http://my.directorseries.com/users/sign_in");
+            //if (_globalConfig.Tenant == "CCS")
+            //    return Redirect("http://my.ttscompliancesuite.com/users/sign_in");
 
             try
             {

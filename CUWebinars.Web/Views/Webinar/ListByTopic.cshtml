@@ -14,7 +14,15 @@
     }
     else
     {
-        Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+        if (globalConfig.Tenant == "MortgageWebinars")
+        {
+
+            Layout = "/Views/Shared/_Layout_MW.cshtml";
+        }
+        else
+        {
+            Layout = "/Views/Shared/_LayoutPublic.cshtml";
+        }
     }
 
     <style>

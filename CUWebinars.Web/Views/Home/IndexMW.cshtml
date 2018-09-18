@@ -16,37 +16,86 @@
 
 <style>
     .buttonBucket {
-        padding: 10px 15px;
+        padding: 5px;
         background-color: #ffffff;
         border-radius: 3px;
+        border-style: solid;
+        border-color: #86BE48;
+        border-width: medium;
         display: inline-block;
-        margin: 0, auto;
-        margin-left: 30px;
-        min-width: 200px;
-        font-weight: 600;
-        border: none;
+        margin: 3px;
+        max-width: 300px;
+        font-size: .95rem;
     }
-</style>
+
+    .buttonBucketTop {
+        line-height: 24px;
+        padding: 10px 15px;
+        display: block;
+        width: 100%;
+        float: right;
+    }
+
+    a img {
+        border: none;
+        text-decoration: none;
+        float: right;
+    }
+
+    @@media only screen and (max-width: 768px) {
+
+        #box1,
+        #box2,
+        #box3 {
+            width: 425px;
+            max-width: 500px;
+        }
+    }
+
+
+    @@media only screen and (max-width: 550px) {
+
+        #box1,
+        #box2,
+        #box3 {
+            width: 75%;
+            max-width: 500px;
+            font-size: .8rem;
+        }
+    }
+</style><div id="validately-unmoderated-testing" class="vldt-installed"></div>
 <div class="clearfix">
-    <div style="background-position: center; background-size: cover; margin-top: 0px; width: 100%; height: 500px; background-repeat: no-repeat; background-image: url('https://mortgagewebinars.azurewebsites.net/content/images/MortgageWebinarsHomeScreen.png');">
-        <p class="clearfix" style="display: block;">&nbsp;</p>
-        <div style="margin-top: 100px;">
-            <h1 style="color: white; text-shadow: 1px 1px #808080; text-align: center;">Welcome!</h1>
+    <div style="background-position: center; background-size: cover; margin-top: 0px; width: 100%; height: 525px; background-repeat: no-repeat; background-image: url('/Content/images/Hero1260x700.jpg');">
+        <div id="boxTop" class="buttonBucketTop clearfix">
+            <a href="/Home/TTS_OCL">
+                <img style="background-color: #ffffff;
+                        /*border-radius: 3px; border-style: solid; border-color: #86BE48; border-width: medium;*/
+                        padding: 3px;" src="~/Content/images/TTS-OCLFS_Color.png" />
+            </a>
+        </div>
+
+        <div style="margin-top: 50px;">
             <div style="color: white; text-align: center;">
-                <p style="font-size: 24px; text-shadow: 1px 2px #000000; ">The text that shows here will make you feel really welcome.</p>
-                <div id="box1" class="buttonBucket">
-                    <a href="/Webinar/allActive?eventsToShow=upcoming">Upcoming<br />Upcoming Webinars are coming up!</a>
-                </div>
-                <div id="box2" class="buttonBucket">
-                    <a href="/Webinar/Details/2520"><span>Webinar Subscription Packages<br />Webinar Subscription Packages (WSP) are awesome!</span></a>
-                </div>
-                <div id="box3" class="buttonBucket">
-                    <a href="/Webinar/allActive?eventsToShow=recorded"><span>Recorded<br />Recorded Webinars are awesome!</span></a>
+                <h1 style="color: white; text-align: center;margin-top: 45px;">Welcome!</h1>
+                <div style="color: white; text-align: center;">
+                    <p style="font-size: 19px; line-height: 24px; max-width: 450px;margin: 0 auto 25px;padding: 0 10px">
+                        Here at Mortgage Webinars you'll find the best webinars on topics relevant to the mortgage industry. Be sure and let us know if you have any questions or comments by using the Help & Feedback link below.
+                    </p>
+                    <div id="box1" class="buttonBucket">
+                        <a href="/Webinar/allActive?eventsToShow=upcoming"><b>Upcoming Webinars</b><br />View a complete list of our upcoming live training events. </a>
+                    </div>
+                    <div id="box2" class="buttonBucket">
+                        <a href="/Webinar/Details/2520"><span><b>Webinar Subscription Packages (WSP)</b><br />Learn how to reduce your training cost with a WSP.</span></a>
+                    </div>
+                    <div id="box3" class="buttonBucket">
+                        <a href="/Webinar/allActive?eventsToShow=recorded"><span><b>Recorded Webinars</b><br />Access our library of recorded webinars to view at your convenience.</span></a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 @if (!string.IsNullOrWhiteSpace(ViewBag.Message))

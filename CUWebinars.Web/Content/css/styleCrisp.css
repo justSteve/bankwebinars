@@ -1009,7 +1009,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 
 /******  contemporary 3 columns layout ******/
 .contemp-three-cols {
-	background-image: url(/Content/images/rule.png), url(/Content/images/rule.png);
+	background-image: url(/Content/images/rule.png);
 	background-position: 50.75% 0, 76% 0;
 	background-repeat: repeat-y;
 }
@@ -1041,7 +1041,7 @@ input[type="text"], input[type="password"], input[type="search"], input[type="em
 }
 
 .holy-grail {
-	background-image: url(/Content/images/rule.png), url(/Content/images/rule.png);
+	background-image: url(/Content/images/rule.png);
 	background-position: 23.5% 0, 76.5% 0;
 	background-repeat: repeat-y;
 }

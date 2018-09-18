@@ -1,0 +1,63 @@
+﻿@using System.Configuration
+@using System.Runtime.InteropServices
+@using CUWebinars.Web.Core
+@{
+    ViewBag.Title = "Who Are We?";
+
+    GlobalConfig globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
+}
+
+<div id="page">
+    <div class="container visible-phone">
+        <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
+    </div>
+    <div class="hero-unit">
+        <div class="container">
+
+            <h1>@ViewBag.Title</h1>
+        </div>
+        <!--close container-->
+    </div>
+    <section class="contact">
+
+        <div class="container clearfix" id="main-content">
+            <div class="row-fluid reverse-order whoarewe-page">
+                <table width="90%">
+                    <tr>
+                        <td width="50%"><img  src="/Content/images/TTSLogoWOCLColors.png" /></td>
+                        <td width="50%"><img  src="/Content/images/OCLFSLogo_Color.png" /></td>
+                    </tr>
+                    <tr>
+                        <td valign="top">
+                            <p align="left">
+                                The staff at TTS has been working with the financial industry since 1983. Total Training Solutions has delivered training in many formats from classroom to web-based.</p><p align="left">
+                                Total Training Solutions has produced dozens of videotapes, CD-ROMS and self-paced online compliance training programs. These programs constantly receive high acclaim and are recognized as some of the best in the industry.</p><p align="left">
+                                We have worked exclusively with the financial industry since our founding. Because of this, we understand the needs of training departments in financial institutions and are alert to changes which affect the industry. We maintain a network of consultants throughout the country who serve as subject matter experts when needed.</p>
+                        </td>
+                        <td valign="top">
+                            <p align="left">
+                                OnCourse Learning delivers licensure, regulatory and compliance education solutions throughout the nation’s leading industries including financial services, healthcare and real estate. Through trusted industry expertise, compliance management and technology solutions, OnCourse Learning focuses on advancing the e-learning environment for individuals and businesses to help to build new careers, empower employees through knowledge and identify efficiencies in corporate training management.
+                            </p>
+                            <p align="left">
+                                OnCourse Learning offers a full suite of educational products including state and federally approved prelicensing and continuing education programs, accredited course content, exam prep tools, publications, e-books, events and a sophisticated and customizable learning management system and course-authoring tool. To learn more, visit <a href="https://www.oncourselearning.com/financial-services/">
+                                    https://OncourseLearning.com/financial-services/
+                                </a>.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+
+
+            </div>
+        </div>
+    </section>
+</div>
