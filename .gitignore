@@ -888,3 +888,4 @@ CUWebinars.Web/App_Data/Trace/
 /.vs/tasks.vs.json
 /.vs/slnx.sqlite
 *.map
+*.pdf

@@ -1931,6 +1931,14 @@
     <Content Include="Notification\Templates\SendCCSPromoMaster.cshtml" />
     <Content Include="App_Data\mergeTemplates\OrderSubmitted_WSPRenewal.docx" />
     <Content Include="App_Data\mergeTemplates\OrderSubmittedCCS.docx" />
+    <Content Include="Notification\Templates\OrderSubmittedMulti2.cshtml" />
+    <Content Include="Notification\Templates\Partials\_GeneralFooter2.cshtml" />
+    <Content Include="Notification\Templates\Partials\_GeneralHeader2.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\AccountCreatedEvent_Body2.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailChangeRequestedEvent_Body2.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\EmailVerifiedEvent_Body2.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Body2.cshtml" />
+    <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Body2.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
@@ -2271,6 +2279,7 @@
     <Content Include="Views\Webinar\Search2 - Copy.cshtml" />
     <Content Include="Views\Home\Search2.cshtml" />
     <Content Include="Views\Home\TTS_OCL.cshtml" />
+    <Content Include="Views\Home\AboutMortgageWebinars.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

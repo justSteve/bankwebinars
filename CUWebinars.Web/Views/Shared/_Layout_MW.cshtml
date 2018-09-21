@@ -150,53 +150,24 @@
             var currentAffiliateId = "@currentAffiliate.idUserAff";
             var currentAffiliateDisplayTitle = "@currentAffiliate.DisplayTitle";
         </script>
-        if (globalConfig.Tenant == DomainConstants.CUWebinars)
-        {
 
-            <script>
-                function earlyIEExpress(idWebinar) {
-                    window.location = "/cart/ExpressCheckout";
-                }
-                //Rollbar Placeholder
 
-                (function (i, s, o, g, r, a, m) {
-                    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-                        (i[r].q = i[r].q || []).push(arguments)
-                    }, i[r].l = 1 * new Date(); a = s.createElement(o),
-                        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-                ga('create', 'UA-44361719-1', 'auto');
-                ga('send', 'pageview');
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-126036439-1"></script>
+        <script>
+            function earlyIEExpress(idWebinar) {
+                window.location = "/cart/ExpressCheckout";
+            }
 
-            </script>
-        }
-        if (globalConfig.Tenant == DomainConstants.BankWebinars)
-        {
-            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
 
-                function earlyIEExpress(idWebinar) {
-                    window.location = "/cart/ExpressCheckout";
-                }
+            gtag('config', 'UA-126036439-1');
+        </script>
 
-                //Rollbar Placeholder
 
-                (function (i, s, o, g, r, a, m) {
-                    i['GoogleAnalyticsObject'] = r;
-                    i[r] = i[r] || function () {
-                        (i[r].q = i[r].q || []).push(arguments)
-                    }, i[r].l = 1 * new Date();
-                    a = s.createElement(o),
-                        m = s.getElementsByTagName(o)[0];
-                    a.async = 1;
-                    a.src = g;
-                    m.parentNode.insertBefore(a, m)
-                })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-                ga('create', 'UA-1443899-1', 'auto');
-                ga('send', 'pageview');
-            </script>
-        }
 
 
 
@@ -397,8 +368,9 @@
                             <ul>@Html.Action("GetRecordedWebinarMenu", "Navigation")</ul>
                         </li>
                         <li class="parent">
-                            <a href="javascript:void(0)">About Us<i></i></a>
+                            <a href="javascript:void(0)">Resources<i></i></a>
                             <ul>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/AboutMortgageWebinars">About MortgageWebinars.com</a></li>
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/WhatIsAWebinar">What Is A Webinar?</a></li>
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/CommonQuestions">Commonly Asked Questions</a></li>
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="/Home/DetailedConnectionInstructions">Connecting to Your Webinar</a></li>
@@ -448,7 +420,7 @@
                         @*@Html.Raw(footSocial)*@
                         <p align="left">
                             <a href="/Home/TTS_OCL">
-                                <img style="float: none;"  src="~/Content/images/TTS-OCLFS_Knockout.png" />
+                                <img style="float: none;" src="~/Content/images/TTS-OCLFS_Knockout.png" />
                             </a>
                         </p>
                         @{

@@ -674,7 +674,15 @@ namespace CUWebinars.Web.Helpers
         {
             body = body.Replace("&gt;", ">");
             body = body.Replace("&lt;", "<");
-            body = body.Replace("[logo]", "<img src=" + tenantLogo + " />");
+            if (_globalConfig.Tenant == "MortgageWebinars")
+            {
+                body = body.Replace("[logo]", "<img src='https://mortgagewebinars.azurewebsites.net/content/images/logo_mortgagewebinarsNoti.png' />");
+            }
+            else
+            {
+                body = body.Replace("[logo]", "<img src='" + tenantLogo + "' />");
+            }
+
             if (!string.IsNullOrEmpty(addloccost))
                 body = body.Replace("[addloccost]", addloccost);
             if (!string.IsNullOrEmpty(openingMessage))
@@ -705,15 +713,17 @@ namespace CUWebinars.Web.Helpers
             string TenantURL = _globalConfig.TenantURL;
             fields.SupportEmail = _globalConfig.TenantEmail;
             string Tenant = _globalConfig.Tenant;
+            string tenantCom = _globalConfig.Tenant + ".com";
 
-            fields.AffFooter = "This webinar brought to you by TTS & " + _globalConfig.Tenant;
+            fields.AffFooter = "This webinar brought to you by TTS & " + tenantCom;
             if (order.idAffiliate != 2988 && order.idAffiliate != 19 && order.idAffiliate != 41382)
-                fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + _globalConfig.Tenant;
+                fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + tenantCom;
 
             if (_globalConfig.Tenant == "CUWebinars" && order.idAffiliate != 2988 && order.idAffiliate != 62 && order.idAffiliate != 19 && order.idAffiliate != 41382)
-                fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + _globalConfig.Tenant;
+                fields.AffFooter = "This webinar brought to you by " + order.Affiliate.DisplayTitle + " & " + tenantCom;
 
 
+            fields.WebinarDate = row.Webinar.Date.ToShortDateString();
             fields.OndemandLink = " <a href='" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "'>" + TenantURL + "/o/" + order.idOrder + "-" + row.OnDemandCode + "</a>";
             fields.UpdateOrderPage = " <a href='" + TenantURL + "/resume/" + order.idOrder + "'>Update Order</a> page.";
             fields.ConfirmAccountLink = " <a href='" + TenantURL + "/acc/apwd/" + order.idOrder + "'>" + TenantURL + "/acc/apwd/" + order.idOrder + "</a>";

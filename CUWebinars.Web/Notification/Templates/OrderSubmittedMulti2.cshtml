@@ -1,0 +1,52 @@
+﻿@using CUWebinars.Business.Notification
+@using CUWebinars.Web.Models
+@model CUWebinars.Business.Notification.ViewModel.OrderSubmittedMultiViewModel
+@{
+    // used by FormatV2, doesn't hurt direct use of RenderViewToString
+    <title>
+        @Model.Subject
+    </title>
+}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@Model.Subject</title>
+    <style type="text/css">
+        .auto-style1 {
+            height: 10px;
+        }
+
+        .auto-style2 {
+            height: 50px;
+        }
+    </style>
+</head>
+<body style="font-family: Verdana, Arial, Helvetica, sans-serif">
+    <table width="660px" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+            @{
+                TtsConfigHelper TtsTemplateHelperObject = new TtsConfigHelper();
+                NotificationHeaderModel nhm = new NotificationHeaderModel()
+                {
+                    BannerText = Model.HeaderSummaryCaption.ToString(), // OrderSubmittedMulti might not need this near the top of the email body
+                    HeaderText = "Order Confirmation", // OrderSubmittedMulti might not need this near the top of the email body
+                    TenantLogo = TtsTemplateHelperObject.TenantLogo(),
+                    TenantURL = TtsTemplateHelperObject.TenantURL()
+                };
+            }
+
+            @Html.Partial("~/Notification/Templates/Partials/_GeneralHeader.cshtml", nhm)
+
+
+            @Html.Raw(Model.OrderSummaryHtml)
+            <br />
+            <hr />
+            <div>@Model.GrandTotalCaption</div>
+
+            @Html.Partial("~/Notification/Templates/Partials/_GeneralFooter2.cshtml")
+
+        </tbody>
+    </table>
+</body>
+</html>

@@ -3300,7 +3300,7 @@ namespace CUWebinars.Web.Controllers
                 HeaderSummaryCaption = sbHeaderSummary.ToString().TrimEnd(',')
             };
 
-            string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/OrderSubmittedMulti.cshtml", orderSubmittedMultiViewModel, true);
+            string htmlEmailBody = ViewHelpers.RenderViewToString(ControllerContext, "~/Notification/Templates/OrderSubmittedMulti2.cshtml", orderSubmittedMultiViewModel, true);
 
             _cartControllerOrchestrator.FireOrderSubmittedMultiNotification(currentUserEmail, subject, htmlEmailBody);
 

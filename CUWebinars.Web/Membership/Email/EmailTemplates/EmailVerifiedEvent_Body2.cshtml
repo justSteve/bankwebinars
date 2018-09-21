@@ -11,13 +11,13 @@
     string TenantLogo = TtsConfigHelperObject.TenantLogo();
     string TenantCom = TenantDomain + ".com";
 
-    var HeaderText = Model.Email + " is activated with " + Tenant;
-    var BannerText = Tenant + " has confirmed your account.";
+    var HeaderText = Model.Email + " is verified";
+    var BannerText = Model.Email + " with " + Tenant + " is confirmed.";
 
 }
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>@Model.Email is activated with @Tenant. </title>
+    <title>Email is Verified</title>
     <style type="text/css">
         .auto-style1 {
             height: 10px;
@@ -29,18 +29,13 @@
     </style>
 </head>
 <body style="font-family: Verdana, Arial, Helvetica, sans-serif">
-@HeaderText
-<p>
-    @BannerText
-</p>
-<p style="font-family: Arial, Helvetica, sans-serif;">
-    Your account with @TenantDomain is activated. Detailed connection information can be reviewed at <a href="@TenantURL/Home/DetailedConnectionInstructions">@Tenant Connecting to your Webinar</a>.
-</p>
-<p>
-    We invite you to visit our FAQ page to preview our features and services. <a href="@TenantURL/Home/CommonQuestions">@Tenant FAQ</a>.
-</p>
-<p>
-    Please confirm your receipt of this message by clicking: <b><a href="@Model.ConfirmChangeEmailUrl">@Model.ConfirmChangeEmailUrl</a></b>
-</p>
+
+    @HeaderText
+    <p>
+        @BannerText
+    </p>
+    <p>
+        Thank you for confirming your account with @Tenant. We invite you to visit our FAQ page to preview our features and services. <a href="@TenantURL/Home/CommonQuestions">@Tenant FAQ</a>.
+    </p>
 </body>
 </html>

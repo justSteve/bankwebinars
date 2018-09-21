@@ -1,0 +1,110 @@
+﻿@using CUWebinars.Web.Core
+@using CUWebinars.Web.Helpers
+
+@{
+    ViewBag.Title = "About MortgageWebinars.com";
+
+    GlobalConfig _globalConfig = GlobalConfig.GlobalConfigSingleton;
+    if (_globalConfig.Tenant == "MortgageWebinars")
+    {
+
+        Layout = "/Views/Shared/_Layout_MW.cshtml";
+    }
+    else
+    {
+        Layout = "/Views/Shared/_LayoutPublic.cshtml";
+    }
+
+}
+<style>
+    blockquote {
+        background: none;
+        border: 0 none;
+        clear: both;
+        font-family: inherit;
+        text-align: left;
+        font-style: inherit;
+    }
+
+    p {
+        margin-top: 10px;
+    }
+</style>
+
+<div id="page">
+    <div class="container visible-phone">
+        <p class="right"><a class="btn btn-primary scrollto" href="#secondary-nav">Page Menu &nbsp;<i class="icon-align-justify"></i></a></p>
+    </div>
+    <div class="hero-unit">
+        <div class="container">
+            <h1>About MortgageWebinars.com</h1>
+        </div>
+        <!--close container-->
+    </div>
+    <!--close hero-unit-->
+    <div class="container clearfix" id="main-content">
+        <!--begin main content-->
+
+        <div class="row-fluid sidebar-right">
+            <!--begin row-fluid-->
+            <div class="span9 primary-column">
+                <!--begin primary content-->
+                
+                <blockquote>
+                    <p>
+                        Mortgage Webinars provides convenient training delivered by industry thought leaders on some of the most critical topics in the financial services industry today. With over 50 mortgage webinars and more topics added regularly, we’re committed to ensuring you remain at the forefront of regulatory issues and trends while maximizing your training budget.
+                    </p>
+                    <p>
+                        Webinar training offers a cost effective, efficient and flexible format to meet your training needs. Increase your mortgage industry knowledge while earning self-reportable continuing education credits.
+                    </p>
+                    <p>
+                        Learn how to reduce your training cost <a href="@_globalConfig.TenantURL/WSP"> with a Webinar Subscription Package.</a>
+                    </p>
+                </blockquote>
+
+            </div>
+            <!-- close span9 primary-column-->
+
+            <section class="span3 sidebar secondary-column" id="secondary-nav">
+                @if (_globalConfig.Tenant != "MortgageWebinars")
+                {
+                    <aside class="widget">
+                        <div class="rotating-testimonials">
+                            <!--"rotating-testimonials" is a required class-->
+                            <h5 class="short_headline"><span>Testimonials</span></h5>
+                            <div class="panels">
+
+                                <div id="t1">
+                                    <blockquote>
+                                        <p>We are loving the program for our Directors. Training has now become a more regular event and the format and timing of the training is just right for the BOD. They have found the information very helpful in understanding their roles as directors.</p>
+                                        <footer>Maureen Daehn, Maple Bank</footer>
+                                    </blockquote>
+                                </div>
+                                <!--close #t5 -->
+                            </div>
+                            <!--close panels-->
+                        </div>
+
+                        <!--close rotating-testimonials-->
+                    </aside>
+                }
+                <aside class="widget">
+                    <h5 class="short_headline"><span>Stay Updated</span></h5>
+                    @{Html.RenderPartial("Partials/_AddToMailingBox");}
+                </aside>
+                <!--close aside .widget -->
+                @*<aside class="widget">
+                        <h5 class="short_headline"><span>Search</span></h5>
+                        <form class="searchform" method="get">
+                            <input type="search" class="span12" value="type and hit enter" onfocus="this.value=''" onblur="this.value='type and hit enter'" />
+                        </form>
+                    </aside>*@
+                <!--close aside widget-->
+            </section>
+            <!--close aside .widget-->
+            <!--close section sidebar span3-->
+        </div>
+        <!--close row-fluid-->
+    </div>
+</div>
+

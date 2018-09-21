@@ -71,6 +71,11 @@ namespace CUWebinars.Web.Controllers
             ViewBag.PageStyleType = "two-columns-right-sidebar";
             return View();
         }
+        public ActionResult AboutMortgageWebinars()
+        {
+            ViewBag.PageStyleType = "two-columns-right-sidebar";
+            return View();
+        }
 
         public ActionResult CommonQuestions()
         {
