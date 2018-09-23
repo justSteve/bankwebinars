@@ -2280,6 +2280,7 @@
     <Content Include="Views\Home\Search2.cshtml" />
     <Content Include="Views\Home\TTS_OCL.cshtml" />
     <Content Include="Views\Home\AboutMortgageWebinars.cshtml" />
+    <Content Include="Views\Admin\ReminderPromo.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

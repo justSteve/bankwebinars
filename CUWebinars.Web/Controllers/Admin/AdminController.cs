@@ -1925,9 +1925,83 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 return Json(new { masterText = model.EventBody });
             }
+            if (model.TemplateType == "Reminder")
+            {
+                model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
+                model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
+                ViewBag.SubjectForCampaign = "Webinar: " + model.Webinar.Title;
+                if (model.Affiliate.idUserAff != null && model.Affiliate.idUserAff > 0)
+                {
+                    model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
+                    model.TimeZone = model.Affiliate.WebUser.timeZone;
+
+                }
+                if (_globalConfig.Tenant == "BankWebinars" || _globalConfig.Tenant == "CUWebinars")
+                    model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
+
+                model.BasePrice = "$265";
+                if (model.Webinar.Duration == 1)
+                    model.BasePrice = "$165";
+                if ((double)model.Webinar.Duration == 1.5)
+                    model.BasePrice = "$195";
+
+                // populate the dropdown selector (not currently implemented)
+                TempData["ListOfWebinarsForUpcoming"] =
+                    _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(10).ToList();
+
+
+                if (model.ListOfWebinarsForUpcoming == null)
+                {
+                    model.ListOfWebinarsForUpcoming =
+                        _webinarManagementService.GetUpcomingWebinars()
+                            .OrderBy(w => w.Date)
+                            .Take(10)
+                            .Select(w => w.idWebinar)
+                            .ToArray();
+                }
+
+                var _upcoming =
+                    _webinarManagementService.GetUpcomingWebinars()
+                        .Where(w => w.Date > model.SendDate && w.idWebinar != model.Webinar.idWebinar)
+                        .OrderBy(w => w.Date)
+                        .Take(5);
+
+
+                var doc = new HtmlDocument();
+                doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
+
+                var root = doc.DocumentNode;
+                root.SelectSingleNode("(//img)[1]").Remove();
+
+                model.PresenterW_OutPic = root.InnerHtml;
+
+                var upcomingWebinars = (from w in _upcoming
+                                        select
+                                        "<p style=\"color: #f5f5f5; text-decoration: none; \" ><a style=\" color: whitesmoke; border-bottom: 1px dotted bisque;\" href=\"" +
+                                        _globalConfig.TenantURL + "/Webinar/Details/" +
+                                        w.idWebinar + "?idaff={aff_idUserAff}\">" + w.Title + "</a><br>" +
+                                        w.Date.ToLongDateString() + "</p>"
+                ).ToArray();
+
+                if (upcomingWebinars.Count() > 0)
+                    model.ListOfWebinarsUpcomingRendered = String.Join("\r\n", upcomingWebinars);
+
+                model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
+                                          " - " +
+                                          DateTimeHelper.FormatTime(
+                                              model.Webinar.Date.AddHours((double)model.Webinar.Duration),
+                                              model.TimeZone,
+                                              true) + "<br /></i>";
+
+                model.EventBody =
+                    HttpUtility.HtmlDecode(
+                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendPerDayPromoMaster.cshtml").Body);
+                // get Template with new method
+
+                return Json(new { masterText = model.EventBody });
+            }
             if (model.TemplateType == "Daily")
             {
-
                 model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
                 model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
                 ViewBag.SubjectForCampaign = "Webinar: " + model.Webinar.Title;
@@ -2298,6 +2372,44 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             return View(model);
         }
+        [HttpGet]
+        public async Task<ActionResult> ReminderPromo(int id)
+        {
+
+            TempData["campaigns"] = _webinarManagementService.GetWebinar(id).Campaigns;
+
+            WebinarPromoViewModel model = new WebinarPromoViewModel()
+            {
+                TimeZone = USTimeZone.Eastern,
+                SendDate = TtsConfig.UtcNowAsCts,
+                Webinar = _webinarManagementService.GetWebinar(id),
+                TemplateType = "Reminder"
+            };
+
+
+            // check for Admins vs Affiliates and limit if Affiliate
+            ClaimsIdentity claimsIdentityOfAuthenticatedUser = (ClaimsIdentity)User.Identity;
+            if (claimsIdentityOfAuthenticatedUser.HasClaim((claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
+            {
+                //hack GetAffiliatesByPromoType("Daily") is hacked to just always list all affiliates. Is nothing to do with 'Daily' template.
+                model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily").ToList();
+            }
+            else
+            {
+                // limit affiliates (non-admins)...
+                int affId = -1;
+                var affiliate = _stateService.GetValue<Affiliate>(WebUiConstants.CurrentAffiliate);
+                if (affiliate != null)
+                {
+                    model.Affiliate = affiliate; // used on View to manipulate displayed verbiage
+                    affId = affiliate.idUserAff;
+                }
+
+                model.Affiliates = new AffiliateRepository().GetAffiliatesByPromoType("Daily")
+                    .Where(a => a.idUserAff == affId).ToList();
+            }
+            return View(model);
+        }
 
         [HttpGet]
         public async Task<ActionResult> PromoForDES(int id)
@@ -2384,7 +2496,7 @@ namespace CUWebinars.Web.Controllers.Admin
         [HandleAjaxException]
         public async Task<JsonResult> GenerateMailChimpCampaign
             (int affiliateId, string messageBodyHtml, int webinarId,
-            string sendDate, string sendTime, string subject)
+            string sendDate, string sendTime, string subject, string isReminder)
         {
             Affiliate aff = _affiliateManagementService.FindById(affiliateId);
 
@@ -2438,10 +2550,27 @@ namespace CUWebinars.Web.Controllers.Admin
                 var recp = new Recipient();
 
                 var segment = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
-
+                if (isReminder == "true")
+                {
+                    try
+                    {
+                        var idCampaign = GetAffCampaign(affiliateId, webinar.idWebinar).Id;
+                        
+                        segment = MakeReminderSegment(affiliateId, idCampaign);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
+                }
                 try
                 {
                     var savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "webinars").Id;
+
+                    if (isReminder == "true")
+                        savedSegId = segment.SingleOrDefault(s => s.Name.ToLower() == "reminder").Id;
+                    
                     if (_globalConfig.Tenant == "CCS")
                     {
                         savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "ccs").Id;
@@ -2584,194 +2713,30 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
-        [ValidateInput(false)]
-        [HttpPost]
-        [HandleAjaxException]
-        public async Task<JsonResult> GenerateMailChimpCampaignOriginal
-            (int affiliateId, string messageBodyHtml, int webinarId,
-            string sendDate, string sendTime, string subject)
+        private IEnumerable<ListSegment> MakeReminderSegment(int affiliateId, string idCampaign)
         {
-            Affiliate aff = _affiliateManagementService.FindById(affiliateId);
-
-            _logger.Info("GenerateMailChimpCampaign starting");
-            Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
-            Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
-            TimeZone zone = TimeZone.CurrentTimeZone;
-
-            if (messageBodyHtml.Contains("{aff_EmailFooter}"))
-            {
-                messageBodyHtml = _appHelper.ReplaceMergeCodes(messageBodyHtml, aff);
-            }
+            IEnumerable<ListSegment> segments = new List<ListSegment>();
 
 
-            string standard = zone.StandardName;
-            string daylight = zone.DaylightName;
-            bool flag = !zone.IsDaylightSavingTime(new DateTime());
 
-            var theTime = (int)affiliate.WebUser.timeZone;
-
-            if (messageBodyHtml.Contains("{timeString}"))
-            {
-                var timeString = _appHelper.ReplaceTimeString(webinar, affiliate.WebUser.timeZone);
-                messageBodyHtml = messageBodyHtml.Replace("{timeString}", timeString);
-            }
-            if (flag)
-            {
-                //adjust for Daylight Savings
-                theTime = (int)affiliate.WebUser.timeZone + 1;
-                //theTime = (int)affiliate.WebUser.timeZone;
-            }
-            if (sendDate.Contains("-"))
-            {
-                //2017-01-23
-                sendDate = sendDate.Split('-')[0] + "-" + sendDate.Split('-')[1] + "-" + sendDate.Split('-')[2] + "T" +
-                           sendTime + ":00:00" + theTime; //"T10:00:00-05:00";
-            }
-            else
-            {
-                sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T" +
-                           sendTime + ":00:00" + theTime; //"T10:00:00-05:00";
-            }
-            try
-            {
-                McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
-
-                IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
-
-                //List list = await manager.Lists.GetAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
-
-                var recp = new Recipient { ListId = _globalConfig.TenantMailChimpList };
-
-
-                var segment = await manager.ListSegments.GetAllAsync(_globalConfig.TenantMailChimpList).ConfigureAwait(false);
-                var _segment = segment.Where(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).FirstOrDefault();
-                if (_segment != null)
-                {
-
-                    recp = new Recipient
-                    {
-                        ListId = _globalConfig.TenantMailChimpList,
-                        SegmentOptions =
-                            new SegmentOptions
-                            {
-                                SavedSegmentId = segment.FirstOrDefault(s => s.Name == "grp" + affiliate.ttsDomain.ToUpper()).Id
-                            }
-                    };
-                }
-                else
-                {
-                    _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
-
-                    return Json(new
-                    {
-                        WebUiConstants.Fail,
-                        campMsg = "No Segment Found for: " + affiliate.ttsDomain
-                    });
-                }
-
-                //https://github.com/brandonseydel/MailChimp.Net/issues/157
-                // or find a way to nav to URL
-
-                var affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
-                var affiliatePromoSenderName = affiliate.PromoSenderName;
-
-                var newCamp = new Campaign
-                {
-                    ContentType = "html",
-                    Type = CampaignType.Regular,
-                    Recipients = recp,
-
-                    Settings = new Setting
-                    {
-                        SubjectLine = subject,
-                        Title = affiliate.ttsDomain + "_" + subject,
-                        FolderId = "30aca5892b",
-                        InlineCss = true,
-                        Authenticate = true,
-                        AutoFooter = true,
-                        AutoTweet = false,
-                        ToName = "*|FNAME|* *|LNAME|* ",
-                        //FromName = "steve@ttstrain.com",
-                        //ReplyTo = "steve@ttstrain.com",
-                        FromName = affiliatePromoSenderName,
-                        ReplyTo = affiliatePromoSenderEmail,
-                        UseConversation = true,
-                    },
-                    Tracking = new Tracking
-                    {
-                        GoogleAnalytics = affiliate.idUserAff + "_" + webinar.idWebinar + "_" + sendDate,
-                        HtmlClicks = true,
-                        TextClicks = true,
-                        Opens = true
-                    }
-
-                };
-                var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
-                campaign.CampaignId = mkCamp.Id;
-                var content = new Content
-                {
-                    Html = messageBodyHtml
-                };
-
-                _logger.Info("CreateCampaign | mkCamp.Id: " + mkCamp.Id);
-                var putContent = await manager.Content.AddOrUpdateAsync(mkCamp.Id, new ContentRequest
-                {
-                    Html = messageBodyHtml
-                });
-
-
-                _logger.Info("CreateCampaign | SendChecklistAsync: " + mkCamp.Id);
-                var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
-
-                List<string> sendToEmails = new List<string>();
-
-                //sendToEmails.Add("steve@ttstrain.com");
-                sendToEmails.Add("all.of.us@ttstrain.com");
-                sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
-
-                CampaignTestRequest emails = new CampaignTestRequest
-                {
-                    EmailType = "html",
-                    Emails = sendToEmails.ToArray()
-                };
-
-                //await manager.Campaigns.TestAsync(mkCamp.Id, emails);
-                foreach (var sendToEmail in sendToEmails)
-                {
-                    _orderManagementService.FireMandrillNotificationEvent(
-                        sendToEmail
-                        , "[Testing] " + subject, messageBodyHtml);
-                }
-
-                _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
-                await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
-                {
-                    Timewarp = false,
-                    BatchDelivery = new BatchDelivery
-                    {
-                        Count = 2,
-                        Delay = 15
-                    },
-                    ScheduleTime = sendDate
-                });
-
-                var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign,
-                    JsonConvert.SerializeObject(campaign, Formatting.None));
-                _logger.Info("Webinar.Campaigns += " + campMsg);
-                webinar.Campaigns = JsonHelpers.ReplaceJsonWithStoredField(webinar.Campaigns, campMsg,
-                    "MailChimpCampaign");
-
-                _webinarManagementService.SaveChanges();
-
-                return Json(new { WebUiConstants.Success, campMsg });
-
-            }
-            catch (Exception exception)
-            {
-                _logger.FatalException("GenerateMailChimpCampaign: ", exception);
-                return Json(new { Result = exception.Message });
-            }
+            return segments;
         }
+
+        private Campaign GetAffCampaign(int affiliateId, int idWebinar)
+        {
+            Campaign campaign = new Campaign();
+            
+            var aff = _affiliateManagementService.GetAffiliates().Where(a => a.idUserAff == affiliateId)
+                .SingleOrDefault();
+
+            var affDom = aff.ttsDomain;
+
+            var title = _webinarManagementService.GetAllActive().Where(w => w.idWebinar == idWebinar).SingleOrDefault().Title;
+
+
+            return campaign;
+        }
+
 
         [ValidateInput(false)]
         [HttpGet]

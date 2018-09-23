@@ -36,7 +36,7 @@ $(document).ready(function () {
 
 
     $("#generateAll").on("click", function (e) {
-
+        
         //var r = confirm("Do you want to continue", "yes");
         if (!confirm("Do you want to continue")) {
             alert("Submission has been canceled.");
@@ -531,8 +531,14 @@ function GetMasterMarkupAJAX($btn) {
 
 
 function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
-
-
+    alert("starting create" + window.location.pathname);
+    var isReminder = "false";
+    var path = window.location.pathname;
+    
+    if (path.includes("Reminder")) {
+        isReminder = "true";
+        
+    }
     var origBtnText = $btn.text();
     $btn.text("Processing " + affiliateId);
     $btn
@@ -564,7 +570,8 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
             "webinarId": $("#Webinar_idWebinar").val(),
             "sendDate": $("#SendDate").val(),
             "sendTime": sendTime,
-            "subject": subjectForCampaign
+            "subject": subjectForCampaign,
+            "isReminder": isReminder
         },
         dataType: "json",
         async: false,

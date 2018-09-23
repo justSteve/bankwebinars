@@ -1,0 +1,183 @@
+﻿@using CUWebinars.Business.Constants
+@using FluentDate
+@using FluentDateTime
+@using CUWebinars.Web.ViewModel
+
+@using Newtonsoft.Json
+
+@model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
+
+
+@{
+
+    var promoEvent = Model.Webinar;
+
+    Layout = "/Views/Shared/_LayoutAdmin.cshtml";
+    if (Model.Affiliates.Count < 2)
+    {
+        Layout = "/Views/Shared/_LayoutAffiliate.cshtml";
+    }
+    string wDate = "<b>" + DateTimeHelper.FormatDate(Model.Webinar.Date) + "</b> &nbsp;";
+    wDate = wDate + DateTimeHelper.FormatTimeWithDuration(Model.Webinar.Date, Model.TimeZone, false, Model.Webinar.Duration);
+
+    ViewBag.Title = "Generate Promo Emails - Reminders" + promoEvent.Title;
+
+    //var minDay = 1.Days().Since(DomainConstants.BuildUtcNowAsCts);
+    //var maxDay = DomainConstants.BuildUtcNowAsCts.NextMonth();
+
+    bool hasAffiliates = Model.Affiliates.Count > 1;
+    bool isAffiliateRestricted = Model.Affiliate != null;
+
+    if (hasAffiliates != true)
+    {
+        <script language="javascript" type="text/javascript">
+
+            var currentUserId = @Model.Affiliate.idUserAff + 0;
+            var webinarId = @Model.Webinar.idWebinar;
+
+        </script>
+    }
+}
+
+@Scripts.Render("~/bundles/wijmo-editor-scripts")
+<link type="text/css" href="~/Scripts/WijmoEditor/Themes/arctic/jquery-wijmo.css" rel="stylesheet" />
+@Styles.Render("~/bundles/wijmo-editor-styles")
+
+
+<script id="scriptInit" type="text/javascript">
+    @{
+        var affDTO = (from Affiliate a in Model.Affiliates
+                      select new
+                      {
+
+                          ttsDomain = a.ttsDomain,
+                          idUserAff = a.idUserAff,
+                          EmailBanner = a.EmailBanner,
+                          ContactPerson = a.ContactPerson,
+                          ContactEmail = a.ContactEmail,
+                          ContactPhone = a.ContactPhone,
+                          NotiPromos = a.NotiPromos,
+                          Logo = a.Logo,
+                          EmailFooter = a.EmailFooter.Trim()
+                      }).ToList();
+    }
+
+    var affs = @Html.Raw(Json.Encode(affDTO));
+    var _subject = "ANNOUNCING: @Model.Webinar.Title";
+    var _testEmails = "all.of.us@ttstrain.com,";
+    var valOfStatus = "@Model.Webinar.Status";
+    
+    $(document)
+        .ready(function() {
+
+    var _subjectForCampaign = "Webinar: @Model.Webinar.Title";
+            $("#editorTA")
+                .wijeditor({
+                    // editorMode: "split" // can default to split view if they want
+                    textChanged: function(e, data) { // Set textChanged event handler function
+                        SetCopyToClipboardTextArea(false);
+                    }
+                });
+        });
+</script>
+
+
+@* vertical tab layout based on http://tutsme-webdesign.info/tutorials/navs/pills_stacked_panesright.html*@
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer", @class = "form-inline form-promo-generater" }))
+{
+    <div class="container-admin">
+
+        <h2 id="WebinarTitle">
+            @Model.Webinar.Title
+        </h2>
+        <div>
+            <button data-toggle="button" type="button" id="showCampaignsBtn" class="btn btn-mini">Show Just Campaigns</button>
+            @Model.Webinar.Presenter.WebUser.FullName &nbsp;
+            @Html.Raw(wDate)
+        </div>
+
+        <div class="row-fluid">
+            <div id="leftSideBar" class="span2" style="height:98%; overflow: auto;">
+                <ul id="showAll" class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;  ">
+                    <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
+
+                    @foreach (var aff in Model.Affiliates)
+                    {
+                        <li id="li_@aff.idUserAff"><input type="checkbox" class="removeCamp" id="e_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
+                    }
+                </ul>
+                <ul id="showCampaign" class="nav nav-pills nav-stacked" style="display: none; margin: 0; padding: 0;">
+                    <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
+
+                    @foreach (var aff in Model.Affiliates.Where(a => a.idMailChimpList != null && a.idMailChimpList != ""))
+                    {
+                        <li id="li_@aff.idUserAff"><input type="checkbox"  class="removeCamp" id="r_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
+                    }
+                </ul>
+            </div>
+
+            <div class="span10">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_Master" data-pane-affid="0">
+
+                        <h4 class="float-right"><button type="button" class="btn  btn-info setStatusBtn" id="setStatusBtn_@Model.Webinar.idWebinar" name="setStatusBtn">Set to Draft</button></h4>
+                        <p>
+                            @Html.HiddenFor(m => m.TemplateType)
+                            @Html.HiddenFor(m => m.Webinar.idWebinar)
+                            @Html.HiddenFor(m => m.Webinar.Title)
+                            @Html.HiddenFor(m => m.Affiliate.idUserAff)
+
+                            @if (hasAffiliates)
+                            {
+                                <input type="button" id="resetAllAffiliates" class="button btn btn-small" value="Reset@(isAffiliateRestricted ? " Affiliate" : " All Affiliates")" />
+                            }
+                            <label for="SendDate">Send date:</label>@Html.TextBoxFor(m => m.SendDate, "{0:MM/dd/yyyy}", new { @class = "input", type = "date" })
+                            <button id="submitGenPromoTexts" class="button btn btn-success btn-small">Generate Master Markup</button>
+                            @if (hasAffiliates)
+                            {
+                                <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
+                                <button id="sendAll" class="button btn btn-small">Send@(isAffiliateRestricted ? " Affiliate" : " All")</button>
+                                <button id="generateAll" class="button btn btn-small">Generate All</button>
+                                
+                            }
+                        </p>
+                        <p>
+                            <textarea id="editor_0" name="editor_0" style="display: none;"></textarea>
+                        </p>
+                    </div>
+                    <span id="opCaption"></span>
+                    @foreach (var aff in Model.Affiliates)
+                    {
+                        // create a "tab" for each Affiliate to hold affiliate-specific stuff
+                        <div class="tab-pane" id="tab_@aff.idUserAff" data-pane-affid="@aff.idUserAff">
+                            <h4 class="float-right">@aff.ttsDomain.ToUpper() Markup</h4>
+                            <p>
+                                <input type="button" class="button btn btn-small reset-to-master" value="Reset to Master" />
+                                <input type="button" class="button btn btn-small copy-markup" value="Copy to Clipboard" />
+                                @Html.HiddenFor(m => aff.ttsDomain, new { id = "ttsDomain_" + @aff.idUserAff })
+                                <input type="button" class="button btn btn-small send-to-affiliate" value="Send" />
+                                <button class="button btn btn-small write-markup-to-storage">Save</button>
+                                @if (hasAffiliates && aff.idMailChimpList != null)
+                                {
+                                    <button id="createCampBtn" data-btn-affid="@aff.idUserAff" class="button btn btn-small create-campaign">Create Campaign</button>
+                                }
+                            </p>
+                            <p>
+                                <textarea id="editor_@aff.idUserAff" name="editor_@aff.idUserAff" style="display: none;"></textarea>
+                            </p>
+                        </div>
+                    }
+
+                    <!-- the following items always show below the Affiliate-specific content above -->
+                    <p>
+                        <textarea id="editorTA" name="editorTA" style="width:98%; height:90%; margin:0; padding: 0;"></textarea>
+                        <div><input type="button" class="button btn btn-small copy-markup" value="Copy to Clipboard" /></div>
+                        <textarea id="copyToClipboard" class="disabled" style="width:98%; height:60px; margin:10px 0 0 0; padding: 5px;"></textarea>
+                    </p>
+
+                </div><!-- tab content -->
+            </div>
+        </div><!-- row-fluid -->
+    </div>
+}
+

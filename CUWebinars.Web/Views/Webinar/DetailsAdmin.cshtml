@@ -225,6 +225,7 @@
                     {
                         <a href="/admin/perdaypromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Daily Promotional Email</a>
                         <a href="#" data-toggle="collapse" data-target="#ListOfEvents" class="btn btn-dangerx">Weekly Promotional Email</a>
+                        <a href="/admin/Reminderpromo/@Model.Webinar.idWebinar" class="btn btn-dangerx">Reminder Email</a>
                     }
                     @*<a href="/admin/PerWeekPromo?id=2060&includedEventsIds=2060,2078,2071,2072" class="btn btn-dangerx">Weekly Promotional Email</a>*@
                 </div>
@@ -237,6 +238,17 @@
                         <input type="text" name="sListOfWebinarsForWeekly" />
                         @*@Html.DropDownList("ListOfWebinarsForWeekly", (MultiSelectList)ViewBag.ListOfWebinars, new { multiple = "multiple" })*@
 
+                        <br />
+                        <input type="submit" value="submit" />
+                    </div>
+                    }
+                </div>
+                <div id="ListOfReminders" class="collapse out">
+                    @using (Html.BeginForm("reminderpromo", "Admin", FormMethod.Post, new { id = "PickWebinars", @class = "form-horizontal" }))
+                    {
+                    <div>
+                        <input type="hidden" name="idWebinar" value=@Model.Webinar.idWebinar />
+                        <input type="text" name="sListOfReminderCampaigns" />
                         <br />
                         <input type="submit" value="submit" />
                     </div>
