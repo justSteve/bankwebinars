@@ -571,7 +571,7 @@ namespace CUWebinars.Web.Controllers.Admin
                             || originalOrder.OrderStatus == OrderStatus.InProcess)
                     )
                     {
-                        _logger.Info("UpdateOrderStatus from: " + originalOrder.OrderStatus + " original Date: " +
+                        _logger.Info("UpdateOrderStatus " + originalOrder.idOrder + " from: " + originalOrder.OrderStatus + " original Date: " +
                                      originalOrder.OrderDate);
 
                         var newDate = TtsConfig.UtcNowAsCts.ToShortDateString();
@@ -1788,7 +1788,6 @@ namespace CUWebinars.Web.Controllers.Admin
         [HttpPost]
         public JsonResult GeneratePromo(WebinarPromoViewModel model)
         {
-
             if (model.TemplateType == "DES")
             {
                 model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
@@ -1929,21 +1928,18 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
                 model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-credit-unions/";
-                ViewBag.SubjectForCampaign = "Webinar: " + model.Webinar.Title;
+                ViewBag.SubjectForCampaign = "Final Reminder: " + model.Webinar.Title;
                 if (model.Affiliate.idUserAff != null && model.Affiliate.idUserAff > 0)
                 {
                     model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
                     model.TimeZone = model.Affiliate.WebUser.timeZone;
-
                 }
-                if (_globalConfig.Tenant == "BankWebinars" || _globalConfig.Tenant == "CUWebinars")
-                    model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
 
-                model.BasePrice = "$265";
+                model.BasePrice = "Starting at $265";
                 if (model.Webinar.Duration == 1)
-                    model.BasePrice = "$165";
+                    model.BasePrice = "Starting at $165";
                 if ((double)model.Webinar.Duration == 1.5)
-                    model.BasePrice = "$195";
+                    model.BasePrice = "Starting at $195";
 
                 // populate the dropdown selector (not currently implemented)
                 TempData["ListOfWebinarsForUpcoming"] =
@@ -2014,11 +2010,11 @@ namespace CUWebinars.Web.Controllers.Admin
                 if (_globalConfig.Tenant == "BankWebinars" || _globalConfig.Tenant == "CUWebinars")
                     model.SubscriptionPackURL = "http://ttstrain.com/webinar-subscription-packages-for-banks/";
 
-                model.BasePrice = "$265";
+                model.BasePrice = "Starting at $265";
                 if (model.Webinar.Duration == 1)
-                    model.BasePrice = "$165";
+                    model.BasePrice = "Starting at $165";
                 if ((double)model.Webinar.Duration == 1.5)
-                    model.BasePrice = "$195";
+                    model.BasePrice = "Starting at $195";
 
                 // populate the dropdown selector (not currently implemented)
                 TempData["ListOfWebinarsForUpcoming"] =
@@ -2075,6 +2071,97 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 return Json(new { masterText = model.EventBody });
             }
+            if (model.TemplateType == "MortgageWebinars")
+            {
+                //implements Sam's template
+                model.Webinar = _webinarManagementService.GetWebinar(model.Webinar.idWebinar);
+                model.SubscriptionPackURL = "https://mortgagewebinars.com/wsp";
+                ViewBag.SubjectForCampaign = "Webinar: " + model.Webinar.Title;
+                if (model.Affiliate.idUserAff != null && model.Affiliate.idUserAff > 0)
+                {
+                    model.Affiliate = _affiliateManagementService.FindById(model.Affiliate.idUserAff);
+                    model.TimeZone = model.Affiliate.WebUser.timeZone;
+                }
+
+                model.BasePrice = "Starting at $265";
+                if (model.Webinar.Duration == 1)
+                    model.BasePrice = "Starting at $165";
+                if ((double)model.Webinar.Duration == 1.5)
+                    model.BasePrice = "Starting at $195";
+
+                // populate the dropdown selector (not currently implemented)
+                TempData["ListOfWebinarsForUpcoming"] =
+                    _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date)
+                        .Take(10).ToList();
+
+
+                if (model.ListOfWebinarsForUpcoming == null)
+                {
+                    model.ListOfWebinarsForUpcoming =
+                        _webinarManagementService.GetUpcomingWebinars()
+                            .OrderBy(w => w.Date)
+                            .Take(10)
+                            .Select(w => w.idWebinar)
+                            .ToArray();
+                }
+
+                var _upcoming =
+                    _webinarManagementService.GetUpcomingWebinars()
+                        .Where(w => w.Date > model.SendDate && w.idWebinar != model.Webinar.idWebinar)
+                        .OrderBy(w => w.Date)
+                        .Take(4).ToList();
+
+
+                var doc = new HtmlDocument();
+                doc.LoadHtml(model.Webinar.Presenter.BiographyLong);
+
+                var root = doc.DocumentNode;
+                root.SelectSingleNode("(//img)[1]").Remove();
+
+                model.PresenterW_OutPic = root.InnerHtml;
+
+                var upcomingWebinars = new StringBuilder();
+                var iterator = 0;
+                foreach (var w in _upcoming)
+                {
+                    iterator++;
+                    if (iterator == 1 || iterator == 3)
+                        upcomingWebinars.Append("<td valign='top'  width='33%'>");
+                    upcomingWebinars.Append("<table cellspacing = '0' cellpadding = '0' border = '0' > " +
+                                            "  <tr>" +
+                                            "        <td style='padding:0px;font-family:sans-serif;font-size:12px;line-height:15px;color:#555555;'>" +
+                                            "            <div style='padding:0;margin-bottom:5px;list-style-type:none;'>" +
+                                            "               <div style='margin: 0 0 0 10px; font-weight: bold;' >" +
+                                            "                    <a href='" + _globalConfig.TenantURL + "/Webinar/Details/" + w.idWebinar + "?idaff={aff_idUserAff}'>" + w.Title + "</a>" +
+                                            "                </div>" +
+                                            "                <div style='margin:0 0 0 10px;'>" + w.Date.ToLongDateString() + "</div>" +
+                                            "            </div>" +
+                                            "        </td>" +
+                                            "  </tr>" +
+                                            "</table> "
+                    );
+                    if (iterator == 2 || iterator == 4)
+                        upcomingWebinars.Append("</td> ");
+                }
+
+
+                model.ListOfWebinarsUpcomingRendered = upcomingWebinars.ToString();
+
+                model.TimeFormatDisplay = "<i>" + DateTimeHelper.FormatTime(model.Webinar.Date, model.TimeZone, false) +
+                                          " - " +
+                                          DateTimeHelper.FormatTime(
+                                              model.Webinar.Date.AddHours((double)model.Webinar.Duration),
+                                              model.TimeZone,
+                                              true) + "<br /></i>";
+
+                model.EventBody =
+                    HttpUtility.HtmlDecode(
+                        _generalFormatter.FormatV2(model, "~/Notification/Templates/SendMWPromo.cshtml").Body);
+                // get Template with new method
+
+                return Json(new { masterText = model.EventBody });
+            }
+
             if (model.TemplateType == "Weekly")
             {
                 ViewBag.SubjectForCampaign = "Webinars: Week of " +
@@ -2194,11 +2281,11 @@ namespace CUWebinars.Web.Controllers.Admin
                                       DateTimeHelper.FormatTimeWithDuration(webinar.Date, model.TimeZone, false,
                                           webinar.Duration);
 
-            model.BasePrice = "$265";
+            model.BasePrice = "Starting at $265";
             if (model.Webinar.Duration == 1)
-                model.BasePrice = "$165";
+                model.BasePrice = "Starting at $165";
             if ((double)model.Webinar.Duration == 1.5)
-                model.BasePrice = "$195";
+                model.BasePrice = "Starting at $195";
             if (model.TemplateType == "")
             {
                 model.Webinar.Description = doc.DocumentNode.SelectSingleNode("//*[@id='bodyLeft']").InnerHtml;
@@ -2337,16 +2424,21 @@ namespace CUWebinars.Web.Controllers.Admin
         public async Task<ActionResult> PerDayPromo(int id)
         {
 
-            var webinarsForUpcoming = _webinarManagementService.GetUpcomingWebinars().Take(15).OrderBy(w => w.Date);
+            var webinarsForUpcoming = _webinarManagementService.GetUpcomingWebinars()
+                .Take(15).OrderBy(w => w.Date);
 
             TempData["ListOfWebinarsForWeekly"] = webinarsForUpcoming;
 
+            string tempType = "Daily";
+
+            if (_globalConfig.Tenant == "MortgageWebinars")
+                tempType = "MortgageWebinars";
             WebinarPromoViewModel model = new WebinarPromoViewModel()
             {
                 TimeZone = USTimeZone.Eastern,
                 SendDate = TtsConfig.UtcNowAsCts,
                 Webinar = _webinarManagementService.GetWebinar(id),
-                TemplateType = "Daily"
+                TemplateType = tempType
             };
 
 
@@ -2491,6 +2583,75 @@ namespace CUWebinars.Web.Controllers.Admin
             return this.ModelStateJson(ModelState);
         }
 
+        [AllowAnonymous]
+
+        public void BuildMailChimpCampaignRecords()
+        {
+            try
+            {
+                IList<Campaign> originalCampaign = JsonConvert.DeserializeObject<IList<Campaign>>(System.IO.File.ReadAllText(@"c:\users/steve/webinars.json"));
+
+                foreach (var campaign in originalCampaign)
+                {
+                    try
+                    {
+                        var affString = campaign.Settings.Title.Split('_')[0];
+                        var titleString = campaign.Settings.Title.Split(':')[1].Trim();
+
+                        DateTime sinceDate = DateTime.Now.AddMonths(-6);
+
+                        var webinar = _webinarManagementService.GetAllActive()
+                            .Where(w => w.Title == titleString && w.Date > sinceDate)
+                            .OrderByDescending(w => w.Date).FirstOrDefault();
+                        if (webinar == null)
+                        {
+                            _logger.Warn("BuildMailChimpCampaignRecords didn't find title: " + titleString + " CampaignId: " + campaign.Id);
+                            continue;
+                        }
+                        McCampaign campaignFieldValue = new McCampaign
+                        {
+                            AffiliateId =
+                            _affiliateManagementService.GetAffiliates().Where(a => a.ttsDomain == affString)
+                                .SingleOrDefault().idUserAff
+                            ,
+                            CampaignId = campaign.Id
+                            ,
+                            WebinarId = webinar.idWebinar
+                        };
+
+                        _logger.Info("CreatedCampaignFieldValue: " + campaignFieldValue);
+
+                        webinar.Campaigns = JsonHelpers.AddObjectToJsonArray(webinar.Campaigns,
+                            JsonPropertyKeys.MailChimpCampaigns, campaignFieldValue);
+
+                        _webinarManagementService.SaveChanges();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.FatalException("BuildMailChimpCampaignRecords: " + campaign.Id, ex);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.FatalException("BuildMailChimpCampaignRecords: ", exception);
+
+            }
+        }
+
+        private object MakeCampaignsGetAsync(string idCampaign)
+        {
+
+            IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
+            var mkCamp = manager.Campaigns.GetAsync(idCampaign);
+
+            return mkCamp;
+
+
+        }
+
+
         [ValidateInput(false)]
         [HttpPost]
         [HandleAjaxException]
@@ -2545,7 +2706,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
 
-                //List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+                List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
 
                 var recp = new Recipient();
 
@@ -2554,9 +2715,19 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     try
                     {
-                        var idCampaign = GetAffCampaign(affiliateId, webinar.idWebinar).Id;
-                        
-                        segment = MakeReminderSegment(affiliateId, idCampaign);
+                        var idCampaign = GetAffCampaign(affiliateId, webinar.idWebinar);
+                        var cmpRpt = await manager.Reports.GetCampaignOpenReportAsync(idCampaign).ConfigureAwait(false);
+                        var addressesToAdd = "";
+                        var reminderInterest = MailChimpAddReminderInterest(affiliate.ttsDomain);
+                        //foreach (var open in cmpRpt)
+                        //{
+                        //    //addressesToAdd += open.EmailAddress;
+                        //    var addUser = await manager.Members.
+                        //}
+
+                        var clicks = "cmp.ReportSummary.SubscriberClicks";
+
+
                     }
                     catch (Exception e)
                     {
@@ -2570,7 +2741,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                     if (isReminder == "true")
                         savedSegId = segment.SingleOrDefault(s => s.Name.ToLower() == "reminder").Id;
-                    
+
                     if (_globalConfig.Tenant == "CCS")
                     {
                         savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "ccs").Id;
@@ -2587,7 +2758,8 @@ namespace CUWebinars.Web.Controllers.Admin
                             new SegmentOptions
                             {
                                 SavedSegmentId = savedSegId
-                            }
+                            },
+
                     };
                 }
                 catch (Exception e)
@@ -2695,16 +2867,12 @@ namespace CUWebinars.Web.Controllers.Admin
                     ScheduleTime = sendDate
                 });
 
-                var campMsg = new JProperty(JsonPropertyKeys.MailChimpCampaign,
-                    JsonConvert.SerializeObject(campaign, Formatting.None));
-                _logger.Info("Webinar.Campaigns += " + campMsg);
-                webinar.Campaigns = JsonHelpers.ReplaceJsonWithStoredField(webinar.Campaigns, campMsg,
-                    "MailChimpCampaign");
+                webinar.Campaigns = JsonHelpers.AddObjectToJsonArray(webinar.Campaigns,
+                    JsonPropertyKeys.MailChimpCampaigns, campaign);
 
                 _webinarManagementService.SaveChanges();
 
-                return Json(new { WebUiConstants.Success, campMsg });
-
+                return Json(new { WebUiConstants.Success, campaign });
             }
             catch (Exception exception)
             {
@@ -2713,27 +2881,41 @@ namespace CUWebinars.Web.Controllers.Admin
             }
         }
 
-        private IEnumerable<ListSegment> MakeReminderSegment(int affiliateId, string idCampaign)
+        private ListSegment MakeReminderSegment(List list, string idCampaign)
         {
-            IEnumerable<ListSegment> segments = new List<ListSegment>();
+            //get users who have clicked
+
+
+            ListSegment segment = new ListSegment
+            {
+                ListId = list.Id
+            };
 
 
 
-            return segments;
+            return segment;
         }
 
-        private Campaign GetAffCampaign(int affiliateId, int idWebinar)
+        private string GetAffCampaign(int affiliateId, int idWebinar)
         {
-            Campaign campaign = new Campaign();
-            
+            var campaign = "";
+
             var aff = _affiliateManagementService.GetAffiliates().Where(a => a.idUserAff == affiliateId)
                 .SingleOrDefault();
 
             var affDom = aff.ttsDomain;
 
-            var title = _webinarManagementService.GetAllActive().Where(w => w.idWebinar == idWebinar).SingleOrDefault().Title;
+            var _campaigns = _webinarManagementService.GetAllActive().Where(w => w.idWebinar == idWebinar).SingleOrDefault().Campaigns;
+            var o = JToken.Parse(_campaigns);
+            var campaigns = JsonConvert.DeserializeObject<IEnumerable<McCampaign>>(o.First.Children().First().ToString());
 
-
+            foreach (var campaign1 in campaigns)
+            {
+                if (campaign1.AffiliateId == affiliateId)
+                {
+                    campaign = campaign1.CampaignId;
+                }
+            }
             return campaign;
         }
 
@@ -3145,7 +3327,7 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         memMergeFields = BuildMergeFields(user, memMergeFields, generateIdMailChimp);
 
-                        newMember.EmailAddress = user.Email_Address;
+                        newMember.EmailAddress = user.Email_Address.Trim().ToLower();
                         newMember.ListId = mcList.Id;
                         newMember.Interests = memInterests;
                         newMember.StatusIfNew = Status.Subscribed;
@@ -3197,6 +3379,78 @@ namespace CUWebinars.Web.Controllers.Admin
             return View(model);
 
         }
+
+        public async Task<Interest> MailChimpAddReminderInterest(string aff)
+        {
+            _logger.Info("MailChimpAddReminderInterest starting");
+
+
+            var affiliate = _affiliateManagementService.GetAffiliates().Where(a => a.ttsDomain == aff)
+                .SingleOrDefault();
+
+            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
+
+            StringBuilder sb = new StringBuilder();
+            var lists = await manager.Lists.GetAllAsync().ConfigureAwait(false);
+            var tenant = _globalConfig.TenantPrefix.Replace("-", "");
+            var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
+            var mcList = lists.FirstOrDefault(l => l.Name == listName);
+
+            if (mcList == null)
+            {
+                _logger.Warn("No List found for " + affiliate.ttsDomain + "<br>");
+                return null;
+            }
+
+            try
+            {
+                var intCat = await manager.InterestCategories.GetAllAsync(mcList.Id).ConfigureAwait(false);
+                var interestCategory = intCat.FirstOrDefault(i => i.Title == "Keep me informed about:");
+                var interests = await manager.Interests.GetAllAsync(mcList.Id, interestCategory.Id).ConfigureAwait(false);
+                var reminderInterest = interests.FirstOrDefault(i => i.Name.ToLower() == "reminder");
+
+                if (reminderInterest == null)
+                {
+                    reminderInterest = new Interest
+                    {
+                        InterestCategoryId = interestCategory.Id,
+                        Name = "Reminder",
+                        ListId = mcList.Id
+                    };
+                    reminderInterest = await manager.Interests.AddOrUpdateAsync(reminderInterest);
+                }
+                else
+                {
+                    await manager.Interests.DeleteAsync(mcList.Id, interestCategory.Id, reminderInterest.Id);
+
+                    reminderInterest = new Interest
+                    {
+                        InterestCategoryId = interestCategory.Id,
+                        Name = "Reminder",
+                        ListId = mcList.Id
+                    };
+                    reminderInterest = await manager.Interests.AddOrUpdateAsync(reminderInterest);
+                }
+
+                //MakeReminderInterestCategory(mcList.Id);
+
+                return reminderInterest;
+
+            }
+            catch (Exception exception)
+            {
+                _logger.FatalException("MailChimpAddReminderInterest: ", exception);
+
+                var reminderInterest = new Interest
+                {
+                    InterestCategoryId = "Failed",
+                    Name = exception.Message,
+                    ListId = mcList.Id
+                };
+                return reminderInterest;
+            }
+        }
+
 
 
         [ValidateInput(false)]

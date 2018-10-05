@@ -25,6 +25,9 @@ namespace CUWebinars.Business.Services
         Quiz GetQuizByOrderId(int idOrder);
         IEnumerable<Webinar> GetRecordedWebinars();
         IEnumerable<Webinar> GetDesWebinars();
+        IEnumerable<Webinar> GetCcsWebinars();
+
+        
         IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar);
         IEnumerable<WebinarFile> GetWebinarFilesPerWebinar(int idWebinar);
         IEnumerable<Webinar> GetUpcomingWebinars();
@@ -66,6 +69,6 @@ namespace CUWebinars.Business.Services
         string ParseForSpeakerName(string descriptionText);
         int? GetUserIdByFirstNameLastName(string fullName);
         string ImportLUEvents();
-        
+
     }
 }

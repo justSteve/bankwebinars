@@ -67,9 +67,7 @@ $(document).ready(function () {
                 }
 
                 console.log("running MC generate for: '" + affiliateId + "' localCopy: " + localCopy);
-
-
-
+                
                 CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
 
             });
@@ -90,14 +88,14 @@ $(document).ready(function () {
             e.preventDefault();
             var $btn = $(this);
             //$btn.blur();
-            console.log("sending");
+
             $("#showAll").find('li').each(function () {
 
                 var $tab = $(this);
                 var affiliateId = $tab.text().split(":")[1];
                 if (!affiliateId || affiliateId === 0)
                     return;
-                console.log("SendAllToAffiliate: '" + affiliateId + "' subject: " + subject);
+
 
 
                 var localCopy = "";
@@ -180,7 +178,7 @@ $(document).ready(function () {
         var sendTime = prompt("Time To Send: ", _sendTime);
 
         var subjectForCampaign = prompt("Subject line: ", "Webinar: " + $("#Webinar_Title").val());
-        console.log(subjectForCampaign);
+        
         CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
 
     });
@@ -253,7 +251,7 @@ function GetAffTimeString(affId) {
         dataType: "json",
 
         success: function (result) {
-            console.log(result.timeFormatDisplay);
+            //console.log(result.timeFormatDisplay);
             return result.timeFormatDisplay;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -316,7 +314,7 @@ function SetwStatus() {
     if (subject != null) {
 
         var idWebinar = $("#Webinar_idWebinar").val();
-        console.log(_subject + " " + subject);
+        //console.log(_subject + " " + subject);
         $.ajax({
             url: '/Webinar/SetStatus',
             type: 'GET',
@@ -344,7 +342,7 @@ function SetwStatus() {
 function GetAffiliateCopy(affiliateId, isActive) {
 
     var currCopy = "";
-    console.log("GetAffiliateCopy was passed: " + affiliateId + " Active: " + isActive);
+    //console.log("GetAffiliateCopy was passed: " + affiliateId + " Active: " + isActive);
 
     // is this affiliate currently showing?  if so, grab Editor value rather than hidden text area
     // Addendum: this test is returning false at the point where true is expected. 
@@ -356,7 +354,7 @@ function GetAffiliateCopy(affiliateId, isActive) {
     }
     // HACK: the above test is returning false at the point where true is expected. 
     //currCopy = $.trim($("#editorTA").wijeditor("getText"));
-    console.log(currCopy);
+    //console.log(currCopy);
     currCopy = stripWijNull(currCopy);
     return currCopy;
 }
@@ -434,7 +432,9 @@ function GetMasterMarkupAJAX($btn) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus + " " + errorThrown);
+            console.log(errorThrown);
+            console.log(textStatus);
+            alert(textStatus + " " + errorThrown.Result);
         }
     }).done(function (result) {
         $('#submitSpinWrapper').remove();
@@ -531,7 +531,7 @@ function GetMasterMarkupAJAX($btn) {
 
 
 function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
-    alert("starting create" + window.location.pathname);
+    
     var isReminder = "false";
     var path = window.location.pathname;
     
@@ -584,7 +584,7 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
                 //$(this.closest("li").remove());
             } else {
 
-                alert("error: " + Result);
+                alert("error: " + Result.Result);
             }
         },
         error: function (result) {

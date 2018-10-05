@@ -159,12 +159,13 @@ namespace CUWebinars.Business.Core.Helpers
                 )
                 {
                     if (propertyInfo.GetType() != typeof(Newtonsoft.Json.Linq.JValue))
-                        properties.Add(new JProperty(propertyInfo.Name, propertyInfo.GetValue(objectToJsonify)));
+                        properties.Add(new JProperty(propertyInfo.Name
+                            , propertyInfo.GetValue(objectToJsonify)));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                throw;
             }
             return properties;
         }

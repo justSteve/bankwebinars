@@ -1,0 +1,647 @@
+﻿@using CUWebinars.Business.Models
+@using CUWebinars.Business.Notification
+@model CUWebinars.Business.Notification.ViewModel.WebinarPromoViewModel
+@{
+    TtsTemplateHelper TtsTemplateHelperObject = new TtsTemplateHelper();
+
+    var thisWebinar = Model.Webinar;
+    string TenantHead = TtsTemplateHelperObject.Tenant();
+}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<title>[preview-@TenantHead] promo: @thisWebinar.Title</title>
+
+<html lang="en">
+
+@{
+
+    var webinar = Model.Webinar;
+    //var aff = Model.Affiliate;
+    //int currentUserID = UserFacade.Instance.GetCurrentUserID();
+
+    var ceuStmt = "";
+    var ceuShort = "";
+
+    if (String.IsNullOrEmpty(webinar.ceu) == false)
+    {
+        string[] ceu = webinar.ceu.Split('|');
+        ceuShort = ceu[0];
+        ceuStmt = ceu[1];
+    }
+
+    USTimeZone tz = Model.TimeZone;
+    string DateTimeString = TtsTemplateHelperObject.FormatTimeWithDuration(webinar.Date, tz, true, webinar.Duration);
+
+    string Tenant = TtsTemplateHelperObject.Tenant();
+    string TenantEmail = TtsTemplateHelperObject.TenantEmail();
+    string TenantDomain = TtsTemplateHelperObject.TenantDomain();
+    string TenantURL = TtsTemplateHelperObject.TenantURL();
+    string TenantLogo = TtsTemplateHelperObject.TenantLogo();
+    string TenantPrefix = TtsTemplateHelperObject.TenantPrefix();
+    string TenantCom = TenantDomain + ".com";
+
+    string poweredByLogo = "https://ttsimages.blob.core.windows.net/images/email/logo_powered_by_bank_rv.png";
+
+    if (Tenant == "CUWebinars")
+    {
+        poweredByLogo = "https://ttsimages.blob.core.windows.net:443/images/email/logo_powered_by_cu_rv.png";
+    }
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>TTS - Total Training Solutions</title>
+    <!--[if mso]>
+    <style>
+    ul,ol {
+    margin:0 !important;
+    }
+    li {
+    margin-left:30px !important;
+    }
+    li.list-item-first {
+    margin-top:0 !important;
+    }
+    li.list-item-last {
+    margin-bottom:10px !important;
+    }
+    </style>
+    <![endif]-->
+
+    <style type="text/css">
+        html, body {
+            margin: 0 auto !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        table, td {
+            mso-table-lspace: 0 !important;
+            mso-table-rspace: 0 !important;
+        }
+
+        table {
+            border-spacing: 0 !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            margin: 0 auto !important;
+        }
+
+            table table table {
+                table-layout: auto;
+            }
+
+        a {
+            text-decoration: none;
+        }
+
+        @@media only screen and (min-device-width: 330px) {
+            .email-container {
+                min-width: 330px !important;
+            }
+        }
+
+        html, body {
+            margin: 0 auto !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        table, td {
+            mso-table-lspace: 0 !important;
+            mso-table-rspace: 0 !important;
+        }
+
+        table {
+            border-spacing: 0 !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            margin: 0 auto !important;
+        }
+
+            table table table {
+                table-layout: auto;
+            }
+
+        a {
+            text-decoration: none;
+        }
+
+        @@media only screen and (min-device-width: 330px) {
+            .email-container {
+                min-width: 330px !important;
+            }
+        }
+
+        @@media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                margin: auto !important;
+            }
+        }
+
+        @@media screen and (max-width: 600px) {
+            .stack-column, .column-center {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+        }
+
+        @@media screen and (max-width: 600px) {
+            .column-center {
+                text-align: center !important;
+            }
+        }
+
+        @@media screen and (max-width: 600px) {
+            .center-on-narrow {
+                text-align: center !important;
+                display: block !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                float: none !important;
+            }
+        }
+
+        @@media screen and (max-width: 600px) {
+            table.center-on-narrow {
+                display: inline-block !important;
+            }
+        }
+
+        .mcnPreviewText {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #ffffff;">
+
+    <!--*|IF:MC_PREVIEW_TEXT|*-->
+    <!--[if !gte mso 9]><!--><span class="mcnPreviewText" style="display:none; font-size:0px; line-height:0px; max-height:0px; max-width:0px; opacity:0; overflow:hidden; visibility:hidden; mso-hide:all;">*|MC_PREVIEW_TEXT|*</span>
+    <!--<![endif]-->
+    <!--*|END:IF|*-->
+
+
+    <center style="width:100%;background-color:#ffffff;">
+        <!--[if mso | IE]>
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#ffffff;">
+          <tr>
+            <td>
+              <![endif]-->
+
+        <table align="center" cellspacing="0" cellpadding="0" border="0" width="600" style="margin:0 auto;" class="email-container">
+            <tr>
+                <td style="padding:10px 0 0;text-align:center;">
+                    <p>
+                        <a href="*|ARCHIVE|*" style="width: 600px; color: #555555; font-weight: normal; display: block; text-decoration: none; text-align: center; font-size: 12px;">
+                            View this email in your browser
+                        </a>
+                    </p>
+                    <p>
+                        <img src="https://gallery.mailchimp.com/92ad1b34176b78abcb8550fe5/images/2545149d-c852-43b7-804f-3166f9a44c64.png" alt="Logo" border="0" style="width:100%;max-width:350px;display:block;height: auto; margin:0 auto;background: #dddddd; font-family: sans-serif; font-size: 15px; text-align:center;line-height: 15px; background:#ffffff;" />
+                    </p>
+                    <p>
+                        <img src="https://gallery.mailchimp.com/92ad1b34176b78abcb8550fe5/images/9062d79b-049a-4eab-ba8b-204e3c7df0df.png" width="80%" alt="Logo" border="0" style="padding-top:5px;border-top:5px solid #dddddd;height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; background:#ffffff;" />
+                    </p>
+                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                            <td style="padding:5px;text-align:left;font-family:sans-serif;font-size:15px;line-height:20px;color:#ffffff;"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign="middle" style="text-align:center;background-color:#3e67b1;background-position:center !important;background-size:cover !important;">
+                    <div>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td valign="middle" height="5" style="text-align:center;font-family:sans-serif;font-size:15px;color:#ffffff;border-top:5px solid #87bc50;"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <!------------- Large Image------------->
+            <!-- <tr>
+              <td style="background-color:#ffffff;">
+                <img src="http://placehold.it/1200x600" width="600" alt="alt_text" border="0" style="width: 100%; max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555; margin: auto;">
+              </td>
+            </tr> -->
+            <tr>
+                <td valign="top" width="100%" style="padding:0px 10px;background-color:#ffffff;">
+                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                            <td valign="top">
+                                <div style="max-width:600px;margin:auto;" class="email-container">
+                                    <!--[if mso]>
+                                    <table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+                                      <tr>
+                                        <td>
+                                          <![endif]-->
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="padding:10px;text-align:left;font-family:sans-serif;font-size:15px;line-height:20px;color:#ffffff;"></td>
+                                        </tr>
+                                    </table>
+                                    <!--[if mso]>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                    <![endif]-->
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td width="33%" class="column-center">
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td valign="top" style="padding:0 10px;">
+                                            <!-- 170x170 presenter image -->
+                                            <img src="@webinar.Presenter.PhotoFull" alt="Photo: @webinar.Presenter.WebUser.FullName" border="0" class="center-on-narrow" style="height: auto; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555; border: 1px solid #dddddd" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td width="66%" class="column-center">
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td valign="top" style="font-family:sans-serif;font-size:15px;line-height:20px;color:#555555;padding:10px 15px;text-align:center;" class="center-on-narrow">
+                                            <h2 style="margin:0 0 5px 0;font-family:sans-serif;font-size:18px;line-height:22px;color:#333333;font-weight:bold;">
+                                                @webinar.Title
+                                            </h2>
+                                            <p style="margin:0;">@webinar.Date.ToLongDateString()</p>
+                                            <p style="margin:0 0 10px 0;">{timeString}</p>
+                                            <p style="margin:0 0 5px 0;font-weight:600;">@webinar.Presenter.WebUser.FullName</p>
+                                            <p style="margin:0 0 10px 0;">@Model.BasePrice</p>
+
+                                            <table cellspacing="0" cellpadding="0" border="0" class="center-on-narrow" style="float:none;">
+                                                <tr>
+                                                    <td style="padding:0 20px 0px;">
+                                                        <!-- button -->
+                                                        <table border="0" cellspacing="0" cellpadding="0" align="center">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td align="center" style="font-family:sans-serif;font-size:15px;color:#ffffff;padding:0;">
+                                                                        <table border="0" cellspacing="0" cellpadding="10">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family:sans-serif;font-size:15px;color:#3e67b1;-webkit-border-radius:4px;border-radius:4px;" xml:lang="en-us">
+                                                                                        <a href="@TenantURL/webinar/details/@Model.Webinar.idWebinar?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color:#ffffff;text-decoration:none;font-size:14px;font-weight:normal;font-family:sans-serif;-webkit-border-radius:4px;border-radius:4px;padding:0 36px;display:inline-block;line-height:100%;">Register Now</a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:0 20px 0px;">
+                                            <table align="center" cellspacing="0" cellpadding="0" border="0" style="margin:auto;">
+                                                <tr>
+                                                    <td>
+                                                        <div style="font-family: sans-serif; font-size: 11px; line-height: 15px; text-decoration: none; color: #ababab; display: block; margin-top: 5px; text-align: center;">
+                                                            Can’t attend? OnDemand playback is included. <br /> @ceuShort
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <!-- Column : END -->
+            </tr>
+            <tr>
+                <td style="background-color:#ffffff;">
+                    <table cellspacing="0" cellpadding="0" border="0" width="100%" class="email-container">
+                        <tr>
+                            <td style="padding:10px 15px 5px 15px;font-family:sans-serif;font-size:15px;line-height:20px;color:#555555;">
+                                <!-- optional title -->
+                                <!-- <h1 style="margin:0 0 10px;font-size:25px;line-height:30px;color:#333333;font-weight:normal;">Praesent laoreet malesuada cursus.</h1> -->
+
+                                <p style="margin: 5px 15px;">
+                                    @webinar.DescriptionLong
+                                </p>
+                                <h1 style="margin:0 0 10px;font-size:23px;line-height:30px;color:#333333;font-weight:normal;">
+                                    @Model.Webinar.LearnCaption
+                                </h1>
+                                @Model.Webinar.LearnBody
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px 15px 5px 15px;font-family:sans-serif;font-size:15px;line-height:20px;color:#555555;">
+                                <!-- optional title -->
+                                <h1 style="margin: 0 0 10px; font-size: 23px; line-height: 30px; color: #333333; font-weight: normal;">
+                                    Who Should Attend?
+                                </h1>
+                                @Model.Webinar.WhoAttend
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:5px 15px 5px 15px;font-family:sans-serif;font-size:15px;line-height:20px;color:#555555;">
+                                <!-- optional title -->
+                                <h1 style="margin: 0 0 10px; font-size: 23px; line-height: 30px; color: #333333; font-weight: normal;">
+                                    About The Presenter
+                                </h1>
+                                @Model.PresenterW_OutPic
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0 10px 20px;">
+
+                                <table cellspacing="0" cellpadding="0" border="0" class="center-on-narrow" style="float:none;">
+                                    <tr>
+                                        <td style="padding:0 20px 0px;">
+                                            <!-- button -->
+                                            <table border="0" cellspacing="0" cellpadding="0" align="center">
+                                                <tbody>
+                                                    <tr>
+                                                        <td align="center" style="font-family:sans-serif;font-size:13px;color:#ffffff;padding:0;">
+                                                            <table border="0" cellspacing="0" cellpadding="10">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family:sans-serif;font-size:14px;color:#3e67b1;-webkit-border-radius:4px;border-radius:4px;" xml:lang="en-us">
+                                                                            <a href="@TenantURL/webinar/details/@Model.Webinar.idWebinar?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 14px; font-weight: normal; font-family: sans-serif; -webkit-border-radius: 4px; border-radius: 4px; padding: 0 36px; display: inline-block; line-height: 100%;">
+                                                                                Register Now
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td valign="middle" style="text-align:center;background-color:#3e67b1;background-position:center !important;background-size:cover !important;">
+                    <div>
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td valign="middle" style="text-align:center;padding:15px 20px;font-family:sans-serif;font-size:15px;color:#ffffff;border-top:5px solid #87bc50;">
+                                    <h1 style="font-size: 25px; line-height: 30px; color: #ffffff; font-weight: bold; text-transform: uppercase;">
+                                        Upcoming Events
+                                    </h1>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <!-- Upcoming Webinar Section-->
+            <tr>
+                <td valign="top" style="padding:10px;background-color:#ffffff;border:1px solid #dddddd;">
+                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                            <td valign="top" style="padding:10px;background-color:#ffffff;">
+                                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                    <!-- Upcoming Webinar Section-->
+                                    <tr>
+                                        <td valign='top' style='padding:10px;background-color:#ffffff;border:1px solid #dddddd;'>
+                                            <table cellspacing='0' cellpadding='0' border='0' width='100%'>
+                                                <tr>
+                                                    <td valign='top' style='padding:10px;background-color:#ffffff;'>
+                                                        <table cellspacing='0' cellpadding='0' border='0' width='100%'>
+                                                            <tr>
+
+                                                                @Model.ListOfWebinarsUpcomingRendered
+
+                                                                <td width="33%">
+                                                                    <table cellspacing="0" cellpadding="0" border="0" align="center">
+                                                                        <tr>
+                                                                            <td style="text-align: center;">
+                                                                                <a href="@TenantURL/webinar/calendar?lid=*|LINKID|*&idaff={aff_idUserAff}">
+                                                                                    <img src="https://cms-goc.oclstoreadmin.com/pub/media/wysiwyg/webicon-calendar-3.png" width="95" alt="alt_text" border="0" class="fluid" style="height: auto; background: #ffffff; font-family: sans-serif; font-size: 15px; line-height: 11px; color: #555555;"/>
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="padding: 0 0px 0px;">
+                                                                                <!-- button -->
+                                                                                <table border="0" cellspacing="0" cellpadding="0" align="center">
+                                                                                    <tbody>
+                                                                                    <tr>
+                                                                                        <td align="center" style="font-family: sans-serif; font-size: 13px; color: #ffffff; padding: 0;">
+                                                                                            <table border="0" cellspacing="0" cellpadding="10">
+                                                                                                <tbody>
+                                                                                                <tr>
+                                                                                                    <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family: sans-serif; font-size: 14px; color: #3e67b1; -webkit-border-radius: 4px; border-radius: 4px;" xml:lang="en-us">
+                                                                                                        <a href="@TenantURL/webinar/calendar?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 13px; font-weight: normal; font-family: sans-serif; -webkit-border-radius: 4px; border-radius: 4px; padding: 0 5px; display: inline-block; line-height: 100%;">
+                                                                                                            View Calendar
+                                                                                                        </a>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- 2 Even Columns : END -->
+                        <!-- 3 Even Columns : BEGIN -->
+                        <tr>
+                            <td dir="ltr" valign="top" width="100%" style="padding:10px;background-color:#ffffff;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td width="33%" class="column-center">
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                <tr>
+                                                    <td dir="ltr" valign="top" style="padding:0 10px;">
+                                                        <img src="https://s33.postimg.cc/vo1cdsa33/group_package.jpg" width="140" height="140" alt="alt_text" border="0" class="center-on-narrow" style="height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td width="66%" class="column-center">
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                <tr>
+                                                    <td dir="ltr" valign="top" style="font-family:sans-serif;font-size:15px;line-height:20px;color:#555555;padding:10px;text-align:left;" class="center-on-narrow">
+                                                        <h2 style="margin:0 0 10px 0;font-family:sans-serif;font-size:18px;line-height:22px;color:#333333;font-weight:bold;">Webinar Subscription Packages </h2>
+                                                        <p style="margin:0 0 10px 0;">Would you and your colleagues like to attend webinars at a lower price?  With a Webinar Subscription Package, we can help you greatly reduce that expense.</p>
+                                                        <table cellspacing="0" cellpadding="0" border="0" class="center-on-narrow" style="float:left;">
+                                                            <tr>
+                                                                <td style="padding:0 0px 0px;">
+                                                                    <!-- button -->
+                                                                    <table border="0" cellspacing="0" cellpadding="0" align="center">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td align="center" style="font-family:sans-serif;font-size:13px;color:#ffffff;padding:0;">
+                                                                                    <table border="0" cellspacing="0" cellpadding="10">
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family:sans-serif;font-size:14px;color:#3e67b1;-webkit-border-radius:4px;border-radius:4px;" xml:lang="en-us">
+                                                                                                    <a href="@TenantURL/webinar/details/2520?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 14px; font-weight: normal; font-family: sans-serif; -webkit-border-radius: 4px; border-radius: 4px; padding: 0 36px; display: inline-block; line-height: 100%;">
+                                                                                                        Register Now
+                                                                                                    </a>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- Optional Spacer -->
+                        <!--
+                        <tr>
+                          <td height="40" style="font-size:0px;line-height:0px;">
+
+                          </td>
+                        </tr>
+                        -->
+                        <tr style="border:1px solid #dddddd;">
+                            <td dir="rtl" valign="top" width="100%" style="padding:10px;background-color:#ffffff;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td width="33%" class="column-center">
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                <tr>
+                                                    <td dir="ltr" valign="top" style="padding:0 10px;">
+                                                        <img src="https://s33.postimg.cc/z3tgn4wz3/ondemand_content.jpg" width="170" height="170" alt="alt_text" border="0" class="center-on-narrow" style="height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555;" />
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td width="66%" class="column-center">
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                                <tr>
+                                                    <td dir="ltr" valign="top" style="font-family:sans-serif;font-size:15px;line-height:20px;color:#555555;padding:10px;text-align:left;" class="center-on-narrow">
+                                                        <h2 style="margin:0 0 10px 0;font-family:sans-serif;font-size:18px;line-height:22px;color:#333333;font-weight:bold;">OnDemand Webinars Available</h2>
+                                                        <p style="margin:0 0 10px 0;">Unable to attend the live session, or interested in a topic of a past webinar? Not a problem. Get the recording that includes online access to the webinar for six months, you can even add a CD-ROM and materials for offline viewing. </p>
+                                                        <table cellspacing="0" cellpadding="0" border="0" class="center-on-narrow" style="float:left;">
+                                                            <tr>
+                                                                <td style="padding:0px 0px 0px;">
+                                                                    <!-- button -->
+                                                                    <table border="0" cellspacing="0" cellpadding="0" align="center">
+                                                                        <tbody>
+                                                                        <tr>
+                                                                            <td align="center" style="font-family:sans-serif;font-size:13px;color:#ffffff;padding:0;">
+                                                                                <table border="0" cellspacing="0" cellpadding="10">
+                                                                                    <tbody>
+                                                                                    <tr>
+                                                                                        <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family:sans-serif;font-size:14px;color:#3e67b1;-webkit-border-radius:4px;border-radius:4px;" xml:lang="en-us">
+                                                                                            <a href="@TenantURL/Webinar/Recorded?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color:#ffffff;text-decoration:none;font-size:14px;font-weight:normal;font-family:sans-serif;-webkit-border-radius:4px;border-radius:4px;padding:0 36px;display:inline-block;line-height:100%;">Register Now</a>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- Footer-->
+                    <table align="center" cellspacing="0" cellpadding="0" border="0" width="600" style="margin:0 auto;" class="email-container">
+                        <tr>
+                            <td style="display:block;padding:20px;font-family:sans-serif;font-size:12px;line-height:15px;text-align:center;color:#888888;text-decoration:none;">
+
+                                <p style="margin:0;">
+                                    <strong>Total Training Solutions</strong>
+                                </p>
+                                <a style="color:inherit;" href="tel:800-831-0678">800-831-0678</a>
+                                <p style="margin:5px;">
+
+                                    <a href="https://www.linkedin.com/company/bankwebinars-com" title="LinkedIn" target="_blank">
+                                    </a>
+                                    <a href="" title="Twitter" target="_blank">
+                                    </a>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                            <td valign="top">
+                                <div style="max-width:600px;margin:auto;" class="email-container">
+                                    <!--[if mso]>
+                                    <table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+                                      <tr>
+                                        <td>
+                                          <![endif]-->
+                                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                        <tr>
+                                            <td style="padding:10px;text-align:left;font-family:sans-serif;font-size:15px;line-height:20px;color:#ffffff;"></td>
+                                        </tr>
+                                    </table>
+                                    <!--[if mso]>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                    <![endif]-->
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <!--[if mso | IE]>
+                        </td>
+                      </tr>
+                    </table>
+                    <![endif]-->
+                </td>
+            </tr>
+        </table>
+    </center>
+</body>
+</html>

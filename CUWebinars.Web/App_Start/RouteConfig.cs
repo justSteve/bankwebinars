@@ -63,17 +63,102 @@ namespace CUWebinars.Web.App_Start
 
             if (GlobalConfig.GlobalConfigSingleton.Tenant == "BankWebinars")
             {
+                //routes.MapRoute(
+                //    name: "topicDeposit",
+                //    url: "DepositAccounts",
+                //   defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                //);
+
+                //routes.MapRoute(
+                //    name: "topicManagementEmployeeDevelopment",
+                //    url: "DepositAccounts",
+                //    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                //);
+
                 routes.MapRoute(
-                    name: "topicDeposit",
+                    name: "topicBSA",
+                    url: "BSA",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 30 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCompliance",
+                    url: "Compliance",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 15 }
+                );
+
+                routes.MapRoute(
+                    name: "topicComputerSkills",
+                    url: "ComputerSkills",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 25 }
+                );
+
+                routes.MapRoute(
+                    name: "topicDepositAccounts",
                     url: "DepositAccounts",
-                   defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                );
+
+                routes.MapRoute(
+                    name: "topicExecutive",
+                    url: "Executive",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 32 }
+                );
+
+                routes.MapRoute(
+                    name: "topicHumanResources",
+                    url: "HumanResources",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 23 }
+                );
+
+                routes.MapRoute(
+                    name: "topicIRAs",
+                    url: "IRAs",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 16 }
+                );
+
+                routes.MapRoute(
+                    name: "topicLending",
+                    url: "Lending",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 22 }
                 );
 
                 routes.MapRoute(
                     name: "topicManagementEmployeeDevelopment",
-                    url: "DepositAccounts",
-                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                    url: "ManagementEmployeeDevelopment",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 33 }
                 );
+
+                routes.MapRoute(
+                    name: "topicReporting",
+                    url: "Reporting",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 34 }
+                );
+
+                routes.MapRoute(
+                    name: "topicRiskManagementLegal",
+                    url: "RiskManagementLegal",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 26 }
+                );
+
+                routes.MapRoute(
+                    name: "topicSafeDeposit",
+                    url: "SafeDeposit",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 36 }
+                );
+
+                routes.MapRoute(
+                    name: "topicSales",
+                    url: "Sales",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 21 }
+                );
+
+                routes.MapRoute(
+                    name: "topicTRID",
+                    url: "TRID",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 37 }
+                );
+
 
             }
             routes.MapRoute(

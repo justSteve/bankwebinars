@@ -871,6 +871,7 @@ function FireGenerator() { // used recursively!!!
                 //crunchingLabel.html('<span class="label label-warning">&nbsp;<i class="icon-spinner icon-spin "></i>&nbsp;Processing ' + (callsComplete + 1) + ' of ' + arryAff.length + '</span>');
             }
         }).done(function (data) {
+            console.log(data);
             if (data.InvoicesFound) {
 
                 var parsedInvoice = 0;

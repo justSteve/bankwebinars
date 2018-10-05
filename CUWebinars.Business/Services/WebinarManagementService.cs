@@ -670,6 +670,11 @@ namespace CUWebinars.Business.Services
             return _webinarRepository.GetDes().ToList();
         }
 
+        public IEnumerable<Webinar> GetCcsWebinars()
+        {
+            return _webinarRepository.GetCcs().ToList();
+        }
+
         public IEnumerable<Topic> GetTopicsPerWebinar(int idWebinar)
         {
             return _webinarRepository.GetTopicsPerWebinar(idWebinar).ToList();

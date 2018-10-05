@@ -30,7 +30,7 @@ namespace CUWebinars.Business.Constants
         public static readonly string MonerisDupeTx = "MonerisDupeTx";
         public static readonly string DiscountIsApplied = "DiscountIsApplied";
         public static readonly string PriceAdjusted = "PriceAdjusted";
-        public static readonly string MailChimpCampaign = "MailChimpCampaign";
+        public static readonly string MailChimpCampaigns = "MailChimpCampaigns";
         public static readonly string PendingACSOrderIsApproved = "PendingACSOrderIsApproved";
         public static readonly string AdjustedOrderIsReinvoiced = "AdjustedOrderIsReinvoiced";
         public static readonly string PostEventOrder = "PostEventOrder";
@@ -42,8 +42,8 @@ namespace CUWebinars.Business.Constants
         public static readonly string SentMsg = "SentMsg";
         public static readonly string NotiResults = "NotiResults";
         public static readonly string SendConnectionChecklist = "SendConnectionChecklist";
-        
+
         public static readonly string AddBillingEmail = "AddBillingEmail";
-        
+
     }
 }

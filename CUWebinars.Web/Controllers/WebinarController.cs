@@ -341,16 +341,16 @@ namespace CUWebinars.Web.Controllers
 
             }
 
-            if (eventsToShow == "des")
+            if (eventsToShow == "DES")
             {
                 webinars = _webinarManagementService.GetDesWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date);
                 ViewBag.Title = "All Director Education Series Courses";
                 return View("~/Views/Webinar/AllActiveDes.cshtml", webinars);
             }
-            if (eventsToShow == "ccs")
+            if (eventsToShow == "CCS")
             {
-                webinars = _webinarManagementService.GetDesWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date);
-                ViewBag.Title = "All Director Education Series Courses";
+                webinars = _webinarManagementService.GetCcsWebinars().Where(w => w.idWebinar != 2485).OrderByDescending(w => w.Date);
+                ViewBag.Title = "All Compliance Suite Courses";
                 return View("~/Views/Webinar/AllActiveCcs.cshtml", webinars);
             }
 
