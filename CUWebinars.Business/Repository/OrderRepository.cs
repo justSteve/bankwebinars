@@ -253,17 +253,35 @@ namespace CUWebinars.Business.Repository
         }
         public IEnumerable<Order> GetOrdersByIds(int[] ids)
         {
-            return items
-                .Include(o => o.WebUser)
-                .Include(o => o.WebUser.Addresses)
-                .Include(o => o.Affiliate)
-                .Include(o => o.OrderRows)
-                .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
-                .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
-                .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
-                .Include(o => o.OrderRows.Select(or => or.RegistrationType))
-                .Include(o => o.OrderRows.Select(or => or.Discount))
-                .Where(o => ids.Contains(o.idOrder));
+            IList<Order> orders = new List<Order>();
+            foreach (var id in ids)
+            {
+                orders.Add(items
+                    .Include(o => o.WebUser)
+                    .Include(o => o.WebUser.Addresses)
+                    .Include(o => o.Affiliate)
+                    .Include(o => o.OrderRows)
+                    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
+                    .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
+                    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+                    .Include(o => Enumerable.Select<OrderRow, Discount>(o.OrderRows, or => or.Discount)).FirstOrDefault(o => id == o.idOrder)
+                );
+            }
+
+            return orders;
+            //original code was timing out for idWebinar = 4841 and 4900
+            //return items
+            //    .Include(o => o.WebUser)
+            //    .Include(o => o.WebUser.Addresses)
+            //    .Include(o => o.Affiliate)
+            //    .Include(o => o.OrderRows)
+            //    .Include(o => o.OrderRows.Select(or => or.AdditionalLocation))
+            //    .Include(o => o.OrderRows.Select(or => or.Webinar.Presenter.WebUser))
+            //    .Include(o => o.OrderRows.Select(or => or.Webinar.WebinarFiles))
+            //    .Include(o => o.OrderRows.Select(or => or.RegistrationType))
+            //    .Include(o => o.OrderRows.Select(or => or.Discount))
+            //    .Where(o => ids.Contains(o.idOrder));
         }
 
         public IList<int> FindUserIdsByPartialId(int userId)

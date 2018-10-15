@@ -30,6 +30,7 @@ using CUWebinars.Business.Core;
 using CUWebinars.Business.Core.Extensions;
 using CUWebinars.Business.Core.Helpers;
 using CUWebinars.Business.Models;
+using CUWebinars.Business.ModelsV4;
 using CUWebinars.Business.Notification;
 using CUWebinars.Business.Notification.Formatters;
 using CUWebinars.Business.Notification.ViewModel;
@@ -1801,9 +1802,26 @@ namespace CUWebinars.Web.Controllers.Admin
                 }
 
 
-                // populate the dropdown selector (not currently implemented)
+                // begin instrumentation of MC stats
+                //model.ShowMcCampaignViewModel = new ShowMcCampaignViewModel
+                //{
+                //    Affiliates = _affiliateManagementService.GetAffiliates()
+                //        .Where(a => a.idMailChimpList != ""),
+                //    McCampaigns = new IEnumerable<McCampaign>,
+                //    Webinar = model.Webinar
+                //};
+
+                //foreach (var affiliate in model.ShowMcCampaignViewModel.Affiliates)
+                //{
+                //    var affCamp = _webinarManagementService.GetCampaignsByAffiliate(affiliate.idUserAff,
+                //        model.ShowMcCampaignViewModel.Webinar.idWebinar);
+                //    model.ShowMcCampaignViewModel.McCampaigns.Add();
+                //}
+
+                // populate the dropdown selector
+                // 
                 TempData["ListOfWebinarsForUpcoming"] =
-                    _webinarManagementService.GetDesWebinars().OrderByDescending(w => w.Date).Take(10).ToList();
+                _webinarManagementService.GetDesWebinars().OrderByDescending(w => w.Date).Take(10).ToList();
 
 
                 if (model.ListOfWebinarsForUpcoming == null)
@@ -2585,16 +2603,28 @@ namespace CUWebinars.Web.Controllers.Admin
 
         [AllowAnonymous]
 
-        public void BuildMailChimpCampaignRecords()
+        public async Task BuildMailChimpCampaignRecords()
         {
             try
             {
-                IList<Campaign> originalCampaign = JsonConvert.DeserializeObject<IList<Campaign>>(System.IO.File.ReadAllText(@"c:\users/steve/webinars.json"));
 
-                foreach (var campaign in originalCampaign)
+                var originalCampaign = JsonConvert.DeserializeObject<List<CampaignsJson>>
+                    (System.IO.File.ReadAllText(@"c:\users/steve/allcampaigns.json"));
+
+                IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
+
+                foreach (var id in originalCampaign)
                 {
                     try
                     {
+                        System.Diagnostics.Debug.WriteLine(id.id);
+                        var campaign = await manager.Campaigns.GetAsync(id.id).ConfigureAwait(false);
+
+                        if (!campaign.Settings.Title.Contains('_') || !campaign.Settings.Title.Contains(':'))
+                        {
+                            _logger.Warn("BuildMailChimpCampaignRecords didn't find title: " + campaign.Settings.Title + " CampaignId: " + campaign.Id);
+                            continue;
+                        };
                         var affString = campaign.Settings.Title.Split('_')[0];
                         var titleString = campaign.Settings.Title.Split(':')[1].Trim();
 
@@ -2619,17 +2649,20 @@ namespace CUWebinars.Web.Controllers.Admin
                             WebinarId = webinar.idWebinar
                         };
 
-                        _logger.Info("CreatedCampaignFieldValue: " + campaignFieldValue);
-
-                        webinar.Campaigns = JsonHelpers.AddObjectToJsonArray(webinar.Campaigns,
-                            JsonPropertyKeys.MailChimpCampaigns, campaignFieldValue);
+                        _logger.Info("BuildMailChimpCampaignRecords CreatedCampaignFieldValue: " + titleString + " values: " + JsonConvert.SerializeObject(campaignFieldValue) + "");
 
                         _webinarManagementService.SaveChanges();
+                        var dataOperations =
+                            new DataOperations(ConfigurationManager.ConnectionStrings["MailChimp"]
+                                .ConnectionString);
+
+                        var usersFromSheet =
+                            dataOperations.InsertMailChimpCampaign(campaign);
 
                     }
                     catch (Exception ex)
                     {
-                        _logger.FatalException("BuildMailChimpCampaignRecords: " + campaign.Id, ex);
+                        _logger.FatalException("BuildMailChimpCampaignRecords: " + id, ex);
                     }
                 }
             }
@@ -2661,7 +2694,6 @@ namespace CUWebinars.Web.Controllers.Admin
         {
             Affiliate aff = _affiliateManagementService.FindById(affiliateId);
 
-            _logger.Info("GenerateMailChimpCampaign starting");
             Webinar webinar = _webinarManagementService.GetWebinar(webinarId);
             Affiliate affiliate = _affiliateManagementService.FindById(affiliateId);
             TimeZone zone = TimeZone.CurrentTimeZone;
@@ -2670,7 +2702,6 @@ namespace CUWebinars.Web.Controllers.Admin
             {
                 messageBodyHtml = _appHelper.ReplaceMergeCodes(messageBodyHtml, aff);
             }
-
 
             string standard = zone.StandardName;
             string daylight = zone.DaylightName;
@@ -2691,97 +2722,180 @@ namespace CUWebinars.Web.Controllers.Admin
             }
             if (sendDate.Contains("-"))
             {
-                //2017-01-23
                 sendDate = sendDate.Split('-')[0] + "-" + sendDate.Split('-')[1] + "-" + sendDate.Split('-')[2] + "T" +
-                           sendTime + ":00:00" + theTime; //"T10:00:00-05:00";
+                           sendTime + ":00:00" + theTime;
             }
             else
             {
                 sendDate = sendDate.Split('/')[2] + "-" + sendDate.Split('/')[0] + "-" + sendDate.Split('/')[1] + "T" +
-                           sendTime + ":00:00" + theTime; //"T10:00:00-05:00";
+                           sendTime + ":00:00" + theTime;
             }
             try
             {
-                McCampaign campaign = new McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
+                CUWebinars.Business.ModelsV4.McCampaign campaign = new CUWebinars.Business.ModelsV4.McCampaign { AffiliateId = affiliate.idUserAff, WebinarId = webinar.idWebinar };
 
                 IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
 
                 List list = await manager.Lists.GetAsync(affiliate.idMailChimpList).ConfigureAwait(false);
 
                 var recp = new Recipient();
+                var reminderAddresses = "";
+                var segments = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+                if (segments == null)
+                {
+                    _logger.Warn("segment not found " + affiliate.ttsDomain);
+                    return Json(new { Result = "segment not found " + affiliate.ttsDomain + Environment.NewLine + Environment.NewLine });
+                }
 
-                var segment = await manager.ListSegments.GetAllAsync(affiliate.idMailChimpList).ConfigureAwait(false);
+                var savedSegId = segments.FirstOrDefault(s => s.Name.ToLower() == "webinars").Id;
+                var auditBuilder = new StringBuilder();
                 if (isReminder == "true")
                 {
                     try
                     {
-                        var idCampaign = GetAffCampaign(affiliateId, webinar.idWebinar);
-                        var cmpRpt = await manager.Reports.GetCampaignOpenReportAsync(idCampaign).ConfigureAwait(false);
-                        var addressesToAdd = "";
-                        var reminderInterest = MailChimpAddReminderInterest(affiliate.ttsDomain);
-                        //foreach (var open in cmpRpt)
-                        //{
-                        //    //addressesToAdd += open.EmailAddress;
-                        //    var addUser = await manager.Members.
-                        //}
+                        subject = subject.Replace("Webinar", "Final Reminder");
 
-                        var clicks = "cmp.ReportSummary.SubscriberClicks";
+                        var idCampaign = _webinarManagementService.GetCampaignsByAffiliate(affiliateId, webinar.idWebinar);
+                        if (idCampaign == "not found")
+                        {
+                            _logger.Warn(
+                                "idCampaign not found " + affiliate.ttsDomain);
+                            auditBuilder.Append("idCampaign not found " + affiliate.ttsDomain);
 
+                            return Json(new { Result = "idCampaign not found " + affiliate.ttsDomain + Environment.NewLine + Environment.NewLine });
 
+                        }
+                        if (idCampaign == null || idCampaign == "")
+                        {
+                            _logger.Warn(
+                                "idCampaign is null " + affiliate.ttsDomain);
+                            auditBuilder.Append("idCampaign is null " + affiliate.ttsDomain);
+                            return Json(new { Result = "idCampaign is Null " + affiliate.ttsDomain + Environment.NewLine + Environment.NewLine });
+                        }
+
+                        campaign.CampaignId = idCampaign;
+                        var dataOperations =
+                            new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+
+                        var cmpRpt = await manager.Reports.GetClickReportAsync(idCampaign);
+                        foreach (var urlClicked in cmpRpt.Where(c => c.TotalClicks > 0))
+                        {
+                            var clickDetail = await manager.Reports
+                                .GetClickReportDetailsAsync(idCampaign, urlClicked.Id).ConfigureAwait(false);
+
+                            if (clickDetail == null)
+                            {
+                                _logger.Warn(
+                                    "ClickDetail is null " + affiliate.ttsDomain);
+                                auditBuilder.Append("ClickDetail is null " + affiliate.ttsDomain);
+                                return Json(new { Result = "reportDetails not found " + affiliate.ttsDomain }); ;
+                            }
+                            var clicked =
+                                dataOperations.InsertMailChimpUrlClicked(urlClicked);
+
+                            var members = await manager.Reports.GetClickReportMembersAsync(idCampaign, clickDetail.Id);
+
+                            if (members == null || members.Count() == 0)
+                            {
+                                _logger.Warn(
+                                    "members list is empty " + affiliate.ttsDomain);
+                                auditBuilder.Append("members list is empty " + affiliate.ttsDomain);
+                                return Json(new { Result = "Members list is empty " + affiliate.ttsDomain }); ;
+                            }
+                            try
+                            {
+                                foreach (var clickMember in members)
+                                {
+                                    var userHasOrder =
+                                        _orderManagementService.CheckIfEmailAlreadyRegisteredForWebinar(webinarId,
+                                            clickMember.EmailAddress);
+                                    if (userHasOrder == 0)
+                                    {
+                                        if (clickDetail.Url.Contains("/details/" + webinarId))
+                                        {
+                                            _logger.Info(
+                                                "GMCC: Send Reminder to: " + clickMember.EmailAddress + " UrlId: " + clickMember.UrlId + " on webinar: " + webinar.idWebinar);
+                                            auditBuilder.Append("Send Reminder to: " + clickMember.EmailAddress + " UrlId: " + clickMember.UrlId + " on webinar: " + webinar.idWebinar);
+                                            reminderAddresses += "," + clickMember.EmailAddress;
+                                        }
+                                        else
+                                        {
+                                            _logger.Info(
+                                                "GMCC: Send Reminder found clicked link that was not primary target: " + clickMember.EmailAddress + " Link: " + clickDetail.Url);
+                                            auditBuilder.Append("Send Reminder found clicked link that was not primary target: " + clickMember.EmailAddress + " Link: " + clickDetail.Url);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _logger.Info(
+                                            "GMCC: Send Reminder will not send to: " + clickMember.EmailAddress);
+                                        auditBuilder.Append("Send Reminder will not send to: " + clickMember.EmailAddress);
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.FatalException("GMCC MemberLoop:  " + affiliate.ttsDomain, e);
+                                return Json(new { Result = "GMCC MemberLoop: " + e.Message + Environment.NewLine + Environment.NewLine });
+                            }
+                        }
+
+                        if (reminderAddresses == "")
+                        {
+                            _logger.Info(
+                                "GMCC: blank list of addresses:  " + affiliate.ttsDomain);
+                            auditBuilder.Append("blank list of addresses:  " + affiliate.ttsDomain);
+                            return Json(new { Result = "blank list of addresses:  " + affiliate.ttsDomain + Environment.NewLine + Environment.NewLine });
+                        }
+
+                        var mySeg = new Segment
+                        {
+                            Name = "Reminder_" + campaign.CampaignId + "_aff_" + campaign.AffiliateId,
+                            EmailAddresses = reminderAddresses.ToString().TrimStart(',').Split(',')
+                        };
+
+                        var newSeg = await manager.ListSegments.AddAsync(list.Id, mySeg).ConfigureAwait(false);
+                        if (newSeg == null)
+                        {
+                            _logger.Info(
+                                "GMCC NewSeg is null:   " + affiliate.ttsDomain);
+                            auditBuilder.Append("NewSeg is null:   " + affiliate.ttsDomain);
+                            return Json(new { Result = "New segment is null: :  " + affiliate.ttsDomain + Environment.NewLine + Environment.NewLine });
+
+                        }
+                        savedSegId = newSeg.Id;
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
-                        throw;
+                        _logger.FatalException("GMCC:  " + affiliate.ttsDomain, e);
+                        return Json(new { Result = "GMCC: " + e.Message });
                     }
                 }
                 try
                 {
-                    var savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "webinars").Id;
-
-                    if (isReminder == "true")
-                        savedSegId = segment.SingleOrDefault(s => s.Name.ToLower() == "reminder").Id;
-
                     if (_globalConfig.Tenant == "CCS")
-                    {
-                        savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "ccs").Id;
-                    }
+                        savedSegId = segments.FirstOrDefault(s => s.Name.ToLower() == "ccs").Id;
+
                     if (_globalConfig.Tenant == "DirectorSeries")
-                    {
-                        savedSegId = segment.FirstOrDefault(s => s.Name.ToLower() == "des").Id;
-                    }
+                        savedSegId = segments.FirstOrDefault(s => s.Name.ToLower() == "des").Id;
 
                     recp = new Recipient
                     {
                         ListId = affiliate.idMailChimpList,
                         SegmentOptions =
-                            new SegmentOptions
-                            {
-                                SavedSegmentId = savedSegId
-                            },
-
+                            new SegmentOptions { SavedSegmentId = savedSegId }
                     };
                 }
                 catch (Exception e)
                 {
-                    _logger.FatalException("No Segment Found for: " + affiliate.ttsDomain, e);
-
-                    return Json(new
-                    {
-                        WebUiConstants.Fail,
-                        campMsg = "No Segment Found for: " + affiliate.ttsDomain
-                    });
+                    _logger.FatalException("No Segment Found for:  " + affiliate.ttsDomain, e);
+                    return Json(new { WebUiConstants.Fail, campMsg = "No Segment Found for:  " + affiliate.ttsDomain + Environment.NewLine + Environment.NewLine });
                 }
 
                 if (recp.ListId == null)
                 {
-                    _logger.Warn("No Segment Found for: " + affiliate.ttsDomain);
-
-                    return Json(new
-                    {
-                        WebUiConstants.Fail,
-                        campMsg = "No Segment Found for: " + affiliate.ttsDomain
-                    });
+                    _logger.Warn("No Segment Found for:  " + affiliate.ttsDomain);
+                    return Json(new { WebUiConstants.Fail, campMsg = "No Segment Found for:  " + affiliate.ttsDomain + Environment.NewLine + Environment.NewLine });
                 }
 
                 var affiliatePromoSenderEmail = affiliate.PromoSenderEmail;
@@ -2808,6 +2922,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         FromName = affiliatePromoSenderName,
                         ReplyTo = affiliatePromoSenderEmail,
                         UseConversation = true,
+                        PreviewText = "Join us for this webinar on " + webinar.Date.ToShortDateString()
                     },
                     Tracking = new Tracking
                     {
@@ -2816,46 +2931,41 @@ namespace CUWebinars.Web.Controllers.Admin
                         TextClicks = true,
                         Opens = true
                     }
-
                 };
+
                 var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
                 campaign.CampaignId = mkCamp.Id;
-                var content = new Content
-                {
-                    Html = messageBodyHtml
-                };
+                var content = new Content { Html = messageBodyHtml };
 
                 _logger.Info("CreateCampaign | mkCamp.Id: " + mkCamp.Id);
-                var putContent = await manager.Content.AddOrUpdateAsync(mkCamp.Id, new ContentRequest
+                var putContent = await manager.Content.AddOrUpdateAsync(mkCamp.Id, new ContentRequest { Html = messageBodyHtml });
+                if (isReminder != "true")
                 {
-                    Html = messageBodyHtml
-                });
+                    var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
+                    List<string> sendToEmails = new List<string>();
 
-                _logger.Info("CreateCampaign | SendChecklistAsync: " + mkCamp.Id);
-                var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
+                    //sendToEmails.Add("steve@ttstrain.com");
+                    sendToEmails.Add("all.of.us@ttstrain.com");
+                    sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
 
-                List<string> sendToEmails = new List<string>();
+                    foreach (var sendToEmail in sendToEmails)
+                    {
+                        _orderManagementService.FireMandrillNotificationEvent(
+                            sendToEmail
+                            , "[Testing] " + subject, messageBodyHtml);
+                    }
 
-                //sendToEmails.Add("steve@ttstrain.com");
-                sendToEmails.Add("all.of.us@ttstrain.com");
-                sendToEmails.AddRange(affiliate.NotiPromos.Split(','));
+                    _logger.Info(
+                        "CreateCampaign | sendDate: " + mkCamp.Id + " with emails: " + reminderAddresses.ToString());
+                    auditBuilder.Append("CreateCampaign | sendDate: " + mkCamp.Id + " with emails: " + reminderAddresses.ToString());
 
-                //CampaignTestRequest emails = new CampaignTestRequest
-                //{
-                //    EmailType = "html",
-                //    Emails = sendToEmails.ToArray()
-                //};
+                    webinar.Campaigns = JsonHelpers.AddObjectToJsonArray(webinar.Campaigns,
+                        JsonPropertyKeys.MailChimpCampaigns, campaign);
 
-                //await manager.Campaigns.TestAsync(mkCamp.Id, emails);
-                foreach (var sendToEmail in sendToEmails)
-                {
-                    _orderManagementService.FireMandrillNotificationEvent(
-                        sendToEmail
-                        , "[Testing] " + subject, messageBodyHtml);
+                    _webinarManagementService.SaveChanges();
                 }
 
-                _logger.Info("CreateCampaign | sendDate: " + mkCamp.Id);
                 await manager.Campaigns.ScheduleAsync(mkCamp.Id, new CampaignScheduleRequest
                 {
                     Timewarp = false,
@@ -2867,56 +2977,14 @@ namespace CUWebinars.Web.Controllers.Admin
                     ScheduleTime = sendDate
                 });
 
-                webinar.Campaigns = JsonHelpers.AddObjectToJsonArray(webinar.Campaigns,
-                    JsonPropertyKeys.MailChimpCampaigns, campaign);
 
-                _webinarManagementService.SaveChanges();
-
-                return Json(new { WebUiConstants.Success, campaign });
+                return Json(new { WebUiConstants.Success, campaign, audit = auditBuilder.ToString() });
             }
             catch (Exception exception)
             {
                 _logger.FatalException("GenerateMailChimpCampaign: ", exception);
                 return Json(new { Result = exception.Message });
             }
-        }
-
-        private ListSegment MakeReminderSegment(List list, string idCampaign)
-        {
-            //get users who have clicked
-
-
-            ListSegment segment = new ListSegment
-            {
-                ListId = list.Id
-            };
-
-
-
-            return segment;
-        }
-
-        private string GetAffCampaign(int affiliateId, int idWebinar)
-        {
-            var campaign = "";
-
-            var aff = _affiliateManagementService.GetAffiliates().Where(a => a.idUserAff == affiliateId)
-                .SingleOrDefault();
-
-            var affDom = aff.ttsDomain;
-
-            var _campaigns = _webinarManagementService.GetAllActive().Where(w => w.idWebinar == idWebinar).SingleOrDefault().Campaigns;
-            var o = JToken.Parse(_campaigns);
-            var campaigns = JsonConvert.DeserializeObject<IEnumerable<McCampaign>>(o.First.Children().First().ToString());
-
-            foreach (var campaign1 in campaigns)
-            {
-                if (campaign1.AffiliateId == affiliateId)
-                {
-                    campaign = campaign1.CampaignId;
-                }
-            }
-            return campaign;
         }
 
 
@@ -3379,78 +3447,6 @@ namespace CUWebinars.Web.Controllers.Admin
             return View(model);
 
         }
-
-        public async Task<Interest> MailChimpAddReminderInterest(string aff)
-        {
-            _logger.Info("MailChimpAddReminderInterest starting");
-
-
-            var affiliate = _affiliateManagementService.GetAffiliates().Where(a => a.ttsDomain == aff)
-                .SingleOrDefault();
-
-            IMailChimpManager manager = new MailChimpManager("9e623830aa054e8fc5b2bf18473d482f-us10");
-
-            StringBuilder sb = new StringBuilder();
-            var lists = await manager.Lists.GetAllAsync().ConfigureAwait(false);
-            var tenant = _globalConfig.TenantPrefix.Replace("-", "");
-            var listName = tenant + "_" + affiliate.ttsDomain.ToUpper();
-            var mcList = lists.FirstOrDefault(l => l.Name == listName);
-
-            if (mcList == null)
-            {
-                _logger.Warn("No List found for " + affiliate.ttsDomain + "<br>");
-                return null;
-            }
-
-            try
-            {
-                var intCat = await manager.InterestCategories.GetAllAsync(mcList.Id).ConfigureAwait(false);
-                var interestCategory = intCat.FirstOrDefault(i => i.Title == "Keep me informed about:");
-                var interests = await manager.Interests.GetAllAsync(mcList.Id, interestCategory.Id).ConfigureAwait(false);
-                var reminderInterest = interests.FirstOrDefault(i => i.Name.ToLower() == "reminder");
-
-                if (reminderInterest == null)
-                {
-                    reminderInterest = new Interest
-                    {
-                        InterestCategoryId = interestCategory.Id,
-                        Name = "Reminder",
-                        ListId = mcList.Id
-                    };
-                    reminderInterest = await manager.Interests.AddOrUpdateAsync(reminderInterest);
-                }
-                else
-                {
-                    await manager.Interests.DeleteAsync(mcList.Id, interestCategory.Id, reminderInterest.Id);
-
-                    reminderInterest = new Interest
-                    {
-                        InterestCategoryId = interestCategory.Id,
-                        Name = "Reminder",
-                        ListId = mcList.Id
-                    };
-                    reminderInterest = await manager.Interests.AddOrUpdateAsync(reminderInterest);
-                }
-
-                //MakeReminderInterestCategory(mcList.Id);
-
-                return reminderInterest;
-
-            }
-            catch (Exception exception)
-            {
-                _logger.FatalException("MailChimpAddReminderInterest: ", exception);
-
-                var reminderInterest = new Interest
-                {
-                    InterestCategoryId = "Failed",
-                    Name = exception.Message,
-                    ListId = mcList.Id
-                };
-                return reminderInterest;
-            }
-        }
-
 
 
         [ValidateInput(false)]
@@ -6440,16 +6436,5 @@ namespace CUWebinars.Web.Controllers.Admin
 
 
 
-    }
-
-
-    public class InvoiceLog
-    {
-        public string ActiveInvoice { get; set; }
-        public int idWebinar { get; set; }
-        public string idGTW { get; set; }
-        public Dictionary<string, string> User_AffState { get; set; }
-        public int idOrder { get; set; }
-        public string InvoiceHistory { get; set; }
     }
 }

@@ -243,6 +243,7 @@
     <Compile Include="CQS\Queries\OrderReportingQuery.cs" />
     <Compile Include="CQS\QueryHandlers\OrderManagementQueryHandlers.cs" />
     <Compile Include="CQS\QueryProcessor.cs" />
+    <Compile Include="ModelsV4\McCampaign.cs" />
     <Compile Include="Models\AdditionalLocationsLookupPrice.cs" />
     <Compile Include="Models\AffiliateInvoiceDTO.cs" />
     <Compile Include="Models\AffiliateReportDTO.cs" />
@@ -387,6 +388,7 @@
     <Compile Include="Notification\ViewModel\OrderSubmittedAdditionalLocationViewModel.cs" />
     <Compile Include="Notification\ViewModel\OrderSubmittedViewModel.cs" />
     <Compile Include="Notification\ViewModel\PostEventPublishModel.cs" />
+    <Compile Include="Notification\ViewModel\ShowMcCampaignViewModel.cs" />
     <Compile Include="Notification\ViewModel\WebinarPromoViewModel.cs" />
     <Compile Include="Repository\AdditionalLocationRepository.cs" />
     <Compile Include="Repository\DiscountRepository.cs" />
@@ -508,9 +510,7 @@
     <Content Include="SQLSeeding\SQLScripts\Quiz Results.sql" />
     <Content Include="SQLSeeding\SQLScripts\QuizSchemaScript.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ModelsV4\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>

@@ -253,7 +253,7 @@ namespace CUWebinars.Web
             {
 
                 //  Variables related to error and context.
-                var httpContext = ((MvcApplication)sender).Context;
+                 var httpContext = ((MvcApplication)sender).Context;
                 Exception exception = Server.GetLastError();
                 var httpException = exception as HttpException;
 

@@ -18,7 +18,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web.Mvc;
+using CUWebinars.Business.ModelsV4;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using IEvent = CUWebinars.NotificationSystem.Event.IEvent;
 
 namespace CUWebinars.Business.Services
@@ -613,7 +615,42 @@ namespace CUWebinars.Business.Services
             return finding.ToString();
 
         }
-        
+
+        public string GetCampaignsByAffiliate(int affiliateId, int idWebinar)
+        {
+
+            var campaign = "";
+            try
+            {
+                var _campaigns = GetAllActive().Where(w => w.idWebinar == idWebinar).SingleOrDefault()
+                    .Campaigns;
+                var o = JToken.Parse(_campaigns);
+                var campaigns = JsonConvert.DeserializeObject<IEnumerable<McCampaign>>(o.First.Children().First().ToString());
+
+                if (!campaigns.Any())
+                {
+                    _logger.Info("GetAffCampaign: no affiliate matched: " + affiliateId + " webinar: " + idWebinar);
+                    campaign = "not found";
+                    return campaign;
+                }
+
+                foreach (var campaign1 in campaigns)
+                {
+                    if (campaign1.AffiliateId == affiliateId)
+                    {
+                        campaign = campaign1.CampaignId;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
+            return campaign;
+        }
+
         public string ParseForSpeakerName(string importWebinarDescriptionText)
         {
 
@@ -854,4 +891,6 @@ namespace CUWebinars.Business.Services
             _webinarRepository.Update(webinar);
         }
     }
+
+
 }

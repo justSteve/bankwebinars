@@ -41,7 +41,7 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Bugsnag.Clients;
-
+using CUWebinars.Business.ModelsV4;
 using LogMeIn.GoToWebinar.Api;
 using LogMeIn.GoToWebinar.Api.Model;
 
@@ -863,6 +863,8 @@ namespace CUWebinars.Web.Controllers
                     (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
                     var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
+                    
+
 
                     ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
 
@@ -872,11 +874,6 @@ namespace CUWebinars.Web.Controllers
                     {
                         CheckoutResumeByAdmin(id, model);
                     }
-
-                    //if (webinar.Status == WebinarStatus.Active || webinar.Status == WebinarStatus.InProgress)
-                    //{
-                    //    _webinarControllerOrchestrator.GetCitrixRegsPerWebinar(webinar);
-                    //}
 
                     model.ShowOrdersViewModel = new ShowOrdersViewModel
                     {

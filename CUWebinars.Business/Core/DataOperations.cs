@@ -2441,6 +2441,88 @@ namespace CUWebinars.Business.Core
             }
             return numRows.ToString();
         }
+        public string InsertMailChimpCampaign(MailChimp.Net.Models.Campaign campaign)
+        {
+            campaign.Links = null;
+            campaign.VariateSettings = null;
+            campaign.RssOptions = null;
+
+            int numRows = 0;
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var insertCampagin = new SqlCommand())
+                {
+                    try
+                    {
+
+                        var campaignParam = new SqlParameter
+                        {
+                            DbType = DbType.String,
+                            ParameterName = "@json",
+                            Value = JsonConvert.SerializeObject(campaign)
+                        };
+
+                        insertCampagin.Connection = sqlConnection;
+                        insertCampagin.CommandType = CommandType.StoredProcedure;
+                        insertCampagin.Parameters.Add(campaignParam);
+                        insertCampagin.CommandText = "InsertCampaign";
+
+                        numRows = insertCampagin.ExecuteNonQuery();
+
+                    }
+                    catch (Exception e)
+                    {
+                        LogError("InsertMailChimpCampaign", "InsertMailChimpCampaign: " + insertCampagin.CommandText +
+                                                   " Exception.Message: " + e.Message);
+                        return "error: " + e.Message;
+                    }
+                }
+            }
+            return numRows.ToString();
+        }
+
+        public string InsertMailChimpUrlClicked(MailChimp.Net.Models.UrlClicked clickDetail)
+        {
+            
+
+            int numRows = 0;
+
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                using (var insertCampagin = new SqlCommand())
+                {
+                    try
+                    {
+                        var campaignParam = new SqlParameter
+                        {
+                            DbType = DbType.String,
+                            ParameterName = "@json",
+                            Value = JsonConvert.SerializeObject(clickDetail)
+                        };
+
+                        insertCampagin.Connection = sqlConnection;
+                        insertCampagin.CommandType = CommandType.StoredProcedure;
+                        insertCampagin.Parameters.Add(campaignParam);
+                        insertCampagin.CommandText = "InsertClicksDetails";
+
+                        numRows = insertCampagin.ExecuteNonQuery();
+
+                    }
+                    catch (Exception e)
+                    {
+                        LogError("InsertMailChimpCampaign", "InsertMailChimpCampaign: " + insertCampagin.CommandText +
+                                                   " Exception.Message: " + e.Message);
+                        return "error: " + e.Message;
+                    }
+                }
+            }
+            return numRows.ToString();
+        }
 
         public string ConvertCfteaOrders()
         {
@@ -2472,6 +2554,7 @@ namespace CUWebinars.Business.Core
             }
             return numRows.ToString();
         }
+
     }
 
     public class MigrateMCUsers

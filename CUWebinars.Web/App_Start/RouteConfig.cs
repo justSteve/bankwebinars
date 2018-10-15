@@ -60,7 +60,14 @@ namespace CUWebinars.Web.App_Start
             {
 
             }
-
+            if (GlobalConfig.GlobalConfigSingleton.Tenant == "DES" || GlobalConfig.GlobalConfigSingleton.Tenant == "CCS")
+            {
+                routes.MapRoute(
+                    name: "SignUpDES_CCS",
+                    url: "SignUp",
+                    defaults: new { controller = "Webinar", action = "Details", id = 2485 }
+                );
+            }
             if (GlobalConfig.GlobalConfigSingleton.Tenant == "BankWebinars")
             {
                 //routes.MapRoute(

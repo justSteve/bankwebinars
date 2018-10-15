@@ -1744,27 +1744,6 @@ namespace CUWebinars.Business.Services
             var orderIds = _webinarRepository.GetV3OrdersIdsByWebinar(idWebinar);
 
             return _orderRepository.GetOrdersByIds(orderIds.ToArray()).ToList();
-            //List<Order> orders = new List<Order>();
-            //foreach (var orderId in orderIds)
-            //{
-            //    orders.Add(_orderRepository.GetOrderById(orderId));
-
-            //}
-            //foreach (var _o in orders)
-            //{
-            //    if (_o != null)
-            //    {
-            //        Debug.WriteLine("idOrder: " + _o.idOrder);
-
-            //    }
-            //    else
-            //    {
-            //        continue;
-            //    }
-            //}
-
-            //return orders;
-
         }
 
         public List<Order> GetOrdersByWebinarForInvoice(int idWebinar)

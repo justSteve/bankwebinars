@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 using CUWebinars.Business.Models;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using CUWebinars.Web.Models;
+
 
 namespace CUWebinars.Business.Notification.ViewModel
 {
@@ -28,5 +31,6 @@ namespace CUWebinars.Business.Notification.ViewModel
         public string Subject { get; set; }
         public string BodyLeft { get; set; }
         public string BodyRight { get; set; }
+        public ShowMcCampaignViewModel ShowMcCampaignViewModel { get; set; }
     }
 }

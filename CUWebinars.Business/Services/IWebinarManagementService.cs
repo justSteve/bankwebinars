@@ -70,5 +70,6 @@ namespace CUWebinars.Business.Services
         int? GetUserIdByFirstNameLastName(string fullName);
         string ImportLUEvents();
 
+        string GetCampaignsByAffiliate(int affiliateId, int webinarIdWebinar);
     }
 }

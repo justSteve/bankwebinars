@@ -58,18 +58,15 @@ $(document).ready(function () {
 
                 if (!affiliateId || affiliateId == 0) // skip the Master tab, although, conceivably, we could store that in a special file and use it for something...
                     return;
-                console.log("affs is: ");
-                console.log(affs);
                 var localCopy = "";
                 var affObj = arrayLookup(affs, "idUserAff", affiliateId);
-                if (affObj != null) {
+                if (affObj !== null) {
                     localCopy = replaceMasterTokensForAffiliate(affObj);
                 }
 
-                console.log("running MC generate for: '" + affiliateId + "' localCopy: " + localCopy);
-                
                 CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
-
+                console.log("ran MC generate for: '" + affiliateId + "' localCopy: " + localCopy);
+                
             });
         }
     });
@@ -180,6 +177,7 @@ $(document).ready(function () {
         var subjectForCampaign = prompt("Subject line: ", "Webinar: " + $("#Webinar_Title").val());
         
         CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
+        console.log("ran MC generate (single) for: '" + affiliateId );
 
     });
 
@@ -311,7 +309,7 @@ function GetCurrentEditorCopy() {
 function SetwStatus() {
     var subject = prompt("Subject Line", _subject);
 
-    if (subject != null) {
+    if (subject !== null) {
 
         var idWebinar = $("#Webinar_idWebinar").val();
         //console.log(_subject + " " + subject);
@@ -434,7 +432,11 @@ function GetMasterMarkupAJAX($btn) {
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log(errorThrown);
             console.log(textStatus);
-            alert(textStatus + " " + errorThrown.Result);
+            //alert(textStatus + " " + errorThrown.Result);
+            $("#generatorResults").append(textStatus + " " + errorThrown.Result);
+
+
+
         }
     }).done(function (result) {
         $('#submitSpinWrapper').remove();
@@ -545,7 +547,8 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
         .append('<span id="submitSpinWrapper">&nbsp;<span class=""><i id="spinner" class="icon-spinner icon-spin"></i></span></span>');
 
     var errorAffs = [];
-    //var callsNeeded = $(".tab-pane").length - 1; // don't count Master tab, we're skipping that one
+    //var callsNeeded = $(".tab-pane").length - 1; 
+    // don't count Master tab, we're skipping that one
     var callsComplete = 0;
     var messages = [];
 
@@ -575,16 +578,18 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
         },
         dataType: "json",
         async: false,
-        //contentType: "application/json",
-        //contentType: "json",
+
         success: function (Result) {
             console.log(Result);
             if (Result.Success) {
                 $("#r_" + affiliateId).closest("li").text("sent!");
-                //$(this.closest("li").remove());
+                
+                $("#auditResults").append("<div>"+ Result.audit + "</div>");
+        
             } else {
+                
+                $("#generatorResults").append("error: " + Result.Result);
 
-                alert("error: " + Result.Result);
             }
         },
         error: function (result) {
@@ -635,7 +640,7 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
 
             // generate from master...
             var affObj = arrayLookup(affs, "idUserAff", affiliateId);
-            if (affObj != null) {
+            if (affObj !== null) {
 
                 currCopy = replaceMasterTokensForAffiliate(affObj); // always pulls from editor_0 (master)
 
@@ -674,16 +679,18 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
             // console.log("done with: " + callsComplete);
 
             // record the returned messages, just record ones that don't totally succeed (non-blank) for now
-            if (result.returnMessage != null &&
-                result.returnMessage != "") {
+            if (result.returnMessage !== null &&
+                result.returnMessage !== "") {
                 messages.push(result.returnMessage);
             }
 
-            // figure out if this was the "last one" so we can clean up the UI, report errors, etc.
+            // figure out if this was the "last one" so we can clean up 
+            //the UI, report errors, etc.
             if (callsComplete >= callsNeeded) {
                 // print elapsed time...
                 var tEnd = (new Date()).getTime();
-                console.log("Time taken for all (" + callsComplete + ") AJAX calls: " + (tEnd - tStart) + " ms");
+                console.log("Time taken for all (" + callsComplete
+                    + ") AJAX calls: " + (tEnd - tStart) + " ms");
 
                 // technical issues, errors, ajax, etc.
                 if (errorAffs.length) {
@@ -711,7 +718,8 @@ function WriteAllAffMarkupToStorageAJAX($btn) {
 }
 
 
-// should be pretty (very!) similar to the above "WriteAllAffMarkupToStorageAJAX" function
+// should be pretty (very!) similar to the above 
+//"WriteAllAffMarkupToStorageAJAX" function
 function WriteMarkupToStorageAJAX($btn, affiliateId) {
 
     // send to server for additional processing and eventual storage
@@ -760,7 +768,7 @@ function WriteMarkupToStorageAJAX($btn, affiliateId) {
 
 function SendToAff(affiliateId, subject) {
 
-    if (subject != null) {
+    if (subject !== null) {
 
         var currCopy = GetCurrentEditorCopy();
 

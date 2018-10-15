@@ -2,6 +2,7 @@
 using CUWebinars.Business.Models;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using CUWebinars.Web.Controllers;
 using CUWebinars.Web.Models;
 
 namespace CUWebinars.Web.ViewModel

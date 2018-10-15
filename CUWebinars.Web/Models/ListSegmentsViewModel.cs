@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using CUWebinars.Business.Models;
-using MailChimp.Net.Models;
+//using MailChimp.Net.Models;
 
 namespace CUWebinars.Web.Models
 {

@@ -179,7 +179,8 @@
       <HintPath>..\packages\LogMeIn.GoToWebinar.NET.2.0.0.0\lib\net40\LogMeIn.GoToWebinar.NET.dll</HintPath>
     </Reference>
     <Reference Include="MailChimp.Net, Version=3.3.0.0, Culture=neutral, PublicKeyToken=37d26d538413c581, processorArchitecture=MSIL">
-      <HintPath>..\packages\MailChimp.Net.V3.3.3.0\lib\net45\MailChimp.Net.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MailChimp.Net\MailChimp.Net\bin\Release\net45\MailChimp.Net.dll</HintPath>
     </Reference>
     <Reference Include="Mandrill.net, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Mandrill.net.4.1.0\lib\net45\Mandrill.net.dll</HintPath>
@@ -386,6 +387,9 @@
       <HintPath>..\packages\RestSharp.105.2.3\lib\net451\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ServiceStack.Text, Version=3.9.71.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -564,6 +568,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\Admin\CampaignId.cs" />
+    <Compile Include="Controllers\Admin\CampaignsJson.cs" />
+    <Compile Include="Controllers\Admin\InvoiceLog.cs" />
     <Compile Include="Controllers\ConnectivityController.cs" />
     <Compile Include="Core\CalendarRssFullDTOAssembler2.cs" />
     <Compile Include="Models\WspModel.cs" />
@@ -599,7 +606,6 @@
     <Compile Include="Models\EditPresenterInfoModel.cs" />
     <Compile Include="Models\EditPresenterModel.cs" />
     <Compile Include="Models\PromoLinks.cs" />
-    <Compile Include="Models\JsonModels\McCampaign.cs" />
     <Compile Include="Models\FileViewModel.cs" />
     <Compile Include="Controllers\CertOfCompletionDSViewModel.cs" />
     <Compile Include="Controllers\ManageMessageId.cs" />
