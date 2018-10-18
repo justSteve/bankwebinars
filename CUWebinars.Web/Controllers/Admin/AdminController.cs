@@ -2612,12 +2612,14 @@ namespace CUWebinars.Web.Controllers.Admin
                     (System.IO.File.ReadAllText(@"c:\users/steve/allcampaigns.json"));
 
                 IMailChimpManager manager = new MailChimpManager("b864fb8a5039b1152c7b774b6602a9e9-us10");
+                var i = 0;
 
                 foreach (var id in originalCampaign)
                 {
+                    i++;
                     try
                     {
-                        System.Diagnostics.Debug.WriteLine(id.id);
+                        System.Diagnostics.Debug.WriteLine(i + " of " + originalCampaign.Count() + " is: " + id.id);
                         var campaign = await manager.Campaigns.GetAsync(id.id).ConfigureAwait(false);
 
                         if (!campaign.Settings.Title.Contains('_') || !campaign.Settings.Title.Contains(':'))
@@ -2650,10 +2652,12 @@ namespace CUWebinars.Web.Controllers.Admin
                         };
 
                         _logger.Info("BuildMailChimpCampaignRecords CreatedCampaignFieldValue: " + titleString + " values: " + JsonConvert.SerializeObject(campaignFieldValue) + "");
+                        webinar.Campaigns = JsonHelpers.AddObjectToJsonArray(webinar.Campaigns,
+                            JsonPropertyKeys.MailChimpCampaigns, campaignFieldValue);
 
                         _webinarManagementService.SaveChanges();
                         var dataOperations =
-                            new DataOperations(ConfigurationManager.ConnectionStrings["MailChimp"]
+                            new DataOperations(ConfigurationManager.ConnectionStrings["DefaultConnection"]
                                 .ConnectionString);
 
                         var usersFromSheet =
@@ -2911,7 +2915,7 @@ namespace CUWebinars.Web.Controllers.Admin
                     {
                         SubjectLine = subject,
                         Title = affiliate.ttsDomain + "_" + subject,
-                        FolderId = "30aca5892b",
+                        FolderId = "9824f972f5",
                         InlineCss = true,
                         Authenticate = true,
                         AutoFooter = true,
@@ -2922,7 +2926,7 @@ namespace CUWebinars.Web.Controllers.Admin
                         FromName = affiliatePromoSenderName,
                         ReplyTo = affiliatePromoSenderEmail,
                         UseConversation = true,
-                        PreviewText = "Join us for this webinar on " + webinar.Date.ToShortDateString()
+                        PreviewText = "Join us for this webinar on "  + DateTimeHelper.FormatDateNoYear(webinar.Date)
                     },
                     Tracking = new Tracking
                     {
@@ -2935,12 +2939,26 @@ namespace CUWebinars.Web.Controllers.Admin
 
                 var mkCamp = await manager.Campaigns.AddAsync(campaign: newCamp);
                 campaign.CampaignId = mkCamp.Id;
+
+
+                if (_globalConfig.Tenant == "CCS")
+                    mkCamp.Settings.FolderId = "cf6d051d78";
+
+                if (_globalConfig.Tenant == "CUWebinars")
+                    mkCamp.Settings.FolderId = "485a0396c0";
+
+                if (_globalConfig.Tenant == "DirectorSeries")
+                    mkCamp.Settings.FolderId = "23bf826cc3";
+
+                if (_globalConfig.Tenant == "MortgageWebinars")
+                    mkCamp.Settings.FolderId = "04f95c484f";
+
                 var content = new Content { Html = messageBodyHtml };
 
-                _logger.Info("CreateCampaign | mkCamp.Id: " + mkCamp.Id);
                 var putContent = await manager.Content.AddOrUpdateAsync(mkCamp.Id, new ContentRequest { Html = messageBodyHtml });
                 if (isReminder != "true")
                 {
+                    campaign.Type = "Promo";
                     var checkList = await manager.Campaigns.SendChecklistAsync(mkCamp.Id);
 
                     List<string> sendToEmails = new List<string>();
@@ -2957,9 +2975,22 @@ namespace CUWebinars.Web.Controllers.Admin
                     }
 
                     _logger.Info(
-                        "CreateCampaign | sendDate: " + mkCamp.Id + " with emails: " + reminderAddresses.ToString());
+                        "CreateCampaign | sendDate: " + sendDate  );
                     auditBuilder.Append("CreateCampaign | sendDate: " + mkCamp.Id + " with emails: " + reminderAddresses.ToString());
 
+                    webinar.Campaigns = JsonHelpers.AddObjectToJsonArray(webinar.Campaigns,
+                        JsonPropertyKeys.MailChimpCampaigns, campaign);
+
+                    _webinarManagementService.SaveChanges();
+                }
+                else
+                {
+
+                    _logger.Info(
+                        "CreateCampaign | sendDate: " + sendDate + " with emails: " + reminderAddresses.ToString());
+
+                    mkCamp.Settings.FolderId = "a640c13260";
+                    campaign.Type = "Reminder";
                     webinar.Campaigns = JsonHelpers.AddObjectToJsonArray(webinar.Campaigns,
                         JsonPropertyKeys.MailChimpCampaigns, campaign);
 

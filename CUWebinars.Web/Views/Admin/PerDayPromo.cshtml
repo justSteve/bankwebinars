@@ -85,36 +85,32 @@
 {
     <div class="container-admin">
 
-        <h2 id="WebinarTitle">
-            @Model.Webinar.Title
-        </h2>
+
 
         <div class="row-fluid">
             <div class="span8">
                 <button data-toggle="button" type="button" id="showCampaignsBtn" class="btn btn-mini">Show Just Campaigns</button>
+                <h2 id="WebinarTitle">
+                    @Model.Webinar.Title
+                </h2>
                 @Model.Webinar.Presenter.WebUser.FullName &nbsp;
                 @Html.Raw(wDate)
-            </div><div id="statsResults" class="span3">
-                <div id="">
-                    Campaign Stats show here
-                </div>
+            </div>
+            <div id="statsResults" class="span3">
+
+                @*Campaign Stats show here*@
+
             </div>
         </div>
         <div class="row-fluid">
-            <div id="statsResults" class="span5">
-                <div id="">
+            <div id="statsResults" class="span4">
 
-                </div>
             </div>
             <div id="generatorResults" class="span5">
-                <div id="">
 
-                </div>
             </div>
             <div id="auditResults" class="span3">
-                <div id="">
 
-                </div>
             </div>
         </div>
         <div class="row-fluid">

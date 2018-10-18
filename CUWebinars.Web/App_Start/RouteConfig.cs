@@ -60,7 +60,7 @@ namespace CUWebinars.Web.App_Start
             {
 
             }
-            if (GlobalConfig.GlobalConfigSingleton.Tenant == "DES" || GlobalConfig.GlobalConfigSingleton.Tenant == "CCS")
+            if (GlobalConfig.GlobalConfigSingleton.Tenant == "DirectorSeries" || GlobalConfig.GlobalConfigSingleton.Tenant == "CCS")
             {
                 routes.MapRoute(
                     name: "SignUpDES_CCS",

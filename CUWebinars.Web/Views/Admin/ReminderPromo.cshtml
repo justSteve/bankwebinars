@@ -66,11 +66,11 @@
     var _subject = "ANNOUNCING: @Model.Webinar.Title";
     var _testEmails = "all.of.us@ttstrain.com,";
     var valOfStatus = "@Model.Webinar.Status";
-    
+
     $(document)
         .ready(function() {
 
-    var _subjectForCampaign = "Webinar: @Model.Webinar.Title";
+    var _subjectForCampaign = "Final Reminder: @Model.Webinar.Title";
             $("#editorTA")
                 .wijeditor({
                     // editorMode: "split" // can default to split view if they want
@@ -86,34 +86,23 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer", @class = "form-inline form-promo-generater" }))
 {
     <div class="container-admin">
-        
+
         <div class="row-fluid">
             <div class="span8">
                 <button data-toggle="button" type="button" id="showCampaignsBtn" class="btn btn-mini">Show Just Campaigns</button>
+                <h2>@Model.Webinar.Title</h2>
                 @Model.Webinar.Presenter.WebUser.FullName &nbsp;
                 @Html.Raw(wDate)
             </div><div id="statsResults" class="span3">
                 <div id="">
-                    Campaign Stats show here
+                    [Campaign Stats show here]
                 </div>
             </div>
         </div>
         <div class="row-fluid">
-            <div id="statsResults" class="span5">
-                <div id="">
-
-                </div>
-            </div>
-            <div id="generatorResults" class="span5">
-                <div id="">
-
-                </div>
-            </div>
-            <div id="auditResults" class="span3">
-                <div id="">
-
-                </div>
-            </div>
+            <div id="statsResults" class="span4"></div>
+            <div id="generatorResults" class="span5"></div>
+            <div id="auditResults" class="span3"></div>
         </div>
 
         <div class="row-fluid">
@@ -131,7 +120,7 @@
 
                     @foreach (var aff in Model.Affiliates.Where(a => a.idMailChimpList != null && a.idMailChimpList != ""))
                     {
-                        <li id="li_@aff.idUserAff"><input type="checkbox"  class="removeCamp" id="r_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
+                        <li id="li_@aff.idUserAff"><input type="checkbox" class="removeCamp" id="r_@aff.idUserAff" data-link-affid="@aff.idUserAff"><nobr><a href="#tab_@aff.idUserAff" data-toggle="pill" data-link-affid="@aff.idUserAff">@aff.ttsDomain:@aff.idUserAff</a></li>
                     }
                 </ul>
             </div>
@@ -158,7 +147,7 @@
                                 <button id="writeAllAffMarkupToStorage" class="button btn btn-small">Save@(isAffiliateRestricted ? " Affiliate" : " All")</button>
                                 <button id="sendAll" class="button btn btn-small">Send@(isAffiliateRestricted ? " Affiliate" : " All")</button>
                                 <button id="generateAll" class="button btn btn-small">Generate All</button>
-                                
+
                             }
                         </p>
                         <p>

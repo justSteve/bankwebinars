@@ -99,6 +99,11 @@ namespace CUWebinars.Web.Helpers
             return date.ToString("dddd, MMMM d") + GetOrdinalSuffix(date.Day) + ", " + date.ToString("yyyy");
         }
 
+        public static string FormatDateNoYear(DateTime date)
+        {
+            return date.ToString("MMMM d") + GetOrdinalSuffix(date.Day) ;
+        }
+
         public static string FormatDateShort(DateTime date)
         {
 

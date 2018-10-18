@@ -12,5 +12,6 @@ namespace CUWebinars.Business.ModelsV4
         public string CampaignId { get; set; }
         public int WebinarId { get; set; }
         public int AffiliateId { get; set; }
+        public string Type { get; set; }
     }
 }
