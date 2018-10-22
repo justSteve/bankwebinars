@@ -17,8 +17,6 @@
 @{
 
     var webinar = Model.Webinar;
-    //var aff = Model.Affiliate;
-    //int currentUserID = UserFacade.Instance.GetCurrentUserID();
 
     var ceuStmt = "";
     var ceuShort = "";
@@ -208,7 +206,7 @@
                         <img src="https://gallery.mailchimp.com/92ad1b34176b78abcb8550fe5/images/2545149d-c852-43b7-804f-3166f9a44c64.png" alt="Logo" border="0" style="width:100%;max-width:350px;display:block;height: auto; margin:0 auto;background: #dddddd; font-family: sans-serif; font-size: 15px; text-align:center;line-height: 15px; background:#ffffff;" />
                     </p>
                     <p>
-                        <img src="https://gallery.mailchimp.com/92ad1b34176b78abcb8550fe5/images/9062d79b-049a-4eab-ba8b-204e3c7df0df.png" width="80%" alt="Logo" border="0" style="padding-top:5px;border-top:5px solid #dddddd;height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; background:#ffffff;" />
+                        {aff_EmailBanner}
                     </p>
                     <table cellspacing="0" cellpadding="0" border="0" width="100%">
                         <tr>
@@ -437,7 +435,7 @@
                                                                         <tr>
                                                                             <td style="text-align: center;">
                                                                                 <a href="@TenantURL/webinar/calendar?lid=*|LINKID|*&idaff={aff_idUserAff}">
-                                                                                    <img src="https://cms-goc.oclstoreadmin.com/pub/media/wysiwyg/webicon-calendar-3.png" width="95" alt="alt_text" border="0" class="fluid" style="height: auto; background: #ffffff; font-family: sans-serif; font-size: 15px; line-height: 11px; color: #555555;"/>
+                                                                                    <img src="https://cms-goc.oclstoreadmin.com/pub/media/wysiwyg/webicon-calendar-3.png" width="95" alt="alt_text" border="0" class="fluid" style="height: auto; background: #ffffff; font-family: sans-serif; font-size: 15px; line-height: 11px; color: #555555;" />
                                                                                 </a>
                                                                             </td>
                                                                         </tr>
@@ -446,21 +444,21 @@
                                                                                 <!-- button -->
                                                                                 <table border="0" cellspacing="0" cellpadding="0" align="center">
                                                                                     <tbody>
-                                                                                    <tr>
-                                                                                        <td align="center" style="font-family: sans-serif; font-size: 13px; color: #ffffff; padding: 0;">
-                                                                                            <table border="0" cellspacing="0" cellpadding="10">
-                                                                                                <tbody>
-                                                                                                <tr>
-                                                                                                    <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family: sans-serif; font-size: 14px; color: #3e67b1; -webkit-border-radius: 4px; border-radius: 4px;" xml:lang="en-us">
-                                                                                                        <a href="@TenantURL/webinar/calendar?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 13px; font-weight: normal; font-family: sans-serif; -webkit-border-radius: 4px; border-radius: 4px; padding: 0 5px; display: inline-block; line-height: 100%;">
-                                                                                                            View Calendar
-                                                                                                        </a>
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                                </tbody>
-                                                                                            </table>
-                                                                                        </td>
-                                                                                    </tr>
+                                                                                        <tr>
+                                                                                            <td align="center" style="font-family: sans-serif; font-size: 13px; color: #ffffff; padding: 0;">
+                                                                                                <table border="0" cellspacing="0" cellpadding="10">
+                                                                                                    <tbody>
+                                                                                                        <tr>
+                                                                                                            <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family: sans-serif; font-size: 14px; color: #3e67b1; -webkit-border-radius: 4px; border-radius: 4px;" xml:lang="en-us">
+                                                                                                                <a href="@TenantURL/webinar/calendar?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color: #ffffff; text-decoration: none; font-size: 13px; font-weight: normal; font-family: sans-serif; -webkit-border-radius: 4px; border-radius: 4px; padding: 0 5px; display: inline-block; line-height: 100%;">
+                                                                                                                    View Calendar
+                                                                                                                </a>
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    </tbody>
+                                                                                                </table>
+                                                                                            </td>
+                                                                                        </tr>
                                                                                     </tbody>
                                                                                 </table>
                                                                             </td>
@@ -565,19 +563,19 @@
                                                                     <!-- button -->
                                                                     <table border="0" cellspacing="0" cellpadding="0" align="center">
                                                                         <tbody>
-                                                                        <tr>
-                                                                            <td align="center" style="font-family:sans-serif;font-size:13px;color:#ffffff;padding:0;">
-                                                                                <table border="0" cellspacing="0" cellpadding="10">
-                                                                                    <tbody>
-                                                                                    <tr>
-                                                                                        <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family:sans-serif;font-size:14px;color:#3e67b1;-webkit-border-radius:4px;border-radius:4px;" xml:lang="en-us">
-                                                                                            <a href="@TenantURL/Webinar/Recorded?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color:#ffffff;text-decoration:none;font-size:14px;font-weight:normal;font-family:sans-serif;-webkit-border-radius:4px;border-radius:4px;padding:0 36px;display:inline-block;line-height:100%;">Register Now</a>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    </tbody>
-                                                                                </table>
-                                                                            </td>
-                                                                        </tr>
+                                                                            <tr>
+                                                                                <td align="center" style="font-family:sans-serif;font-size:13px;color:#ffffff;padding:0;">
+                                                                                    <table border="0" cellspacing="0" cellpadding="10">
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td align="center" lang="en-us" bgcolor="#3e67b1" style="font-family:sans-serif;font-size:14px;color:#3e67b1;-webkit-border-radius:4px;border-radius:4px;" xml:lang="en-us">
+                                                                                                    <a href="@TenantURL/Webinar/Recorded?lid=*|LINKID|*&idaff={aff_idUserAff}" target="_blank" style="color:#ffffff;text-decoration:none;font-size:14px;font-weight:normal;font-family:sans-serif;-webkit-border-radius:4px;border-radius:4px;padding:0 36px;display:inline-block;line-height:100%;">Register Now</a>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </td>
+                                                                            </tr>
                                                                         </tbody>
                                                                     </table>
                                                                 </td>
@@ -593,24 +591,7 @@
                         </tr>
                     </table>
                     <!-- Footer-->
-                    <table align="center" cellspacing="0" cellpadding="0" border="0" width="600" style="margin:0 auto;" class="email-container">
-                        <tr>
-                            <td style="display:block;padding:20px;font-family:sans-serif;font-size:12px;line-height:15px;text-align:center;color:#888888;text-decoration:none;">
-
-                                <p style="margin:0;">
-                                    <strong>Total Training Solutions</strong>
-                                </p>
-                                <a style="color:inherit;" href="tel:800-831-0678">800-831-0678</a>
-                                <p style="margin:5px;">
-
-                                    <a href="https://www.linkedin.com/company/bankwebinars-com" title="LinkedIn" target="_blank">
-                                    </a>
-                                    <a href="" title="Twitter" target="_blank">
-                                    </a>
-                                </p>
-                            </td>
-                        </tr>
-                    </table>
+                    {aff_EmailFooter}
                     <table cellspacing="0" cellpadding="0" border="0" width="100%">
                         <tr>
                             <td valign="top">

@@ -585,6 +585,7 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
                 $("#r_" + affiliateId).closest("li").text("sent!");
                 
                 $("#auditResults").append("<div>"+ Result.audit + "</div>");
+                $("#errorsResults").append("<div>"+ Result.errors + "</div>");
         
             } else {
                 

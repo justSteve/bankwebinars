@@ -59,6 +59,137 @@ namespace CUWebinars.Web.App_Start
             if (GlobalConfig.GlobalConfigSingleton.Tenant == "CUWebinars")
             {
 
+                routes.MapRoute(
+                    name: "topicCU_BSA",
+                    url: "BSA",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 30 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Compliance",
+                    url: "Compliance",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 15 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_ComputerSkills",
+                    url: "ComputerSkills",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 25 }
+                );
+                routes.MapRoute(
+                    name: "topicCU_Computer",
+                    url: "Computer",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 25 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_DepositAccounts",
+                    url: "DepositAccounts",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Deposit",
+                    url: "Deposit",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Deposits",
+                    url: "Deposits",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Executive",
+                    url: "Executive",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 32 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_HumanResources",
+                    url: "HumanResources",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 23 }
+                );
+
+
+                routes.MapRoute(
+                    name: "topicCU_HR",
+                    url: "HR",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 23 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_IRAs",
+                    url: "IRAs",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 16 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_IRA",
+                    url: "IRA",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 16 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Lending",
+                    url: "Lending",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 22 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_ManagementEmployeeDevelopment",
+                    url: "ManagementEmployeeDevelopment",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 33 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Management",
+                    url: "Management",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 33 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Reporting",
+                    url: "Reporting",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 34 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_RiskManagementLegal",
+                    url: "RiskManagementLegal",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 35 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_RiskManagement",
+                    url: "RiskManagement",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 35 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Risk",
+                    url: "Risk",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 35 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_SafeDeposit",
+                    url: "SafeDeposit",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 36 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_Sales",
+                    url: "Sales",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 21 }
+                );
+
+                routes.MapRoute(
+                    name: "topicCU_TRID",
+                    url: "TRID",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 37 }
+                );
             }
             if (GlobalConfig.GlobalConfigSingleton.Tenant == "DirectorSeries" || GlobalConfig.GlobalConfigSingleton.Tenant == "CCS")
             {
@@ -99,10 +230,27 @@ namespace CUWebinars.Web.App_Start
                     url: "ComputerSkills",
                     defaults: new { controller = "Webinar", action = "ListByTopic", id = 25 }
                 );
+                routes.MapRoute(
+                    name: "topicComputer",
+                    url: "Computer",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 25 }
+                );
 
                 routes.MapRoute(
                     name: "topicDepositAccounts",
                     url: "DepositAccounts",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                );
+
+                routes.MapRoute(
+                    name: "topicDeposit",
+                    url: "Deposit",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
+                );
+
+                routes.MapRoute(
+                    name: "topicDeposits",
+                    url: "Deposits",
                     defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
                 );
 
@@ -118,9 +266,22 @@ namespace CUWebinars.Web.App_Start
                     defaults: new { controller = "Webinar", action = "ListByTopic", id = 23 }
                 );
 
+
+                routes.MapRoute(
+                    name: "topicHR",
+                    url: "HR",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 23 }
+                );
+
                 routes.MapRoute(
                     name: "topicIRAs",
                     url: "IRAs",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 16 }
+                );
+
+                routes.MapRoute(
+                    name: "topicIRA",
+                    url: "IRA",
                     defaults: new { controller = "Webinar", action = "ListByTopic", id = 16 }
                 );
 
@@ -137,14 +298,32 @@ namespace CUWebinars.Web.App_Start
                 );
 
                 routes.MapRoute(
+                    name: "topicManagement",
+                    url: "Management",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 33 }
+                );
+
+                routes.MapRoute(
                     name: "topicReporting",
                     url: "Reporting",
                     defaults: new { controller = "Webinar", action = "ListByTopic", id = 34 }
                 );
 
                 routes.MapRoute(
-                    name: "topicRiskManagementLegal",
-                    url: "RiskManagementLegal",
+                    name: "topicLegal",
+                    url: "Legal",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 26 }
+                );
+
+                routes.MapRoute(
+                    name: "topicRiskManagement",
+                    url: "RiskManagement",
+                    defaults: new { controller = "Webinar", action = "ListByTopic", id = 26 }
+                );
+
+                routes.MapRoute(
+                    name: "topicRisk",
+                    url: "Risk",
                     defaults: new { controller = "Webinar", action = "ListByTopic", id = 26 }
                 );
 
@@ -165,9 +344,8 @@ namespace CUWebinars.Web.App_Start
                     url: "TRID",
                     defaults: new { controller = "Webinar", action = "ListByTopic", id = 37 }
                 );
-
-
             }
+
             routes.MapRoute(
                 name: "UpdateAffiliate",
                 url: "UpdateAffiliate",

@@ -207,6 +207,7 @@ table.dataTable thead .sorting_desc_disabled {
     font-size: 100%;
     padding: 0 10px;
     padding-top: 40px;
+    padding-bottom: 40px;
     text-transform: none;
 }
 

@@ -84,38 +84,27 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "mailer", @class = "form-inline form-promo-generater" }))
 {
     <div class="container-admin">
-
-
-
         <div class="row-fluid">
             <div class="span8">
-                <button data-toggle="button" type="button" id="showCampaignsBtn" class="btn btn-mini">Show Just Campaigns</button>
-                <h2 id="WebinarTitle">
-                    @Model.Webinar.Title
-                </h2>
+                <h2>@Model.Webinar.Title</h2>
                 @Model.Webinar.Presenter.WebUser.FullName &nbsp;
                 @Html.Raw(wDate)
             </div>
             <div id="statsResults" class="span3">
-
-                @*Campaign Stats show here*@
-
+                <div id="">
+                    [Campaign Stats show here]
+                </div>
             </div>
         </div>
         <div class="row-fluid">
-            <div id="statsResults" class="span4">
-
-            </div>
-            <div id="generatorResults" class="span5">
-
-            </div>
-            <div id="auditResults" class="span3">
-
-            </div>
+            <div id="generatorResults" class="span5"></div>
+            <div id="auditResults" class="span3"></div>
+            <div id="statsResults" class="span4"></div>
         </div>
         <div class="row-fluid">
-            <div id="leftSideBar" class="span2" style="height:98%; overflow: auto;">
-                <ul id="showAll" class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;  ">
+            <div id="leftSideBar" class="span2" style="height: 98%; overflow: auto;">
+                <button data-toggle="button" type="button" id="showCampaignsBtn" class="btn btn-mini">Show Just Campaigns</button>
+                <ul id="showAll" class="nav nav-pills nav-stacked" style="margin: 0; padding: 0;">
                     <li class="active"><a href="#tab_Master" data-toggle="pill" data-link-affid="0">MASTER</a></li>
 
                     @foreach (var aff in Model.Affiliates)

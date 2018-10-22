@@ -620,10 +620,9 @@ namespace CUWebinars.Business.Services
         {
 
             var campaign = "";
+            var _campaigns = GetWebinar(idWebinar).Campaigns;
             try
             {
-                var _campaigns = GetAllActive().Where(w => w.idWebinar == idWebinar).SingleOrDefault()
-                    .Campaigns;
                 var o = JToken.Parse(_campaigns);
                 var campaigns = JsonConvert.DeserializeObject<IEnumerable<McCampaign>>(o.First.Children().First().ToString());
 
