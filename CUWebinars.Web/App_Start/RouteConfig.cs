@@ -194,24 +194,21 @@ namespace CUWebinars.Web.App_Start
             if (GlobalConfig.GlobalConfigSingleton.Tenant == "DirectorSeries" || GlobalConfig.GlobalConfigSingleton.Tenant == "CCS")
             {
                 routes.MapRoute(
-                    name: "SignUpDES_CCS",
+                    name: "SignUpDES",
+                    url: "SignUp",
+                    defaults: new { controller = "Webinar", action = "Details", id = 2485 }
+                );
+            }
+            if (GlobalConfig.GlobalConfigSingleton.Tenant == "CCS" || GlobalConfig.GlobalConfigSingleton.Tenant == "CCS")
+            {
+                routes.MapRoute(
+                    name: "SignUpCCS",
                     url: "SignUp",
                     defaults: new { controller = "Webinar", action = "Details", id = 2485 }
                 );
             }
             if (GlobalConfig.GlobalConfigSingleton.Tenant == "BankWebinars")
             {
-                //routes.MapRoute(
-                //    name: "topicDeposit",
-                //    url: "DepositAccounts",
-                //   defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
-                //);
-
-                //routes.MapRoute(
-                //    name: "topicManagementEmployeeDevelopment",
-                //    url: "DepositAccounts",
-                //    defaults: new { controller = "Webinar", action = "ListByTopic", id = 31 }
-                //);
 
                 routes.MapRoute(
                     name: "topicBSA",

@@ -1946,6 +1946,8 @@
     <Content Include="Membership\Email\EmailTemplates\PasswordChangedEvent_Body2.cshtml" />
     <Content Include="Membership\Email\EmailTemplates\PasswordResetRequestedEvent_Body2.cshtml" />
     <Content Include="Notification\Templates\SendMWPromo.cshtml" />
+    <Content Include="Notification\Templates\SendACSPromo.cshtml" />
+    <Content Include="Notification\Templates\SendOCLPromo.cshtml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\BankWebinars33 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\BWDev - FTP.pubxml" />
@@ -2289,6 +2291,8 @@
     <Content Include="Views\Home\AboutMortgageWebinars.cshtml" />
     <Content Include="Views\Admin\ReminderPromo.cshtml" />
     <Content Include="Views\Webinar\AllActiveCcs.cshtml" />
+    <Content Include="Views\Admin\PromoForACS.cshtml" />
+    <Content Include="Views\Admin\PromoForOCL.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
