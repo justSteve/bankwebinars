@@ -1665,8 +1665,14 @@ namespace CUWebinars.Web.Controllers
                         bool webinarIsPast = false;
                         if (orderRow.Webinar.Status == WebinarStatus.Recorded)
                             webinarIsPast = true;
+                        var optedOutOfUpgradePrompt = false;
+                        if (orderRow.Order.WebUser.OptedOutOfUpgradePrompt)
+                        {
+                            optedOutOfUpgradePrompt = true;
+                        }
                         model.CheckoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
+                            UserOptedOutOfUpgradePrompt = optedOutOfUpgradePrompt,
                             DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(orderRow),
                             WebinarIsPast = webinarIsPast,

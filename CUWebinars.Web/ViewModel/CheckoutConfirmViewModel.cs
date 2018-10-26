@@ -36,6 +36,8 @@ namespace CUWebinars.Web.ViewModel
         public bool SendHardcopy { get; set; }
 
         public bool WebinarIsPast { get; set; }
+
+        public bool UserOptedOutOfUpgradePrompt { get; set; }
         //public Order Order { get; set; }
 
     }

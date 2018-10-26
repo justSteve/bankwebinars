@@ -53,7 +53,7 @@ $(function () {
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
-
+            ShowUpgradePrompt();
             if (desCheckout) {
                 $('#ConfirmRegistrationBillMe').hide();
                 $('#ContinueShoppingButton').hide();

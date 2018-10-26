@@ -209,8 +209,14 @@ namespace CUWebinars.Web.Core.Orchestrators
                         if (row.Webinar.SeriesInfo == "DES")
                             desCheckout = true;
 
+                        var optedOutOfUpgradePrompt = false;
+                        if (row.Order.WebUser.OptedOutOfUpgradePrompt)
+                        {
+                            optedOutOfUpgradePrompt = true;
+                        }
                         var checkoutConfirmViewModel = new CheckoutConfirmViewModel
                         {
+                            UserOptedOutOfUpgradePrompt = optedOutOfUpgradePrompt,
                             SendHardcopy = row.SendHardcopy != null && row.SendHardcopy.Value,
                             DESCheckout = desCheckout,
                             AdditionalLocationCaption = DomainHelpers.BuildAdditionalLocationsCaption(row),

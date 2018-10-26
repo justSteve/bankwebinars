@@ -563,7 +563,6 @@ namespace CUWebinars.Web.Controllers.Admin
                 {
                     var originalOrder = _orderManagementService.GetOrderById(model.Id);
 
-
                     if ((model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Billed ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Paid ||
                          model.DisplayRowPriceViewModel.OrderStatus == OrderStatus.Submitted)
@@ -640,25 +639,25 @@ namespace CUWebinars.Web.Controllers.Admin
                             }
                         }
 
-                        if (originalOrder.OrderStatus != OrderStatus.Canceled)
-                        {
-                            try
-                            {
-                                var newJson4Invoice = _invoiceHelper.OrderIsCanceled(model.Order, originalOrder);
+                        //if (originalOrder.OrderStatus != OrderStatus.Canceled)
+                        //{
+                        //    try
+                        //    {
+                        //        var newJson4Invoice = _invoiceHelper.OrderIsCanceled(model.Order, originalOrder);
 
-                                if (newJson4Invoice == null)
-                                    throw new NullReferenceException();
+                        //        if (newJson4Invoice == null)
+                        //            throw new NullReferenceException();
 
-                                originalOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(originalOrder.InvoiceDetail,
-                                    newJson4Invoice, "OrderIsInvoiced");
-                                _orderManagementService.UpdateOrderByAdmin(originalOrder);
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
-                                return null;
-                            }
-                        }
+                        //        originalOrder.InvoiceDetail = JsonHelpers.ReplaceJsonWithStoredField(originalOrder.InvoiceDetail,
+                        //            newJson4Invoice, "OrderIsInvoiced");
+                        //        _orderManagementService.UpdateOrderByAdmin(originalOrder);
+                        //    }
+                        //    catch (Exception ex)
+                        //    {
+                        //        _logger.FatalException("UpdateOrderChanged Json Merge: ", ex);
+                        //        return null;
+                        //    }
+                        //}
                     }
 
                     return Json(new
