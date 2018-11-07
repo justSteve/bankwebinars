@@ -175,6 +175,175 @@ namespace CUWebinars.Web.Controllers
 
 
 
+        [HttpGet]
+        public JsonResult UpgradePromptIni(int idOrder)
+        {
+            if (_globalConfig.Tenant != "BankWebinars")
+                return Json(new { Result = 0 }, JsonRequestBehavior.AllowGet);
+
+            var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+            var orginalReg = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType;
+            var webinar = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar;
+
+            if (webinar.Duration != 1 && webinar.Duration != 2)
+            {
+                return Json(new { Result = 0 });
+            }
+            if (webinar.SeriesInfo.Contains("Children"))
+            {
+                return Json(new { Result = 0 });
+            }
+
+            var result = orginalReg;
+            var upgradeCaption = "";
+            var upgradeCost = "";
+
+            if (orginalReg.OptionLabel.StartsWith("Live Plus Five"))
+            {
+                upgradeCaption = "Would you like to add six months of unlimited access to the recording and materials?";
+                result = GetUpgradeRegId(orginalReg.idRegType, "UpToLivePlus6");
+                upgradeCost = "$" + (result.Price - orginalReg.Price).ToString();
+
+            }
+
+            if (orginalReg.OptionLabel.StartsWith("OnDemand"))
+            {
+                upgradeCaption = "Would you like to add access to the live event?";
+                result = GetUpgradeRegId(orginalReg.idRegType, "UpToLivePlus6");
+                upgradeCost = "$" + (result.Price - orginalReg.Price).ToString();
+            }
+
+            if (orginalReg.OptionLabel.StartsWith("CD-ROM"))
+            {
+                upgradeCaption = "Would you like to add access to the live event?";
+                result = GetUpgradeRegId(orginalReg.idRegType, "UpToPremier");
+                upgradeCost = "$" + (result.Price - orginalReg.Price).ToString();
+            }
+
+            return Json(new { Result = result.idRegType, Caption = upgradeCaption, Cost = upgradeCost }
+                , JsonRequestBehavior.AllowGet);
+        }
+
+        private RegType GetUpgradeRegId(int orgRegIdRegType, string upgradeTo)
+        {
+            int upToRegType = 260;
+
+            switch (upgradeTo)
+            {
+                case "UpToLivePlus6":
+                    switch (orgRegIdRegType)
+                    {
+                        case 260: // 2hr
+                            upToRegType = 262;
+                            break;
+                        case 261: // 2hr
+                            upToRegType = 262;
+                            break;
+                        case 200: // 1hr
+                            upToRegType = 203;
+                            break;
+                        case 201: // 1hr
+                            upToRegType = 203;
+                            break;
+                    }
+                    return _cartControllerOrchestrator.GetRegTypeById(upToRegType);
+
+                case "UpToPremier":
+                    switch (orgRegIdRegType)
+                    {
+                        case 263: // 2hr
+                            upToRegType = 264;
+                            break;
+                        case 265: // 1hr
+                            upToRegType = 204;
+                            break;
+                    }
+                    return _cartControllerOrchestrator.GetRegTypeById(upToRegType);
+
+                default:
+                    return _cartControllerOrchestrator.GetRegTypeById(orgRegIdRegType);
+            }
+
+            ;
+        }
+
+        [HttpPost]
+        [ValidateJsonAntiForgeryToken(Order = 0)]
+        [HandleAjaxException(Order = 1)]
+        [AllowAnonymous]
+        public JsonResult UpgradeOrderFromPrompt(string code, int idOrder, string optOut)
+        {
+            if (CheckIfMultiOrdersExist(idOrder) && !Request.QueryString.ToString().Contains("checked"))
+            {
+                return Json(new
+                {
+                    success = "success",
+                    redirectUrl = Url.Action("Checkout", "Cart", new RouteValueDictionary("checked=true")),
+                    isRedirect = true
+                }, JsonRequestBehavior.AllowGet);
+            }
+
+            _logger.Info("UpgradeOrderFromPrompt: " + idOrder + "  Starts with: " + code);
+
+            if (code != "optOut")
+            {
+                //ensures that the price passed to PayTrace reflects order price with discount applied.
+                var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+                //if the discount is a wsp null it out.
+                var upgradeReg = _cartControllerOrchestrator.GetRegTypeById(Convert.ToInt32(code));
+                if (upgradeReg == null || order == null)
+                    throw new ArgumentNullException();
+
+
+                var idRegOrg = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).RegistrationType
+                    .idRegType;
+                var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
+                    upgradeReg;
+
+                var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
+                var loggerStruc = new UpgradeFromPromptModel
+                {
+                    idOrder = idOrder,
+                    idAffiliate = order.idAffiliate,
+                    AuditInfo = _appHelper.GetUserAuditInfo(),
+                    TimeStamp = DateTime.Now.ToLongTimeString(),
+                    idRegOriginal = idRegOrg,
+                    idRegUpgrade = row.idRegType
+
+                };
+
+                return Json(JsonConvert.SerializeObject(loggerStruc));
+            }
+            else
+            {
+                //is optOut.
+                if (idOrder != 0)
+                {
+
+                }
+                else
+                {
+
+                }
+                var loggerStruc = new UpgradeFromPromptModel
+                {
+                    idOrder = idOrder,
+                    idAffiliate = order.idAffiliate,
+                    AuditInfo = _appHelper.GetUserAuditInfo(),
+                    TimeStamp = DateTime.Now.ToLongTimeString(),
+                    idRegOriginal = idRegOrg,
+                    idRegUpgrade = row.idRegType
+
+                };
+
+
+
+                return Json(JsonConvert.SerializeObject(loggerStruc));
+
+            }
+
+        }
+
         [HttpPost]
         [ValidateJsonAntiForgeryToken(Order = 0)]
         [HandleAjaxException(Order = 1)]
@@ -204,13 +373,13 @@ namespace CUWebinars.Web.Controllers
                     var discountCaption = "";
 
 
-                    if (myDiscount.DiscountType == DiscountType.Subscription &&
-                        myDiscount.DateValidFrom != myDiscount.DateValidTo
-                        && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
-                    {
-                        ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
-                        msg += " A $50 surcharge is added for shipping & handling.";
-                    }
+                    //if (myDiscount.DiscountType == DiscountType.Subscription &&
+                    //    myDiscount.DateValidFrom != myDiscount.DateValidTo
+                    //    && row.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+                    //{
+                    //    ViewBag.DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
+                    //    msg += " A $50 surcharge is added for shipping & handling.";
+                    //}
                     var updateSuccessCaption = "Applied Discount";
 
                     var pricesAndDiscounts = _cartControllerOrchestrator.UpdateOrderPricingReadOnly(row.Order);

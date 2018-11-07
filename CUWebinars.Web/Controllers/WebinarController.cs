@@ -863,7 +863,7 @@ namespace CUWebinars.Web.Controllers
                     (claim) => claim.Type == Business.Constants.ClaimTypes.Admin))
                 {
                     var webinars = _webinarManagementService.GetUpcomingWebinars().OrderBy(w => w.Date).Take(15);
-                    
+
 
 
                     ViewBag.ListOfWebinars = new MultiSelectList(webinars, "idWebinar", "Title");
@@ -2295,7 +2295,8 @@ namespace CUWebinars.Web.Controllers
                 tz = _membershipService.GetWebUserById(_idAff).timeZone;
 
             }
-            IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars().ToList();
+            IList<Webinar> webinarsList = _webinarManagementService.GetUpcomingWebinars()
+                .OrderBy(w => w.Date).Take(25).ToList();
 
             var data = new CalendarRssFullDTOAssembler().Entities2DTOs(webinarsList);
 
@@ -2792,15 +2793,15 @@ namespace CUWebinars.Web.Controllers
                             organizerKey = _globalConfig.CitrixOrgKeyKyle,
                         });
                         break;
-                    case 1:
-                        orgList.Add(new CoorganizerReqCreate
-                        {
-                            email = "steve@ttstrain.com",
-                            organizerKey = _globalConfig.CitrixOrgKeySteve,
-                            givenName = "Steve Hueners",
-                            external = false
-                        });
-                        break;
+                    //case 1:
+                    //    orgList.Add(new CoorganizerReqCreate
+                    //    {
+                    //        email = "steve@ttstrain.com",
+                    //        organizerKey = _globalConfig.CitrixOrgKeySteve,
+                    //        givenName = "Steve Hueners",
+                    //        external = false
+                    //    });
+                    //    break;
                     case 3:
                         orgList.Add(new CoorganizerReqCreate
                         {

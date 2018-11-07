@@ -260,6 +260,9 @@ namespace CUWebinars.Web.Helpers
 
         public string GetUserAuditInfo()
         {
+            var _userCookies = SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]).Split(';');
+            var userCookies = "";
+
             IDictionary<string, string> auditInfoDictionary = new Dictionary<string, string>();
 
             auditInfoDictionary.Add("FirstPage", SecurityElement.Escape(_stateService.GetValue<string>("FirstPage")));
@@ -267,7 +270,7 @@ namespace CUWebinars.Web.Helpers
             auditInfoDictionary.Add("RemoteHost", SecurityElement.Escape(_request.ServerVariables["REMOTE_HOST"]));
             auditInfoDictionary.Add("RemoteUser", SecurityElement.Escape(_request.ServerVariables["REMOTE_USER"]));
             auditInfoDictionary.Add("UserAgent", SecurityElement.Escape(_request.ServerVariables["HTTP_USER_AGENT"]));
-            auditInfoDictionary.Add("Cookie", SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]));
+            auditInfoDictionary.Add("Cookie", userCookies);
             auditInfoDictionary.Add("Elmah", SecurityElement.Escape(_stateService.GetValue<string>("Elmah")));
             auditInfoDictionary.Add("SessionRoot", SecurityElement.Escape(_stateService.GetValue<string>("SessonRoot")));
             auditInfoDictionary.Add("SessionID", SecurityElement.Escape(_stateService.GetValue<string>("SessionID")));

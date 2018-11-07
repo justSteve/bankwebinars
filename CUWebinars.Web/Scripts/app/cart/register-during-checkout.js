@@ -520,7 +520,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                 } else {
 
                                     $('#ConfirmRegistrationBillMe').on('click', function (e) {
-
+                                        // This location is hit when new user created at order entry
                                         completeOrder(userId, orderRowId, webinarId, orderId);
                                         L.clientLogger.info("BigGreenBillMe from register-user-in-cart", { orderid: orderId });
                                     });
@@ -662,7 +662,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                     $('#SignUpFormContainer > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
-
+                                        console.log("hit checkoutConfirm")
                                         if (status == 'error') {
                                             L.clientLogger.error("Connection Error #106.", { 'data': data || 'data was falsey' });
 
@@ -670,9 +670,10 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                             $('#confirmationTab a').tab('show');
                                         } else {
                                             $('#ConfirmRegistrationBillMe').on('click', function (e) {
-
+                                                console.log("hit ConfirmRegistrationBillMe");
                                                 e.preventDefault();
                                                 callback();
+                                                //TODO: centralize confirmOrderSubmission by OrderRegistration.stateManager.PlaceOrder();
                                                 $('#confirmOrder').submit();
                                             });
 
@@ -781,7 +782,8 @@ registerDuringCheckout.searchInstitution = _.debounce(function (query, process) 
 }, 200);
 
 function completeOrder(userId, orderRowId, webinarId, orderId) {
-
+    // currently only hit by new user creations
+    // might be good to generalize things thru this point
     var cartStateManager = new OrderRegistration.StateManager();
 
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));

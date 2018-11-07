@@ -198,6 +198,7 @@ module OrderRegistration {
 
         PlaceOrder(): void {
             $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
+            console.log("hit placeOrder");
             this.confirmOrderForm.submit();
         }
 
@@ -207,7 +208,7 @@ module OrderRegistration {
                 $("#findUserTab").hide();
                 $("#confirmationTabForAffiliate").hide();
             } else if (cartType === 'admin') {
-
+                var a = 'holder';
             } else {
                 $("#signUpTab").hide();
                 $("#contactInfoTab").hide();

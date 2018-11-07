@@ -19,39 +19,7 @@
             addLocEmails.Add(_addLoc.Email);
         }
     }
-    if (ViewBag.DiscountSurcharge == "A $50 surcharge is added for shipping & handling")
-    {
-        <script language="javascript" type="text/javascript">
-            var DiscountSurcharge = "A $50 surcharge is added for shipping & handling";
-        </script>
-    }
-    else
-    {
-        <script language="javascript" type="text/javascript">
-            var DiscountSurcharge = "";
 
-        </script>
-
-    }
-
-    if (Model.UserOptedOutOfUpgradePrompt)
-    {
-        <script language="javascript" type="text/javascript">
-            function ShowUpgradePrompt() {
-                alert("Showed the prompt");
-            }
-
-        </script>
-    }
-    else
-    {
-        <script language="javascript" type="text/javascript">
-            function ShowUpgradePrompt() {
-                alert("Didn't show prompt");
-            }
-
-        </script>
-    }
 
     if (Model.OrderExists)
     {
@@ -163,6 +131,8 @@
             Html.RenderPartial("~/Views/Cart/Partials/_CancelModal.cshtml", (Order)ViewBag.Order);
         }
         Html.RenderPartial("~/Views/Cart/Partials/_UserDetailsModal.cshtml", Model.ShippingDetailsModel);
+
+        Html.RenderPartial("~/Views/Cart/Partials/_UpgradePromptModal.cshtml");
 
 
         <script type="text/javascript">var anyAddLocs = @(string.IsNullOrWhiteSpace(Model.AdditionalLocationCaption) ? "false" : "true");</script>

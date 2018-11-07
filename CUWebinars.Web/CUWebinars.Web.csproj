@@ -572,6 +572,7 @@
     <Compile Include="Controllers\Admin\CampaignsJson.cs" />
     <Compile Include="Controllers\Admin\InvoiceLog.cs" />
     <Compile Include="Controllers\ConnectivityController.cs" />
+    <Compile Include="Models\UpgradeFromPromptModel.cs" />
     <Compile Include="Core\CalendarRssFullDTOAssembler2.cs" />
     <Compile Include="Models\WspModel.cs" />
     <Compile Include="Models\CheckoutConfirmCookie.cs" />
@@ -763,6 +764,7 @@
     <Content Include="Content\css\bootstrapOverridesMW.css" />
     <Content Include="Content\css\formCss.css" />
     <Content Include="Content\css\header-1MW.css" />
+    <Content Include="Content\css\jquery-confirm.min.css" />
     <Content Include="Content\css\styleCrispMW.css" />
     <Content Include="Content\css\stylesDirectorSeries.css" />
     <Content Include="Content\images\BankWebinars\menu_arrow.png" />
@@ -840,6 +842,7 @@
     <Content Include="Scripts\ai.js" />
     <Content Include="Scripts\app\cart\details.js" />
     <Content Include="Scripts\app\cart\register-during-checkout.js" />
+    <Content Include="Scripts\jquery-confirm.min.js" />
     <Content Include="Scripts\js.cookie\js.cookie.js" />
     <Content Include="Scripts\SimpleAjaxUploader.min.js" />
     <Content Include="Web.config">
@@ -2293,6 +2296,7 @@
     <Content Include="Views\Webinar\AllActiveCcs.cshtml" />
     <Content Include="Views\Admin\PromoForACS.cshtml" />
     <Content Include="Views\Admin\PromoForOCL.cshtml" />
+    <Content Include="Views\Cart\Partials\_UpgradePromptModal.cshtml" />
     <None Include="Web.BankWebinars33 - Web Deploy.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

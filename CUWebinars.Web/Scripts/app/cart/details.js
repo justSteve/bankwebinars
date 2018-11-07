@@ -46,14 +46,17 @@ $(function () {
 
     signUpFormContainer = $('#SignUpFormContainer'); // The big beige box
 
-    // This function gets invoked when the 3rd tab is loaded and an existing user is using the cart
+
+    // This function gets invoked when the 3rd tab is loaded and an 
+    //    existing user is using the cart 
+    // update this to create 
     checkoutConfirm.initialize = function (userId) {
-        console.log("checkoutConfirm");
+
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
         cartStateManager.getConfirmOrderForm().on('submit', function (e) {
-            ShowUpgradePrompt();
+
             if (desCheckout) {
                 $('#ConfirmRegistrationBillMe').hide();
                 $('#ContinueShoppingButton').hide();
@@ -65,12 +68,11 @@ $(function () {
             }
             e.preventDefault();
             var self = $(this);
-            self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
+            var orderRowId = self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
             var data = $(this).serialize();
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
             var utilities = new Common.Utilities();
-
 
             $.ajax({
                 type: 'POST',
@@ -170,7 +172,7 @@ $(function () {
     cartStateManager.setAddressVerified(addressVerified); // addressVerified is set in a script tag in razor view Details.cshtml
     cartStateManager.setNotificationsTesting(notificationsTesting); // notificationsTesting is set in a script tag in razor view Details.cshtml
 
-    
+
     cartStateManager.SetCartState();
 
 
@@ -233,13 +235,12 @@ $(function () {
         checkoutConfirm.initialize();
         //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
-
+            console.log("BIG green button submits");
             e.preventDefault();
             var confirmOrderForm = $('#confirmOrder');
-            //submits to 
+
             confirmOrderForm.submit();
         });
-
 
         // The grey CANCEL Registration button on 3rd tab       
         $('#Canceller').on('click', function (e) {
@@ -263,6 +264,7 @@ $(function () {
     /* Submit event for the big green SIGNUP button */
     signUpForm.on('submit', function (e) {
 
+
         e.preventDefault();
         $('#EventDescription').slideToggle();
         window.scrollTo(0, 0);
@@ -276,13 +278,13 @@ $(function () {
         shippingAddressRequired = isShippingAddressRequired($('#RegistrationType > dl dt input:checked').prev());
 
         var data = signUpForm.serialize();
-        
+
         //$.post('/cart/checkoutConfirmSetCookie', data,
         //    function (response, status, xhr) {
         //        //console.log(response);
         //            //primary objective is to set cookie state according to initial button click.
         //            window.Cookies.set('OrderStart', response.model);
-                
+
         //    });
 
         var spinner = $('#signUpSpinner');
@@ -290,7 +292,7 @@ $(function () {
         var loadingSpinner = $('#loadingSpinner');
 
         // If the user IS NOT LOGGED IN - control moves 
-        //    to the register- during - checkout.js script
+        //       to the register-during-checkout.js script
         if (!cartStateManager.getIsUserLoggedIn()) {
 
             //Cart/Signup2
@@ -303,7 +305,7 @@ $(function () {
 
                         var cookieVals = getCookie("OrderStart");
 
-                        if (cookieVals == null) {
+                        if (cookieVals === null) {
                             var a = "holder";
                         }
                         else {
@@ -354,9 +356,9 @@ $(function () {
 
                         var cookieVals = getCookie("OrderStart");
 
-                        if (cookieVals != null) {
-                            cookieVals = cookieVals.replace("OrderId=", "Email=" + $('#loginEmail').val()+ "&OrderId=")
-                            window.Cookies.set('OrderStart', cookieVals );
+                        if (cookieVals !== null) {
+                            cookieVals = cookieVals.replace("OrderId=", "Email=" + $('#loginEmail').val() + "&OrderId=")
+                            window.Cookies.set('OrderStart', cookieVals);
                         }
 
                         $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
@@ -367,9 +369,6 @@ $(function () {
                                 $('#loadingSpinner').remove();
                                 $('#confirmationTab a').tab('show');
                             } else {
-                                if (DiscountSurcharge === "A $50 surcharge is added for shipping & handling") {
-                                    alert("Note that a $50 surcharge is added for shipping & handling");
-                                }
                                 $('#confirmationTab a').tab('show');
                                 var utilities = new Common.Utilities();
 
@@ -383,13 +382,43 @@ $(function () {
                                 checkoutConfirm.initialize();
 
                                 // The Bill Me button on 3rd tab
-                                $('#ConfirmRegistrationBillMe').on('click', function (e) {
+                                $('#ConfirmRegistrationBillMe').on('click',
+                                    function (e) {
 
-                                    e.preventDefault();
-                                    var confirmOrderForm = $('#confirmOrder');
-                                    confirmOrderForm.submit();
-                                });
+                                        e.preventDefault();
+                                        //var confirmOrderForm = $('#confirmOrder');
 
+                                        //added to display upgradePrompt
+                                        var promise = new Promise(function (resolve, reject) {
+
+                                            var upgradePrompt = showUpgradePrompt();
+                                            console.log("upgradePrompt: " + upgradePrompt);
+
+                                            if (upgradePrompt === 1) {
+                                                resolve("Stuff worked!");
+                                            }
+                                            else {
+                                                reject(Error("It broke"));
+                                            }
+                                        });
+
+                                        promise.then(function (result) {
+
+                                            console.log(result); // "Stuff worked!"
+                                            // replace this with a reference to the callback
+                                            //callback(result);
+                                            //current code is submitting here.
+                                            //confirmOrderForm.submit();
+
+                                        }, function (err) {
+                                            console.log(err); // Error: "It broke"
+                                            //alert("rejected");
+                                            //replace with real error handling
+                                            //callback();
+                                            //confirmOrderForm.submit();
+                                        });
+
+                                    });
                                 // The Cancel Registration button on 3rd tab
                                 $('#Canceller').on('click', function (e) {
                                     e.preventDefault();
@@ -419,7 +448,6 @@ $(function () {
                         formProcessor.lightUpValidationSummary('valSummarySignUpForm', xhr.responseJSON);
 
                         spinner.remove();
-
                     }
                 } else {
                     spinner.remove();
@@ -452,6 +480,85 @@ function isShippingAddressRequired(jQueryObject) {
     //if ($.trim(jQueryObject.val()).toLowerCase() === 'false')
     return false;
     //return true;
+}
+
+function showUpgradePrompt() {
+    //cartStateManager.getOrderId 
+    $.ajax({
+        datatype: "text/plain",
+        type: "GET",
+        url: '/cart/UpgradePromptIni?idOrder=' + cartStateManager.getOrderId() + "",
+        cache: false
+    })
+        .done(function (data) {
+            console.log(data);
+            if (data.Result !== 0) {
+
+                $('#UpgradeModal').modal('show');
+
+                $('#hiddenCode').val(data.Result);
+                $('#hiddenOrderId').val(cartStateManager.getOrderId());
+                $('#UpgradeCaption')
+                    .text(data.Caption + " Accepting the upgrade will increase the cost by " + data.Cost);
+
+                $("#btnAcceptUpgrade").click(
+                    function () {
+                        submitAcceptUpgradeForm();
+                    }
+                );
+                $("#btnOptOutAfterAccept").click(
+                    function () {
+                        $('#hiddenOptOut').val("true");
+                        submitAcceptUpgradeForm();
+                    }
+                );
+                $("#btnOptOut").click(
+                    function () {
+                        $('#hiddenOptOut').val("true");
+                        submitAcceptUpgradeForm();
+                    }
+                );
+                //
+            } else {
+
+                var confirmOrderForm = $('#confirmOrder');
+                confirmOrderForm.submit();
+            }
+        });
+}
+function submitAcceptUpgradeForm() {
+
+
+    var submitUpgradeOrderFromPromptForm = $('#submitUpgradeOrderFromPromptForm');
+    var data = submitUpgradeOrderFromPromptForm.serialize();
+    var url = submitUpgradeOrderFromPromptForm.attr('action');
+
+    $.ajax({
+        type: 'POST',
+        contentType: RegistrationInCart.Constants.FormPostContentType,
+        cache: false,
+        url: url,
+        dataType: RegistrationInCart.Constants.JsonDataType,
+        data: data,
+
+        beforeSend: function () {
+
+            $('#UpgradeModal').modal('hide');
+        }
+    })
+        .done(function (data) {
+            console.log(data);
+            if (data.Result !== 0) {
+
+                var confirmOrderForm = $('#confirmOrder');
+                confirmOrderForm.submit();
+                //
+            } else {
+                var a = 1;
+
+            }
+
+        });
 }
 
 function setUpEditButtons() {
@@ -612,29 +719,29 @@ function populateAdditionalLocationsOn3rdTab() {
         console.log("locations: " + locations);
     }
 }
+//seems to be duplicate that would be over-ridden below
+//var deleteAddLocInputTabb3 = function (event) {
 
-var deleteAddLocInputTabb3 = function (event) {
+//    numberOfAdditionalLocationsTab3--;
 
-    numberOfAdditionalLocationsTab3--;
+//    var trashClicked = event.currentTarget.id;
+//    var idx = trashClicked.substring(0, 1);
+//    var spanToRemove = locationsSpanPrefix + idx;
 
-    var trashClicked = event.currentTarget.id;
-    var idx = trashClicked.substring(0, 1);
-    var spanToRemove = locationsSpanPrefix + idx;
+//    $('#' + spanToRemove).hide(500, function () {
+//        $(this).remove();
+//    });
 
-    $('#' + spanToRemove).hide(500, function () {
-        $(this).remove();
-    });
+//    $('#' + idx + breakSuffix).hide(500, function () {
+//        $(this).remove();
+//    });
 
-    $('#' + idx + breakSuffix).hide(500, function () {
-        $(this).remove();
-    });
-
-    //if (numberOfAdditionalLocationsTab3 < 1) {
-    //    $('#applyAdditionalLocationsButton').hide(300, function () {
-    //        $(this).remove();
-    //    });
-    //}
-};
+//    //if (numberOfAdditionalLocationsTab3 < 1) {
+//    //    $('#applyAdditionalLocationsButton').hide(300, function () {
+//    //        $(this).remove();
+//    //    });
+//    //}
+//};
 
 var applyCcLocations = function (e) {
 

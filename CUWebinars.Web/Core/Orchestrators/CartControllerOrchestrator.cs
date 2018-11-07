@@ -1038,7 +1038,9 @@ namespace CUWebinars.Web.Core.Orchestrators
                         createdByImpersonatedClaim.Value
                         );
 
-                    newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
+                    newOrder.AdminComments = JsonHelpers.ReplaceJsonWithStoredField(newOrder.AdminComments,
+                        createdByImpersonatedUserMsg, JsonPropertyKeys.OrderCreatedByImpersonatedUserKey);
+                    //newOrder.AdminComments = JsonHelpers.MergeJsonWithStoredField(newOrder.AdminComments, createdByImpersonatedUserMsg);
                 }
 
                 return _orderManagementService.SaveOrderChanges(newOrder, string.Empty, string.Empty);
@@ -1938,8 +1940,8 @@ namespace CUWebinars.Web.Core.Orchestrators
             if (discountModel.TypeOfDiscount == DiscountType.Subscription)
             {
                 discountModel.UsersOnWsp = _orderManagementService.GetWspUsers(discountModel.idDiscount);
-                    
-                
+
+
                 discountModel.WspUsageSum = _orderManagementService.GetOrdersByDiscount(discountModel.idDiscount)
                                     .Where(o => o.OrderStatus == OrderStatus.Billed || o.OrderStatus == OrderStatus.Paid).ToList();
 

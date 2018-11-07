@@ -66,7 +66,7 @@
                             });
 
                         }
-                        console.log(data);
+                        //console.log(data);
                         if (data.success === "failed") {
 
                             alert("There was a problem contacting our credit card processor.")
@@ -104,28 +104,28 @@
                             @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", registrationSummaryViewModel); }
                         </div>
                     </div>
-                                }
+                }
 
-                                if (Model.RegistrationSummaryViewModels.Count == 0)
-                                {
-                                    <p style="margin-top: 12px;">
-                                        Your shopping cart is empty.
-                                    </p>
-                                }
-                                else
-                                {
-                                    <div id="checkout-action-container" style="margin-bottom: 10px;">
-                                        @{
-                                            string confirmButtonLabel = "Submit Registrations";
-                                            string confirmPayTraceLabel = "Pay By Credit Card";
-                                            // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
-                                        }
-                                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
-                                        <button role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
+                if (Model.RegistrationSummaryViewModels.Count == 0)
+                {
+                    <p style="margin-top: 12px;">
+                        Your shopping cart is empty.
+                    </p>
+                }
+                else
+                {
+                    <div id="checkout-action-container" style="margin-bottom: 10px;">
+                        @{
+                            string confirmButtonLabel = "Submit Registrations";
+                            string confirmPayTraceLabel = "Pay By Credit Card";
+                            // null check like Views\Cart\Partials\_DisplayRowPrice.cshtml ->   Model.PricesAndDiscounts.Discount == null  ?
+                        }
+                        <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMeMulti">@confirmButtonLabel</button>
+                        <button role="button" class="btn btn-success" id="ShowPayByCCModal">Pay By Credit Card</button><br />
 
 
-                                    </div>
-                                            }
+                    </div>
+                }
             }
 
             <div id="PayByPayTraceModal" class="modal hide fade">

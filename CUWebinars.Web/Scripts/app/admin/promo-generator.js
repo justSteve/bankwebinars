@@ -36,7 +36,7 @@ $(document).ready(function () {
 
 
     $("#generateAll").on("click", function (e) {
-        
+
         //var r = confirm("Do you want to continue", "yes");
         if (!confirm("Do you want to continue")) {
             alert("Submission has been canceled.");
@@ -66,7 +66,7 @@ $(document).ready(function () {
 
                 CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
                 console.log("ran MC generate for: '" + affiliateId + "' localCopy: " + localCopy);
-                
+
             });
         }
     });
@@ -175,9 +175,9 @@ $(document).ready(function () {
         var sendTime = prompt("Time To Send: ", _sendTime);
 
         var subjectForCampaign = prompt("Subject line: ", "Webinar: " + $("#Webinar_Title").val());
-        
+
         CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign);
-        console.log("ran MC generate (single) for: '" + affiliateId );
+        console.log("ran MC generate (single) for: '" + affiliateId);
 
     });
 
@@ -533,13 +533,13 @@ function GetMasterMarkupAJAX($btn) {
 
 
 function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
-    
+
     var isReminder = "false";
     var path = window.location.pathname;
-    
+
     if (path.includes("Reminder")) {
         isReminder = "true";
-        
+
     }
     var origBtnText = $btn.text();
     $btn.text("Processing " + affiliateId);
@@ -583,12 +583,12 @@ function CreateCampaign($btn, affiliateId, sendTime, subjectForCampaign) {
             console.log(Result);
             if (Result.Success) {
                 $("#r_" + affiliateId).closest("li").text("sent!");
-                
-                $("#auditResults").append("<div>"+ Result.audit + "</div>");
-                $("#errorsResults").append("<div>"+ Result.errors + "</div>");
-        
+
+                $("#auditResults").append("<div>" + Result.audit + "</div>");
+                $("#errorsResults").append("<div>" + Result.errors + "</div>");
+
             } else {
-                
+
                 $("#generatorResults").append("error: " + Result.Result);
 
             }

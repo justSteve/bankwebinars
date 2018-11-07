@@ -312,7 +312,8 @@ namespace CUWebinars.Business.AccountService
                 email = email,
                 timeZone = USTimeZone.Central,
                 generalComments = "Origin: CreatedAtExpressCheckout",
-                Addresses = addresses
+                Addresses = addresses,
+                OptedOutOfUpgradePrompt = true
             };
 
             _webUserRepository.Add(webUser);
@@ -360,7 +361,7 @@ namespace CUWebinars.Business.AccountService
                 Addresses = addresses,
                 Title = title,
                 timeZone = timeZone,
-                UserType = UserType.Customer,
+                UserType = UserType.Customer, OptedOutOfUpgradePrompt = true
             };
 
             _webUserRepository.Add(webUser);
@@ -1138,7 +1139,7 @@ namespace CUWebinars.Business.AccountService
                 idUserInstitution = 8,
                 email = email,
                 timeZone = USTimeZone.Central,
-                generalComments = "Origin: CreateBareUserFromEmail"
+                generalComments = "Origin: CreateBareUserFromEmail", OptedOutOfUpgradePrompt = true
             };
             webUser.Addresses = new List<Address>();
             Address billing = BuildPlaceHolderAddressBilling(email);

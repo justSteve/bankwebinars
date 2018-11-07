@@ -1,0 +1,54 @@
+﻿@using CUWebinars.Web.Core
+
+@model CheckoutConfirmViewModel
+@functions {
+    private const string CurrencyFormatToken = "c";
+    private const string DotAndTwoDecimals = ".00";
+
+
+}
+<style>
+    .validation-summary-errors ul {
+        list-style: none;
+        margin-left: -20px
+    }
+</style>
+<div id="UpgradeModal" class="modal modalCenterV hide fade">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h2 class="modal-title">Upgrade Your Order?</h2>
+            </div>
+
+            <div class="modal-body">
+                <style>
+                    .form-horizontal .control-group {
+                        margin-bottom: 5px;
+                    }
+                </style>
+                <div>
+                    @using (Html.BeginForm("UpgradeOrderFromPrompt", "Cart", null, FormMethod.Post, new { id = "submitUpgradeOrderFromPromptForm", @class = "form-horizontal" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary("Please address the following problems:", new { id = "upgradeOrderFromPrompt" })
+                        <span id="UpgradeCaption">[text]</span>
+                        <button id="btnAcceptUpgrade" type="button" class="btn btn-default">Accept</button><br/>
+                        <button id="btnOptOutAfterAccept" type="button" class="btn btn-default" >Accept this time but don't offer upgrades again</button><br/>
+                        <button id="btnOptOut" type="button" class="btn btn-default">No thanks and don't show again</button>
+                        <input type="hidden" name="code" id="hiddenCode"/>
+                        <input type="hidden" name="idOrder" id="hiddenOrderId"/>
+                        <input type="hidden" name="optOut" id="hiddenOptOut"/>
+                    }
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+
+</div>
+

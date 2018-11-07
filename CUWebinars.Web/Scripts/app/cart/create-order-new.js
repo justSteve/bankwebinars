@@ -155,6 +155,7 @@ var OrderRegistration;
         };
         StateManager.prototype.PlaceOrder = function () {
             $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
+            console.log("hit placeOrder");
             this.confirmOrderForm.submit();
         };
         StateManager.prototype.SetCartState = function (cartType) {
@@ -163,6 +164,7 @@ var OrderRegistration;
                 $("#confirmationTabForAffiliate").hide();
             }
             else if (cartType === 'admin') {
+                var a = 'holder';
             }
             else {
                 $("#signUpTab").hide();
