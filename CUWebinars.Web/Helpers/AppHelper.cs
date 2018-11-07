@@ -261,7 +261,7 @@ namespace CUWebinars.Web.Helpers
         public string GetUserAuditInfo()
         {
             var _userCookies = SecurityElement.Escape(_request.ServerVariables["HTTP_COOKIE"]).Split(';');
-            var userCookies = "";
+            var userCookies = "na";
 
             IDictionary<string, string> auditInfoDictionary = new Dictionary<string, string>();
 
