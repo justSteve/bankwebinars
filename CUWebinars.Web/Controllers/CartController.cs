@@ -319,27 +319,23 @@ namespace CUWebinars.Web.Controllers
                 //is optOut.
                 if (idOrder != 0)
                 {
-
+                    var a = "holder";
                 }
                 else
                 {
-
+                    var a = "holder";
                 }
                 var loggerStruc = new UpgradeFromPromptModel
                 {
                     idOrder = idOrder,
-                    idAffiliate = order.idAffiliate,
+                    //idAffiliate = order.idAffiliate,
                     AuditInfo = _appHelper.GetUserAuditInfo(),
                     TimeStamp = DateTime.Now.ToLongTimeString(),
-                    idRegOriginal = idRegOrg,
-                    idRegUpgrade = row.idRegType
+                    //idRegOriginal = idRegOrg,
+                    //idRegUpgrade = row.idRegType
 
                 };
-
-
-
                 return Json(JsonConvert.SerializeObject(loggerStruc));
-
             }
 
         }
