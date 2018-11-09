@@ -1,35 +1,34 @@
 ﻿@model CUWebinars.Web.Models.NotificationHeaderModel
-<tr style="background-color: #344a58">
-    <td background="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
-        <img alt="left_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5px" />
-    </td>
-    <td>
-        <table align="center" border="0" cellpadding="0" cellspacing="0" height="115" width="645px">
-            <tbody>
-                <tr>
-                    <td bgcolor="#01232a" width="364">
-                        <img alt="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
-                    </td>
-                    <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
-                        <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">
-                            @Html.Raw(Model.HeaderText)
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td width="462px" bgcolor="#4c5966" valign="top">
-                        <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@Model.TenantLogo" style="display: block;" title="Site Logo" vspace="25" />
-                    </td>
-                    <td align="left" bgcolor="#4c5966" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
-                        <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                            @Model.BannerText
-                        </p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </td>
-    <td background="http://ttsmedia.ttstrain.com/images/vrLocal/right_shadow.jpg" rowspan="3" valign="top" width="5">
-        <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
-    </td>
-</tr>
+
+<td background="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" rowspan="3" valign="top" width="5">
+    <img alt="left_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/left_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5px" />
+</td>
+<td>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" height="115" width="645px">
+        <tbody>
+            <tr>
+                <td bgcolor="#01232a" width="364">
+                    <img alt="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" border="0" height="36" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/hardware_2_header_1.jpg" style="width: 374px; height: 36px; display: block;" width="374" />
+                </td>
+                <td align="right" bgcolor="#01232a" style="padding-right: 15px; border-top-color: rgb(52, 74, 88); border-right-color: rgb(52, 74, 88); border-top-width: 1px; border-right-width: 1px; border-top-style: solid; border-right-style: solid;" width="286">
+                    <div style="color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold;">
+                        @Html.Raw(Model.HeaderText)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td width="462px" bgcolor="#4c5966" valign="top">
+                    <img align="middle" alt="Site Logo" border="0" height="50" hspace="25" margin="0px 0px 0px 0px" src="@Model.TenantLogo" style="display: block;" title="Site Logo" vspace="25" />
+                </td>
+                <td align="left" bgcolor="#4c5966" style="padding: 0px 15px 0px 0px; border-right-color: rgb(52, 74, 88); border-right-width: 1px; border-right-style: solid;">
+                    <p style="text-align: center; color: rgb(255, 255, 255); font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                        @Model.BannerText
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</td>
+<td background="http://ttsmedia.ttstrain.com/images/vrLocal/right_shadow.jpg" rowspan="3" valign="top" width="5">
+    <img alt="right_shadow.jpg" border="0" height="1" margin="0px 0px 0px 0px" src="http://ttsmedia.ttstrain.com/images/vrLocal/right_shadow.jpg" style="width: 5px; height: 1px; display: block;" width="5" />
+</td>

@@ -388,9 +388,14 @@ $(function () {
                                 $('#ConfirmRegistrationBillMe').on('click', function (e) {
 
                                     e.preventDefault();
+
                                     //var confirmOrderForm = $('#confirmOrder');
                                     //confirmOrderForm.submit();
-                                    $('#ConfirmRegistrationBillMe > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
+
+                                    var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+
+                                    confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                                    confirmRegistrationBillMe.attr('disabled', 'disabled');
 
                                     //updated to show upgradePrompt
                                     $.ajax({
@@ -402,7 +407,7 @@ $(function () {
                                         .done(function (data) {
                                             console.log(data);
 
-                                            $('#loadingSpinner').remove();
+                                            $('#finalLoadingSpinner').remove();
                                             if (data.Result !== 0) {
 
                                                 $('#UpgradeModal').modal('show');
@@ -412,6 +417,12 @@ $(function () {
                                                 $('#UpgradeCaption')
                                                     .text(data.Caption + " Accepting the upgrade will increase the cost by " + data.Cost);
 
+                                                $("#UpgradeOrderFromPromptCloser").click(
+                                                    function () {
+                                                        var confirmOrderForm = $('#confirmOrder');
+                                                        confirmOrderForm.submit();
+                                                    }
+                                                );
                                                 $("#btnAcceptUpgrade").click(
                                                     function () {
                                                         alert("Great! We'll upgrade your order as requested.");
@@ -420,14 +431,14 @@ $(function () {
                                                 );
                                                 $("#btnOptOutAfterAccept").click(
                                                     function () {
-                                                        alert("Great! We'll upgrade your order as requested but<br> will not send future upgrade prompts..");
+                                                        alert("Great! We'll upgrade your order as requested but will not send future upgrade prompts.");
                                                         $('#hiddenOptOut').val("true");
                                                         submitAcceptUpgradeForm();
                                                     }
                                                 );
                                                 $("#btnOptOut").click(
                                                     function () {
-                                                        alert("Understood. We're leaving your order as is and<br> will not send any more upgrade prompts.");
+                                                        alert("Understood. We're leaving your order as is and will not send any more upgrade prompts.");
                                                         $('#hiddenOptOut').val("true");
                                                         submitAcceptUpgradeForm();
                                                     }
@@ -518,23 +529,13 @@ function submitAcceptUpgradeForm() {
         cache: false,
         url: url,
         dataType: RegistrationInCart.Constants.JsonDataType,
-        data: data,
+        data: data
 
-        beforeSend: function () {
-
-        }
     })
         .done(function (data) {
             console.log(data);
-            if (data.Result !== 0) {
-
-                var confirmOrderForm = $('#confirmOrder');
-                confirmOrderForm.submit();
-                //
-            } else {
-                var a = 1;
-
-            }
+            var confirmOrderForm = $('#confirmOrder');
+            confirmOrderForm.submit();
 
         });
 }

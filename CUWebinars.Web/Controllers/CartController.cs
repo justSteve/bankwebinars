@@ -182,6 +182,12 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = 0 }, JsonRequestBehavior.AllowGet);
 
             var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+            if (order == null)
+                throw new ArgumentNullException();
+
+            if (order.WebUser.OptedOutOfUpgradePrompt)
+                return Json(new { Result = 0 }, JsonRequestBehavior.AllowGet);
+
             var orginalReg = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).RegistrationType;
             var webinar = order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active).Webinar;
 
@@ -273,34 +279,24 @@ namespace CUWebinars.Web.Controllers
         [AllowAnonymous]
         public JsonResult UpgradeOrderFromPrompt(string code, int idOrder, string optOut)
         {
-            if (CheckIfMultiOrdersExist(idOrder) && !Request.QueryString.ToString().Contains("checked"))
+            var order = _cartControllerOrchestrator.GetOrderById(idOrder);
+
+            //if the discount is a wsp null it out.
+            var upgradeReg = _cartControllerOrchestrator.GetRegTypeById(Convert.ToInt32(code));
+            if (upgradeReg == null || order == null)
             {
-                return Json(new
-                {
-                    success = "success",
-                    redirectUrl = Url.Action("Checkout", "Cart", new RouteValueDictionary("checked=true")),
-                    isRedirect = true
-                }, JsonRequestBehavior.AllowGet);
+                throw new ArgumentNullException();
             }
 
-            _logger.Info("UpgradeOrderFromPrompt: " + idOrder + "  Starts with: " + code);
+            var idRegOrg = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                .RegistrationType.idRegType;
 
-            if (code != "optOut")
+            if (idOrder != 0)
             {
-                //ensures that the price passed to PayTrace reflects order price with discount applied.
-                var order = _cartControllerOrchestrator.GetOrderById(idOrder);
-                //if the discount is a wsp null it out.
-                var upgradeReg = _cartControllerOrchestrator.GetRegTypeById(Convert.ToInt32(code));
-                if (upgradeReg == null || order == null)
-                    throw new ArgumentNullException();
+                order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                       .RegistrationType = upgradeReg;
+                _cartControllerOrchestrator.SaveOrder(order);
 
-
-                var idRegOrg = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).RegistrationType
-                    .idRegType;
-                var row = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active).RegistrationType =
-                    upgradeReg;
-
-                var newPrice = _cartControllerOrchestrator.UpdateOrderPricing(order);
                 var loggerStruc = new UpgradeFromPromptModel
                 {
                     idOrder = idOrder,
@@ -308,36 +304,32 @@ namespace CUWebinars.Web.Controllers
                     AuditInfo = _appHelper.GetUserAuditInfo(),
                     TimeStamp = DateTime.Now.ToLongTimeString(),
                     idRegOriginal = idRegOrg,
-                    idRegUpgrade = row.idRegType
-
+                    idRegUpgrade = Convert.ToInt32(code)
                 };
 
-                return Json(JsonConvert.SerializeObject(loggerStruc));
+                _logger.Info(JsonConvert.SerializeObject(Json(new { UpgradeOrderFromPrompt = loggerStruc })));
             }
-            else
+
+            if (optOut == "true")
             {
-                //is optOut.
-                if (idOrder != 0)
-                {
-                    var a = "holder";
-                }
-                else
-                {
-                    var a = "holder";
-                }
+                order.WebUser.OptedOutOfUpgradePrompt = true;
+                _membershipService.UpdateUserDetails(order.WebUser);
+
                 var loggerStruc = new UpgradeFromPromptModel
                 {
                     idOrder = idOrder,
-                    //idAffiliate = order.idAffiliate,
+                    idAffiliate = order.idAffiliate,
                     AuditInfo = _appHelper.GetUserAuditInfo(),
                     TimeStamp = DateTime.Now.ToLongTimeString(),
-                    //idRegOriginal = idRegOrg,
-                    //idRegUpgrade = row.idRegType
-
+                    idRegOriginal = idRegOrg,
+                    idRegUpgrade = Convert.ToInt32(code)
                 };
-                return Json(JsonConvert.SerializeObject(loggerStruc));
+
+                _logger.Info(JsonConvert.SerializeObject(Json(new { UpgradeOrderFromPrompt = loggerStruc })));
+
             }
 
+            return Json(new {result = 1}, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -462,7 +454,6 @@ namespace CUWebinars.Web.Controllers
             _logger.Info("Confirming Order for OrderRow with Id {0}", id.Value);
             var model = _cartControllerOrchestrator.BuildCheckOutViewModel(id);
             var row = model.Order.OrderRows.SingleOrDefault(r => r.RowStatus == OrderRowStatus.Active);
-
 
             if (_cartControllerOrchestrator.UserHasMultipleEvents(id))
             {
