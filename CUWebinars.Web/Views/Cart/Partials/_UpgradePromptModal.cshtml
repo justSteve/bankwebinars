@@ -34,18 +34,18 @@
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary("Please address the following problems:", new { id = "upgradeOrderFromPrompt" })
                         <span id="UpgradeCaption">[text]</span>
-                        <button id="btnAcceptUpgrade" type="button" class="btn btn-default">Accept</button><br/>
-                        <button id="btnOptOutAfterAccept" type="button" class="btn btn-default" >Accept this time but don't offer upgrades again</button><br/>
+                        <button id="btnAcceptUpgrade" type="button" class="btn btn-default">Accept</button><br />
+                        <button id="btnOptOutAfterAccept" type="button" class="btn btn-default">Accept this time but don't offer upgrades again</button><br />
                         <button id="btnOptOut" type="button" class="btn btn-default">No thanks and don't show again</button>
-                        <input type="hidden" name="code" id="hiddenCode"/>
-                        <input type="hidden" name="idOrder" id="hiddenOrderId"/>
-                        <input type="hidden" name="optOut" id="hiddenOptOut"/>
+                        <input type="hidden" name="code" id="hiddenCode" />
+                        <input type="hidden" name="idOrder" id="hiddenOrderId" />
+                        <input type="hidden" name="optOut" id="hiddenOptOut" />
                     }
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="UpgradeOrderFromPromptCloser" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
