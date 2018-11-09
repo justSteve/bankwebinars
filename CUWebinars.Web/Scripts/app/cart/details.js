@@ -372,7 +372,9 @@ $(function () {
                                 $('#confirmationTab a').tab('show');
                                 var utilities = new Common.Utilities();
 
-                                if (shippingAddressRequired && !cartStateManager.getNotificationsTesting() && !cartStateManager.getAddressVerified()) {
+                                if (shippingAddressRequired &&
+                                    !cartStateManager.getNotificationsTesting() &&
+                                    !cartStateManager.getAddressVerified()) {
                                     // Following function lives in the register-during-checkout.js script
                                     // which will be in memory at this point and thus will have been hoisted.
                                     hookUpModal($('#UserDetailsModal'));
@@ -381,44 +383,63 @@ $(function () {
                                 // see top of this file
                                 checkoutConfirm.initialize();
 
+
                                 // The Bill Me button on 3rd tab
-                                $('#ConfirmRegistrationBillMe').on('click',
-                                    function (e) {
+                                $('#ConfirmRegistrationBillMe').on('click', function (e) {
 
-                                        e.preventDefault();
-                                        //var confirmOrderForm = $('#confirmOrder');
+                                    e.preventDefault();
+                                    //var confirmOrderForm = $('#confirmOrder');
+                                    //confirmOrderForm.submit();
+                                    $('#ConfirmRegistrationBillMe > div').prepend('<i id="loadingSpinner" class="icon-spinner icon-spin"></i>');
 
-                                        //added to display upgradePrompt
-                                        var promise = new Promise(function (resolve, reject) {
+                                    //updated to show upgradePrompt
+                                    $.ajax({
+                                        datatype: "text/plain",
+                                        type: "GET",
+                                        url: '/cart/UpgradePromptIni?idOrder=' + cartStateManager.getOrderId() + "",
+                                        cache: false
+                                    })
+                                        .done(function (data) {
+                                            console.log(data);
 
-                                            var upgradePrompt = showUpgradePrompt();
-                                            console.log("upgradePrompt: " + upgradePrompt);
+                                            $('#loadingSpinner').remove();
+                                            if (data.Result !== 0) {
 
-                                            if (upgradePrompt === 1) {
-                                                resolve("Stuff worked!");
-                                            }
-                                            else {
-                                                reject(Error("It broke"));
+                                                $('#UpgradeModal').modal('show');
+
+                                                $('#hiddenCode').val(data.Result);
+                                                $('#hiddenOrderId').val(cartStateManager.getOrderId());
+                                                $('#UpgradeCaption')
+                                                    .text(data.Caption + " Accepting the upgrade will increase the cost by " + data.Cost);
+
+                                                $("#btnAcceptUpgrade").click(
+                                                    function () {
+                                                        alert("Great! We'll upgrade your order as requested.");
+                                                        submitAcceptUpgradeForm();
+                                                    }
+                                                );
+                                                $("#btnOptOutAfterAccept").click(
+                                                    function () {
+                                                        alert("Great! We'll upgrade your order as requested but<br> will not send future upgrade prompts..");
+                                                        $('#hiddenOptOut').val("true");
+                                                        submitAcceptUpgradeForm();
+                                                    }
+                                                );
+                                                $("#btnOptOut").click(
+                                                    function () {
+                                                        alert("Understood. We're leaving your order as is and<br> will not send any more upgrade prompts.");
+                                                        $('#hiddenOptOut').val("true");
+                                                        submitAcceptUpgradeForm();
+                                                    }
+                                                );
+                                                //
+                                            } else {
+
+                                                var confirmOrderForm = $('#confirmOrder');
+                                                confirmOrderForm.submit();
                                             }
                                         });
-
-                                        promise.then(function (result) {
-
-                                            console.log(result); // "Stuff worked!"
-                                            // replace this with a reference to the callback
-                                            //callback(result);
-                                            //current code is submitting here.
-                                            //confirmOrderForm.submit();
-
-                                        }, function (err) {
-                                            console.log(err); // Error: "It broke"
-                                            //alert("rejected");
-                                            //replace with real error handling
-                                            //callback();
-                                            //confirmOrderForm.submit();
-                                        });
-
-                                    });
+                                });
                                 // The Cancel Registration button on 3rd tab
                                 $('#Canceller').on('click', function (e) {
                                     e.preventDefault();
@@ -482,50 +503,7 @@ function isShippingAddressRequired(jQueryObject) {
     //return true;
 }
 
-function showUpgradePrompt() {
-    //cartStateManager.getOrderId 
-    $.ajax({
-        datatype: "text/plain",
-        type: "GET",
-        url: '/cart/UpgradePromptIni?idOrder=' + cartStateManager.getOrderId() + "",
-        cache: false
-    })
-        .done(function (data) {
-            console.log(data);
-            if (data.Result !== 0) {
 
-                $('#UpgradeModal').modal('show');
-
-                $('#hiddenCode').val(data.Result);
-                $('#hiddenOrderId').val(cartStateManager.getOrderId());
-                $('#UpgradeCaption')
-                    .text(data.Caption + " Accepting the upgrade will increase the cost by " + data.Cost);
-
-                $("#btnAcceptUpgrade").click(
-                    function () {
-                        submitAcceptUpgradeForm();
-                    }
-                );
-                $("#btnOptOutAfterAccept").click(
-                    function () {
-                        $('#hiddenOptOut').val("true");
-                        submitAcceptUpgradeForm();
-                    }
-                );
-                $("#btnOptOut").click(
-                    function () {
-                        $('#hiddenOptOut').val("true");
-                        submitAcceptUpgradeForm();
-                    }
-                );
-                //
-            } else {
-
-                var confirmOrderForm = $('#confirmOrder');
-                confirmOrderForm.submit();
-            }
-        });
-}
 function submitAcceptUpgradeForm() {
 
 
@@ -533,6 +511,7 @@ function submitAcceptUpgradeForm() {
     var data = submitUpgradeOrderFromPromptForm.serialize();
     var url = submitUpgradeOrderFromPromptForm.attr('action');
 
+    $('#UpgradeModal').modal('hide');
     $.ajax({
         type: 'POST',
         contentType: RegistrationInCart.Constants.FormPostContentType,
@@ -543,7 +522,6 @@ function submitAcceptUpgradeForm() {
 
         beforeSend: function () {
 
-            $('#UpgradeModal').modal('hide');
         }
     })
         .done(function (data) {
