@@ -627,7 +627,7 @@ function setUpEditButtons() {
     }
     $('#revealOptions').on('click', function (e) {
         e.preventDefault();
-
+        alert("hit");
         $('#AdjustOrder').slideToggle();
     });
 

@@ -43,7 +43,8 @@
                     Model.OrderRow.Order.OrderStatus == OrderStatus.Paid ||
                     Model.OrderRow.Order.OrderStatus == OrderStatus.InProcess ||
                     Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted
-                    || Model.OrderRow.Order.OrderStatus == OrderStatus.OutstandingBalance)
+                    || Model.OrderRow.Order.OrderStatus == OrderStatus.OutstandingBalance
+                )
                 {
                     <aside style="width: 100%" class="widget clearfix">
 
@@ -62,14 +63,20 @@
                                 @{ Html.RenderPartial("DisplayTemplates/OrderSumUser", Model); }
                             </div>
 
-                            <h5 style="text-align: right; background-color: darkorange; color: whitesmoke; font-weight: bold; padding-top: 2px; padding-right: 3px;" class="short_headline"><span>Connection Status</span></h5>
-                        }
 
-                        @if (Model.ClickToJoinModel != null)
+                        }
+                        @if (Model.OrderRow.Order.OrderStatus == OrderStatus.Billed ||
+                             Model.OrderRow.Order.OrderStatus == OrderStatus.Paid ||
+                             Model.OrderRow.Order.OrderStatus == OrderStatus.Submitted
+
+                            )
                         {
-                            @Html.Partial("ClickToJoin", Model.ClickToJoinModel)
+                            <h5 style="text-align: right; background-color: darkorange; color: whitesmoke; font-weight: bold; padding-top: 2px; padding-right: 3px;" class="short_headline"><span>Connection Status</span></h5>
+                            if (Model.ClickToJoinModel != null)
+                            {
+                                @Html.Partial("ClickToJoin", Model.ClickToJoinModel)
+                            }
                         }
-
 
                     </aside>
                 }

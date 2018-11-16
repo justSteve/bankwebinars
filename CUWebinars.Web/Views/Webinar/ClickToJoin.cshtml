@@ -17,7 +17,7 @@
 
         if (Model.Webinar.idWebinar != 2520)
         {
-<div>This event took place on @Model.Webinar.Date.ToShortDateString()</div>
+            <div>This event took place on @Model.Webinar.Date.ToShortDateString()</div>
         }
     }
     else
@@ -56,7 +56,11 @@
                             Presented by @row.Webinar.Presenter.WebUser.FullName @Html.Raw(remainingDays)
                             starting at @Html.DisplayTime(row.Webinar.Date, timeZ, true).Replace(":00 ", "").Replace("12pm ", "Noon ").
                         </p>
-                        @if (row.RegistrationType.ShowLiveNotifications == "Yes")
+                        @if (row.RegistrationType.ShowLiveNotifications == "Yes" 
+                             && (Model.Order.OrderStatus == OrderStatus.Billed
+                             || Model.Order.OrderStatus == OrderStatus.Paid
+                             || Model.Order.OrderStatus == OrderStatus.Submitted
+                            ))
                         {
                             if (row.CitrixJoinUrl == null)
                             {
@@ -96,7 +100,7 @@
                                 </a>
                             </p>
                             <p>
-                                Check back here after the event for a link to the recording and your <i>Certificate of Completion</i>. 
+                                Check back here after the event for a link to the recording and your <i>Certificate of Completion</i>.
                             </p>
                         }
                         else
