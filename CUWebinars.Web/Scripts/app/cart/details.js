@@ -209,13 +209,13 @@ $(function () {
         var cookie = document.cookie;
         var prefix = name + "=";
         var begin = cookie.indexOf("; " + prefix);
-        if (begin == -1) {
+        if (begin === -1) {
             begin = cookie.indexOf(prefix);
-            if (begin != 0) return null;
+            if (begin !== 0) return null;
         } else {
             begin += 2;
             var end = document.cookie.indexOf(";", begin);
-            if (end == -1) {
+            if (end === -1) {
                 end = cookie.length;
             }
         }
@@ -237,9 +237,68 @@ $(function () {
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
             console.log("BIG green button submits");
             e.preventDefault();
-            var confirmOrderForm = $('#confirmOrder');
+            //var confirmOrderForm = $('#confirmOrder');
 
-            confirmOrderForm.submit();
+            //confirmOrderForm.submit();
+
+            var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+
+            confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+            confirmRegistrationBillMe.attr('disabled', 'disabled');
+
+            //updated to show upgradePrompt
+            $.ajax({
+                datatype: "text/plain",
+                type: "GET",
+                url: '/cart/UpgradePromptIni?idOrder=' + cartStateManager.getOrderId() + "",
+                cache: false
+            })
+                .done(function (data) {
+                    console.log(data);
+
+                    $('#finalLoadingSpinner').remove();
+                    if (data.Result !== 0) {
+
+                        $('#UpgradeModal').modal('show');
+
+                        $('#hiddenCode').val(data.Result);
+                        $('#hiddenOrderId').val(cartStateManager.getOrderId());
+                        $('#UpgradeCaption')
+                            .text(data.Caption + " Accepting the upgrade will increase the cost by " + data.Cost);
+
+                        $("#UpgradeOrderFromPromptCloser").click(
+                            function () {
+                                var confirmOrderForm = $('#confirmOrder');
+                                confirmOrderForm.submit();
+                            }
+                        );
+                        $("#btnAcceptUpgrade").click(
+                            function () {
+                                alert("Great! We'll upgrade your order as requested.");
+                                submitAcceptUpgradeForm();
+                            }
+                        );
+                        $("#btnOptOutAfterAccept").click(
+                            function () {
+                                alert("Great! We'll upgrade your order as requested but will not send future upgrade prompts.");
+                                $('#hiddenOptOut').val("true");
+                                submitAcceptUpgradeForm();
+                            }
+                        );
+                        $("#btnOptOut").click(
+                            function () {
+                                alert("Understood. We're leaving your order as is and will not send any more upgrade prompts.");
+                                $('#hiddenOptOut').val("true");
+                                submitAcceptUpgradeForm();
+                            }
+                        );
+                        //
+                    } else {
+
+                        var confirmOrderForm = $('#confirmOrder');
+                        confirmOrderForm.submit();
+                    }
+                });
         });
 
         // The grey CANCEL Registration button on 3rd tab       
@@ -514,9 +573,10 @@ function isShippingAddressRequired(jQueryObject) {
     //return true;
 }
 
-
+//this method is of a different scope than
+//  the scope that includes the .on('click' handler for confirmOrderForm
+//  hence the .done code is not being run.
 function submitAcceptUpgradeForm() {
-
 
     var submitUpgradeOrderFromPromptForm = $('#submitUpgradeOrderFromPromptForm');
     var data = submitUpgradeOrderFromPromptForm.serialize();
@@ -534,7 +594,10 @@ function submitAcceptUpgradeForm() {
     })
         .done(function (data) {
             console.log(data);
+
             var confirmOrderForm = $('#confirmOrder');
+
+            confirmOrderForm.find('input[name="id"]').val(cartStateManager.getOrderId());
             confirmOrderForm.submit();
 
         });
@@ -882,9 +945,9 @@ var applyAdditionalLocations = function (e) {
 
             var addLocPrice = 0;
 
-            if (typeof ADDLOC != "undefined") {
+            if (typeof ADDLOC !== "undefined") {
                 addLocPrice = ADDLOC.price;
-            } else if (typeof webinarAdditionalLocationPrice != "undefined") {
+            } else if (typeof webinarAdditionalLocationPrice !== "undefined") {
                 addLocPrice = webinarAdditionalLocationPrice;
             }
 

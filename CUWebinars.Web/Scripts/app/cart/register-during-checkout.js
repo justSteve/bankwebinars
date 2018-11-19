@@ -5,13 +5,13 @@ function getCookie(name) {
     var cookie = document.cookie;
     var prefix = name + "=";
     var begin = cookie.indexOf("; " + prefix);
-    if (begin == -1) {
+    if (begin === -1) {
         begin = cookie.indexOf(prefix);
-        if (begin != 0) return null;
+        if (begin !== 0) return null;
     } else {
         begin += 2;
         var end = document.cookie.indexOf(";", begin);
-        if (end == -1) {
+        if (end === -1) {
             end = cookie.length;
         }
     }
@@ -36,7 +36,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
     $('#RegisterFields_Email').bind('change keyup', function () {
         regUserStateManager.ensureFormValidatorParsed();
-        if ($(this).valid() == true) {
+        if ($(this).valid() === true) {
             $('#TheSubmitButton').removeClass('button_disabled').attr('disabled', false);
         } else {
             $('#TheSubmitButton').addClass('button_disabled').attr('disabled', true);
@@ -122,7 +122,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
             inputElementTriggered = 'NormalResetPasswordInput';
 
         // 13 is enter key
-        if (event.which == 13) {
+        if (event.which === 13) {
 
             if ($('#modalInstitution').filter(':visible').length > 0
                 && inputElementTriggered !== RegistrationInCart.Button.YesUseAddress
@@ -286,7 +286,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                 }
                 var cookieVals = getCookie("OrderStart");
 
-                if (cookieVals == null) {
+                if (cookieVals === null) {
                     var a = "holder";
                 }
                 else {
@@ -378,7 +378,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
     $('#FullName').blur(function () {
         var tempName = $('#FullName').val().split(' ');
-        if (tempName.length == 2) {
+        if (tempName.length === 2) {
             $('#RegisterFields_FirstName').val(tempName[0]);
             $('#RegisterFields_LastName').val(tempName[1]);
             $('#RegisterFields_Title').focus();
@@ -512,7 +512,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                             $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
 
-                                if (status == 'error') {
+                                if (status === 'error') {
                                     L.clientLogger.error("Error at /cart/checkoutConfirm/", { rowid: cartStateManager.getOrderId() });
                                     $(this).html('<div class="text-error">There has been error at the server, please use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
                                     $('#loadingSpinner').remove();
@@ -521,7 +521,69 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                                     $('#ConfirmRegistrationBillMe').on('click', function (e) {
                                         // This location is hit when new user created at order entry
-                                        completeOrder(userId, orderRowId, webinarId, orderId);
+
+                                        var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+
+                                        confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                                        confirmRegistrationBillMe.attr('disabled', 'disabled');
+
+                                        //updated to show upgradePrompt
+                                        $.ajax({
+                                            datatype: "text/plain",
+                                            type: "GET",
+                                            url: '/cart/UpgradePromptIni?idOrder=' + cartStateManager.getOrderId() + "",
+                                            cache: false
+                                        })
+                                            .done(function (data) {
+                                                console.log(data);
+                                                
+                                                $('#finalLoadingSpinner').remove();
+                                                if (data.Result !== 0) {
+
+                                                    $('#UpgradeModal').modal('show');
+
+                                                    $('#hiddenCode').val(data.Result);
+                                                    $('#hiddenOrderId').val(cartStateManager.getOrderId());
+                                                    $('#UpgradeCaption')
+                                                        .text(data.Caption + " Accepting the upgrade will increase the cost by " + data.Cost);
+
+                                                    $("#UpgradeOrderFromPromptCloser").click(
+                                                        function () {
+                                                            completeOrder(userId, orderRowId, webinarId, orderId);
+
+                                                            //var confirmOrderForm = $('#confirmOrder');
+                                                            //confirmOrderForm.submit();
+                                                        }
+                                                    );
+                                                    $("#btnAcceptUpgrade").click(
+                                                        function () {
+                                                            alert("Great! We'll upgrade your order as requested.");
+
+                                                            submitAcceptUpgradeForm();
+                                                        }
+                                                    );
+                                                    $("#btnOptOutAfterAccept").click(
+                                                        function () {
+                                                            alert("Great! We'll upgrade your order as requested but will not send future upgrade prompts.");
+                                                            $('#hiddenOptOut').val("true");
+                                                            submitAcceptUpgradeForm();
+                                                        }
+                                                    );
+                                                    $("#btnOptOut").click(
+                                                        function () {
+                                                            alert("Understood. We're leaving your order as is and will not send any more upgrade prompts.");
+                                                            $('#hiddenOptOut').val("true");
+                                                            submitAcceptUpgradeForm();
+                                                        }
+                                                    );
+                                                    //
+                                                } else {
+                                                    completeOrder(userId, orderRowId, webinarId, orderId);
+                                                    //var confirmOrderForm = $('#confirmOrder');
+                                                    //confirmOrderForm.submit();
+                                                }
+                                            });
+                                        //
                                         L.clientLogger.info("BigGreenBillMe from register-user-in-cart", { orderid: orderId });
                                     });
 
@@ -663,7 +725,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
                                     $('#confirmation').load('/cart/checkoutConfirm/' + cartStateManager.getOrderId(), function (response, status, xhr) {
                                         console.log("hit checkoutConfirm")
-                                        if (status == 'error') {
+                                        if (status === 'error') {
                                             L.clientLogger.error("Connection Error #106.", { 'data': data || 'data was falsey' });
 
                                             $(this).html('<div class="text-error">Connection Error #106. Email ' + globalConfig.TenantEmail + ' or use our Help & Feedback button (lower right corner)  for immediate assistance.</div>');
@@ -731,7 +793,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
 
         }).fail(function (jqXHR, textStatus, errorThrown) {
 
-            if (jqXHR.statusCode().status == 403) {
+            if (jqXHR.statusCode().status === 403) {
                 alert('Sorry, your session has expired. Please login again to continue');
                 window.location.href = '/Account/Login';
             } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
@@ -791,11 +853,13 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
     var confirmOrderForm = cartStateManager.getConfirmOrderForm();
 
     confirmOrderForm.on('submit', function (e) {
-        console.log("confirmOrderForm");
+
         e.preventDefault();
 
         var self = $(this);
         self.find('input[name="id"]').val(orderRowId);
+        console.log("confirmOrderForm");
+        console.log(data);
 
         var data = $(this).serialize();
 
@@ -831,7 +895,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
                 utilities.goToUrl('/Account/OrderComplete/' + orderId);
 
             } else {
-
+                console.log(result);
                 L.clientLogger.error("Error #935: ", { result: result && result.Result });
                 confirmRegistrationBillMe.after('<span class="text-error">Error #935. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
             }
@@ -1065,7 +1129,7 @@ function hookUpEditUserLogic(button, shippingAddressRequired) {
 
             }).fail(function (data) {
 
-                if (jqXHR.statusCode().status == 403) {
+                if (jqXHR.statusCode().status === 403) {
                     alert('Sorry, your session has expired. Please login again to continue');
                     window.location.href = '/Account/Login';
                 } else if (jqXHR.statusCode().status === 0 && errorThrown === '' && textStatus === 'error') {
@@ -1332,7 +1396,7 @@ function hookUpApplyDiscountLogic(btn, orderRowId) {
             }
         }).done(function (data) {
 
-            if (data.Result == 0) {
+            if (data.Result === 0) {
                 alert("The discount code " +
                     $('#CheckoutDiscountCode').val() +
                     " was not found or had an error that prevented usage. Try again or use our Help & Feedback button (lower right corner)  for assistance.");
