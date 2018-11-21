@@ -595,11 +595,11 @@ function submitAcceptUpgradeForm() {
         .done(function (data) {
             console.log(data);
 
-            var confirmOrderForm = $('#confirmOrder');
+            //var confirmOrderForm = $('#confirmOrder');
 
-            confirmOrderForm.find('input[name="id"]').val(cartStateManager.getOrderId());
-            confirmOrderForm.submit();
-
+            //confirmOrderForm.find('input[name="id"]').val(cartStateManager.getOrderId());
+            //confirmOrderForm.submit();
+            completeOrder(null, cartStateManager.getOrderRowId(), null, cartStateManager.getOrderId());
         });
 }
 
