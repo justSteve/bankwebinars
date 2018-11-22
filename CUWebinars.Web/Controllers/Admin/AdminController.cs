@@ -5394,19 +5394,19 @@ namespace CUWebinars.Web.Controllers.Admin
                                              incOrder.InvoiceDetail + "' where idOrder =" + incOrder.idOrder);
 
                                 incOrder.InvoiceDetail = null;
+
+
+
+                                AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
+                                {
+                                    Affiliate = affiliate,
+                                    InvoiceID = weekNumber + "-" + affiliate.idUserAff,
+                                    RoyaltyTier = affiliate.CommissionModel
+                                };
+                                invoice = _affiliateManagementService.BuildAffiliateInvoiceForIncompleteOrders(invoice,
+                                    _incompleteOrders, thisAffiliate);
+                                int rowNumber = 0;
                             }
-
-
-                            AffiliateInvoiceDTO invoice = new AffiliateInvoiceDTO
-                            {
-                                Affiliate = affiliate,
-                                InvoiceID = weekNumber + "-" + affiliate.idUserAff,
-                                RoyaltyTier = affiliate.CommissionModel
-                            };
-                            invoice = _affiliateManagementService.BuildAffiliateInvoiceForIncompleteOrders(invoice,
-                                _incompleteOrders, thisAffiliate);
-                            int rowNumber = 0;
-
                         }
                     }
                     catch (Exception ex)

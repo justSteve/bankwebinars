@@ -278,10 +278,9 @@ $(function () {
                                 submitAcceptUpgradeForm();
                             }
                         );
-                        $("#btnOptOutAfterAccept").click(
+                        $("#btnDeclineUpgrade").click(
                             function () {
-                                alert("Great! We'll upgrade your order as requested but will not send future upgrade prompts.");
-                                $('#hiddenOptOut').val("true");
+                                alert("Understood. We're leaving your order as is.");
                                 submitAcceptUpgradeForm();
                             }
                         );
@@ -488,10 +487,9 @@ $(function () {
                                                         submitAcceptUpgradeForm();
                                                     }
                                                 );
-                                                $("#btnOptOutAfterAccept").click(
+                                                $("#btnDeclineUpgrade").click(
                                                     function () {
-                                                        alert("Great! We'll upgrade your order as requested but will not send future upgrade prompts.");
-                                                        $('#hiddenOptOut').val("true");
+                                                        alert("Understood. We're leaving your order as is.");
                                                         submitAcceptUpgradeForm();
                                                     }
                                                 );
@@ -545,10 +543,18 @@ $(function () {
                     $('#confirmation').html('<div class="text-error">There has been an error at the server. Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.</div>');
                 }
             }, constants.JsonDataType);
-
+//            setUpEditButtons();
             return false;
         }
         return false;
+    });
+
+    $(window).on('load', function (e) {
+        var isExpressCheckout = getQueryVariable("source");
+
+        if (isExpressCheckout === "Express" || isExpressCheckout === "Resume"  ) {
+            setUpEditButtons();
+        }
     });
 
     $(window).on('beforeunload', function (e) {
@@ -565,6 +571,16 @@ $(function () {
         return confirmationMessage;
     });
 });
+
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] === variable) { return pair[1]; }
+    }
+    return (false);
+}
 
 function isShippingAddressRequired(jQueryObject) {
     //todo: re-enable
@@ -604,7 +620,11 @@ function submitAcceptUpgradeForm() {
 }
 
 function setUpEditButtons() {
+    $('#Canceller').on('click', function (e) {
+        e.preventDefault();
 
+        $('#CancelModal').modal('show');
+    });
     $('#addCcLoc').on('click', function (e) {
 
         e.preventDefault();
@@ -624,7 +644,8 @@ function setUpEditButtons() {
                 $('#applycCLocationsButton').on('click', applyCcLocations);
             }
             newId = 0;
-        } else {
+        }
+        else {
 
             $('#applycCLocationsButton').on('click', applyCcLocations);
             // first get the last previous email input
@@ -690,7 +711,7 @@ function setUpEditButtons() {
     }
     $('#revealOptions').on('click', function (e) {
         e.preventDefault();
-        alert("hit");
+
         $('#AdjustOrder').slideToggle();
     });
 
@@ -707,9 +728,6 @@ function setUpEditButtons() {
         e.preventDefault();
 
         $('#AdjustAddLoc').slideToggle(400, function () { wireUpHandlers(); });
-
-
-
     });
     $('#editUserDetails').on('click', function (e) {
         e.preventDefault();

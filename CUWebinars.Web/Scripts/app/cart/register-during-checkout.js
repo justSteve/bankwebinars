@@ -562,10 +562,9 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                                             submitAcceptUpgradeForm();
                                                         }
                                                     );
-                                                    $("#btnOptOutAfterAccept").click(
+                                                    $("#btnDeclineUpgrade").click(
                                                         function () {
-                                                            alert("Great! We'll upgrade your order as requested but will not send future upgrade prompts.");
-                                                            $('#hiddenOptOut').val("true");
+                                                            alert("Understood. We're leaving your order as is.");
                                                             submitAcceptUpgradeForm();
                                                         }
                                                     );
