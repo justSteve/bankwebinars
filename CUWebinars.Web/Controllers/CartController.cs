@@ -201,6 +201,11 @@ namespace CUWebinars.Web.Controllers
                 return Json(new { Result = 0 });
             }
 
+            if (webinar.Status != WebinarStatus.Scheduled)
+            {
+                return Json(new { Result = 0 });
+            }
+
             if (_globalConfig.Tenant == "DirSeries" || _globalConfig.Tenant == "CCS")
             {
                 return Json(new { Result = 0 });
