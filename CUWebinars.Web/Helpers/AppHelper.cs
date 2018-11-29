@@ -1681,6 +1681,13 @@ namespace CUWebinars.Web.Helpers
 
         }
 
+        public void ConvertCftSoutheastOrders()
+        {
+            var dataOperations = new DataOperations(TtsConfig.DefaultConnectionString);
+            dataOperations.ConvertCftSoutheastOrders();
+
+        }
+
         public static string[] AddNonvalidToArray(string[] zipCentricFields)
         {
             if (zipCentricFields == null) throw new ArgumentNullException("zipCentricFields");

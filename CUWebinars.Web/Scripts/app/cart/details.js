@@ -281,6 +281,8 @@ $(function () {
                         $("#btnDeclineUpgrade").click(
                             function () {
                                 alert("Understood. We're leaving your order as is.");
+                                $('#hiddenCode').val("na");
+
                                 submitAcceptUpgradeForm();
                             }
                         );
@@ -288,6 +290,8 @@ $(function () {
                             function () {
                                 alert("Understood. We're leaving your order as is and will not send any more upgrade prompts.");
                                 $('#hiddenOptOut').val("true");
+                                $('#hiddenCode').val("na");
+
                                 submitAcceptUpgradeForm();
                             }
                         );
@@ -490,6 +494,8 @@ $(function () {
                                                 $("#btnDeclineUpgrade").click(
                                                     function () {
                                                         alert("Understood. We're leaving your order as is.");
+                                                        $('#hiddenCode').val("na");
+
                                                         submitAcceptUpgradeForm();
                                                     }
                                                 );
@@ -497,6 +503,8 @@ $(function () {
                                                     function () {
                                                         alert("Understood. We're leaving your order as is and will not send any more upgrade prompts.");
                                                         $('#hiddenOptOut').val("true");
+
+                                                        $('#hiddenCode').val("na");
                                                         submitAcceptUpgradeForm();
                                                     }
                                                 );
@@ -511,6 +519,7 @@ $(function () {
                                 // The Cancel Registration button on 3rd tab
                                 $('#Canceller').on('click', function (e) {
                                     e.preventDefault();
+
 
                                     $('#CancelModal').modal('show');
                                 });
@@ -543,7 +552,7 @@ $(function () {
                     $('#confirmation').html('<div class="text-error">There has been an error at the server. Please refresh your page and try again. In the event of repeated problems, please use our Help & Feedback button (lower right corner) for immediate assistance.</div>');
                 }
             }, constants.JsonDataType);
-//            setUpEditButtons();
+            //            setUpEditButtons();
             return false;
         }
         return false;
@@ -552,7 +561,7 @@ $(function () {
     $(window).on('load', function (e) {
         var isExpressCheckout = getQueryVariable("source");
 
-        if (isExpressCheckout === "Express" || isExpressCheckout === "Resume"  ) {
+        if (isExpressCheckout === "Express" || isExpressCheckout === "Resume") {
             setUpEditButtons();
         }
     });
@@ -597,7 +606,7 @@ function submitAcceptUpgradeForm() {
     var submitUpgradeOrderFromPromptForm = $('#submitUpgradeOrderFromPromptForm');
     var data = submitUpgradeOrderFromPromptForm.serialize();
     var url = submitUpgradeOrderFromPromptForm.attr('action');
-
+    console.log(data);
     $('#UpgradeModal').modal('hide');
     $.ajax({
         type: 'POST',

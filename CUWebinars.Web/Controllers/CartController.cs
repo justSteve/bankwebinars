@@ -195,6 +195,17 @@ namespace CUWebinars.Web.Controllers
             {
                 return Json(new { Result = 0 });
             }
+
+            if (webinar.idWebinar == 2520)
+            {
+                return Json(new { Result = 0 });
+            }
+
+            if (_globalConfig.Tenant == "DirSeries" || _globalConfig.Tenant == "CCS")
+            {
+                return Json(new { Result = 0 });
+            }
+
             if (webinar.SeriesInfo.Contains("Children"))
             {
                 return Json(new { Result = 0 });
@@ -280,34 +291,36 @@ namespace CUWebinars.Web.Controllers
         public JsonResult UpgradeOrderFromPrompt(string code, int idOrder, string optOut)
         {
             var order = _cartControllerOrchestrator.GetOrderById(idOrder);
-
-            //if the discount is a wsp null it out.
-            var upgradeReg = _cartControllerOrchestrator.GetRegTypeById(Convert.ToInt32(code));
-            if (upgradeReg == null || order == null)
+            var idRegOrg = 0;
+            if (code != "na")
             {
-                throw new ArgumentNullException();
-            }
-
-            var idRegOrg = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
-                .RegistrationType.idRegType;
-
-            if (idOrder != 0)
-            {
-                order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
-                       .RegistrationType = upgradeReg;
-                _cartControllerOrchestrator.SaveOrder(order);
-
-                var loggerStruc = new UpgradeFromPromptModel
+                var upgradeReg = _cartControllerOrchestrator.GetRegTypeById(Convert.ToInt32(code));
+                if (upgradeReg == null || order == null)
                 {
-                    idOrder = idOrder,
-                    idAffiliate = order.idAffiliate,
-                    AuditInfo = _appHelper.GetUserAuditInfo(),
-                    TimeStamp = DateTime.Now.ToLongTimeString(),
-                    idRegOriginal = idRegOrg,
-                    idRegUpgrade = Convert.ToInt32(code)
-                };
+                    throw new ArgumentNullException();
+                }
 
-                _logger.Info(JsonConvert.SerializeObject(Json(new { UpgradeOrderFromPrompt = loggerStruc })));
+                idRegOrg = order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                    .RegistrationType.idRegType;
+
+                if (idOrder != 0)
+                {
+                    order.OrderRows.Single(r => r.RowStatus == OrderRowStatus.Active)
+                        .RegistrationType = upgradeReg;
+                    _cartControllerOrchestrator.SaveOrder(order);
+
+                    var loggerStruc = new UpgradeFromPromptModel
+                    {
+                        idOrder = idOrder,
+                        idAffiliate = order.idAffiliate,
+                        AuditInfo = _appHelper.GetUserAuditInfo(),
+                        TimeStamp = DateTime.Now.ToLongTimeString(),
+                        idRegOriginal = idRegOrg,
+                        idRegUpgrade = Convert.ToInt32(code)
+                    };
+
+                    _logger.Info(JsonConvert.SerializeObject(Json(new { UpgradeOrderFromPrompt = loggerStruc })));
+                }
             }
 
             if (optOut == "true")
@@ -328,8 +341,7 @@ namespace CUWebinars.Web.Controllers
                 _logger.Info(JsonConvert.SerializeObject(Json(new { UpgradeOrderFromPrompt = loggerStruc })));
 
             }
-
-            return Json(new {result = 1}, JsonRequestBehavior.AllowGet);
+            return Json(new { result = 1 }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

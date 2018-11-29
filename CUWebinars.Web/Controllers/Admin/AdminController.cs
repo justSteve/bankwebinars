@@ -4973,6 +4973,9 @@ namespace CUWebinars.Web.Controllers.Admin
             //openingCall.Start();
             if (_idAffiliate == 11464)
                 _appHelper.ConvertCfteaOrders();
+
+            if (_idAffiliate == 11464)
+                _appHelper.ConvertCftSoutheastOrders();
             int TenantConstant = 4985;
 
             if (_globalConfig.Tenant == "BankWebinars")

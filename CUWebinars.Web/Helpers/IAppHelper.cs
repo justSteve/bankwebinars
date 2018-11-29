@@ -48,5 +48,6 @@ namespace CUWebinars.Web.Helpers
         string FindChangedRegTypes(Order order);
         string FindChangedOrderStatus(Order order);
         void ConvertCfteaOrders();
+        void ConvertCftSoutheastOrders();
     }
 }

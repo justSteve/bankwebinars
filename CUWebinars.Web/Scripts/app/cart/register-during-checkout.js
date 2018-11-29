@@ -565,6 +565,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                                     $("#btnDeclineUpgrade").click(
                                                         function () {
                                                             alert("Understood. We're leaving your order as is.");
+                                                            $('#hiddenCode').val("na");
+
                                                             submitAcceptUpgradeForm();
                                                         }
                                                     );
@@ -572,6 +574,8 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                                         function () {
                                                             alert("Understood. We're leaving your order as is and will not send any more upgrade prompts.");
                                                             $('#hiddenOptOut').val("true");
+                                                            $('#hiddenCode').val("na");
+
                                                             submitAcceptUpgradeForm();
                                                         }
                                                     );
