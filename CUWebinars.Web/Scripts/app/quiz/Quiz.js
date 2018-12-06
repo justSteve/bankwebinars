@@ -2,19 +2,11 @@
 /// <reference path="../../typings/jquery/jquery.validation.d.ts" />
 /// <reference path="../../typings/bootstrap/bootstrap.d.ts" />
 /// <reference path="../../typings/underscore/underscore.d.ts" />
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    }
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var QuizDomain;
 (function (QuizDomain) {
     var CompletionStatus;
@@ -31,7 +23,7 @@ var QuizDomain;
         EditType[EditType["Deleted"] = 2] = "Deleted";
     })(EditType = QuizDomain.EditType || (QuizDomain.EditType = {}));
     ;
-    var Quiz = /** @class */ (function () {
+    var Quiz = (function () {
         function Quiz() {
         }
         Quiz.prototype.getCompleted = function () {
@@ -70,7 +62,7 @@ var QuizDomain;
         return Quiz;
     }());
     QuizDomain.Quiz = Quiz;
-    var Question = /** @class */ (function () {
+    var Question = (function () {
         function Question() {
         }
         Question.prototype.incrementOptionsCount = function () {
@@ -123,7 +115,7 @@ var QuizDomain;
     }());
     QuizDomain.Question = Question;
     ;
-    var Option = /** @class */ (function () {
+    var Option = (function () {
         function Option() {
         }
         Option.prototype.getText = function () {
@@ -148,7 +140,7 @@ var QuizDomain;
     }());
     QuizDomain.Option = Option;
     ;
-    var EditableQuestion = /** @class */ (function (_super) {
+    var EditableQuestion = (function (_super) {
         __extends(EditableQuestion, _super);
         function EditableQuestion() {
             return _super.call(this) || this;
@@ -162,7 +154,7 @@ var QuizDomain;
         return EditableQuestion;
     }(Question));
     QuizDomain.EditableQuestion = EditableQuestion;
-    var EditableOption = /** @class */ (function (_super) {
+    var EditableOption = (function (_super) {
         __extends(EditableOption, _super);
         function EditableOption() {
             return _super.call(this) || this;
@@ -176,14 +168,14 @@ var QuizDomain;
         return EditableOption;
     }(Option));
     QuizDomain.EditableOption = EditableOption;
-    var EditedQuestion = /** @class */ (function () {
+    var EditedQuestion = (function () {
         function EditedQuestion(id) {
             this.QuestionId = id;
         }
         return EditedQuestion;
     }());
     QuizDomain.EditedQuestion = EditedQuestion;
-    var EditedOption = /** @class */ (function () {
+    var EditedOption = (function () {
         function EditedOption() {
         }
         return EditedOption;

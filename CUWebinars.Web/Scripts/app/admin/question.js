@@ -4,7 +4,7 @@
 /// <reference path="../../typings/underscore/underscore.d.ts" />
 var AddQuiz;
 (function (AddQuiz) {
-    var Question = /** @class */ (function () {
+    var Question = (function () {
         function Question() {
         }
         Question.prototype.incrementOptionsCount = function () {
@@ -42,7 +42,7 @@ var AddQuiz;
     }());
     AddQuiz.Question = Question;
     ;
-    var Option = /** @class */ (function () {
+    var Option = (function () {
         function Option() {
         }
         Option.prototype.getText = function () {

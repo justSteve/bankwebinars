@@ -198,7 +198,7 @@ module OrderRegistration {
 
         PlaceOrder(): void {
             $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
-            console.log("hit placeOrder");
+            
             this.confirmOrderForm.submit();
         }
 

@@ -4974,7 +4974,7 @@ namespace CUWebinars.Web.Controllers.Admin
             if (_idAffiliate == 11464)
                 _appHelper.ConvertCfteaOrders();
 
-            if (_idAffiliate == 11464)
+            if (_idAffiliate == 383)
                 _appHelper.ConvertCftSoutheastOrders();
             int TenantConstant = 4985;
 
@@ -5385,12 +5385,15 @@ namespace CUWebinars.Web.Controllers.Admin
 
                         if (_incompleteOrders.Any())
                         {
-
+                            
                             _logger.Info("GenerateWeeklyInvoices found Incomplete Orders " + _incompleteOrders.Count +
                                          "  for " +
                                          idAffiliate);
                             foreach (var incOrder in _incompleteOrders)
                             {
+                                if (incOrder == null)
+                                    continue;
+
                                 _logger.Info("GenerateWeeklyInvoices | Incomplete  order " + incOrder.idOrder +
                                              " for " + idAffiliate);
                                 _logger.Info("GenInv:   UPDATE dbo.[Order] SET InvoiceDetail = '" +
@@ -5842,13 +5845,13 @@ namespace CUWebinars.Web.Controllers.Admin
 
                             // Retrieve reference to a previously created container.
                             CloudBlobContainer container = blobClient.GetContainerReference("affiliateinvoices");
-#if DEBUG
-                            container = blobClient.GetContainerReference("affiliateinvoices_TESTING");
-                            document.Save(
-                                Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".pdf"), SaveOptions.PdfDefault);
+//#if DEBUG
+//                            container = blobClient.GetContainerReference("affiliateinvoices_TESTING");
+//                            document.Save(
+//                                Server.MapPath(@"~/App_Data/mergeTemplates/" + InvoiceID + ".pdf"), SaveOptions.PdfDefault);
 
 
-#endif
+//#endif
 
                             container.CreateIfNotExists();
                             CloudBlobContainer containerSheets = blobClient.GetContainerReference("invoices-affiliate");
@@ -5868,12 +5871,12 @@ namespace CUWebinars.Web.Controllers.Admin
                                                                       InvoiceID + ".xls");
                             blobSheets.UploadText(sheetAff.ToString());
 
-                            using (MemoryStream output = new MemoryStream())
-                            {
-                                document.Save(output, SaveOptions.PdfDefault);
-                                output.Position = 0; // reset to beginning so Upload operation can work correctly
-                                blob.UploadFromStream(output);
-                            }
+                            //using (MemoryStream output = new MemoryStream())
+                            //{
+                            //    document.Save(output, SaveOptions.PdfDefault);
+                            //    output.Position = 0; // reset to beginning so Upload operation can work correctly
+                            //    blob.UploadFromStream(output);
+                            //}
 
                             using (MemoryStream output = new MemoryStream())
                             {

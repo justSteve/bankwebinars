@@ -536,7 +536,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                         })
                                             .done(function (data) {
                                                 console.log(data);
-                                                
+
                                                 $('#finalLoadingSpinner').remove();
                                                 if (data.Result !== 0) {
 
@@ -551,8 +551,6 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                                         function () {
                                                             completeOrder(userId, orderRowId, webinarId, orderId);
 
-                                                            //var confirmOrderForm = $('#confirmOrder');
-                                                            //confirmOrderForm.submit();
                                                         }
                                                     );
                                                     $("#btnAcceptUpgrade").click(
@@ -582,8 +580,7 @@ registerDuringCheckout.initialize = function (orderId, webinarId, orderRowId, ad
                                                     //
                                                 } else {
                                                     completeOrder(userId, orderRowId, webinarId, orderId);
-                                                    //var confirmOrderForm = $('#confirmOrder');
-                                                    //confirmOrderForm.submit();
+
                                                 }
                                             });
                                         //
@@ -850,7 +847,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
     // currently only hit by new user creations
     // might be good to generalize things thru this point
     var cartStateManager = new OrderRegistration.StateManager();
-
+    console.log("completeOrder: " + orderId);
     cartStateManager.setConfirmOrderForm($('#confirmOrder'));
 
     var confirmOrderForm = cartStateManager.getConfirmOrderForm();
@@ -860,17 +857,18 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
         e.preventDefault();
 
         var self = $(this);
-        self.find('input[name="id"]').val(orderRowId);
+        self.find('input[name="id"]').val(orderId);
         console.log("confirmOrderForm");
-        console.log(data);
 
-        var data = $(this).serialize();
+        var data = $(confirmOrderForm).serialize();
+        console.log(data);
 
         var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
         confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
         confirmRegistrationBillMe.attr('disabled', 'disabled');
 
+        var utilities = new Common.Utilities();
         $.ajax({
             type: 'POST',
             contentType: RegistrationInCart.Constants.FormPostContentType,
@@ -883,8 +881,8 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
 
             }
         }).done(function (result) {
+
             if (result.Result === 'Success') {
-                orderRowId = result.OrderRowId;
 
                 $('#orderDetails').empty();
                 $('#orderDetails').append(result.Msg);
@@ -892,12 +890,12 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
                 $('#orderStatusLabel').text('Submitted').removeClass('label-warning').addClass('label-success');
                 confirmRegistrationBillMe.after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Transferring you now...</span></span>');
 
-                okToLeave = true;
-
-                var utilities = new Common.Utilities();
                 utilities.goToUrl('/Account/OrderComplete/' + orderId);
-
+            } else if (data.Result === 'UserHasMulti') {
+                utilities.goToUrl('/Cart/Checkout');
             } else {
+                //console.error('Failed to post order');
+                
                 console.log(result);
                 L.clientLogger.error("Error #935: ", { result: result && result.Result });
                 confirmRegistrationBillMe.after('<span class="text-error">Error #935. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
@@ -907,6 +905,7 @@ function completeOrder(userId, orderRowId, webinarId, orderId) {
             confirmRegistrationBillMe.removeAttr('disabled');
         }).fail(commonFuncs.failCallBack);
     });
+
     confirmOrderForm.submit();
     confirmOrderForm.off('submit');
 }

@@ -54,72 +54,73 @@ $(function () {
 
         cartStateManager.setCancelOrderForm($('#cancelOrder'));
         cartStateManager.setConfirmOrderForm($('#confirmOrder'));
+        //with the following handler enabled the form was being 
+        // submitted twice.
+        //cartStateManager.getConfirmOrderForm().on('submit', function (e) {
 
-        cartStateManager.getConfirmOrderForm().on('submit', function (e) {
+        //    if (desCheckout) {
+        //        $('#ConfirmRegistrationBillMe').hide();
+        //        $('#ContinueShoppingButton').hide();
+        //        $('#linkIsOrderForCoworker').hide();
+        //        $('#revealAddLocsPanel').hide();
+        //        $('#revealDiscountInput').hide();
+        //        $('#revealOptions').hide();
+        //        $('#AttendRegTypesCaption').text("Subscription Overview");
+        //    }
+        //    e.preventDefault();
+        //    var self = $(this);
+        //    var orderRowId = self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
 
-            if (desCheckout) {
-                $('#ConfirmRegistrationBillMe').hide();
-                $('#ContinueShoppingButton').hide();
-                $('#linkIsOrderForCoworker').hide();
-                $('#revealAddLocsPanel').hide();
-                $('#revealDiscountInput').hide();
-                $('#revealOptions').hide();
-                $('#AttendRegTypesCaption').text("Subscription Overview");
-            }
-            e.preventDefault();
-            var self = $(this);
-            var orderRowId = self.find('input[name="id"]').val(cartStateManager.getOrderRowId());
+        //    var data = $(this).serialize();
+        //    var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+        //    var utilities = new Common.Utilities();
 
-            var data = $(this).serialize();
-            var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
-            var utilities = new Common.Utilities();
+        //    $.ajax({
+        //        type: 'POST',
+        //        contentType: RegistrationInCart.Constants.FormPostContentType,
+        //        cache: false,
+        //        // form is submitted to Cart/ConfirmOrder
+        //        url: self.attr('action'),
+        //        dataType: RegistrationInCart.Constants.JsonDataType,
+        //        data: data,
+        //        beforeSend: function () {
 
-            $.ajax({
-                type: 'POST',
-                contentType: RegistrationInCart.Constants.FormPostContentType,
-                cache: false,
-                // form is submitted to Cart/ConfirmOrder
-                url: self.attr('action'),
-                dataType: RegistrationInCart.Constants.JsonDataType,
-                data: data,
-                beforeSend: function () {
+        //            confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+        //            confirmRegistrationBillMe.attr('disabled', 'disabled');
+        //        }
+        //    }).done(function (data) {
+        //        if (data.Result === 'Success') {
 
-                    confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-                    confirmRegistrationBillMe.attr('disabled', 'disabled');
-                }
-            }).done(function (data) {
-                if (data.Result === 'Success') {
+        //            $('#orderDetails').empty();
+        //            $('#orderDetails').append(data.Msg);
 
-                    $('#orderDetails').empty();
-                    $('#orderDetails').append(data.Msg);
+        //            $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
 
-                    $('#orderStatusLabel').text("Submitted").removeClass('label-warning').addClass('label-success');
+        //            confirmRegistrationBillMe
+        //                .after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Order Confirmed!</span></span>');
 
-                    confirmRegistrationBillMe
-                        .after('<span>&nbsp;<span class="label label-success">&nbsp;<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;Order Confirmed!</span></span>');
+        //            okToLeave = true;
+        //            utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
 
-                    okToLeave = true;
-                    utilities.goToUrl('/Account/OrderComplete/' + data.OrderRowID);
+        //        } else if (data.Result === 'UserHasMulti') {
+        //            utilities.goToUrl('/Cart/Checkout');
+        //        } else {
+        //            //console.error('Failed to post order');
+        //            confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
+        //        }
 
-                } else if (data.Result === 'UserHasMulti') {
-                    utilities.goToUrl('/Cart/Checkout');
-                } else {
-                    //console.error('Failed to post order');
-                    confirmRegistrationBillMe.after('<span class="field-validation-error">Invalid Data #554. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
-                }
+        //        $('#finalLoadingSpinner').remove();
+        //        confirmRegistrationBillMe.removeAttr('disabled');
+        //        $('#signUpSpinner').remove();
 
-                $('#finalLoadingSpinner').remove();
-                confirmRegistrationBillMe.removeAttr('disabled');
-                $('#signUpSpinner').remove();
+        //    }).fail(function (jqXHR, textStatus, errorThrown) {
+        //        $('#finalLoadingSpinner').remove();
+        //        confirmRegistrationBillMe.removeAttr('disabled');
+        //        $('#signUpSpinner').remove();
+        //        confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error #555. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
+        //    });
 
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                $('#finalLoadingSpinner').remove();
-                confirmRegistrationBillMe.removeAttr('disabled');
-                $('#signUpSpinner').remove();
-                confirmRegistrationBillMe.after('<span class="field-validation-error">Transport error #555. Try again or use our Help & Feedback button (lower right corner)  for immediate assistance! </span>');
-            });
-
-        });
+        //});
         var cancelOrderForm = cartStateManager.getCancelOrderForm();
 
         $('#CancelModal').on('show', function (e) {
@@ -235,12 +236,9 @@ $(function () {
         checkoutConfirm.initialize();
         //The BIG GREEN 'Bill Me' button on 3rd tab
         $('#ConfirmRegistrationBillMe').on('click', function (e) {
-            console.log("BIG green button submits");
+
             e.preventDefault();
-            //var confirmOrderForm = $('#confirmOrder');
-
-            //confirmOrderForm.submit();
-
+            
             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
             confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
@@ -268,8 +266,9 @@ $(function () {
 
                         $("#UpgradeOrderFromPromptCloser").click(
                             function () {
-                                var confirmOrderForm = $('#confirmOrder');
-                                confirmOrderForm.submit();
+                                completeOrder(null, cartStateManager.getOrderRowId(), null, cartStateManager.getOrderId());
+                                //var confirmOrderForm = $('#confirmOrder');
+                                //confirmOrderForm.submit();
                             }
                         );
                         $("#btnAcceptUpgrade").click(
@@ -292,14 +291,14 @@ $(function () {
                                 $('#hiddenOptOut').val("true");
                                 $('#hiddenCode').val("na");
 
-                                submitAcceptUpgradeForm();
+                                submitAcceptUpgradeForm("billme");
                             }
                         );
                         //
                     } else {
-
-                        var confirmOrderForm = $('#confirmOrder');
-                        confirmOrderForm.submit();
+                        completeOrder(null, cartStateManager.getOrderRowId(), null, cartStateManager.getOrderId());
+                        //var confirmOrderForm = $('#confirmOrder');
+                        //confirmOrderForm.submit();
                     }
                 });
         });
@@ -451,9 +450,6 @@ $(function () {
 
                                     e.preventDefault();
 
-                                    //var confirmOrderForm = $('#confirmOrder');
-                                    //confirmOrderForm.submit();
-
                                     var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
 
                                     confirmRegistrationBillMe.prepend('<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
@@ -481,8 +477,9 @@ $(function () {
 
                                                 $("#UpgradeOrderFromPromptCloser").click(
                                                     function () {
-                                                        var confirmOrderForm = $('#confirmOrder');
-                                                        confirmOrderForm.submit();
+                                                        completeOrder(null, cartStateManager.getOrderRowId(), null, cartStateManager.getOrderId());
+                                                        //var confirmOrderForm = $('#confirmOrder');
+                                                        //confirmOrderForm.submit();
                                                     }
                                                 );
                                                 $("#btnAcceptUpgrade").click(
@@ -510,9 +507,9 @@ $(function () {
                                                 );
                                                 //
                                             } else {
-
-                                                var confirmOrderForm = $('#confirmOrder');
-                                                confirmOrderForm.submit();
+                                                completeOrder(null, cartStateManager.getOrderRowId(), null, cartStateManager.getOrderId());
+                                                //var confirmOrderForm = $('#confirmOrder');
+                                                //confirmOrderForm.submit();
                                             }
                                         });
                                 });
@@ -598,11 +595,7 @@ function isShippingAddressRequired(jQueryObject) {
     //return true;
 }
 
-//this method is of a different scope than
-//  the scope that includes the .on('click' handler for confirmOrderForm
-//  hence the .done code is not being run.
-function submitAcceptUpgradeForm() {
-
+function submitAcceptUpgradeForm(source) {
     var submitUpgradeOrderFromPromptForm = $('#submitUpgradeOrderFromPromptForm');
     var data = submitUpgradeOrderFromPromptForm.serialize();
     var url = submitUpgradeOrderFromPromptForm.attr('action');
@@ -620,11 +613,11 @@ function submitAcceptUpgradeForm() {
         .done(function (data) {
             console.log(data);
 
-            //var confirmOrderForm = $('#confirmOrder');
-
-            //confirmOrderForm.find('input[name="id"]').val(cartStateManager.getOrderId());
-            //confirmOrderForm.submit();
-            completeOrder(null, cartStateManager.getOrderRowId(), null, cartStateManager.getOrderId());
+            if (source !== "PayTrace") {
+                completeOrder(null, cartStateManager.getOrderRowId(), null, cartStateManager.getOrderId());
+            } else {
+                $('#PayByCCIsOfflineModal').modal('show');
+            }
         });
 }
 

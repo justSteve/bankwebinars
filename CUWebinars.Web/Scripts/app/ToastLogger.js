@@ -2,12 +2,12 @@
 /// <reference path="../typings/toastr/toastr.d.ts" />
 var Common;
 (function (Common) {
-    var Logger = /** @class */ (function () {
+    var Logger = (function () {
         function Logger() {
             var _this = this;
             this.getLogFn = function (moduleId, fnName) {
                 fnName = fnName || 'log';
-                switch (fnName.toLowerCase()) { // convert aliases
+                switch (fnName.toLowerCase()) {
                     case 'success':
                         fnName = 'logSuccess';
                         break;

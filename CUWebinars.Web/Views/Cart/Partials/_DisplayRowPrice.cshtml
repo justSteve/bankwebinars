@@ -128,28 +128,55 @@
 @{
     if (Model != null)
     {
+
+
+        if (Model.Origin != null && Model.Origin.ToLower() != "cart")
+        {
+            <script language="javascript" type="text/javascript">
+                $(function () {
+
+                    $('#ConfirmRegistrationBillMe').on('click',
+                        function(e) {
+                            e.preventDefault();
+                            var confirmOrderForm = $('#confirmOrder');
+
+                            confirmOrderForm.find('input[name="id"]').val(@Model.idOrder);
+
+                            var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
+
+                            confirmRegistrationBillMe.prepend(
+                                '<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
+                            confirmRegistrationBillMe.attr('disabled', 'disabled');
+
+
+                            completeOrder(null, @Model.idOrder, null, @Model.idOrder);
+                            //confirmOrderForm.submit();
+                        });
+                });
+            </script>
+        }
         string discountCaption = "";
-        if (!ReferenceEquals(ViewBag.DiscountCaption, null))
-        {
-            discountCaption = ViewBag.DiscountCaption.ToString();
-        }
-        var discResult = "success";
-        if (discountCaption != "" && (discountCaption.Contains("Insufficient") || discountCaption.Contains("expired")))
-        {
-            discResult = "danger";
-        }
-        var confirmButtonLabel = "Bill Me!";
-
-        var rowAmount = new StringBuilder();
-
-        if (Model.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
-        {
-            rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. " +
-                             "<input type=\"checkbox\" id=\"SendHardcopy\"  /></div>");
-
-            var cbSendHardcopy = "";
-            if (Model.SendHardcopy)
+            if (!ReferenceEquals(ViewBag.DiscountCaption, null))
             {
+                discountCaption = ViewBag.DiscountCaption.ToString();
+            }
+            var discResult = "success";
+            if (discountCaption != "" && (discountCaption.Contains("Insufficient") || discountCaption.Contains("expired")))
+            {
+                discResult = "danger";
+            }
+            var confirmButtonLabel = "Bill Me!";
+
+            var rowAmount = new StringBuilder();
+
+            if (Model.RegistrationType.ShowShippedNotifications.ToLower() == "yes")
+            {
+                rowAmount.Append("<div class=\"well well-sm\" style=\"color: green; text-align: center;\">We have gone eco-friendly! The handouts can be downloaded from the CD.  If you prefer paper handouts, please check this box. " +
+                                 "<input type=\"checkbox\" id=\"SendHardcopy\"  /></div>");
+
+                var cbSendHardcopy = "";
+                if (Model.SendHardcopy)
+                {
                 <script language="javascript" type="text/javascript">
 
                     $(function () {
@@ -227,41 +254,7 @@
             }
 
         }
-        if (Model.Origin != null && Model.Origin.ToLower() != "cart")
-        {
-            <script language="javascript" type="text/javascript">
-                $(function () {
-                    @{
-                        if (hidePaymentButtons)
-                        {
 
-                        }
-                    }
-                    //$('#revealOptions').hide();
-                    //$('#revealAddLocsPanel').hide();
-                    //$('#Canceller').html(
-                    //    '<div class="label label-warning large" role="button" id="Canceller"><span style="color: black"> &nbsp;&nbsp;Problems? Questions?<br /> Use our <b>Chat</b> button lower left or email us at info@ttstrain.com! &nbsp;&nbsp;</span></div>');
-
-                     $('#ConfirmRegistrationBillMe').on('click',
-                         function(e) {
-
-                             e.preventDefault();
-                             var confirmOrderForm = $('#confirmOrder');
-
-                             confirmOrderForm.find('input[name="id"]').val(@Model.idOrder);
-
-                             var confirmRegistrationBillMe = $('#ConfirmRegistrationBillMe');
-
-                             confirmRegistrationBillMe.prepend(
-                                 '<i id="finalLoadingSpinner" class="icon-spinner icon-spin"></i>&nbsp;');
-                             confirmRegistrationBillMe.attr('disabled', 'disabled');
-
-                             confirmOrderForm.submit();
-                         });
-                 });
-            </script>
-
-        }
         <div id="billingDetails" style="text-align: right;">
 
             <div id="flyUpdateSuccessFlag"></div>
@@ -276,8 +269,8 @@
             {
                 <div class="@discResult" style="margin: 8px; text-align: center; padding: 7px 40px 7px 40px; width: 75%;"
                      id="discountCaption"><b>@Html.Raw(ViewBag.DiscountCaption.ToString())</b></div>
-                }
-                @*//following it for Multi-event checkout*@
+            }
+            @*//following it for Multi-event checkout*@
             @if (!Request.Url.PathAndQuery.ContainsIgnoreCase("/webinar/geteditincartjson")) // i don't love this as our logic gate, is there something else we can use / invent?
             {
                 <div id="payment" style="text-align: center; margin-top: 10px;">
@@ -292,8 +285,8 @@
                             &nbsp;
                             &nbsp;
                             @if (!Model.RegistrationType.OptionLabel.StartsWith("1-Month")
-                                 && !Model.RegistrationType.OptionLabel.StartsWith("6-Month")
-                                 && !Model.RegistrationType.OptionLabel.StartsWith("12-Month"))
+                             && !Model.RegistrationType.OptionLabel.StartsWith("6-Month")
+                             && !Model.RegistrationType.OptionLabel.StartsWith("12-Month"))
                             {
                                 <button class="btn btn-success" role="button" id="ConfirmRegistrationBillMe">@confirmButtonLabel</button>
                             }
@@ -327,17 +320,17 @@
     if (hidePaymentButtons)
     {
         <script language="javascript" type="text/javascript">
-            $(function () {
-                $("#ShowPayByCCModal").hide();
-            });
+                $(function () {
+                    $("#ShowPayByCCModal").hide();
+                });
         </script>
     }
     else
     {
         <script language="javascript" type="text/javascript">
-            $(function () {
-                $("#ShowPayByCCModal").show();
-            });
+                $(function () {
+                    $("#ShowPayByCCModal").show();
+                });
         </script>
     }
     <script type="text/javascript" language="javascript">

@@ -782,7 +782,9 @@ OCA.initializeFunctions = function () {
             e.preventDefault();
 
             var confirmOrderForm = $('#confirmOrderForAffiliateForm');
-            confirmOrderForm.submit();
+            completeOrder(null, cartStateManager.getOrderRowId(), null, cartStateManager.getOrderId());
+            // attempts to send all confirmOrder submissions thru completeOrder method
+            //confirmOrderForm.submit();
         });
 
         // The Cancel Registration button on 3rd tab

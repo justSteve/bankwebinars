@@ -4,33 +4,33 @@
 var OrderRegistration;
 (function (OrderRegistration) {
     //  todo: duplicate in Registration module
-    var Constants = /** @class */ (function () {
+    var Constants = (function () {
         function Constants() {
         }
-        Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
-        Constants.City = '_City';
-        Constants.Country = '_Country';
-        Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
-        Constants.FormPostContentType = 'application/x-www-form-urlencoded';
-        Constants.JsonContentType = 'application/json; charset=utf-8';
-        Constants.JsonDataType = 'json';
-        Constants.HtmlDataType = 'html';
-        Constants.Phone = '_Phone';
-        Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
-        Constants.ShippingAddressContainer = '#ShippingAddressContainer';
-        Constants.State = '_State';
-        Constants.AddShippingAddressLink = '#AddShippingAddressLink';
-        Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
-        Constants.StreetAddress = '_StreetAddress';
-        Constants.StreetAddress2 = '_StreetAddress2';
-        Constants.TypeofAddressBilling = 'Billing';
-        Constants.TypeofAddressShipping = 'Shipping';
-        Constants.Zip = '_Zip';
         return Constants;
     }());
+    Constants.BillingAddressFields = '#RegisterFields_BillingAddress';
+    Constants.City = '_City';
+    Constants.Country = '_Country';
+    Constants.ConfirmDeleteShippingAddressdialog = '#ConfirmDeleteShippingAddressdialog';
+    Constants.FormPostContentType = 'application/x-www-form-urlencoded';
+    Constants.JsonContentType = 'application/json; charset=utf-8';
+    Constants.JsonDataType = 'json';
+    Constants.HtmlDataType = 'html';
+    Constants.Phone = '_Phone';
+    Constants.ShippingAddressFields = '#RegisterFields_ShippingAddress';
+    Constants.ShippingAddressContainer = '#ShippingAddressContainer';
+    Constants.State = '_State';
+    Constants.AddShippingAddressLink = '#AddShippingAddressLink';
+    Constants.HideAddShippingAddressLink = '#HideAddShippingAddressLink';
+    Constants.StreetAddress = '_StreetAddress';
+    Constants.StreetAddress2 = '_StreetAddress2';
+    Constants.TypeofAddressBilling = 'Billing';
+    Constants.TypeofAddressShipping = 'Shipping';
+    Constants.Zip = '_Zip';
     OrderRegistration.Constants = Constants;
     ;
-    var StateManager = /** @class */ (function () {
+    var StateManager = (function () {
         function StateManager() {
         }
         StateManager.prototype.getAddressVerified = function () {
@@ -155,7 +155,6 @@ var OrderRegistration;
         };
         StateManager.prototype.PlaceOrder = function () {
             $("#Step2_BillMeFormReferred").val($("#tbReferred").val());
-            console.log("hit placeOrder");
             this.confirmOrderForm.submit();
         };
         StateManager.prototype.SetCartState = function (cartType) {
@@ -196,5 +195,5 @@ var OrderRegistration;
 //function isValidEmailAddress(emailAddress : string) {
 //    var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
 //    return pattern.test(emailAddress);
-//};
+//}; 
 //# sourceMappingURL=create-order-new.js.map

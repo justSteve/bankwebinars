@@ -3,7 +3,7 @@
 //  It uses the purl library - https://github.com/allmarkedup/purl
 var Common;
 (function (Common) {
-    var Utilities = /** @class */ (function () {
+    var Utilities = (function () {
         function Utilities() {
             this.sourceAttribute = 'source';
             this.relativeAttribute = 'relative';

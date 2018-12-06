@@ -178,8 +178,6 @@ namespace CUWebinars.Web.Controllers
         [HttpGet]
         public JsonResult UpgradePromptIni(int idOrder)
         {
-            if (_globalConfig.Tenant != "BankWebinars")
-                return Json(new { Result = 0 }, JsonRequestBehavior.AllowGet);
 
             var order = _cartControllerOrchestrator.GetOrderById(idOrder);
             if (order == null)
@@ -193,27 +191,24 @@ namespace CUWebinars.Web.Controllers
 
             if (webinar.Duration != 1 && webinar.Duration != 2)
             {
-                return Json(new { Result = 0 });
+                return Json(new { Result = 0 }
+                    , JsonRequestBehavior.AllowGet);
             }
 
-            if (webinar.idWebinar == 2520)
+            if (webinar.idWebinar == 2520
+                || (webinar.Status != WebinarStatus.Scheduled && webinar.Status != WebinarStatus.Active)
+                || webinar.SeriesInfo.Contains("Children")
+                )
             {
-                return Json(new { Result = 0 });
+                return Json(new { Result = 0 }
+                    , JsonRequestBehavior.AllowGet);
             }
 
-            if (webinar.Status != WebinarStatus.Scheduled)
-            {
-                return Json(new { Result = 0 });
-            }
 
             if (_globalConfig.Tenant == "DirSeries" || _globalConfig.Tenant == "CCS")
             {
-                return Json(new { Result = 0 });
-            }
-
-            if (webinar.SeriesInfo.Contains("Children"))
-            {
-                return Json(new { Result = 0 });
+                return Json(new { Result = 0 }
+                    , JsonRequestBehavior.AllowGet);
             }
 
             var result = orginalReg;
